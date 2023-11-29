@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:pilot_refresh/screens/edit_screen.dart';
 import 'package:pilot_refresh/screens/home_vehicle.dart';
+import 'package:pilot_refresh/screens/vehicle-details.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -24,10 +25,17 @@ class Item extends StatefulWidget {
   final String? featureSeatDetails;
   final int? jj;
   final String? vehiclaName;
+  final String? brandName;
   final String? registration;
   final String? manufacture;
   final String? condition;
   final String? nMillage;
+  final String? engine;
+  final String? model;
+  final String? fuel;
+  final String? skeleton;
+  final String? transmission;
+  final String? termAndCondition;
   Item({
     super.key,
     required this.id,
@@ -45,10 +53,17 @@ class Item extends StatefulWidget {
     this.featureSeatDetails,
     this.jj,
     this.vehiclaName,
+    this.brandName,
     this.registration,
     this.manufacture,
     this.condition,
     this.nMillage,
+    this.engine,
+    this.transmission,
+    this.model,
+    this.fuel,
+    this.skeleton,
+    this.termAndCondition,
   });
 
   @override
@@ -61,36 +76,55 @@ class _ItemState extends State<Item> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-   
       child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0),
+          padding: EdgeInsets.symmetric(horizontal: 0),
           child: Card(
             margin: EdgeInsets.only(bottom: 1, top: 0),
             elevation: 7,
             child: Padding(
-              padding: const EdgeInsets.only(left: 3),
+              padding: EdgeInsets.only(left: 3),
               child: Stack(
                 children: [
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image.network(
-                        "https://pilotbazar.com/storage/vehicles/${widget.imageName}",
-                        width: 50,
-                        height: 100,
-                        fit: BoxFit.fill,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => VehicleDetails(
+                                        vehicleName: widget.vehiclaName,
+                                        detailsVehicleImageName:
+                                            "https://pilotbazar.com/storage/vehicles/${widget.imageName}",
+                                            price: widget.price,
+                                        brandName: widget.brandName,
+                                        engine: widget.engine,
+                                        detailsCondition: widget.condition,
+                                        detailsMillege: widget.nMillage,
+                                        detailsTransmission:
+                                            widget.transmission,
+                                        model: widget.model,
+                                        detailsFuel: widget.fuel,
+                                        skeleton: widget.skeleton,
+                                        registration: widget.registration,
+                                        detailsGrade: "",
+                                      )));
+                        },
+                        child: Image.network(
+                          "https://pilotbazar.com/storage/vehicles/${widget.imageName}",
+                          width: 50,
+                          height: 100,
+                          fit: BoxFit.fill,
+                        ),
                       ),
-                      
                     ),
-                    
                     subtitle: InkWell(
-                      onTap: (){
-                         _showAlertDialog(context);
+                      onTap: () {
+                        _showAlertDialog(context);
                         print("i am pressed");
-                        
                       },
-                     
                       child: ListTile(
                         contentPadding: EdgeInsets.zero,
                         title: Column(
@@ -117,7 +151,7 @@ class _ItemState extends State<Item> {
                                   " | ",
                                   style: Theme.of(context).textTheme.bodySmall,
                                 ),
-                                        
+
                                 //Text(products[x].id.toString()),
                                 Text(
                                   "m: ",
@@ -133,13 +167,15 @@ class _ItemState extends State<Item> {
                                 ),
                               ],
                             ),
-                                        
+
                             Row(
                               children: [
                                 Text("Tk",
-                                    style: Theme.of(context).textTheme.bodySmall),
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall),
                                 Text("00215452",
-                                    style: Theme.of(context).textTheme.bodySmall),
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall),
                                 SizedBox(
                                   width: 50,
                                 ),
@@ -155,7 +191,7 @@ class _ItemState extends State<Item> {
                                             '${tempDirectory.path}/sharedImage.jpg')
                                         .create();
                                     await tempFile.writeAsBytes(imageBytes);
-                                        
+
                                     final image = XFile(tempFile.path);
                                     await Share.shareXFiles([image],
                                         text:
@@ -166,49 +202,49 @@ class _ItemState extends State<Item> {
                                     size: 20,
                                   ),
                                 ),
-                                 PopupMenuButton(
-                          onSelected: (value) {
-                            if (value == 'Edit') {
-                              // Open Edit Popup
-                              navigateToEditPage(widget.id);
-                            } else if (value == 'Delete') {
-                              // Open Delete Popup
-                              //deleteById(id);
-                            }
-                          },
-                          itemBuilder: (context) {
-                            return [
-                              PopupMenuItem(
-                                child: Text("Price"),
-                                value: 'Price',
-                              ),
-                              PopupMenuItem(
-                                child: Text("Booked"),
-                                value: 'Booked',
-                              ),
-                              PopupMenuItem(
-                                child: Text("Sold"),
-                                value: 'Sold',
-                              ),
-                              PopupMenuItem(
-                                child: Text("Edit"),
-                                value: 'Edit',
-                              ),
-                              PopupMenuItem(
-                                child: Text("Availability"),
-                                value: 'Availability',
-                              ),
-                              PopupMenuItem(
-                                child: Text("Advance"),
-                                value: 'Advance',
-                              ),
-                              PopupMenuItem(
-                                child: Text("Delete"),
-                                value: 'Delete',
-                              ),
-                            ];
-                          },
-                        ),
+                                PopupMenuButton(
+                                  onSelected: (value) {
+                                    if (value == 'Edit') {
+                                      // Open Edit Popup
+                                      navigateToEditPage(widget.id);
+                                    } else if (value == 'Delete') {
+                                      // Open Delete Popup
+                                      //deleteById(id);
+                                    }
+                                  },
+                                  itemBuilder: (context) {
+                                    return [
+                                      PopupMenuItem(
+                                        child: Text("Price"),
+                                        value: 'Price',
+                                      ),
+                                      PopupMenuItem(
+                                        child: Text("Booked"),
+                                        value: 'Booked',
+                                      ),
+                                      PopupMenuItem(
+                                        child: Text("Sold"),
+                                        value: 'Sold',
+                                      ),
+                                      PopupMenuItem(
+                                        child: Text("Edit"),
+                                        value: 'Edit',
+                                      ),
+                                      PopupMenuItem(
+                                        child: Text("Availability"),
+                                        value: 'Availability',
+                                      ),
+                                      PopupMenuItem(
+                                        child: Text("Advance"),
+                                        value: 'Advance',
+                                      ),
+                                      PopupMenuItem(
+                                        child: Text("Delete"),
+                                        value: 'Delete',
+                                      ),
+                                    ];
+                                  },
+                                ),
                               ],
                             ),
                           ],
@@ -216,18 +252,16 @@ class _ItemState extends State<Item> {
                       ),
                     ),
                   ),
-                      Align(
-            alignment: Alignment.topRight,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: InkWell(
-                onTap: (){
-                  navigateToEditPage(widget.id);
-
-                },
-                child: Image.asset('assets/images/edit_icon.png'))
-            ),
-          ),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: InkWell(
+                            onTap: () {
+                              navigateToEditPage(widget.id);
+                            },
+                            child: Image.asset('assets/images/edit_icon.png'))),
+                  ),
                 ],
               ),
             ),
@@ -355,19 +389,15 @@ class _ItemState extends State<Item> {
     );
   }
 
-
-   
-     navigateToEditPage(int index) {
+  navigateToEditPage(int index) {
     final route = MaterialPageRoute(
         builder: (context) => EditScreen(
-              name: widget.vehiclaName.toString(),
-                          
-              price: widget.price.toString()
-            ));
+            name: widget.vehiclaName.toString(),
+            price: widget.price.toString()));
     Navigator.push(context, route);
   }
 
-    void _showAlertDialog(BuildContext context) {
+  void _showAlertDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -397,7 +427,7 @@ class AlartDialogPage extends StatelessWidget {
           children: [
             Row(
               //crossAxisAlignment: CrossAxisAlignment.start,
-    
+
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(

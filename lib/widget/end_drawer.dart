@@ -16,9 +16,12 @@ class EndDrawer extends StatelessWidget {
     return Align(
       alignment: Alignment.topRight,
       child: SizedBox(
+        
         height: 230,
         width: 200,
+        
         child: Drawer(
+          
           backgroundColor: Color(0xFF333333),
           child: ListView(
             children: [

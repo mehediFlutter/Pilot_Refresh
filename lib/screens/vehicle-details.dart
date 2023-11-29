@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 class VehicleDetails extends StatefulWidget {
   final String? brandName;
-  final String detailsVehicleManufacture;
-  final String detailsVehicleManuConditioin;
-  final String detailsVehicleImageName;
-  final String? detailsEngine;
+  final String? detailsVehicleManufacture;
+  final String? detailsVehicleManuConditioin;
+  final String? detailsVehicleImageName;
+  final String? engine;
   final String? detailsCondition;
   final String? detailsMillege;
   final String? detailsTransmission;
@@ -30,10 +30,10 @@ class VehicleDetails extends StatefulWidget {
   const VehicleDetails(
       {super.key,
       this.brandName,
-      required this.detailsVehicleManufacture,
-      required this.detailsVehicleManuConditioin,
-      required this.detailsVehicleImageName,
-      this.detailsEngine,
+       this.detailsVehicleManufacture,
+       this.detailsVehicleManuConditioin,
+       this.detailsVehicleImageName,
+      this.engine,
       this.detailsCondition,
       this.detailsMillege,
       this.detailsTransmission,
@@ -63,34 +63,65 @@ class _VehicleDetailsState extends State<VehicleDetails> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Color(0xFF313131),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(top: 40,left: 15,right: 15),
+            padding: const EdgeInsets.only(top: 40, left: 15, right: 15),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.vehicleName.toString(),style: TextStyle(fontSize: 20),),
-                SizedBox(height: 20,),
-                Image.network(widget.detailsVehicleImageName),
-                SizedBox(height: 10),
+                Center(
+                  child: Text(
+                    widget.vehicleName.toString(),
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Card(
+                    elevation: 20,
+                    color: Color(0xFF313131),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.network(widget.detailsVehicleImageName.toString()?? ""))),
+                SizedBox(height: 5),
                 Container(
                   width: double.infinity,
-                  height: 100,
+                  height: 90,
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 178, 224, 179),
-                  ),
+                      color: const Color.fromARGB(255, 178, 224, 179),
+                      borderRadius: BorderRadius.circular(10)),
                   child: ListTile(
-                    title: Text("BDT ${widget.price} Tk"),
-                    subtitle: Text("Negotiable | T&C will be applicable"),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 5),
+                    title: Padding(
+                      padding: const EdgeInsets.only(top: 5),
+                      child: Text(
+                        "BDT  ${widget.price} Tk",
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .copyWith(color: Colors.black),
+                      ),
+                    ),
+                    subtitle: Text(
+                      "Negotiable | T&C will be applicable",
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          fontSize: 18,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500),
+                    ),
                     trailing: Column(
                       children: [
-                        Text("Code"),
-                        Text("PS-99"),
+                        Text("Code",style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.black),),
+                        Expanded(child: Text("PS-99",style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.black),)),
                       ],
                     ),
                   ),
                 ),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 Container(
                     width: double.infinity,
                     height: 300,
@@ -104,23 +135,23 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                               children: [
                                 Row(
                                   children: [
-                                    Text("Brand: "),
-                                    Text(widget.brandName.toString()),
+                                    Text("Brand : ",style: Theme.of(context).textTheme.titleMedium,),
+                                    Text(widget.brandName.toString(),style: Theme.of(context).textTheme.titleMedium),
                                   ],
                                 ),
                                 Expanded(
                                   child: Row(
                                     children: [
-                                      Text("Engine : "),
-                                      Text(widget.detailsEngine.toString()),
+                                      Text("Engine : ",style: Theme.of(context).textTheme.titleMedium),
+                                      Text(widget.engine.toString(),style: Theme.of(context).textTheme.titleMedium),
                                     ],
                                   ),
                                 ),
                                 Expanded(
                                   child: Row(
                                     children: [
-                                      Text("Condition : "),
-                                      Text(widget.detailsCondition.toString()),
+                                      Text("Condition : ",style: Theme.of(context).textTheme.titleMedium),
+                                      Text(widget.detailsCondition.toString(),style: Theme.of(context).textTheme.titleMedium),
                                     ],
                                   ),
                                 ),
@@ -129,11 +160,10 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                                     children: [
                                       Text(
                                         "Mileage :",
-                                        style: TextStyle(fontSize: 15),
+                                       style: Theme.of(context).textTheme.titleMedium
                                       ),
                                       Text(
-                                        widget.detailsMillege.toString(),
-                                        style: TextStyle(fontSize: 15),
+                                        widget.detailsMillege.toString(),style: Theme.of(context).textTheme.titleMedium
                                       ),
                                     ],
                                   ),
@@ -142,30 +172,28 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                                   child: Row(
                                     children: [
                                       Text(
-                                        "Transmission : ",
-                                        style: TextStyle(fontSize: 14),
+                                        "Transmission : ",style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 17)
                                       ),
                                       Expanded(
                                           child: Text(
                                               widget.detailsTransmission
-                                                  .toString(),
-                                              style: TextStyle(fontSize: 14))),
+                                                  .toString(),style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 17))),
                                     ],
                                   ),
                                 ),
                                 Expanded(
                                   child: Row(
                                     children: [
-                                      Text("Model :"),
-                                      Text(" API?"),
+                                      Text("Model :",style: Theme.of(context).textTheme.titleMedium),
+                                      Text(" API?",style: Theme.of(context).textTheme.titleMedium),
                                     ],
                                   ),
                                 ),
                                 Expanded(
                                   child: Row(
                                     children: [
-                                      Text("Color :"),
-                                      Text("API?"),
+                                      Text("Color :",style: Theme.of(context).textTheme.titleMedium),
+                                      Text("API?",style: Theme.of(context).textTheme.titleMedium),
                                     ],
                                   ),
                                 ),
@@ -176,21 +204,22 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                             child: Align(
                               alignment: Alignment.topRight,
                               child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                              
                                 children: [
                                   Row(
                                     children: [
                                       Text(
-                                        "Trim & Edition :",
-                                        style: TextStyle(fontSize: 10),
+                                        "Trim & Edition :",style: Theme.of(context).textTheme.titleMedium
                                       ),
-                                      Text("API?"),
+                                      Text("API?",style: Theme.of(context).textTheme.titleMedium),
                                     ],
                                   ),
                                   Expanded(
                                     child: Row(
                                       children: [
-                                        Text("Fuel: "),
-                                        Text(widget.detailsFuel.toString()),
+                                        Text("Fuel: ",style: Theme.of(context).textTheme.titleMedium),
+                                        Text(widget.detailsFuel.toString(),style: Theme.of(context).textTheme.titleMedium),
                                       ],
                                     ),
                                   ),
@@ -198,26 +227,26 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                                     child: Row(
                                       children: [
                                         Text(
-                                          "Skeleton : ",
-                                          style: TextStyle(fontSize: 13),
+                                          "Skeleton : ",style: Theme.of(context).textTheme.titleMedium
                                         ),
-                                        Text(widget.skeleton.toString()),
+                                        Text(widget.skeleton.toString(),style: Theme.of(context).textTheme.titleMedium),
                                       ],
                                     ),
                                   ),
                                   Expanded(
                                     child: Row(
                                       children: [
-                                        Text("Registration: "),
-                                        Text(widget.registration.toString()),
+                                        Text("Registration: ",style: Theme.of(context).textTheme.titleMedium),
+                                        Text(widget.registration.toString(),style: Theme.of(context).textTheme.titleMedium),
                                       ],
                                     ),
                                   ),
                                   Expanded(
                                     child: Row(
                                       children: [
-                                        Text("Grade : "),
-                                        Text(widget.detailsGrade.toString()?? '-'),
+                                        Text("Grade : ",style: Theme.of(context).textTheme.titleMedium),
+                                        Text(widget.detailsGrade.toString() ??
+                                            '-',style: Theme.of(context).textTheme.titleMedium),
                                       ],
                                     ),
                                   ),

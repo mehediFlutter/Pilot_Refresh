@@ -212,6 +212,13 @@ class _DoublVehicleState extends State<DoublVehicle> {
                               manufacture: products[index + j].manufacture,
                               condition: products[index + j].condition,
                               nMillage: products[index + j].mileage,
+                              brandName: products[x].brandName,
+                              engine: products[x].engine,
+                              transmission: products[x].transmission,
+                              model: "",
+                              fuel: products[x].fuel,
+                              skeleton: products[x].skeleton,
+                              
                             
                               //dropdownFontLight: products[index+j],
                             ),

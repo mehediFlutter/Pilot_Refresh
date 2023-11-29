@@ -49,14 +49,16 @@ class _AppState extends State<App> {
 
           textTheme: TextTheme(
               titleMedium: TextStyle(
-                fontSize: 15,
+                fontSize: 20,
                 fontFamily: "AbhayaLibre",
-                color: Colors.grey,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
               ),
               titleLarge: TextStyle(
-                fontSize: 18,
+                fontSize: 25,
                 fontFamily: "AbhayaLibre",
                 color: Colors.white,
+                fontWeight: FontWeight.w500
               ),
               titleSmall: TextStyle(
                 fontSize: 12,
