@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pilot_bazar/auth/registration.dart';
-import 'package:pilot_bazar/widget/make_a-phone_call.dart';
+
+import 'package:pilot_refresh/screens/registration.dart';
+import 'package:pilot_refresh/widget/make_a_phone_call.dart';
 import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart';
@@ -21,6 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
     Size size = MediaQuery.sizeOf(context);
 
     return SafeArea(
+      
       child: Scaffold(
         backgroundColor: const Color(0xFF333333),
         body: Padding(
@@ -159,6 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: size.height / 30),
                   SizedBox(
+                    
                       height: size.height / 14,
                       width: double.infinity,
                       child: ElevatedButton(
@@ -173,11 +176,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               borderRadius: BorderRadius.circular(
                                   20.0), // Adjust the value as needed
                             ),
+                            backgroundColor: Colors.blue
                           ),
                           child: Text(
                             'Login',
                             style: Theme.of(context).textTheme.titleLarge,
-                          ))),
+                          ),),),
                   SizedBox(height: size.height / 30),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pilot_bazar/screens/bottom_nav_base-screen.dart';
-import 'package:pilot_bazar/screens/home_page.dart';
-import 'package:pilot_bazar/widget/make_a-phone_call.dart';
+import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
+import 'package:pilot_refresh/widget/make_a_phone_call.dart';
+
 
 class Registration extends StatefulWidget {
   const Registration({super.key});
@@ -212,8 +212,10 @@ class _RegistrationState extends State<Registration> {
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
-                                  20.0), // Adjust the value as needed
+                                  20.0),
+                                   // Adjust the value as needed
                             ),
+                            backgroundColor: Colors.blue
                           ),
                           child: Text(
                             'Register',

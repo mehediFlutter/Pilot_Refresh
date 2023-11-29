@@ -27,13 +27,13 @@ class _DoublVehicleState extends State<DoublVehicle> {
     super.initState();
     _scrollController.addListener(_listenToScroolMoments);
     page = 1;
-    i=0;
+    i = 0;
     setState(() {});
 
     getProduct(page);
   }
 
-  List<Product> products = [];
+  List<SearchProduct> products = [];
   List featureUnicTitle = [];
   List featureDetails = [];
 
@@ -54,10 +54,14 @@ class _DoublVehicleState extends State<DoublVehicle> {
   }
 
   void getNewProduct(int page) async {
+    _getNewProductinProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
     Response response =
         await get(Uri.parse("https://pilotbazar.com/api/vehicle?page=$page"));
-        print("page number");
-        print(page);
+    print("page number");
+    print(page);
 
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
@@ -78,7 +82,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
     if (response.statusCode == 200) {
       decodedResponse['data'].forEach(
         (e) {
-          products.add(Product(
+          products.add(SearchProduct(
             vehicleName: e['translate'][0]['title'],
             id: e['id'],
             slug: e['slug'],
@@ -113,7 +117,6 @@ class _DoublVehicleState extends State<DoublVehicle> {
 
   @override
   bool _loadDetailsInProgress = false;
-  
 
   void getProduct(int page) async {
     _getProductinProgress = true;
@@ -141,7 +144,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
     }
 
     for (i; i < decodedResponse['data'].length; i++) {
-      products.add(Product(
+      products.add(SearchProduct(
         vehicleName: decodedResponse['data'][i]['translate'][0]['title'],
         manufacture: decodedResponse['data'][i]['manufacture'],
         slug: decodedResponse['data'][i]['slug'],
@@ -151,6 +154,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
         mileage: decodedResponse['data'][i]['mileage']['translate'][0]['title'],
         price: decodedResponse['data'][i]['price'],
         imageName: decodedResponse['data'][i]['image']['name'],
+        registration: decodedResponse['data'][i]['registration'],
       ));
     }
     if (decodedResponse['data'] == null) {
@@ -161,10 +165,6 @@ class _DoublVehicleState extends State<DoublVehicle> {
     if (mounted) {
       setState(() {});
     }
-
-    print(products[1].id);
-    print("Length of Proucts");
-    print(products.length.toString());
   }
 
   final ScrollController _scrollController = ScrollController();
@@ -173,33 +173,55 @@ class _DoublVehicleState extends State<DoublVehicle> {
     _scrollController.addListener(() {
       print(_scrollController.offset);
     });
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(page.toString()),
-        ),
-        body: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            //childAspectRatio: 1.0,
-            mainAxisSpacing: 5.0,
-            crossAxisSpacing: 1.0,
-          ),
-          controller: _scrollController,
-          itemCount: products.length,
-          itemBuilder: (BuildContext context, index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              child: Item(
-                id: products[index + j].id!,
-                imageName: products[index + j].imageName.toString(),
-                price: products[index + j].price.toString(),
-                featureSeat: featureUnicTitle[index + j].toString(),
-                featureSeatDetails: featureDetails[index + j].toString(),
-                //dropdownFontLight: products[index+j],
-              ),
-            );
-          },
-        ));
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        child: Scaffold(
+            appBar: AppBar(
+              title: Text(page.toString()),
+            ),
+            body: _getProductinProgress
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Stack(
+                    children: [
+                      GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          //childAspectRatio: 1.0,
+                          mainAxisSpacing: 0.0,
+                          crossAxisSpacing: 0.0,
+                        ),
+                        controller: _scrollController,
+                        itemCount: products.length,
+                        itemBuilder: (BuildContext context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
+                            child: Item(
+                              id: products[index + j].id!,
+                              imageName: products[index + j].imageName.toString(),
+                              price: products[index + j].price.toString(),
+                              featureSeat: featureUnicTitle[index + j].toString(),
+                              featureSeatDetails:
+                                  featureDetails[index + j].toString(),
+                              vehiclaName: products[index + j].vehicleName,
+                              manufacture: products[index + j].manufacture,
+                              condition: products[index + j].condition,
+                              nMillage: products[index + j].mileage,
+                            
+                              //dropdownFontLight: products[index+j],
+                            ),
+                          );
+                        },
+                      ),
+                      Visibility(
+                      visible: _getNewProductinProgress,
+                       child: Align( alignment: Alignment.bottomCenter, child: CircularProgressIndicator())),
+                    ],
+                  )),
+      ),
+    );
   }
 
   static int j = x;

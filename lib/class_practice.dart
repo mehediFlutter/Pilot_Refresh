@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:http/http.dart';
 
 class FeatureDetailPair {
@@ -50,19 +49,18 @@ List<FeatureDetailPair> extractFeatureDetails(List<dynamic> vehicleFeatures) {
 // List tittt=[];
 //   // Now featureDetailPairs contains the desired information
 //   for (var pair in featureDetailPairs) {
-//     print('Feature: ${pair.featureTitle}');
-//     tittt.add({pair.featureTitle});
-//     print('Details: ${pair.detailTitles.join(', ')}');
-//     details.add({pair.detailTitles.join(', ')});
-//     print('-----');
+//     //print('Feature: ${pair.featureTitle}');
+//     tittt.add(pair.featureTitle);
+//     //print('Details: ${pair.detailTitles.join(', ')}');
+//     details.add(pair.detailTitles.join(', '));
+//     //print('-----');
 //   }
-//   print(vehicleFeatures);
-//   print(featureDetailPairs);
-//   print("This is Details");
+//   // print(vehicleFeatures);
+//   // print(featureDetailPairs);
 //   print(details);
-//   print("Index show ");
-//   print(details[0].toString());
+
+//   print(tittt[1].toString());
 //   print(details[1].toString());
-//   print("Unic title");
-//   print(tittt);
+//   //print("Unic title");
+//   //print(tittt);
 // }

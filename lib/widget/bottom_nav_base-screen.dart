@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pilot_bazar/screens/double_vehicle_screen.dart';
-import 'package:pilot_bazar/screens/home_page.dart';
+import 'package:pilot_refresh/screens/double_vehicle_screen.dart';
+import 'package:pilot_refresh/screens/home_vehicle.dart';
+
 
 
 class BottomNavBaseScreen extends StatefulWidget {

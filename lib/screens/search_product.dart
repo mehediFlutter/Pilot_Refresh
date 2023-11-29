@@ -9,7 +9,14 @@ class SearchProduct {
   final String? imageName;
   final String? dropdownFontLight;
     final String? dropdownFontLightAnswer;
+    final String? brandName;
+    final String? detailsEngine;
+    final String? transmission;
+    final String? fuel;
+    final String? skeleton;
     final String? registration;
+    final String? grede;
+    final String? model;
 
 
   // productCode,
@@ -19,7 +26,7 @@ class SearchProduct {
   // createAt,
   // quantity;
 
-  SearchProduct(
+  SearchProduct( 
      {
     this.imageName,
     this.id,
@@ -31,7 +38,14 @@ class SearchProduct {
     this.price,
     this.dropdownFontLight,
     this.dropdownFontLightAnswer,
-    this.registration
+    this.brandName,
+    this.detailsEngine,
+    this.transmission,
+    this.fuel,
+    this.skeleton,
+    this.registration,
+    this.grede,
+    this.model,
     // required this.productCode,
     // required this.image,
     // required this.unitPrice,

@@ -1,4 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
+import 'package:pilot_refresh/screens/edit_screen.dart';
+import 'package:pilot_refresh/screens/home_vehicle.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 class Item extends StatefulWidget {
   final int id;
@@ -12,22 +20,36 @@ class Item extends StatefulWidget {
   final String? dropdownRoofAnswer;
   final String? dropdownStarOption;
   final String? dropdownStarOptionAnswer;
-  final String?  featureSeat;
-  final String?  featureSeatDetails;
- final int?  jj;
-  Item(
-      {super.key,
-      required this.id,
-      required this.imageName,
-      required this.price,
-      this.dropdownFontLight,
-      this.dropdownFontLightAnswer,
-      this.dropdownSeat,
-      this.dropdownSeatAnswer,
-      this.dropdownRoof,
-      this.dropdownRoofAnswer,
-      this.dropdownStarOption,
-      this.dropdownStarOptionAnswer, this.featureSeat, this.featureSeatDetails, this.jj});
+  final String? featureSeat;
+  final String? featureSeatDetails;
+  final int? jj;
+  final String? vehiclaName;
+  final String? registration;
+  final String? manufacture;
+  final String? condition;
+  final String? nMillage;
+  Item({
+    super.key,
+    required this.id,
+    required this.imageName,
+    required this.price,
+    this.dropdownFontLight,
+    this.dropdownFontLightAnswer,
+    this.dropdownSeat,
+    this.dropdownSeatAnswer,
+    this.dropdownRoof,
+    this.dropdownRoofAnswer,
+    this.dropdownStarOption,
+    this.dropdownStarOptionAnswer,
+    this.featureSeat,
+    this.featureSeatDetails,
+    this.jj,
+    this.vehiclaName,
+    this.registration,
+    this.manufacture,
+    this.condition,
+    this.nMillage,
+  });
 
   @override
   State<Item> createState() => _ItemState();
@@ -39,127 +61,430 @@ class _ItemState extends State<Item> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        print("I am on press");
-        _showAlertDialog(context);
-      },
+   
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Card(
-          margin: EdgeInsets.only(bottom: 0),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          elevation: 7,
-          child: ListTile(
-            contentPadding: EdgeInsets.only(left: 2),
-
-            title: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                "https://pilotbazar.com/storage/vehicles/${widget.imageName}",
-                width: 50,
-                height: 110,
-                fit: BoxFit.fill,
-              ),
-            ),
-            //"https://pilotbazar.com/storage/vehicles/${products[x].imageName}"
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(widget.id.toString(), style: TextStyle(height: 0)),
-                Row(
-                  children: [
-                    Text(
-                      "R:",
-                      style: TextStyle(height: 0),
+          padding: const EdgeInsets.symmetric(horizontal: 0),
+          child: Card(
+            margin: EdgeInsets.only(bottom: 1, top: 0),
+            elevation: 7,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 3),
+              child: Stack(
+                children: [
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(
+                        "https://pilotbazar.com/storage/vehicles/${widget.imageName}",
+                        width: 50,
+                        height: 100,
+                        fit: BoxFit.fill,
+                      ),
+                      
                     ),
-                    Text(""),
-                    Text(" | "),
+                    
+                    subtitle: InkWell(
+                      onTap: (){
+                         _showAlertDialog(context);
+                        print("i am pressed");
+                        
+                      },
+                     
+                      child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // product name
+                            Text(widget.vehiclaName.toString(),
+                                style: Theme.of(context).textTheme.bodySmall),
+                            Row(
+                              children: [
+                                Text(
+                                  "R:",
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                                Text(
+                                  widget.registration.toString(),
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                                Text(
+                                  "Used",
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                                Text(
+                                  " | ",
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                                        
+                                //Text(products[x].id.toString()),
+                                Text(
+                                  "m: ",
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                                Text(
+                                  " | ",
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                                Text(
+                                  "321457km",
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              ],
+                            ),
+                                        
+                            Row(
+                              children: [
+                                Text("Tk",
+                                    style: Theme.of(context).textTheme.bodySmall),
+                                Text("00215452",
+                                    style: Theme.of(context).textTheme.bodySmall),
+                                SizedBox(
+                                  width: 50,
+                                ),
+                                InkWell(
+                                  onTap: () async {
+                                    final uri = Uri.parse(
+                                        "https://pilotbazar.com/storage/vehicles/${widget.imageName}");
+                                    final response = await http.get(uri);
+                                    final imageBytes = response.bodyBytes;
+                                    final tempDirectory =
+                                        await getTemporaryDirectory();
+                                    final tempFile = await File(
+                                            '${tempDirectory.path}/sharedImage.jpg')
+                                        .create();
+                                    await tempFile.writeAsBytes(imageBytes);
+                                        
+                                    final image = XFile(tempFile.path);
+                                    await Share.shareXFiles([image],
+                                        text:
+                                            "Vehicle Name: ${widget.vehiclaName} \nManufacture:  ${widget.manufacture} \nConditiion: ${widget.condition} \nRegistration: ${widget.registration} \nMillage: ${widget.nMillage}, \nOur HotLine Number: 017xxxxxxxx");
+                                  },
+                                  child: Icon(
+                                    Icons.share,
+                                    size: 20,
+                                  ),
+                                ),
+                                 PopupMenuButton(
+                          onSelected: (value) {
+                            if (value == 'Edit') {
+                              // Open Edit Popup
+                              navigateToEditPage(widget.id);
+                            } else if (value == 'Delete') {
+                              // Open Delete Popup
+                              //deleteById(id);
+                            }
+                          },
+                          itemBuilder: (context) {
+                            return [
+                              PopupMenuItem(
+                                child: Text("Price"),
+                                value: 'Price',
+                              ),
+                              PopupMenuItem(
+                                child: Text("Booked"),
+                                value: 'Booked',
+                              ),
+                              PopupMenuItem(
+                                child: Text("Sold"),
+                                value: 'Sold',
+                              ),
+                              PopupMenuItem(
+                                child: Text("Edit"),
+                                value: 'Edit',
+                              ),
+                              PopupMenuItem(
+                                child: Text("Availability"),
+                                value: 'Availability',
+                              ),
+                              PopupMenuItem(
+                                child: Text("Advance"),
+                                value: 'Advance',
+                              ),
+                              PopupMenuItem(
+                                child: Text("Delete"),
+                                value: 'Delete',
+                              ),
+                            ];
+                          },
+                        ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                      Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: InkWell(
+                onTap: (){
+                  navigateToEditPage(widget.id);
 
-                    //Text(products[x].id.toString()),
-                    Text("fdf"),
-                    Text(" | "),
-                    Text("fdf"),
-                  ],
-                ),
-                Text("Available At (PBL)"),
-                Row(
-                  children: [
-                    Text("Tk."),
-                    SizedBox(width: 5),
-                    Text("gfg"),
-                  ],
-                ),
-                Text('d'),
-              ],
+                },
+                child: Image.asset('assets/images/edit_icon.png'))
             ),
           ),
-        ),
-      ),
+                ],
+              ),
+            ),
+          )
+
+          // Card(
+          //   elevation: 7,
+          //   child:      ListTile(
+          //       contentPadding: EdgeInsets.only(left: 1, right: 1),
+
+          //       title: ClipRRect(
+          //         borderRadius: BorderRadius.circular(15),
+          //         child: Padding(
+          //           padding: const EdgeInsets.symmetric(horizontal: 5),
+          //           child: Image.network(
+          //             "https://pilotbazar.com/storage/vehicles/${widget.imageName}",
+          //             width: 50,
+          //             height: 100,
+          //             fit: BoxFit.fill,
+          //           ),
+          //         ),
+          //       ),
+          //       //"https://pilotbazar.com/storage/vehicles/${products[x].imageName}"
+          //       subtitle: Column(
+          //         crossAxisAlignment: CrossAxisAlignment.start,
+          //         mainAxisSize: MainAxisSize.max,
+          //         children: [
+          //           // product name
+          //           Text(widget.vehiclaName.toString(),
+          //               style: Theme.of(context).textTheme.bodySmall),
+          //           Row(
+          //             children: [
+          //               Text(
+          //                 "R:",
+          //                 style: Theme.of(context).textTheme.bodySmall,
+          //               ),
+          //               Text(
+          //                 widget.registration.toString(),
+          //                 style: Theme.of(context).textTheme.bodySmall,
+          //               ),
+          //               Text(
+          //                 "",
+          //                 style: Theme.of(context).textTheme.bodySmall,
+          //               ),
+          //               Text(
+          //                 " | ",
+          //                 style: Theme.of(context).textTheme.bodySmall,
+          //               ),
+
+          //               //Text(products[x].id.toString()),
+          //               Text(
+          //                 "fdf",
+          //                 style: Theme.of(context).textTheme.bodySmall,
+          //               ),
+          //               Text(
+          //                 " | ",
+          //                 style: Theme.of(context).textTheme.bodySmall,
+          //               ),
+          //               Text(
+          //                 "my write",
+          //                 style: Theme.of(context).textTheme.bodySmall,
+          //               ),
+          //             ],
+          //           ),
+          //           Row(
+          //             children: [
+          //               Text(
+          //                 "Available At (PBL)",
+          //                 style: Theme.of(context).textTheme.bodySmall,
+          //               ),
+          //               Spacer(),
+          //               InkWell(
+          //                 onTap: (){},
+          //                 child: Icon(Icons.share,size: 20,))
+          //               // IconButton(
+          //               //   padding: EdgeInsets.zero,
+          //               //   onPressed: () {},
+          //               //   icon: Icon(
+          //               //     Icons.share,
+          //               //     size: 12,
+          //               //   ),
+          //               // )
+          //             ],
+          //           ),
+          //           Row(
+          //             children: [
+          //               Text(
+          //                 "Tk.",
+          //                 style: TextStyle(height: 0,fontSize: 10),
+          //               ),
+          //               Text(
+          //                 "gfg",
+          //                 style: Theme.of(context).textTheme.bodySmall,
+          //               ),
+
+          //               // ElevatedButton(
+
+          //               //   onPressed: () async {
+          //               //     final uri = Uri.parse(
+          //               //         "https://pilotbazar.com/storage/vehicles/${widget.imageName}");
+          //               //     final response = await http.get(uri);
+          //               //     final imageBytes = response.bodyBytes;
+          //               //     final tempDirectory = await getTemporaryDirectory();
+          //               //     final tempFile =
+          //               //         await File('${tempDirectory.path}/sharedImage.jpg')
+          //               //             .create();
+          //               //     await tempFile.writeAsBytes(imageBytes);
+
+          //               //     final image = XFile(tempFile.path);
+          //               //     await Share.shareXFiles([image],
+          //               //         text:
+          //               //             "Vehicle Name: ${widget.vehiclaName} \nManufacture:  ${widget.manufacture} \nConditiion: ${widget.condition} \nRegistration: ${widget.registration} \nMillage: ${widget.nMillage}, \nOur HotLine Number: 017xxxxxxxx");
+          //               //   },
+          //               //   child: Icon(Icons.share,size: 15,),
+          //               // ),
+          //             ],
+          //           ),
+          //           Text('d'),
+          //         ],
+          //       ),
+          //     ),
+          // ),
+
+          ),
     );
   }
 
-  void _showAlertDialog(BuildContext context) {
+
+   
+     navigateToEditPage(int index) {
+    final route = MaterialPageRoute(
+        builder: (context) => EditScreen(
+              name: widget.vehiclaName.toString(),
+                          
+              price: widget.price.toString()
+            ));
+    Navigator.push(context, route);
+  }
+
+    void _showAlertDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          contentPadding: EdgeInsets.zero,
-          title: Text("Fuatures and "),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
-                    children: [
-                      Text(widget.price),
-                  Text(widget.featureSeat?.toString() ?? ''),
-                      Text(widget.featureSeatDetails.toString()),
-                      Text("data1"),
-                      Text("data1"),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Text("data2"),
-                      Text("data2"),
-                      Text("data2"),
-                      Text("data2"),
-                      Text("data2"),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Text("data3"),
-                      Text("data3"),
-                      Text("data3"),
-                      Text("data3"),
-                      Text("data3"),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Confirm'),
-              onPressed: () {
-                // Handle the confirm action
-              },
+        return AlartDialogPage();
+      },
+    );
+  }
+}
+
+class AlartDialogPage extends StatelessWidget {
+  const AlartDialogPage({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: Color(0xFF232323),
+      contentPadding: EdgeInsets.zero,
+      title: Text(
+        "Fuatures and ",
+        style: Theme.of(context).textTheme.titleLarge,
+      ),
+      content: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Column(
+          children: [
+            Row(
+              //crossAxisAlignment: CrossAxisAlignment.start,
+    
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Roof",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    Text(
+                      "sunroof",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    Text(
+                      "moon roof",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    Text(
+                      "moon roof",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    Text(
+                      "moon roof",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    Text(
+                      "moon roof",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    Text(
+                      "moon roof",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Text(
+                      "Seat",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    Text(
+                      "1 set",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    Text(
+                      "2 set",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    Text(
+                      "2 set",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    Text(
+                      "2 set",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    Text(
+                      "2 set",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    Text(
+                      "2 set",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ],
+                ),
+              ],
             ),
           ],
-        );
-      },
+        ),
+      ),
+      actions: <Widget>[
+        IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.close),
+          color: Colors.white,
+        ),
+        // TextButton(
+        //   child: const Text('Confirm'),
+        //   onPressed: () {
+        //     // Handle the confirm action
+        //   },
+        // ),
+      ],
     );
   }
 }
