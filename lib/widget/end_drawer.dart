@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pilot_refresh/screens/double_vehicle_screen.dart';
+import 'package:pilot_refresh/screens/marcent_dash_board.dart';
 import 'package:pilot_refresh/widget/drawer_item_list.dart';
 
 class EndDrawer extends StatelessWidget {
@@ -29,10 +30,10 @@ class EndDrawer extends StatelessWidget {
                       text: 'DashBoard',
                       icon: Icon(Icons.dashboard),
                       onTapFunction: () {
-                        //   Navigator.push(
-                        //       context,
-                        //       MaterialPageRoute(
-                        //           builder: (context) => MarchentDashBoard()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MarchentDashBoard()));
                       },
                     ),
                     DrawerItemList(

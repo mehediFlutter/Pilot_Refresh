@@ -91,6 +91,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
             mileage: e['mileage']['translate'][0]['title'],
             price: e['price'],
             imageName: e['image']['name'],
+             brandName: e['brand']['translate'][0]['title'],
           ));
         },
       );
@@ -145,6 +146,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
 
     for (i; i < decodedResponse['data'].length; i++) {
       products.add(SearchProduct(
+        
         vehicleName: decodedResponse['data'][i]['translate'][0]['title'],
         manufacture: decodedResponse['data'][i]['manufacture'],
         slug: decodedResponse['data'][i]['slug'],
@@ -155,6 +157,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
         price: decodedResponse['data'][i]['price'],
         imageName: decodedResponse['data'][i]['image']['name'],
         registration: decodedResponse['data'][i]['registration'],
+        brandName: decodedResponse['data'][i]['brand']['translate'][0]['title'],
       ));
     }
     if (decodedResponse['data'] == null) {

@@ -5,7 +5,8 @@ import 'package:http/http.dart';
 import 'package:pilot_refresh/class_practice.dart';
 import 'package:pilot_refresh/product.dart';
 import 'package:pilot_refresh/screens/edit_screen.dart';
-import 'package:pilot_refresh/screens/vehicle_details_screen.dart';
+import 'package:pilot_refresh/screens/vehicle-details.dart';
+import 'package:pilot_refresh/screens/vehicle_details_demo_screen.dart';
 import 'package:pilot_refresh/search/pilot_search.dart';
 import 'package:pilot_refresh/widget/app_bar.dart';
 import 'package:pilot_refresh/widget/end_drawer.dart';
@@ -101,6 +102,11 @@ class _HomeVehicleState extends State<HomeVehicle> {
             price: e['price'],
             imageName: e['image']['name'],
             registration: e['registration'] ?? '-',
+            engine: e['engine']['translate'][0]['title'],
+            brandName: e['brand']['translate'][0]['title'],
+            transmission: e['transmission']['translate'][0]['title'],
+            fuel: e['fuel']['translate'][0]['title'],
+            skeleton: e['skeleton']['translate'][0]['title'],
           ));
         },
       );
@@ -152,6 +158,13 @@ class _HomeVehicleState extends State<HomeVehicle> {
         price: decodedResponse['data'][i]['price'],
         imageName: decodedResponse['data'][i]['image']['name'],
         registration: decodedResponse['data'][i]['registration'] ?? '-',
+        engine: decodedResponse['data'][i]['engine']['translate'][0]['title'],
+        brandName: decodedResponse['data'][i]['brand']['translate'][0]['title'],
+        transmission: decodedResponse['data'][i]['transmission']['translate'][0]
+            ['title'],
+        fuel: decodedResponse['data'][i]['fuel']['translate'][0]['title'],
+        skeleton: decodedResponse['data'][i]['skeleton']['translate'][0]
+            ['title'],
       ));
     }
     if (decodedResponse['data'] == null) {
@@ -186,6 +199,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
       print(_scrollController.offset);
     });
     return Scaffold(
+      backgroundColor: Color(0xFF333333),
       appBar: AppBar(
         title: Padding(
           padding: const EdgeInsets.all(10),
@@ -208,9 +222,9 @@ class _HomeVehicleState extends State<HomeVehicle> {
               child: CircularProgressIndicator(),
             )
           : Visibility(
-            visible: products.isNotEmpty,
-            replacement: Text("No Data",style: TextStyle(fontSize: 20)),
-            child: Expanded(
+              visible: products.isNotEmpty,
+              replacement: Text("No Data", style: TextStyle(fontSize: 20)),
+              child: Expanded(
                 child: Expanded(
                   child: Stack(
                     children: [
@@ -237,159 +251,173 @@ class _HomeVehicleState extends State<HomeVehicle> {
                   ),
                 ),
               ),
-          ),
+            ),
     );
   }
 
   productList(int x) {
     return Expanded(
-      child: ListTile(
-        title: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: InkWell(
-            onTap: () {
-              print("Index number is ");
-              print(x);
-              Navigator.push(
+      child: Card(
+        child: ListTile(
+          tileColor: Color(0xFF555555),
+          title: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: InkWell(
+              onTap: () {
+                print("Index number is ");
+                print(x);
+                Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => VehicleDetails(
-                            detailsVehicleImageName:
-                                "https://pilotbazar.com/storage/vehicles/${products[x].imageName}",
-                            detailsVehicleName:
-                                products[x].vehicleName.toString(),
-                            detailsVehicleManuConditioin:
-                                products[x].manufacture.toString(),
-                            detailsVehicleManufacture:
-                                products[x].manufacture.toString(),
-                          )));
-            },
-            child: searchInProgress
-                ? Column(
-                    children: [
-                      Text(newSearchProducts[x].id.toString()),
-                      Text(newSearchProducts[x].vehicleName.toString()),
-                    ],
-                  )
-                : Stack(
-                    children: [
-                      Image.network(
-                          "https://pilotbazar.com/storage/vehicles/${products[x].imageName}"
-                          // width: 90,
-                          // height: 100,
-                          // fit: BoxFit.fill,
-                          ),
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: InkWell(
-                                onTap: () {
-                                  navigateToEditPage(x);
-                                },
-                                child: Image.asset(
-                                    'assets/images/edit_icon.png'))),
-                      ),
-                    ],
+                    builder: (context) => VehicleDetails(
+                      
+                      detailsVehicleImageName:
+                          "https://pilotbazar.com/storage/vehicles/${products[x].imageName}",
+                      price: products[x].price,
+                      brandName: products[x].brandName,
+                      vehicleName: products[x].vehicleName,
+                      detailsEngine: products[x].engine,
+                      detailsCondition: products[x].condition,
+                      detailsMillege: products[x].mileage,
+                      detailsTransmission: products[x].transmission,
+                      detailsFuel: products[x].fuel,
+                      skeleton: products[x].skeleton,
+                      registration: products[x].registration,
+                      detailsVehicleManuConditioin:
+                          products[x].manufacture.toString(),
+                      detailsVehicleManufacture:
+                          products[x].manufacture.toString(),
+                    ),
                   ),
+                );
+              },
+              child: searchInProgress
+                  ? Column(
+                      children: [
+                        Text(newSearchProducts[x].id.toString()),
+                        Text(newSearchProducts[x].vehicleName.toString()),
+                      ],
+                    )
+                  : Stack(
+                      children: [
+                        Image.network(
+                            "https://pilotbazar.com/storage/vehicles/${products[x].imageName}"
+                            // width: 90,
+                            // height: 100,
+                            // fit: BoxFit.fill,
+                            ),
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: InkWell(
+                                  onTap: () {
+                                    navigateToEditPage(x);
+                                  },
+                                  child: Image.asset(
+                                      'assets/images/edit_icon.png'))),
+                        ),
+                      ],
+                    ),
+            ),
           ),
-        ),
-        //"https://pilotbazar.com/storage/vehicles/${products[x].imageName}"
-        subtitle: InkWell(
-          onTap: () {
-            print("I am on press");
-            _showAlertDialog(context);
-          },
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(products[x].vehicleName.toString()),
-              SizedBox(height: 10),
-              Row(
-                children: [
-                  Text("R:"),
-                  Text(products[x].manufacture.toString()),
-                  Text(" | "),
-
-                  //Text(products[x].id.toString()),
-                  Text(products[x].condition.toString()),
-                  Text(" | "),
-                  Text(products[x].mileage.toString()),
-                ],
-              ),
-              Text("Available At (PBL)"),
-              Row(
-                children: [
-                  Text("Tk."),
-                  SizedBox(width: 5),
-                  Text(products[x].price.toString()),
-                  Spacer(),
-                  PopupMenuButton(
-                    onSelected: (value) {
-                      if (value == 'Edit') {
-                        // Open Edit Popup
-                        navigateToEditPage(x);
-                      } else if (value == 'Delete') {
-                        // Open Delete Popup
-                        //deleteById(id);
-                      }
-                    },
-                    itemBuilder: (context) {
-                      return [
-                        PopupMenuItem(
-                          child: Text("Price"),
-                          value: 'Price',
-                        ),
-                        PopupMenuItem(
-                          child: Text("Booked"),
-                          value: 'Booked',
-                        ),
-                        PopupMenuItem(
-                          child: Text("Sold"),
-                          value: 'Sold',
-                        ),
-                        PopupMenuItem(
-                          child: Text("Edit"),
-                          value: 'Edit',
-                        ),
-                        PopupMenuItem(
-                          child: Text("Availability"),
-                          value: 'Availability',
-                        ),
-                        PopupMenuItem(
-                          child: Text("Advance"),
-                          value: 'Advance',
-                        ),
-                        PopupMenuItem(
-                          child: Text("Delete"),
-                          value: 'Delete',
-                        ),
-                      ];
-                    },
-                  ),
-                  ElevatedButton.icon(
-                    onPressed: () async {
-                      final uri = Uri.parse(
-                          "https://pilotbazar.com/storage/vehicles/${products[x].imageName}");
-                      final response = await http.get(uri);
-                      final imageBytes = response.bodyBytes;
-                      final tempDirectory = await getTemporaryDirectory();
-                      final tempFile =
-                          await File('${tempDirectory.path}/sharedImage.jpg')
-                              .create();
-                      await tempFile.writeAsBytes(imageBytes);
-
-                      final image = XFile(tempFile.path);
-                      await Share.shareXFiles([image],
-                          text:
-                              "Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nOur HotLine Number: 017xxxxxxxx");
-                    },
-                    icon: Icon(Icons.share),
-                    label: Text("SHARE"),
-                  ),
-                ],
-              ),
-            ],
+          //"https://pilotbazar.com/storage/vehicles/${products[x].imageName}"
+          subtitle: InkWell(
+            onTap: () {
+              print("I am on press");
+              _showAlertDialog(context);
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(products[x].vehicleName.toString(),style: Theme.of(context).textTheme.titleLarge,),
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                    Text("R:"),
+                    Text(products[x].manufacture.toString()),
+                    Text(" | "),
+        
+                    //Text(products[x].id.toString()),
+                    Text(products[x].condition.toString()),
+                    Text(" | "),
+                    Text(products[x].mileage.toString()),
+                  ],
+                ),
+                Text("Available At (PBL)"),
+                Row(
+                  children: [
+                    Text("Tk."),
+                    SizedBox(width: 5),
+                    Text(products[x].price.toString()),
+                    Spacer(),
+                    PopupMenuButton(
+                      onSelected: (value) {
+                        if (value == 'Edit') {
+                          // Open Edit Popup
+                          navigateToEditPage(x);
+                        } else if (value == 'Delete') {
+                          // Open Delete Popup
+                          //deleteById(id);
+                        }
+                      },
+                      itemBuilder: (context) {
+                        return [
+                          PopupMenuItem(
+                            child: Text("Price"),
+                            value: 'Price',
+                          ),
+                          PopupMenuItem(
+                            child: Text("Booked"),
+                            value: 'Booked',
+                          ),
+                          PopupMenuItem(
+                            child: Text("Sold"),
+                            value: 'Sold',
+                          ),
+                          PopupMenuItem(
+                            child: Text("Edit"),
+                            value: 'Edit',
+                          ),
+                          PopupMenuItem(
+                            child: Text("Availability"),
+                            value: 'Availability',
+                          ),
+                          PopupMenuItem(
+                            child: Text("Advance"),
+                            value: 'Advance',
+                          ),
+                          PopupMenuItem(
+                            child: Text("Delete"),
+                            value: 'Delete',
+                          ),
+                        ];
+                      },
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        final uri = Uri.parse(
+                            "https://pilotbazar.com/storage/vehicles/${products[x].imageName}");
+                        final response = await http.get(uri);
+                        final imageBytes = response.bodyBytes;
+                        final tempDirectory = await getTemporaryDirectory();
+                        final tempFile =
+                            await File('${tempDirectory.path}/sharedImage.jpg')
+                                .create();
+                        await tempFile.writeAsBytes(imageBytes);
+        
+                        final image = XFile(tempFile.path);
+                        await Share.shareXFiles([image],
+                            text:
+                                "Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 017xxxxxxxx");
+                      },
+                      icon: Icon(Icons.share),
+                      label: Text("SHARE"),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

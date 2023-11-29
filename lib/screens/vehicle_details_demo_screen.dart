@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class VehicleDetails extends StatefulWidget {
+class VehicleDetailsDemo extends StatefulWidget {
   final String detailsVehicleName;
   final String detailsVehicleManufacture;
   final String detailsVehicleManuConditioin;
@@ -14,7 +14,7 @@ class VehicleDetails extends StatefulWidget {
   final String? dropdownStarOption;
   final String? dropdownStarOptionAnswer;
 
-  const VehicleDetails(
+  const VehicleDetailsDemo(
       {super.key,
       required this.detailsVehicleName,
       required this.detailsVehicleManufacture,
@@ -30,10 +30,10 @@ class VehicleDetails extends StatefulWidget {
       this.dropdownStarOptionAnswer});
 
   @override
-  State<VehicleDetails> createState() => _VehicleDetailsState();
+  State<VehicleDetailsDemo> createState() => _VehicleDetailsDemoState();
 }
 
-class _VehicleDetailsState extends State<VehicleDetails> {
+class _VehicleDetailsDemoState extends State<VehicleDetailsDemo> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(

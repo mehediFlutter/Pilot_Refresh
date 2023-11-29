@@ -13,7 +13,9 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
         theme: ThemeData(
+          
           //primarySwatch: Colors.blue,
           // TextField(
           //             // scrollPadding: EdgeInsets.zero,

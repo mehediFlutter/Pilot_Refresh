@@ -8,9 +8,13 @@ class SearchProduct {
   final String? price;
   final String? imageName;
   final String? dropdownFontLight;
-    final String? dropdownFontLightAnswer;
-    final String? registration;
-
+  final String? dropdownFontLightAnswer;
+  final String? registration;
+  final String? brandName;
+  final String? engine;
+  final String? transmission;
+  final String? fuel;
+  final String? skeleton;
 
   // productCode,
   // image,
@@ -20,23 +24,27 @@ class SearchProduct {
   // quantity;
 
   SearchProduct(
-     {
-    this.imageName,
-    this.id,
-    this.slug,
-    this.vehicleName,
-    this.manufacture,
-    this.condition,
-    this.mileage,
-    this.price,
-    this.dropdownFontLight,
-    this.dropdownFontLightAnswer,
-    this.registration
-    // required this.productCode,
-    // required this.image,
-    // required this.unitPrice,
-    // required this.totalPrice,
-    // required this.createAt,
-    // required this.quantity
-  });
+      {this.imageName,
+      this.id,
+      this.slug,
+      this.vehicleName,
+      this.manufacture,
+      this.condition,
+      this.mileage,
+      this.price,
+      this.dropdownFontLight,
+      this.dropdownFontLightAnswer,
+      this.registration,
+      this.brandName, 
+      this.engine,
+      this.transmission,
+      this.fuel,
+      this.skeleton,
+      // required this.productCode,
+      // required this.image,
+      // required this.unitPrice,
+      // required this.totalPrice,
+      // required this.createAt,
+      // required this.quantity
+      });
 }
