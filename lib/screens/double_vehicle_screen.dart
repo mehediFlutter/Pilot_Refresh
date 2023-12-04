@@ -58,72 +58,55 @@ class _DoublVehicleState extends State<DoublVehicle> {
     if (mounted) {
       setState(() {});
     }
+
     Response response =
         await get(Uri.parse("https://pilotbazar.com/api/vehicle?page=$page"));
-    print("page number");
-    print(page);
-    print("Length of products ");
-    print(products.length);
-
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
     print(response.statusCode);
     final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
-    // List<dynamic> vehicleFeatures =
-    //     decodedResponse['data'][0]?['vehicle_feature']??'';
-    //     if(decodedResponse['data'][null])return;
-    // List<FeatureDetailPair> featureDetailPairs =
-    //     extractFeatureDetails(vehicleFeatures);
+    List<dynamic> vehicleFeatures =
+        decodedResponse['data'][0]?['vehicle_feature']??'';
+    List<FeatureDetailPair> featureDetailPairs =
+        extractFeatureDetails(vehicleFeatures);
 
-    // for (var pair in featureDetailPairs) {
-    //   // print('Feature: ${pair.featureTitle}');
-    //   // print('Details: ${pair.detailTitles.join(', ')}');
-    //   featureDetails.add({pair.detailTitles.join(', ')});
-    //   featureUnicTitle.add({pair.featureTitle});
-    // }
+    for (var pair in featureDetailPairs) {
+      // print('Feature: ${pair.featureTitle}');
+      // print('Details: ${pair.detailTitles.join(', ')}');
+      featureDetails.add({pair.detailTitles.join(', ')});
+      featureUnicTitle.add({pair.featureTitle});
+    }
 
     if (response.statusCode == 200) {
-      decodedResponse['data'].forEach(
-        (e) {
-          products.add(SearchProduct(
-            vehicleName: e['translate'][0]?['title']??"",
-            id: e['id']??'',
-            slug: e['slug']??'',
-            manufacture: e['manufacture']??'',
-            condition: e['condition']?['translate'][0]?['title']??"",
-            mileage: e['mileage']?['translate'][0]?['title'] ?? 'No mileage data',
-            price: e['price']??'',
-            imageName: e['image']?['name']??'',
-             brandName: e['brand']?['translate'][0]?['title']??'',
-             
-          ));
-        },
-      );
+      decodedResponse['data'].forEach((e) {
+        products.add(SearchProduct(
+          vehicleName: e['translate'][0]?['title']??"",
+          id: e['id']??"",
+          slug: e['slug']??'',
+          manufacture: e['manufacture']??'',
+          condition: e['condition']['translate'][0]?['title'] ?? '',
+          mileage: e['mileage']?['translate'][0]?['title'] ?? 'No mileage data',
+           price: e['price'] ?? 0,
+           imageName: e['image']?['name'] ?? '',
+           registration: e['registration'] ?? '',
+           engine: e['engine']?['translate'][0]?['title'] ?? '',
+           brandName: e['brand']?['translate'][0]?['title'] ?? '',
+           transmission: e['transmission']?['translate'][0]?['title'] ?? '',
+           fuel: e['fuel']?['translate'][0]?['title'] ?? '',
+           skeleton: e['skeleton']?['translate'][0]?['title'] ?? '',
+        ));
+      });
+
       x = j + 1;
-
-      // decodedResponse['data']['vehicle_feature'].forEach((e) {
-      //   feature_title.add(e['feature']['title'].toString());
-      //   print(feature_title.toString());
-      // });
-      // for (int a = 0; a < 20; a++) {
-      //   feature_title.add(decodedResponse['data']['vehicle_feature'][1]);
-      //   if (mounted) {
-      //     setState(() {});
-      //   }
-      //   print(feature_title[a]);
-      // }
     }
-    //if(decodedResponse['data'][null])return;
-
     _getNewProductinProgress = false;
     if (mounted) {
       setState(() {});
     }
   }
 
+  bool isLoading = false;
   @override
-  bool _loadDetailsInProgress = false;
-
   void getProduct(int page) async {
     _getProductinProgress = true;
     if (mounted) {
@@ -134,8 +117,6 @@ class _DoublVehicleState extends State<DoublVehicle> {
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
     print(response.statusCode);
-    print("page number");
-    print(page);
     final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
     List<dynamic> vehicleFeatures =
         decodedResponse['data'][0]['vehicle_feature'];
@@ -148,31 +129,56 @@ class _DoublVehicleState extends State<DoublVehicle> {
       featureDetails.add({pair.detailTitles.join(', ')});
       featureUnicTitle.add({pair.featureTitle});
     }
+    if (mounted) {
+      setState(() {});
+    }
 
     for (i; i < decodedResponse['data'].length; i++) {
       products.add(SearchProduct(
-        
-        vehicleName: decodedResponse['data'][i]['translate'][0]?['title']??'',
-        manufacture: decodedResponse['data'][i]['manufacture']??'',
-        slug: decodedResponse['data'][i]['slug']??'',
-        id: decodedResponse['data'][i]['id']??'',
-        condition: decodedResponse['data'][i]['condition']?['translate'][0]?
+        vehicleName: decodedResponse['data'][i]['translate'][0]?['title']??"",
+        manufacture: decodedResponse['data'][i]?['manufacture']??'',
+        slug: decodedResponse['data'][i]?['slug']??'',
+        id: decodedResponse['data'][i]?['id']??'',
+        condition: decodedResponse['data'][i]?['condition']?['translate'][0]?
             ['title']??'',
-        mileage: decodedResponse['data'][i]['mileage']?['translate'][0]?['title'] ?? 'No mileage data',
-        price: decodedResponse['data'][i]['price']??'',
-        imageName: decodedResponse['data'][i]['image']?['name']??'',
-        registration: decodedResponse['data'][i]['registration']??'',
-        brandName: decodedResponse['data'][i]['brand']?['translate'][0]?['title']??'',
+        mileage: decodedResponse['data'][i]['mileage']?['translate'][0]
+                ?['title'] ??
+            'No mileage data',
+        price: decodedResponse['data'][i]?['price']??'',
+        imageName: decodedResponse['data'][i]?['image']?['name']??'',
+        registration: decodedResponse['data'][i]?['registration'] ?? '-',
+        engine: decodedResponse['data'][i]?['engine']?['translate'][0]?['title']??'',
+        brandName: decodedResponse['data'][i]?['brand']?['translate'][0]?['title']??'',
+        transmission: decodedResponse['data'][i]?['transmission']?['translate'][0]?
+            ['title']??'',
+        fuel: decodedResponse['data'][i]?['fuel']?['translate'][0]?['title']??'',
+        skeleton: decodedResponse['data'][i]?['skeleton']?['translate'][0]?
+            ['title']??'',
       ));
     }
     if (decodedResponse['data'] == null) {
       return;
     }
-
     _getProductinProgress = false;
     if (mounted) {
       setState(() {});
     }
+
+    // if (decodedResponse['data'] == null) {
+    //   return;
+    // }
+
+    // show title and details
+//      List unitTitles = [];
+//  List features = [];
+//     decodedResponse['data'].forEach((e) {
+//       e['vehicle_feature'].forEach((a) {
+//         unitTitles.add(a['feature']['title']);
+
+//         print(a['feature']['title']);
+//         print(a['detail']['title']);
+//       });
+//     });
   }
 
   final ScrollController _scrollController = ScrollController();
@@ -207,22 +213,22 @@ class _DoublVehicleState extends State<DoublVehicle> {
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: Item(
-                              id: products[index + j].id!,
-                              imageName: products[index + j].imageName.toString(),
-                              price: products[index + j].price.toString(),
-                              featureSeat: featureUnicTitle[index + j].toString(),
+                              id: products[index+j].id!,
+                              imageName: products[index+j].imageName.toString(),
+                              price: products[index+j].price.toString(),
+                              featureSeat: featureUnicTitle[index+j].toString(),
                               featureSeatDetails:
-                                  featureDetails[index + j].toString(),
-                              vehiclaName: products[index + j].vehicleName,
-                              manufacture: products[index + j].manufacture,
-                              condition: products[index + j].condition,
-                              nMillage: products[index + j].mileage,
-                              brandName: products[x].brandName,
-                              engine: products[x].engine,
-                              transmission: products[x].transmission,
+                                  featureDetails[index+j].toString(),
+                              vehiclaName: products[index+j].vehicleName,
+                              manufacture: products[index+j].manufacture,
+                              condition: products[index+j].condition,
+                              nMillage: products[index+j].mileage,
+                              brandName: products[index+j].brandName,
+                              engine: products[index+j].engine,
+                              transmission: products[index+j].transmission,
                               model: "",
-                              fuel: products[x].fuel,
-                              skeleton: products[x].skeleton,
+                              fuel: products[index+j].fuel,
+                              skeleton: products[index+j].skeleton,
                               
                             
                               //dropdownFontLight: products[index+j],

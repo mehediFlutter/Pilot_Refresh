@@ -140,12 +140,16 @@ class _EditScreenState extends State<EditScreen> {
                 decoration: InputDecoration(border: OutlineInputBorder()),
               ),
               SizedBox(height: 30),
-              SizedBox(
-                  width: double.infinity,
-                  child:
-                      ElevatedButton(onPressed: () {
-                        updateData();
-                      }, child: Text("Update")))
+              Visibility(
+                visible: updateDataInProgress==false,
+                replacement: Center(child: CircularProgressIndicator(),),
+                child: SizedBox(
+                    width: double.infinity,
+                    child:
+                        ElevatedButton(onPressed: () {
+                          updateData();
+                        }, child: Text("Update"))),
+              )
             ],
           ),
         ));

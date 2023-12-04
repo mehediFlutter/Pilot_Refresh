@@ -78,17 +78,17 @@ class _HomeVehicleState extends State<HomeVehicle> {
     //https://crud.teamrabbil.com/api/v1/ReadProduct
     print(response.statusCode);
     final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
-    // List<dynamic> vehicleFeatures =
-    //     decodedResponse['data'][0]['vehicle_feature'];
-    // List<FeatureDetailPair> featureDetailPairs =
-    //     extractFeatureDetails(vehicleFeatures);
+    List<dynamic> vehicleFeatures =
+        decodedResponse['data'][0]?['vehicle_feature']??'';
+    List<FeatureDetailPair> featureDetailPairs =
+        extractFeatureDetails(vehicleFeatures);
 
-    // for (var pair in featureDetailPairs) {
-    //   // print('Feature: ${pair.featureTitle}');
-    //   // print('Details: ${pair.detailTitles.join(', ')}');
-    //   featureDetails.add({pair.detailTitles.join(', ')});
-    //   featureUnicTitle.add({pair.featureTitle});
-    // }
+    for (var pair in featureDetailPairs) {
+      // print('Feature: ${pair.featureTitle}');
+      // print('Details: ${pair.detailTitles.join(', ')}');
+      featureDetails.add({pair.detailTitles.join(', ')});
+      featureUnicTitle.add({pair.featureTitle});
+    }
 
     if (response.statusCode == 200) {
       decodedResponse['data'].forEach((e) {
@@ -99,14 +99,14 @@ class _HomeVehicleState extends State<HomeVehicle> {
           manufacture: e['manufacture']??'',
           condition: e['condition']['translate'][0]?['title'] ?? '',
           mileage: e['mileage']?['translate'][0]?['title'] ?? 'No mileage data',
-          // price: e['price'] ?? 0,
-          // imageName: e['image']['name'] ?? '-',
-          // registration: e['registration'] ?? '-',
-          // engine: e['engine']['translate'][0]['title'] ?? '-',
-          // brandName: e['brand']['translate'][0]['title'] ?? '-',
-          // transmission: e['transmission']['translate'][0]['title'] ?? '-',
-          // fuel: e['fuel']['translate'][0]['title'] ?? '-',
-          // skeleton: e['skeleton']['translate'][0]['title'] ?? '-',
+           price: e['price'] ?? 0,
+           imageName: e['image']?['name'] ?? '',
+           registration: e['registration'] ?? '',
+           engine: e['engine']?['translate'][0]?['title'] ?? '',
+           brandName: e['brand']?['translate'][0]?['title'] ?? '',
+           transmission: e['transmission']?['translate'][0]?['title'] ?? '',
+           fuel: e['fuel']?['translate'][0]?['title'] ?? '',
+           skeleton: e['skeleton']?['translate'][0]?['title'] ?? '',
         ));
       });
 
