@@ -61,7 +61,7 @@ class _AppState extends State<App> {
                 fontWeight: FontWeight.w500
               ),
               titleSmall: TextStyle(
-                fontSize: 12,
+                fontSize: 17,
                 fontFamily: "AbhayaLibre",
                 color: Colors.grey,
               ),

@@ -88,7 +88,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                 SizedBox(height: 5),
                 Container(
                   width: double.infinity,
-                  height: 90,
+                  height: 120,
                   decoration: BoxDecoration(
                       color: const Color.fromARGB(255, 178, 224, 179),
                       borderRadius: BorderRadius.circular(10)),
@@ -113,8 +113,8 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                     ),
                     trailing: Column(
                       children: [
-                        Text("Code",style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.black),),
-                        Expanded(child: Text("PS-99",style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.black),)),
+                        Text("Code",style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.black,fontSize: 15),),
+                        Expanded(child: Text("PS-99",style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.black,fontSize: 10),)),
                       ],
                     ),
                   ),
@@ -135,23 +135,23 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                               children: [
                                 Row(
                                   children: [
-                                    Text("Brand : ",style: Theme.of(context).textTheme.titleMedium,),
-                                    Text(widget.brandName.toString(),style: Theme.of(context).textTheme.titleMedium),
+                                    Text("Brand : ",style: Theme.of(context).textTheme.titleSmall,),
+                                    Text(widget.brandName.toString(),style: Theme.of(context).textTheme.titleSmall),
                                   ],
                                 ),
                                 Expanded(
                                   child: Row(
                                     children: [
-                                      Text("Engine : ",style: Theme.of(context).textTheme.titleMedium),
-                                      Text(widget.engine.toString(),style: Theme.of(context).textTheme.titleMedium),
+                                      Text("Engine : ",style: Theme.of(context).textTheme.titleSmall),
+                                      Text(widget.engine.toString(),style: Theme.of(context).textTheme.titleSmall),
                                     ],
                                   ),
                                 ),
                                 Expanded(
                                   child: Row(
                                     children: [
-                                      Text("Condition : ",style: Theme.of(context).textTheme.titleMedium),
-                                      Text(widget.detailsCondition.toString(),style: Theme.of(context).textTheme.titleMedium),
+                                      Text("Condition : ",style: Theme.of(context).textTheme.titleSmall),
+                                      Text(widget.detailsCondition.toString(),style: Theme.of(context).textTheme.titleSmall),
                                     ],
                                   ),
                                 ),
@@ -160,10 +160,10 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                                     children: [
                                       Text(
                                         "Mileage :",
-                                       style: Theme.of(context).textTheme.titleMedium
+                                       style: Theme.of(context).textTheme.titleSmall
                                       ),
                                       Text(
-                                        widget.detailsMillege.toString(),style: Theme.of(context).textTheme.titleMedium
+                                        widget.detailsMillege.toString(),style: Theme.of(context).textTheme.titleSmall
                                       ),
                                     ],
                                   ),
@@ -172,28 +172,28 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                                   child: Row(
                                     children: [
                                       Text(
-                                        "Transmission : ",style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 17)
+                                        "Transmission : ",style: Theme.of(context).textTheme.titleSmall!.copyWith(fontSize: 17)
                                       ),
                                       Expanded(
                                           child: Text(
                                               widget.detailsTransmission
-                                                  .toString(),style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 17))),
+                                                  .toString(),style: Theme.of(context).textTheme.titleSmall!.copyWith(fontSize: 17))),
                                     ],
                                   ),
                                 ),
                                 Expanded(
                                   child: Row(
                                     children: [
-                                      Text("Model :",style: Theme.of(context).textTheme.titleMedium),
-                                      Text(" API?",style: Theme.of(context).textTheme.titleMedium),
+                                      Text("Model :",style: Theme.of(context).textTheme.titleSmall),
+                                      Text(" API?",style: Theme.of(context).textTheme.titleSmall),
                                     ],
                                   ),
                                 ),
                                 Expanded(
                                   child: Row(
                                     children: [
-                                      Text("Color :",style: Theme.of(context).textTheme.titleMedium),
-                                      Text("API?",style: Theme.of(context).textTheme.titleMedium),
+                                      Text("Color :",style: Theme.of(context).textTheme.titleSmall),
+                                      Text("API?",style: Theme.of(context).textTheme.titleSmall),
                                     ],
                                   ),
                                 ),
@@ -210,16 +210,16 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                                   Row(
                                     children: [
                                       Text(
-                                        "Trim & Edition :",style: Theme.of(context).textTheme.titleMedium
+                                        "Trim & Edition :",style: Theme.of(context).textTheme.titleSmall
                                       ),
-                                      Text("API?",style: Theme.of(context).textTheme.titleMedium),
+                                      Text("API?",style: Theme.of(context).textTheme.titleSmall),
                                     ],
                                   ),
                                   Expanded(
                                     child: Row(
                                       children: [
-                                        Text("Fuel: ",style: Theme.of(context).textTheme.titleMedium),
-                                        Text(widget.detailsFuel.toString(),style: Theme.of(context).textTheme.titleMedium),
+                                        Text("Fuel: ",style: Theme.of(context).textTheme.titleSmall),
+                                        Text(widget.detailsFuel.toString(),style: Theme.of(context).textTheme.titleSmall),
                                       ],
                                     ),
                                   ),
@@ -227,26 +227,26 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                                     child: Row(
                                       children: [
                                         Text(
-                                          "Skeleton : ",style: Theme.of(context).textTheme.titleMedium
+                                          "Skeleton : ",style: Theme.of(context).textTheme.titleSmall
                                         ),
-                                        Text(widget.skeleton.toString(),style: Theme.of(context).textTheme.titleMedium),
+                                        Text(widget.skeleton.toString(),style: Theme.of(context).textTheme.titleSmall),
                                       ],
                                     ),
                                   ),
                                   Expanded(
                                     child: Row(
                                       children: [
-                                        Text("Registration: ",style: Theme.of(context).textTheme.titleMedium),
-                                        Text(widget.registration.toString(),style: Theme.of(context).textTheme.titleMedium),
+                                        Text("Registration: ",style: Theme.of(context).textTheme.titleSmall),
+                                        Text(widget.registration.toString(),style: Theme.of(context).textTheme.titleSmall),
                                       ],
                                     ),
                                   ),
                                   Expanded(
                                     child: Row(
                                       children: [
-                                        Text("Grade : ",style: Theme.of(context).textTheme.titleMedium),
+                                        Text("Grade : ",style: Theme.of(context).textTheme.titleSmall),
                                         Text(widget.detailsGrade.toString() ??
-                                            '-',style: Theme.of(context).textTheme.titleMedium),
+                                            '-',style: Theme.of(context).textTheme.titleSmall),
                                       ],
                                     ),
                                   ),

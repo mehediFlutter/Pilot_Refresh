@@ -131,6 +131,7 @@ class _ItemState extends State<Item> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // product name
+                            Text(widget.id.toString(),style: TextStyle(fontSize: 20),),
                             Text(widget.vehiclaName.toString(),
                                 style: Theme.of(context).textTheme.bodySmall),
                             Row(
@@ -168,84 +169,80 @@ class _ItemState extends State<Item> {
                               ],
                             ),
 
-                            Row(
-                              children: [
-                                Text("Tk",
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall),
-                                Text("00215452",
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall),
-                                SizedBox(
-                                  width: 50,
-                                ),
-                                InkWell(
-                                  onTap: () async {
-                                    final uri = Uri.parse(
-                                        "https://pilotbazar.com/storage/vehicles/${widget.imageName}");
-                                    final response = await http.get(uri);
-                                    final imageBytes = response.bodyBytes;
-                                    final tempDirectory =
-                                        await getTemporaryDirectory();
-                                    final tempFile = await File(
-                                            '${tempDirectory.path}/sharedImage.jpg')
-                                        .create();
-                                    await tempFile.writeAsBytes(imageBytes);
-
-                                    final image = XFile(tempFile.path);
-                                    await Share.shareXFiles([image],
-                                        text:
-                                            "Vehicle Name: ${widget.vehiclaName} \nManufacture:  ${widget.manufacture} \nConditiion: ${widget.condition} \nRegistration: ${widget.registration} \nMillage: ${widget.nMillage}, \nOur HotLine Number: 017xxxxxxxx");
-                                  },
-                                  child: Icon(
-                                    Icons.share,
-                                    size: 20,
+                            Text("Tk",
+                                style:
+                                    Theme.of(context).textTheme.bodySmall),
+                            Text("00215452",
+                                style:
+                                    Theme.of(context).textTheme.bodySmall),
+                            SizedBox(
+                              width: 50,
+                            ),
+                            InkWell(
+                              onTap: () async {
+                                final uri = Uri.parse(
+                                    "https://pilotbazar.com/storage/vehicles/${widget.imageName}");
+                                final response = await http.get(uri);
+                                final imageBytes = response.bodyBytes;
+                                final tempDirectory =
+                                    await getTemporaryDirectory();
+                                final tempFile = await File(
+                                        '${tempDirectory.path}/sharedImage.jpg')
+                                    .create();
+                                await tempFile.writeAsBytes(imageBytes);
+                            
+                                final image = XFile(tempFile.path);
+                                await Share.shareXFiles([image],
+                                    text:
+                                        "Vehicle Name: ${widget.vehiclaName} \nManufacture:  ${widget.manufacture} \nConditiion: ${widget.condition} \nRegistration: ${widget.registration} \nMillage: ${widget.nMillage}, \nOur HotLine Number: 017xxxxxxxx");
+                              },
+                              child: Icon(
+                                Icons.share,
+                                size: 15,
+                              ),
+                            ),
+                            PopupMenuButton(
+                              onSelected: (value) {
+                                if (value == 'Edit') {
+                                  // Open Edit Popup
+                                  navigateToEditPage(widget.id);
+                                } else if (value == 'Delete') {
+                                  // Open Delete Popup
+                                  //deleteById(id);
+                                }
+                              },
+                              itemBuilder: (context) {
+                                return [
+                                  PopupMenuItem(
+                                    child: Text("Price"),
+                                    value: 'Price',
                                   ),
-                                ),
-                                PopupMenuButton(
-                                  onSelected: (value) {
-                                    if (value == 'Edit') {
-                                      // Open Edit Popup
-                                      navigateToEditPage(widget.id);
-                                    } else if (value == 'Delete') {
-                                      // Open Delete Popup
-                                      //deleteById(id);
-                                    }
-                                  },
-                                  itemBuilder: (context) {
-                                    return [
-                                      PopupMenuItem(
-                                        child: Text("Price"),
-                                        value: 'Price',
-                                      ),
-                                      PopupMenuItem(
-                                        child: Text("Booked"),
-                                        value: 'Booked',
-                                      ),
-                                      PopupMenuItem(
-                                        child: Text("Sold"),
-                                        value: 'Sold',
-                                      ),
-                                      PopupMenuItem(
-                                        child: Text("Edit"),
-                                        value: 'Edit',
-                                      ),
-                                      PopupMenuItem(
-                                        child: Text("Availability"),
-                                        value: 'Availability',
-                                      ),
-                                      PopupMenuItem(
-                                        child: Text("Advance"),
-                                        value: 'Advance',
-                                      ),
-                                      PopupMenuItem(
-                                        child: Text("Delete"),
-                                        value: 'Delete',
-                                      ),
-                                    ];
-                                  },
-                                ),
-                              ],
+                                  PopupMenuItem(
+                                    child: Text("Booked"),
+                                    value: 'Booked',
+                                  ),
+                                  PopupMenuItem(
+                                    child: Text("Sold"),
+                                    value: 'Sold',
+                                  ),
+                                  PopupMenuItem(
+                                    child: Text("Edit"),
+                                    value: 'Edit',
+                                  ),
+                                  PopupMenuItem(
+                                    child: Text("Availability"),
+                                    value: 'Availability',
+                                  ),
+                                  PopupMenuItem(
+                                    child: Text("Advance"),
+                                    value: 'Advance',
+                                  ),
+                                  PopupMenuItem(
+                                    child: Text("Delete"),
+                                    value: 'Delete',
+                                  ),
+                                ];
+                              },
                             ),
                           ],
                         ),
@@ -393,7 +390,11 @@ class _ItemState extends State<Item> {
     final route = MaterialPageRoute(
         builder: (context) => EditScreen(
             name: widget.vehiclaName.toString(),
-            price: widget.price.toString()));
+            price: widget.price.toString(),
+            registration: widget.registration,
+            condition: widget.condition,
+            mileage: widget.nMillage,
+            ));
     Navigator.push(context, route);
   }
 

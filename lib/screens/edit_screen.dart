@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
+import 'package:pilot_refresh/screens/home_vehicle.dart';
 
 class EditScreen extends StatefulWidget {
   final String? name;
@@ -7,15 +12,18 @@ class EditScreen extends StatefulWidget {
   final String? manufacture;
   final String? condition;
   final String? mileage;
+  final int? id;
 
-  const EditScreen(
-      {super.key,
-      this.name,
-      this.price,
-      this.registration,
-      this.manufacture,
-      this.condition,
-      this.mileage});
+  const EditScreen({
+    super.key,
+    this.name,
+    this.price,
+    this.registration,
+    this.manufacture,
+    this.condition,
+    this.mileage,
+    this.id,
+  });
 
   @override
   State<EditScreen> createState() => _EditScreenState();
@@ -24,7 +32,8 @@ class EditScreen extends StatefulWidget {
 class _EditScreenState extends State<EditScreen> {
   TextEditingController _nameEditingController = TextEditingController();
   TextEditingController _priceEditingController = TextEditingController();
-   TextEditingController _registrationEditingController = TextEditingController();
+  TextEditingController _registrationEditingController =
+      TextEditingController();
   TextEditingController _manufactureEditingController = TextEditingController();
   TextEditingController _conditionEditingController = TextEditingController();
   TextEditingController _millegeEditingController = TextEditingController();
@@ -35,10 +44,48 @@ class _EditScreenState extends State<EditScreen> {
     //String n=widget.name.toString();
     _nameEditingController.text = widget.name.toString();
     _priceEditingController.text = widget.price.toString();
-    _registrationEditingController.text=widget.registration.toString();
-    _manufactureEditingController.text=widget.manufacture.toString();
-    _conditionEditingController.text=widget.condition.toString();
-    _millegeEditingController.text=widget.mileage.toString();
+    _registrationEditingController.text = widget.registration.toString();
+    _manufactureEditingController.text = widget.manufacture.toString();
+    _conditionEditingController.text = widget.condition.toString();
+    _millegeEditingController.text = widget.mileage.toString();
+  }
+
+  bool updateDataInProgress = false;
+  bool submitDataInProgress = false;
+
+  void updateData() async {
+    updateDataInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    final id = widget.id;
+
+    final body = {
+    "purchase_price":_priceEditingController.text
+};
+    final url =
+        "https://pilotbazar.com/api/merchants/vehicles/products/$id/update";
+    final uri = Uri.parse(url);
+    final response = await http.put(uri, body: jsonEncode(body), headers: {
+      'Content-Type': 'application/vnd.api+json',
+      'Accept': 'application/vnd.api+json'
+    });
+    print(response.statusCode);
+    updateDataInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Task Update Succesfuly")));
+      // Navigator.pushAndRemoveUntil(
+      //     context,
+      //     MaterialPageRoute(builder: (context) => HomeVehicle()),
+      //     (route) => false);
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Task added faild")));
+    }
   }
 
   @override
@@ -62,27 +109,26 @@ class _EditScreenState extends State<EditScreen> {
               ),
               Text("Name"),
               TextField(
-                
                 controller: _nameEditingController,
                 style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  
                     fillColor: Colors.black, border: OutlineInputBorder()),
               ),
               TextField(
                 controller: _priceEditingController,
                 style: TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  border: OutlineInputBorder()),
+                decoration: InputDecoration(border: OutlineInputBorder()),
               ),
               TextField(
                 controller: _registrationEditingController,
                 style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  prefix: Text("R :  ",style: TextStyle(color: Colors.white),), 
-                                   border: OutlineInputBorder()),
+                    prefix: Text(
+                      "R :  ",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    border: OutlineInputBorder()),
               ),
-              
               TextField(
                 controller: _conditionEditingController,
                 style: TextStyle(color: Colors.white),
@@ -97,7 +143,9 @@ class _EditScreenState extends State<EditScreen> {
               SizedBox(
                   width: double.infinity,
                   child:
-                      ElevatedButton(onPressed: () {}, child: Text("Update")))
+                      ElevatedButton(onPressed: () {
+                        updateData();
+                      }, child: Text("Update")))
             ],
           ),
         ));

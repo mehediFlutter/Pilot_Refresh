@@ -78,39 +78,38 @@ class _HomeVehicleState extends State<HomeVehicle> {
     //https://crud.teamrabbil.com/api/v1/ReadProduct
     print(response.statusCode);
     final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
-    List<dynamic> vehicleFeatures =
-        decodedResponse['data'][0]['vehicle_feature'];
-    List<FeatureDetailPair> featureDetailPairs =
-        extractFeatureDetails(vehicleFeatures);
+    // List<dynamic> vehicleFeatures =
+    //     decodedResponse['data'][0]['vehicle_feature'];
+    // List<FeatureDetailPair> featureDetailPairs =
+    //     extractFeatureDetails(vehicleFeatures);
 
-    for (var pair in featureDetailPairs) {
-      // print('Feature: ${pair.featureTitle}');
-      // print('Details: ${pair.detailTitles.join(', ')}');
-      featureDetails.add({pair.detailTitles.join(', ')});
-      featureUnicTitle.add({pair.featureTitle});
-    }
+    // for (var pair in featureDetailPairs) {
+    //   // print('Feature: ${pair.featureTitle}');
+    //   // print('Details: ${pair.detailTitles.join(', ')}');
+    //   featureDetails.add({pair.detailTitles.join(', ')});
+    //   featureUnicTitle.add({pair.featureTitle});
+    // }
 
     if (response.statusCode == 200) {
-      decodedResponse['data'].forEach(
-        (e) {
-          products.add(SearchProduct(
-            vehicleName: e['translate'][0]['title'],
-            id: e['id'],
-            slug: e['slug'],
-            manufacture: e['manufacture'],
-            condition: e['condition']['translate'][0]['title'],
-            mileage: e['mileage']['translate'][0]['title'],
-            price: e['price'],
-            imageName: e['image']['name'],
-            registration: e['registration'] ?? '-',
-            engine: e['engine']['translate'][0]['title'],
-            brandName: e['brand']['translate'][0]['title'],
-            transmission: e['transmission']['translate'][0]['title'],
-            fuel: e['fuel']['translate'][0]['title'],
-            skeleton: e['skeleton']['translate'][0]['title'],
-          ));
-        },
-      );
+      decodedResponse['data'].forEach((e) {
+        products.add(SearchProduct(
+          vehicleName: e['translate'][0]['title'],
+          id: e['id'],
+          slug: e['slug']??'',
+          manufacture: e['manufacture']??'',
+          condition: e['condition']['translate'][0]?['title'] ?? '',
+          mileage: e['mileage']?['translate'][0]?['title'] ?? 'No mileage data',
+          // price: e['price'] ?? 0,
+          // imageName: e['image']['name'] ?? '-',
+          // registration: e['registration'] ?? '-',
+          // engine: e['engine']['translate'][0]['title'] ?? '-',
+          // brandName: e['brand']['translate'][0]['title'] ?? '-',
+          // transmission: e['transmission']['translate'][0]['title'] ?? '-',
+          // fuel: e['fuel']['translate'][0]['title'] ?? '-',
+          // skeleton: e['skeleton']['translate'][0]['title'] ?? '-',
+        ));
+      });
+
       x = j + 1;
     }
     _getNewProductinProgress = false;
@@ -155,7 +154,9 @@ class _HomeVehicleState extends State<HomeVehicle> {
         id: decodedResponse['data'][i]['id'],
         condition: decodedResponse['data'][i]['condition']['translate'][0]
             ['title'],
-        mileage: decodedResponse['data'][i]['mileage']['translate'][0]['title'],
+        mileage: decodedResponse['data'][i]['mileage']?['translate'][0]
+                ?['title'] ??
+            'No mileage data',
         price: decodedResponse['data'][i]['price'],
         imageName: decodedResponse['data'][i]['image']['name'],
         registration: decodedResponse['data'][i]['registration'] ?? '-',
@@ -202,19 +203,17 @@ class _HomeVehicleState extends State<HomeVehicle> {
     return Scaffold(
       backgroundColor: Color(0xFF313131),
       appBar: AppBar(
-         backgroundColor: Color(0xFF666666),
-         //leading: Icon(Icons.image,size: 100,),
-         //
-         //leading:Image.asset('assets/images/pilot_logo.png',width: 80,height:30,fit: BoxFit.cover,),
+        backgroundColor: Color(0xFF666666),
+        //leading: Icon(Icons.image,size: 100,),
+        //
+        //leading:Image.asset('assets/images/pilot_logo.png',width: 80,height:30,fit: BoxFit.cover,),
         title: SearchBarClass(
           onChanged: (value) {
             //updateList(value);
           },
         ),
       ),
-      endDrawer:  EndDrawer(
-        
-        mounted: mounted),
+      endDrawer: EndDrawer(mounted: mounted),
       body: _getProductinProgress
           ? Center(
               child: CircularProgressIndicator(),
@@ -261,7 +260,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
         child: Card(
           elevation: 20,
           child: ListTile(
-            tileColor:  Color(0xFF313131),
+            tileColor: Color(0xFF313131),
             title: ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: InkWell(
@@ -272,7 +271,6 @@ class _HomeVehicleState extends State<HomeVehicle> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => VehicleDetails(
-                        
                         detailsVehicleImageName:
                             "https://pilotbazar.com/storage/vehicles/${products[x].imageName}",
                         price: products[x].price,
@@ -332,31 +330,67 @@ class _HomeVehicleState extends State<HomeVehicle> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 10,),
-                  Text(products[x].vehicleName.toString(),style: Theme.of(context).textTheme.titleLarge,),
+                  Text(
+                    products[x].id.toString(),
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    products[x].vehicleName.toString(),
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
                   SizedBox(height: 10),
                   Row(
                     children: [
-                      Text("R: ",style: Theme.of(context).textTheme.titleMedium,),
-                      Text(products[x].manufacture.toString(),style: Theme.of(context).textTheme.titleMedium,),
-                      Text(" | ",style: Theme.of(context).textTheme.titleMedium,),
-          
+                      Text(
+                        "R: ",
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      Text(
+                        products[x].manufacture.toString(),
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      Text(
+                        " | ",
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+
                       //Text(products[x].id.toString()),
-                      Text(products[x].condition.toString(),style: Theme.of(context).textTheme.titleMedium,),
-                      Text(" | ",style: Theme.of(context).textTheme.titleMedium,),
-                      Text(products[x].mileage.toString(),style: Theme.of(context).textTheme.titleMedium,),
+                      Text(
+                        products[x].condition.toString(),
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      Text(
+                        " | ",
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      Text(
+                        products[x].mileage.toString(),
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
                     ],
                   ),
-                  Text("Available At (PBL)",style: Theme.of(context).textTheme.titleMedium,),
+                  Text(
+                    "Available At (PBL)",
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                   Row(
                     children: [
-                      Text("Tk .",style: Theme.of(context).textTheme.titleLarge,),
+                      Text(
+                        "Tk .",
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
                       SizedBox(width: 5),
-                      Text(products[x].price.toString(),style: Theme.of(context).textTheme.titleLarge,),
+                      Text(
+                        products[x].price.toString(),
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
                       Spacer(),
                       PopupMenuButton(
-                        iconColor: Colors.white,iconSize: 30,
-                        
+                        iconColor: Colors.white,
+                        iconSize: 30,
                         onSelected: (value) {
                           if (value == 'Edit') {
                             // Open Edit Popup
@@ -367,7 +401,6 @@ class _HomeVehicleState extends State<HomeVehicle> {
                           }
                         },
                         itemBuilder: (context) {
-                          
                           return [
                             PopupMenuItem(
                               child: Text("Price"),
@@ -400,25 +433,28 @@ class _HomeVehicleState extends State<HomeVehicle> {
                           ];
                         },
                       ),
-                      ElevatedButton.icon(
+                      ElevatedButton(
                         onPressed: () async {
                           final uri = Uri.parse(
                               "https://pilotbazar.com/storage/vehicles/${products[x].imageName}");
                           final response = await http.get(uri);
                           final imageBytes = response.bodyBytes;
                           final tempDirectory = await getTemporaryDirectory();
-                          final tempFile =
-                              await File('${tempDirectory.path}/sharedImage.jpg')
-                                  .create();
+                          final tempFile = await File(
+                                  '${tempDirectory.path}/sharedImage.jpg')
+                              .create();
                           await tempFile.writeAsBytes(imageBytes);
-          
+
                           final image = XFile(tempFile.path);
                           await Share.shareXFiles([image],
                               text:
                                   "Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 017xxxxxxxx");
                         },
-                        icon: Icon(Icons.share),
-                        label: Text("SHARE"),
+                        child: Icon(
+                          Icons.share,
+                          size: 20,
+                        ),
+                        // label: Text("SHARE"),
                       ),
                     ],
                   ),
@@ -445,6 +481,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
   navigateToEditPage(int index) {
     final route = MaterialPageRoute(
         builder: (context) => EditScreen(
+              id: products[index].id,
               name: products[index].vehicleName.toString(),
               price: products[index].price.toString(),
               manufacture: products[index].manufacture,

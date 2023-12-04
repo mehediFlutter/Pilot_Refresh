@@ -62,36 +62,40 @@ class _DoublVehicleState extends State<DoublVehicle> {
         await get(Uri.parse("https://pilotbazar.com/api/vehicle?page=$page"));
     print("page number");
     print(page);
+    print("Length of products ");
+    print(products.length);
 
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
     print(response.statusCode);
     final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
-    List<dynamic> vehicleFeatures =
-        decodedResponse['data'][0]['vehicle_feature'];
-    List<FeatureDetailPair> featureDetailPairs =
-        extractFeatureDetails(vehicleFeatures);
+    // List<dynamic> vehicleFeatures =
+    //     decodedResponse['data'][0]?['vehicle_feature']??'';
+    //     if(decodedResponse['data'][null])return;
+    // List<FeatureDetailPair> featureDetailPairs =
+    //     extractFeatureDetails(vehicleFeatures);
 
-    for (var pair in featureDetailPairs) {
-      // print('Feature: ${pair.featureTitle}');
-      // print('Details: ${pair.detailTitles.join(', ')}');
-      featureDetails.add({pair.detailTitles.join(', ')});
-      featureUnicTitle.add({pair.featureTitle});
-    }
+    // for (var pair in featureDetailPairs) {
+    //   // print('Feature: ${pair.featureTitle}');
+    //   // print('Details: ${pair.detailTitles.join(', ')}');
+    //   featureDetails.add({pair.detailTitles.join(', ')});
+    //   featureUnicTitle.add({pair.featureTitle});
+    // }
 
     if (response.statusCode == 200) {
       decodedResponse['data'].forEach(
         (e) {
           products.add(SearchProduct(
-            vehicleName: e['translate'][0]['title'],
-            id: e['id'],
-            slug: e['slug'],
-            manufacture: e['manufacture'],
-            condition: e['condition']['translate'][0]['title'],
-            mileage: e['mileage']['translate'][0]['title'],
-            price: e['price'],
-            imageName: e['image']['name'],
-             brandName: e['brand']['translate'][0]['title'],
+            vehicleName: e['translate'][0]?['title']??"",
+            id: e['id']??'',
+            slug: e['slug']??'',
+            manufacture: e['manufacture']??'',
+            condition: e['condition']?['translate'][0]?['title']??"",
+            mileage: e['mileage']?['translate'][0]?['title'] ?? 'No mileage data',
+            price: e['price']??'',
+            imageName: e['image']?['name']??'',
+             brandName: e['brand']?['translate'][0]?['title']??'',
+             
           ));
         },
       );
@@ -109,6 +113,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
       //   print(feature_title[a]);
       // }
     }
+    //if(decodedResponse['data'][null])return;
 
     _getNewProductinProgress = false;
     if (mounted) {
@@ -147,17 +152,17 @@ class _DoublVehicleState extends State<DoublVehicle> {
     for (i; i < decodedResponse['data'].length; i++) {
       products.add(SearchProduct(
         
-        vehicleName: decodedResponse['data'][i]['translate'][0]['title'],
-        manufacture: decodedResponse['data'][i]['manufacture'],
-        slug: decodedResponse['data'][i]['slug'],
-        id: decodedResponse['data'][i]['id'],
-        condition: decodedResponse['data'][i]['condition']['translate'][0]
-            ['title'],
-        mileage: decodedResponse['data'][i]['mileage']['translate'][0]['title'],
-        price: decodedResponse['data'][i]['price'],
-        imageName: decodedResponse['data'][i]['image']['name'],
-        registration: decodedResponse['data'][i]['registration'],
-        brandName: decodedResponse['data'][i]['brand']['translate'][0]['title'],
+        vehicleName: decodedResponse['data'][i]['translate'][0]?['title']??'',
+        manufacture: decodedResponse['data'][i]['manufacture']??'',
+        slug: decodedResponse['data'][i]['slug']??'',
+        id: decodedResponse['data'][i]['id']??'',
+        condition: decodedResponse['data'][i]['condition']?['translate'][0]?
+            ['title']??'',
+        mileage: decodedResponse['data'][i]['mileage']?['translate'][0]?['title'] ?? 'No mileage data',
+        price: decodedResponse['data'][i]['price']??'',
+        imageName: decodedResponse['data'][i]['image']?['name']??'',
+        registration: decodedResponse['data'][i]['registration']??'',
+        brandName: decodedResponse['data'][i]['brand']?['translate'][0]?['title']??'',
       ));
     }
     if (decodedResponse['data'] == null) {

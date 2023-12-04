@@ -188,7 +188,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       Text(
                         "Don't Hava an Account?",
-                        style: Theme.of(context).textTheme.titleMedium,
+                        style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 17),
                       ),
                       TextButton(
                           onPressed: () {
