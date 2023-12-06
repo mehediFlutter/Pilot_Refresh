@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:pilot_refresh/class_practice.dart';
 import 'package:pilot_refresh/item_class.dart';
 import 'package:pilot_refresh/product.dart';
+import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
 
 class DoublVehicle extends StatefulWidget {
   DoublVehicle({super.key});
@@ -33,7 +33,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
     getProduct(page);
   }
 
-  List<SearchProduct> products = [];
+  List<Product> products = [];
   List featureUnicTitle = [];
   List featureDetails = [];
 
@@ -79,14 +79,16 @@ class _DoublVehicleState extends State<DoublVehicle> {
 
     if (response.statusCode == 200) {
       decodedResponse['data'].forEach((e) {
-        products.add(SearchProduct(
+        products.add(Product(
           vehicleName: e['translate'][0]?['title']??"",
           id: e['id']??"",
           slug: e['slug']??'',
           manufacture: e['manufacture']??'',
           condition: e['condition']['translate'][0]?['title'] ?? '',
           mileage: e['mileage']?['translate'][0]?['title'] ?? 'No mileage data',
-           price: e['price'] ?? 0,
+           price: e['price'] ?? '',
+            purchase_price: e['purchase_price']??'',
+           fixed_price: e['fixed_price']??'',
            imageName: e['image']?['name'] ?? '',
            registration: e['registration'] ?? '',
            engine: e['engine']?['translate'][0]?['title'] ?? '',
@@ -134,7 +136,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
     }
 
     for (i; i < decodedResponse['data'].length; i++) {
-      products.add(SearchProduct(
+      products.add(Product(
         vehicleName: decodedResponse['data'][i]['translate'][0]?['title']??"",
         manufacture: decodedResponse['data'][i]?['manufacture']??'',
         slug: decodedResponse['data'][i]?['slug']??'',
@@ -145,6 +147,8 @@ class _DoublVehicleState extends State<DoublVehicle> {
                 ?['title'] ??
             'No mileage data',
         price: decodedResponse['data'][i]?['price']??'',
+        purchase_price: decodedResponse['data'][i]?['purchase_price']??'',
+        fixed_price: decodedResponse['data'][i]?['fixed_price']??'',
         imageName: decodedResponse['data'][i]?['image']?['name']??'',
         registration: decodedResponse['data'][i]?['registration'] ?? '-',
         engine: decodedResponse['data'][i]?['engine']?['translate'][0]?['title']??'',
@@ -191,6 +195,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
         child: Scaffold(
+         backgroundColor: Color(0xFF313131),
             appBar: AppBar(
               title: Text(page.toString()),
             ),
@@ -216,6 +221,8 @@ class _DoublVehicleState extends State<DoublVehicle> {
                               id: products[index+j].id!,
                               imageName: products[index+j].imageName.toString(),
                               price: products[index+j].price.toString(),
+                              purchase_price: products[index+j].purchase_price,
+                              fixed_price: products[index+j].fixed_price,
                               featureSeat: featureUnicTitle[index+j].toString(),
                               featureSeatDetails:
                                   featureDetails[index+j].toString(),
@@ -229,6 +236,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
                               model: "",
                               fuel: products[index+j].fuel,
                               skeleton: products[index+j].skeleton,
+
                               
                             
                               //dropdownFontLight: products[index+j],

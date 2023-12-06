@@ -2,12 +2,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
-import 'package:pilot_refresh/class_practice.dart';
 import 'package:pilot_refresh/product.dart';
+import 'package:pilot_refresh/screens/edit_price.dart';
 import 'package:pilot_refresh/screens/edit_screen.dart';
 import 'package:pilot_refresh/screens/vehicle-details.dart';
 import 'package:pilot_refresh/screens/vehicle_details_demo_screen.dart';
 import 'package:pilot_refresh/search/pilot_search.dart';
+import 'package:pilot_refresh/widget/alart_dialog_class.dart';
 import 'package:pilot_refresh/widget/app_bar.dart';
 import 'package:pilot_refresh/widget/end_drawer.dart';
 import 'package:pilot_refresh/widget/search_bar.dart';
@@ -44,11 +45,11 @@ class _HomeVehicleState extends State<HomeVehicle> {
     setState(() {});
 
     getProduct(page);
+
+    //getDetails(i);
   }
 
-  List<SearchProduct> products = [];
-  List featureUnicTitle = [];
-  List featureDetails = [];
+  List products = [];
 
   bool _getProductinProgress = false;
   bool _getNewProductinProgress = false;
@@ -78,36 +79,28 @@ class _HomeVehicleState extends State<HomeVehicle> {
     //https://crud.teamrabbil.com/api/v1/ReadProduct
     print(response.statusCode);
     final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
-    List<dynamic> vehicleFeatures =
-        decodedResponse['data'][0]?['vehicle_feature']??'';
-    List<FeatureDetailPair> featureDetailPairs =
-        extractFeatureDetails(vehicleFeatures);
-
-    for (var pair in featureDetailPairs) {
-      // print('Feature: ${pair.featureTitle}');
-      // print('Details: ${pair.detailTitles.join(', ')}');
-      featureDetails.add({pair.detailTitles.join(', ')});
-      featureUnicTitle.add({pair.featureTitle});
-    }
 
     if (response.statusCode == 200) {
       decodedResponse['data'].forEach((e) {
-        products.add(SearchProduct(
-          vehicleName: e['translate'][0]['title'],
-          id: e['id'],
-          slug: e['slug']??'',
-          manufacture: e['manufacture']??'',
-          condition: e['condition']['translate'][0]?['title'] ?? '',
-          mileage: e['mileage']?['translate'][0]?['title'] ?? 'No mileage data',
-           price: e['price'] ?? 0,
-           imageName: e['image']?['name'] ?? '',
-           registration: e['registration'] ?? '',
-           engine: e['engine']?['translate'][0]?['title'] ?? '',
-           brandName: e['brand']?['translate'][0]?['title'] ?? '',
-           transmission: e['transmission']?['translate'][0]?['title'] ?? '',
-           fuel: e['fuel']?['translate'][0]?['title'] ?? '',
-           skeleton: e['skeleton']?['translate'][0]?['title'] ?? '',
-        ));
+        products.add(Product(
+            vehicleName: e['translate'][0]['title'],
+            id: e['id'],
+            slug: e['slug'] ?? '',
+            manufacture: e['manufacture'] ?? '',
+            condition: e['condition']['translate'][0]?['title'] ?? '',
+            mileage:
+                e['mileage']?['translate'][0]?['title'] ?? 'No mileage data',
+            price: e['price'] ?? '',
+            purchase_price: e['purchase_price'] ?? '',
+            fixed_price: e['fixed_price'] ?? '',
+            imageName: e['image']?['name'] ?? '',
+            registration: e['registration'] ?? '',
+            engine: e['engine']?['translate'][0]?['title'] ?? '',
+            brandName: e['brand']?['translate'][0]?['title'] ?? '',
+            transmission: e['transmission']?['translate'][0]?['title'] ?? '',
+            fuel: e['fuel']?['translate'][0]?['title'] ?? '',
+            skeleton: e['skeleton']?['translate'][0]?['title'] ?? '',
+            available: e['available']?['translate'][0]?['title'] ?? ''));
       });
 
       x = j + 1;
@@ -131,43 +124,40 @@ class _HomeVehicleState extends State<HomeVehicle> {
     //https://crud.teamrabbil.com/api/v1/ReadProduct
     print(response.statusCode);
     final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
-    List<dynamic> vehicleFeatures =
-        decodedResponse['data'][0]['vehicle_feature'];
-    List<FeatureDetailPair> featureDetailPairs =
-        extractFeatureDetails(vehicleFeatures);
 
-    for (var pair in featureDetailPairs) {
-      // print('Feature: ${pair.featureTitle}');
-      // print('Details: ${pair.detailTitles.join(', ')}');
-      featureDetails.add({pair.detailTitles.join(', ')});
-      featureUnicTitle.add({pair.featureTitle});
-    }
     if (mounted) {
       setState(() {});
     }
 
     for (i; i < decodedResponse['data'].length; i++) {
-      products.add(SearchProduct(
-        vehicleName: decodedResponse['data'][i]['translate'][0]['title'],
-        manufacture: decodedResponse['data'][i]['manufacture'],
-        slug: decodedResponse['data'][i]['slug'],
-        id: decodedResponse['data'][i]['id'],
-        condition: decodedResponse['data'][i]['condition']['translate'][0]
-            ['title'],
-        mileage: decodedResponse['data'][i]['mileage']?['translate'][0]
-                ?['title'] ??
-            'No mileage data',
-        price: decodedResponse['data'][i]['price'],
-        imageName: decodedResponse['data'][i]['image']['name'],
-        registration: decodedResponse['data'][i]['registration'] ?? '-',
-        engine: decodedResponse['data'][i]['engine']['translate'][0]['title'],
-        brandName: decodedResponse['data'][i]['brand']['translate'][0]['title'],
-        transmission: decodedResponse['data'][i]['transmission']['translate'][0]
-            ['title'],
-        fuel: decodedResponse['data'][i]['fuel']['translate'][0]['title'],
-        skeleton: decodedResponse['data'][i]['skeleton']['translate'][0]
-            ['title'],
-      ));
+      products.add(Product(
+          vehicleName: decodedResponse['data'][i]['translate'][0]['title'],
+          manufacture: decodedResponse['data'][i]['manufacture'],
+          slug: decodedResponse['data'][i]['slug'],
+          id: decodedResponse['data'][i]['id'],
+          condition: decodedResponse['data'][i]['condition']['translate'][0]
+              ['title'],
+          mileage: decodedResponse['data'][i]['mileage']?['translate'][0]
+                  ?['title'] ??
+              'No mileage data',
+          //price here
+          price: decodedResponse['data'][i]['price'] ?? '',
+          purchase_price: decodedResponse['data'][i]?['purchase_price'] ?? '',
+          fixed_price: decodedResponse['data'][i]?['fixed_price'] ?? '',
+          //price end
+          imageName: decodedResponse['data'][i]['image']['name'],
+          registration: decodedResponse['data'][i]['registration'] ?? '-',
+          engine: decodedResponse['data'][i]['engine']['translate'][0]['title'],
+          brandName: decodedResponse['data'][i]['brand']['translate'][0]
+              ['title'],
+          transmission: decodedResponse['data'][i]['transmission']['translate']
+              [0]['title'],
+          fuel: decodedResponse['data'][i]['fuel']['translate'][0]['title'],
+          skeleton: decodedResponse['data'][i]['skeleton']['translate'][0]
+              ['title'],
+          available: decodedResponse['data'][i]?['available']?['translate'][0]
+                  ?['title'] ??
+              ''));
     }
     if (decodedResponse['data'] == null) {
       return;
@@ -200,6 +190,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
     _scrollController.addListener(() {
       print(_scrollController.offset);
     });
+
     return Scaffold(
       backgroundColor: Color(0xFF313131),
       appBar: AppBar(
@@ -324,8 +315,13 @@ class _HomeVehicleState extends State<HomeVehicle> {
             //"https://pilotbazar.com/storage/vehicles/${products[x].imageName}"
             subtitle: InkWell(
               onTap: () {
-                print("I am on press");
-                _showAlertDialog(context);
+                print("pressed");
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AlartDialogClass(
+                            id: products[x].id,
+                            vehicleName: products[x].vehicleName)));
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -373,7 +369,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
                     ],
                   ),
                   Text(
-                    "Available At (PBL)",
+                    products[x].available,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   Row(
@@ -398,13 +394,19 @@ class _HomeVehicleState extends State<HomeVehicle> {
                           } else if (value == 'Delete') {
                             // Open Delete Popup
                             //deleteById(id);
+                          } else if (value == 'Edit Price') {
+                            navigateToPriceEditPage(x);
+                          } else if (value == 'Booked') {
+                            updateBooked(x);
+                          } else if (value == 'Sold') {
+                            updateSold(x);
                           }
                         },
                         itemBuilder: (context) {
                           return [
                             PopupMenuItem(
-                              child: Text("Price"),
-                              value: 'Price',
+                              child: Text("Edit Price"),
+                              value: 'Edit Price',
                             ),
                             PopupMenuItem(
                               child: Text("Booked"),
@@ -478,6 +480,46 @@ class _HomeVehicleState extends State<HomeVehicle> {
     );
   }
 
+  void updateBooked(int index) async {
+    final body = {
+      "available_id": 20,
+    };
+
+    final url =
+        "https://pilotbazar.com/api/merchants/vehicles/products/${products[index].id}/update/booked";
+    final uri = Uri.parse(url);
+    final response = await http.put(uri, body: jsonEncode(body), headers: {
+      'Content-Type': 'application/vnd.api+json',
+      'Accept': 'application/vnd.api+json'
+    });
+    print(response.statusCode);
+    print(products[index].id);
+
+    if (response.statusCode == 200) {
+      print("Succesfully Booked");
+    }
+  }
+
+  void updateSold(int index) async {
+    final body = {
+      "available_id": 20,
+    };
+
+    final url =
+        "https://pilotbazar.com/api/merchants/vehicles/products/${products[index].id}/update/sold";
+    final uri = Uri.parse(url);
+    final response = await http.put(uri, body: jsonEncode(body), headers: {
+      'Content-Type': 'application/vnd.api+json',
+      'Accept': 'application/vnd.api+json'
+    });
+    print(response.statusCode);
+    print(products[index].id);
+
+    if (response.statusCode == 200) {
+      print("Succesfully Sold");
+    }
+  }
+
   navigateToEditPage(int index) {
     final route = MaterialPageRoute(
         builder: (context) => EditScreen(
@@ -488,6 +530,18 @@ class _HomeVehicleState extends State<HomeVehicle> {
               condition: products[index].condition,
               registration: products[index].registration,
               mileage: products[index].mileage,
+            ));
+    Navigator.push(context, route);
+  }
+
+  navigateToPriceEditPage(int index) {
+    final route = MaterialPageRoute(
+        builder: (context) => PriceEditScreen(
+              id: products[index].id,
+              name: products[index].vehicleName.toString(),
+              price: products[index].price.toString(),
+              purchase_price: products[index].purchase_price,
+              fixed_price: products[index].fixed_price,
             ));
     Navigator.push(context, route);
   }

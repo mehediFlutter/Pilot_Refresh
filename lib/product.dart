@@ -1,4 +1,4 @@
-class SearchProduct {
+class Product {
   final int? id;
   final String? slug;
   final String? vehicleName;
@@ -6,6 +6,9 @@ class SearchProduct {
   final String? condition;
   final String? mileage;
   final String? price;
+  final String? purchase_price;
+  final String? fixed_price;
+  final String? available;
   final String? imageName;
   final String? dropdownFontLight;
   final String? dropdownFontLightAnswer;
@@ -23,7 +26,7 @@ class SearchProduct {
   // createAt,
   // quantity;
 
-  SearchProduct(
+  Product(
       {this.imageName,
       this.id,
       this.slug,
@@ -32,6 +35,9 @@ class SearchProduct {
       this.condition,
       this.mileage,
       this.price,
+      this.purchase_price,
+      this.fixed_price,
+      this.available,
       this.dropdownFontLight,
       this.dropdownFontLightAnswer,
       this.registration,

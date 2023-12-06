@@ -8,24 +8,14 @@ import 'package:pilot_refresh/screens/home_vehicle.dart';
 class EditScreen extends StatefulWidget {
   final String? name;
   final String? price;
-  final String? purchase_price;
-  final String? fixed_price;
-  final String? registration;
-  final String? manufacture;
-  final String? condition;
-  final String? mileage;
+
   final int? id;
 
   const EditScreen({
     super.key,
     this.name,
     this.price,
-    this.purchase_price,
-    this.fixed_price,
-    this.registration,
-    this.manufacture,
-    this.condition,
-    this.mileage,
+
     this.id,
   });
 
@@ -48,10 +38,7 @@ class _EditScreenState extends State<EditScreen> {
     //String n=widget.name.toString();
     _nameEditingController.text = widget.name.toString();
     _priceEditingController.text = widget.price.toString();
-    _registrationEditingController.text = widget.registration.toString();
-    _manufactureEditingController.text = widget.manufacture.toString();
-    _conditionEditingController.text = widget.condition.toString();
-    _millegeEditingController.text = widget.mileage.toString();
+
   }
 
   bool updateDataInProgress = false;
@@ -64,7 +51,9 @@ class _EditScreenState extends State<EditScreen> {
     }
     final id = widget.id;
 
-    final body = {"purchase_price": _priceEditingController.text};
+    final body = {
+    "purchase_price":_priceEditingController.text
+};
     final url =
         "https://pilotbazar.com/api/merchants/vehicles/products/$id/update";
     final uri = Uri.parse(url);
@@ -106,7 +95,7 @@ class _EditScreenState extends State<EditScreen> {
           child: Column(
             children: [
               Text(
-                "Edit ",
+                "Edit Price",
                 style: TextStyle(color: Colors.white),
               ),
               Text("Name"),
@@ -143,17 +132,14 @@ class _EditScreenState extends State<EditScreen> {
               ),
               SizedBox(height: 30),
               Visibility(
-                visible: updateDataInProgress == false,
-                replacement: Center(
-                  child: CircularProgressIndicator(),
-                ),
+                visible: updateDataInProgress==false,
+                replacement: Center(child: CircularProgressIndicator(),),
                 child: SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
-                        onPressed: () {
+                    child:
+                        ElevatedButton(onPressed: () {
                           updateData();
-                        },
-                        child: Text("Update"))),
+                        }, child: Text("Update"))),
               )
             ],
           ),

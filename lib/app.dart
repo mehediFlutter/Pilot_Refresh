@@ -13,9 +13,8 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          
           //primarySwatch: Colors.blue,
           // TextField(
           //             // scrollPadding: EdgeInsets.zero,
@@ -41,6 +40,10 @@ class _AppState extends State<App> {
           //             ),
           //           ),
           inputDecorationTheme: InputDecorationTheme(
+            labelStyle: TextStyle(
+              color: Colors.blue,
+                   // Change this color to your desired label text color
+            ),
             contentPadding: EdgeInsets.only(left: 20, top: 15),
             enabledBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.white),
@@ -55,11 +58,10 @@ class _AppState extends State<App> {
                 color: Colors.white,
               ),
               titleLarge: TextStyle(
-                fontSize: 25,
-                fontFamily: "AbhayaLibre",
-                color: Colors.white,
-                fontWeight: FontWeight.w500
-              ),
+                  fontSize: 25,
+                  fontFamily: "AbhayaLibre",
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500),
               titleSmall: TextStyle(
                 fontSize: 17,
                 fontFamily: "AbhayaLibre",
@@ -71,6 +73,11 @@ class _AppState extends State<App> {
                 fontFamily: "AbhayaLibre",
                 // color: Colors.grey,
               )),
+
+          textSelectionTheme: TextSelectionThemeData(
+            cursorColor:
+                Colors.blue, // Change this color to your desired cursor color
+          ),
         ),
         home: LoginScreen());
   }
