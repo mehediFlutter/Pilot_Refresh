@@ -43,4 +43,7 @@ flutter:
     - family: AbhayaLibre
       fonts:
         - asset: fonts/AbhayaLibre-Regular.ttf  
+    - family: Roboto
+      fonts:
+        - asset: fonts/Roboto-Regular.ttf    
 

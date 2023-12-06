@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'package:pilot_refresh/product.dart';
 import 'package:pilot_refresh/screens/edit_price.dart';
 import 'package:pilot_refresh/screens/edit_screen.dart';
 import 'package:pilot_refresh/screens/home_vehicle.dart';
@@ -101,6 +102,7 @@ class _ItemState extends State<Item> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => VehicleDetails(
+                                     id: widget.id,
                                         vehicleName: widget.vehiclaName,
                                         detailsVehicleImageName:
                                             "https://pilotbazar.com/storage/vehicles/${widget.imageName}",

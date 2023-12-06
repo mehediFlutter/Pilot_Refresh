@@ -24,6 +24,7 @@ class _RegistrationState extends State<Registration> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  SizedBox(height: size.height/8,),
                   // const Text(
                   //   "Register",
                   //   style: TextStyle(
@@ -215,23 +216,20 @@ class _RegistrationState extends State<Registration> {
                                   20.0),
                                    // Adjust the value as needed
                             ),
-                            backgroundColor: Colors.blue
+                            backgroundColor: Colors.blue,
                           ),
                           child: Text(
                             'Register',
                             style: Theme.of(context)
                                 .textTheme
-                                .titleLarge!
-                                .copyWith(
-                                    color: const Color.fromARGB(
-                                        255, 209, 207, 207)),
+                                .titleLarge,
                           ))),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
                   Text("or connect with",
                       style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -249,15 +247,15 @@ class _RegistrationState extends State<Registration> {
                   ),
                   MakeAPhoneCall(phone: '01969944400'),
                   SizedBox(
-                    height: size.height / 15,
+                    height: size.height / 30,
                   ),
                   Text("By signing in your agreeing our",
-                      style: Theme.of(context).textTheme.titleSmall),
+                      style: Theme.of(context).textTheme.titleSmall!.copyWith(fontSize: 15)),
                   const Text(
                     "Term and privacy policy",
                     style: TextStyle(
                         color: Colors.blue,
-                        fontSize: 12,
+                        fontSize: 14,
                         fontFamily: "AbhayaLibre"),
                   ),
 

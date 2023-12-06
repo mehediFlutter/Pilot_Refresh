@@ -22,7 +22,6 @@ class _LoginScreenState extends State<LoginScreen> {
     Size size = MediaQuery.sizeOf(context);
 
     return SafeArea(
-      
       child: Scaffold(
         backgroundColor: const Color(0xFF333333),
         body: Padding(
@@ -32,6 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  SizedBox(height: size.height / 40),
                   // const Text(
                   //   "Login",
                   //   style: TextStyle(
@@ -161,34 +161,37 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: size.height / 30),
                   SizedBox(
-                    
-                      height: size.height / 14,
-                      width: double.infinity,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Registration()));
-                          },
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  20.0), // Adjust the value as needed
-                            ),
-                            backgroundColor: Colors.blue
+                    height: size.height / 14,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Registration()));
+                      },
+                      style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                20.0), // Adjust the value as needed
                           ),
-                          child: Text(
-                            'Login',
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),),),
+                          backgroundColor: Colors.blue),
+                      child: Text(
+                        'Login',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                    ),
+                  ),
                   SizedBox(height: size.height / 30),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         "Don't Hava an Account?",
-                        style: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 17),
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(fontSize: 14),
                       ),
                       TextButton(
                           onPressed: () {
@@ -204,8 +207,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                   Text("or Connect With Us",
-                      style: Theme.of(context).textTheme.titleMedium),
-                  SizedBox(height: size.height / 22),
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(fontSize: 14)),
+                  SizedBox(height: size.height / 50),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -219,24 +225,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   // SizedBox(
                   //   height: size.height/50,
                   // ),
-                  
+
                   // Image.asset('assets/images/logoCircle.png')
                   Padding(
-                    padding:  EdgeInsets.only(top: size.height/10),
+                    padding: EdgeInsets.only(top: size.height / 30),
                     child: MakeAPhoneCall(phone: phone),
                   ),
-                       SizedBox(
-                    height: size.height/13,
+                  SizedBox(
+                    height: size.height / 26,
                   ),
-                      Text(
-                    "By signing in your agreeing our",
-                   style: Theme.of(context).textTheme.titleSmall
-                  ),
+                  Text("By signing in your agreeing our",
+                      style: Theme.of(context).textTheme.titleSmall!.copyWith(fontSize: 15)),
                   const Text(
                     "Term and privacy policy",
                     style: TextStyle(
                         color: Colors.blue,
-                        fontSize: 12,
+                        fontSize: 14,
                         fontFamily: "AbhayaLibre"),
                   ),
                 ],
@@ -248,4 +252,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-

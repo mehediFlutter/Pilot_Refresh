@@ -8,6 +8,7 @@ import 'package:pilot_refresh/screens/edit_screen.dart';
 import 'package:pilot_refresh/screens/vehicle-details.dart';
 import 'package:pilot_refresh/screens/vehicle_details_demo_screen.dart';
 import 'package:pilot_refresh/search/pilot_search.dart';
+import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
 import 'package:pilot_refresh/widget/alart_dialog_class.dart';
 import 'package:pilot_refresh/widget/app_bar.dart';
 import 'package:pilot_refresh/widget/end_drawer.dart';
@@ -45,6 +46,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
     setState(() {});
 
     getProduct(page);
+    //getDetails(products[0].id);
 
     //getDetails(i);
   }
@@ -53,6 +55,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
   bool _getProductinProgress = false;
   bool _getNewProductinProgress = false;
+  bool _detailsInProgress = false;
 
   static int x = 0;
   void _listenToScroolMoments() {
@@ -184,6 +187,37 @@ class _HomeVehicleState extends State<HomeVehicle> {
 //     });
   }
 
+  bool _getDataInProgress = false;
+  static List unicTitle = [];
+  static List details = [];
+  Future getDetails(int id) async {
+    _getDataInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    Response response = await get(Uri.parse(
+        "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
+    //https://pilotbazar.com/api/vehicle?page=0
+    //https://crud.teamrabbil.com/api/v1/ReadProduct
+    print(response.statusCode);
+    final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
+    List<dynamic> vehicleFeatures =
+        decodedResponse['payload']['vehicle_feature'];
+
+    List<FeatureDetailPair> featureDetailPairs =
+        extractFeatureDetails(vehicleFeatures);
+
+    for (var pair in featureDetailPairs) {
+      unicTitle.add(pair.featureTitle);
+      details.add(pair.detailTitles.join(', '));
+    }
+    _getDataInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
+    //return unicTitle+details;
+  }
+
   final ScrollController _scrollController = ScrollController();
 
   Widget build(BuildContext context) {
@@ -262,6 +296,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => VehicleDetails(
+                        id: products[x].id,
                         detailsVehicleImageName:
                             "https://pilotbazar.com/storage/vehicles/${products[x].imageName}",
                         price: products[x].price,
@@ -437,6 +472,10 @@ class _HomeVehicleState extends State<HomeVehicle> {
                       ),
                       ElevatedButton(
                         onPressed: () async {
+                          if (mounted) {
+                            setState(() {});
+                          }
+                          //setState() {});
                           final uri = Uri.parse(
                               "https://pilotbazar.com/storage/vehicles/${products[x].imageName}");
                           final response = await http.get(uri);
@@ -447,15 +486,43 @@ class _HomeVehicleState extends State<HomeVehicle> {
                               .create();
                           await tempFile.writeAsBytes(imageBytes);
 
+                          await getDetails(products[x].id);
                           final image = XFile(tempFile.path);
+
+                          print("Length is ");
+                          print(unicTitle.length);
+                        late String info;
+                          
+
+                          String message =
+                              "Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 0196-99-444-00\n";
+                          
+                          if (unicTitle.length != 0) {
+                             info = "\n${unicTitle[0]} : ${details[0]}";
+                            _detailsInProgress = true;
+                            setState(() {});
+                            for (int b = 1; b < unicTitle.length; b++) {
+                            info += "\n${unicTitle[b]} : ${details[b]}";
+                          }
+                          }
+                         
                           await Share.shareXFiles([image],
-                              text:
-                                  "Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 017xxxxxxxx");
+                              text: _detailsInProgress
+                                  ? message+info
+                                  : message);
+                          //"Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 017xxxxxxxx\n"
+                          unicTitle.clear();
+                          details.clear();
+                          _detailsInProgress = false;
+
+                          setState(() {});
                         },
+
                         child: Icon(
                           Icons.share,
                           size: 20,
                         ),
+
                         // label: Text("SHARE"),
                       ),
                     ],

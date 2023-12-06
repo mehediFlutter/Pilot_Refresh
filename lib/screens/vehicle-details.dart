@@ -1,6 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
 
 class VehicleDetails extends StatefulWidget {
+  final int id;
   final String? brandName;
   final String? detailsVehicleManufacture;
   final String? detailsVehicleManuConditioin;
@@ -13,6 +18,8 @@ class VehicleDetails extends StatefulWidget {
   final String? model;
   final String? price;
   final String? vehicleName;
+  final String? color;
+  final String? term_and_edition;
 
   final String? dropdownFontLight;
   final String? dropdownFontLightAnswer;
@@ -29,10 +36,11 @@ class VehicleDetails extends StatefulWidget {
 
   const VehicleDetails(
       {super.key,
+      required this.id,
       this.brandName,
-       this.detailsVehicleManufacture,
-       this.detailsVehicleManuConditioin,
-       this.detailsVehicleImageName,
+      this.detailsVehicleManufacture,
+      this.detailsVehicleManuConditioin,
+      this.detailsVehicleImageName,
       this.engine,
       this.detailsCondition,
       this.detailsMillege,
@@ -52,6 +60,8 @@ class VehicleDetails extends StatefulWidget {
       this.dropdownStarOption,
       this.dropdownStarOptionAnswer,
       this.price,
+      this.color,
+      this.term_and_edition,
       this.vehicleName});
 
   @override
@@ -59,8 +69,53 @@ class VehicleDetails extends StatefulWidget {
 }
 
 class _VehicleDetailsState extends State<VehicleDetails> {
+  bool _getDataInProgress = false;
+  List unicTitle = [];
+  List details = [];
+  void getDetails() async {
+    _getDataInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    Response response = await get(Uri.parse(
+        "https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/detail"));
+    //https://pilotbazar.com/api/vehicle?page=0
+    //https://crud.teamrabbil.com/api/v1/ReadProduct
+    print(response.statusCode);
+    final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
+    List<dynamic> vehicleFeatures =
+        decodedResponse['payload']['vehicle_feature'];
+
+    List<FeatureDetailPair> featureDetailPairs =
+        extractFeatureDetails(vehicleFeatures);
+
+    for (var pair in featureDetailPairs) {
+      unicTitle.add(pair.featureTitle);
+      details.add(pair.detailTitles.join(', '));
+    }
+    _getDataInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
+    for (int y = 0; y < unicTitle.length; y++) {
+      print(
+        unicTitle[y],
+      );
+      print(
+        details[y],
+      );
+    }
+  }
+
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getDetails();
+  }
+
   Widget build(BuildContext context) {
+    Size size = MediaQuery.sizeOf(context);
     return SafeArea(
       child: Scaffold(
         backgroundColor: Color(0xFF313131),
@@ -84,7 +139,8 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                     color: Color(0xFF313131),
                     child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: Image.network(widget.detailsVehicleImageName.toString()?? ""))),
+                        child: Image.network(
+                            widget.detailsVehicleImageName.toString() ?? ""))),
                 SizedBox(height: 5),
                 Container(
                   width: double.infinity,
@@ -113,8 +169,21 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                     ),
                     trailing: Column(
                       children: [
-                        Text("Code",style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.black,fontSize: 15),),
-                        Expanded(child: Text("PS-99",style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.black,fontSize: 10),)),
+                        Text(
+                          "Code",
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium!
+                              .copyWith(color: Colors.black, fontSize: 15),
+                        ),
+                        Expanded(
+                            child: Text(
+                          "PS-99",
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium!
+                              .copyWith(color: Colors.black, fontSize: 10),
+                        )),
                       ],
                     ),
                   ),
@@ -122,145 +191,183 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                 SizedBox(
                   height: 10,
                 ),
+
+                Text("Features :",
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          decoration: TextDecoration.underline,
+                          decorationColor: Colors.white,
+                          decorationStyle: TextDecorationStyle.solid,
+                        )),
+                //     RichText(
+                //   text: TextSpan(
+                //     text: 'Features',
+                //     style: TextStyle(
+                //       color: Colors.white,
+                //       fontSize: 20,
+                //       decoration: TextDecoration.underline,
+                //     ),
+                //   ),
+                // ),
+
                 Container(
-                    width: double.infinity,
-                    height: 300,
-                    child: Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Expanded(
+                  width: double.infinity,
+                  height: 320,
+                  child: Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              features_unit_left_side(context, "Brand : ",
+                                  widget.brandName.toString()),
+                              features_unit_left_side(
+                                  context, "Model : ", widget.model.toString()),
+                              features_unit_left_side(context, "Engine : ",
+                                  widget.engine.toString()),
+                              features_unit_left_side(context, "Condition : ",
+                                  widget.detailsCondition.toString()),
+                              features_unit_left_side(context, "Mileage : ",
+                                  widget.detailsMillege.toString()),
+                              Row(
+                                children: [
+                                  Text("Transmission : ",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(fontSize: 17)),
+                                  Expanded(
+                                      child: Text(
+                                          widget.detailsTransmission.toString(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium!
+                                              .copyWith(fontSize: 17))),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.topRight,
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Row(
-                                  children: [
-                                    Text("Brand : ",style: Theme.of(context).textTheme.titleSmall,),
-                                    Text(widget.brandName.toString(),style: Theme.of(context).textTheme.titleSmall),
-                                  ],
-                                ),
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Text("Engine : ",style: Theme.of(context).textTheme.titleSmall),
-                                      Text(widget.engine.toString(),style: Theme.of(context).textTheme.titleSmall),
-                                    ],
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Text("Condition : ",style: Theme.of(context).textTheme.titleSmall),
-                                      Text(widget.detailsCondition.toString(),style: Theme.of(context).textTheme.titleSmall),
-                                    ],
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        "Mileage :",
-                                       style: Theme.of(context).textTheme.titleSmall
-                                      ),
-                                      Text(
-                                        widget.detailsMillege.toString(),style: Theme.of(context).textTheme.titleSmall
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        "Transmission : ",style: Theme.of(context).textTheme.titleSmall!.copyWith(fontSize: 17)
-                                      ),
-                                      Expanded(
-                                          child: Text(
-                                              widget.detailsTransmission
-                                                  .toString(),style: Theme.of(context).textTheme.titleSmall!.copyWith(fontSize: 17))),
-                                    ],
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Text("Model :",style: Theme.of(context).textTheme.titleSmall),
-                                      Text(" API?",style: Theme.of(context).textTheme.titleSmall),
-                                    ],
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Text("Color :",style: Theme.of(context).textTheme.titleSmall),
-                                      Text("API?",style: Theme.of(context).textTheme.titleSmall),
-                                    ],
-                                  ),
-                                ),
+                                features_unit_right_side(context, "Color : ",
+                                    widget.color.toString()),
+                                features_unit_right_side(
+                                    context,
+                                    "Trim & Edition : ",
+                                    widget.term_and_edition.toString()),
+                                features_unit_right_side(context, "Fuel : ",
+                                    widget.detailsFuel.toString()),
+                                features_unit_right_side(
+                                    context,
+                                    "Skeleton  : ",
+                                    widget.detailsFuel.toString()),
+                                features_unit_right_side(
+                                    context,
+                                    "Registration : ",
+                                    widget.detailsFuel.toString()),
+                                features_unit_right_side(context, "Grade : ",
+                                    widget.detailsFuel.toString()),
+                                features_unit_right_side(
+                                    context,
+                                    "Manufacture : ",
+                                    widget.detailsVehicleManufacture
+                                        .toString()),
                               ],
                             ),
                           ),
-                          Expanded(
-                            child: Align(
-                              alignment: Alignment.topRight,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                              
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Trim & Edition :",style: Theme.of(context).textTheme.titleSmall
-                                      ),
-                                      Text("API?",style: Theme.of(context).textTheme.titleSmall),
-                                    ],
-                                  ),
-                                  Expanded(
-                                    child: Row(
-                                      children: [
-                                        Text("Fuel: ",style: Theme.of(context).textTheme.titleSmall),
-                                        Text(widget.detailsFuel.toString(),style: Theme.of(context).textTheme.titleSmall),
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          "Skeleton : ",style: Theme.of(context).textTheme.titleSmall
-                                        ),
-                                        Text(widget.skeleton.toString(),style: Theme.of(context).textTheme.titleSmall),
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Row(
-                                      children: [
-                                        Text("Registration: ",style: Theme.of(context).textTheme.titleSmall),
-                                        Text(widget.registration.toString(),style: Theme.of(context).textTheme.titleSmall),
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Row(
-                                      children: [
-                                        Text("Grade : ",style: Theme.of(context).textTheme.titleSmall),
-                                        Text(widget.detailsGrade.toString() ??
-                                            '-',style: Theme.of(context).textTheme.titleSmall),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Text(
+                  "Special Features",
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        decoration: TextDecoration.underline,
+                        decorationColor:
+                            const Color.fromARGB(255, 175, 173, 173),
                       ),
+                ),
+                Container(
+                    width: double.infinity,
+                    child: ListView.separated(
+                      primary: false,
+                      shrinkWrap: true,
+                      itemCount: unicTitle.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Row(
+                            children: [
+                              Expanded(
+                                  child: Text(unicTitle[index],
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium)),
+                              //Text(":",style: TextStyle(color: Colors.white),),
+                              SizedBox(
+                                width: size.width / 20,
+                              ),
+
+                              Expanded(
+                                  child: Text(details[index],
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium)),
+                            ],
+                          ),
+                        );
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return Divider(
+                          height: 4,
+                        );
+                      },
                     )),
+
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  features_unit_left_side(
+    BuildContext context,
+    String title,
+    String details,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: Row(
+        children: [
+          SizedBox(
+            height: 10,
+          ),
+          Text(title, style: Theme.of(context).textTheme.bodyMedium),
+          Text(details, style: Theme.of(context).textTheme.bodyMedium),
+        ],
+      ),
+    );
+  }
+
+  features_unit_right_side(BuildContext context, String title, String details) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          //Spacer(),
+          //SizedBox(height: 10,),
+          Text(title, style: Theme.of(context).textTheme.bodyMedium),
+          Text(details, style: Theme.of(context).textTheme.bodyMedium),
+        ],
       ),
     );
   }

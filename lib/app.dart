@@ -15,6 +15,8 @@ class _AppState extends State<App> {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
+          primaryColor: Colors.white,
+          
           //primarySwatch: Colors.blue,
           // TextField(
           //             // scrollPadding: EdgeInsets.zero,
@@ -42,7 +44,7 @@ class _AppState extends State<App> {
           inputDecorationTheme: InputDecorationTheme(
             labelStyle: TextStyle(
               color: Colors.blue,
-                   // Change this color to your desired label text color
+              // Change this color to your desired label text color
             ),
             contentPadding: EdgeInsets.only(left: 20, top: 15),
             enabledBorder: UnderlineInputBorder(
@@ -51,28 +53,34 @@ class _AppState extends State<App> {
           ),
 
           textTheme: TextTheme(
-              titleMedium: TextStyle(
-                fontSize: 20,
-                fontFamily: "AbhayaLibre",
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-              ),
               titleLarge: TextStyle(
-                  fontSize: 25,
-                  fontFamily: "AbhayaLibre",
-                  color: Colors.white,
+                  fontSize: 22,
+                  fontFamily: "Roboto",
+                  color: Color.fromARGB(255, 226, 221, 221),
                   fontWeight: FontWeight.w500),
+              titleMedium: TextStyle(
+                fontSize: 16,
+                fontFamily: "Roboto",
+                fontWeight: FontWeight.w400,
+                color: Color.fromARGB(255, 194, 191, 191),
+              ),
               titleSmall: TextStyle(
                 fontSize: 17,
-                fontFamily: "AbhayaLibre",
+                fontFamily: "Roboto",
                 color: Colors.grey,
               ),
+              bodyMedium:  TextStyle(
+                  fontSize: 16,
+                  fontFamily: "Roboto",
+                  //fontFamily: "AbhayaLibre",
+                  color: Color.fromARGB(255, 226, 221, 221),
+                  fontWeight: FontWeight.w100),
               bodySmall: TextStyle(
                 height: 0,
                 fontSize: 10,
-                fontFamily: "AbhayaLibre",
+                fontFamily: "Roboto",
                 // color: Colors.grey,
-              )),
+              ),),
 
           textSelectionTheme: TextSelectionThemeData(
             cursorColor:
