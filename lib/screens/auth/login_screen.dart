@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pilot_refresh/screens/auth/new_login_screen.dart';
 
-import 'package:pilot_refresh/screens/registration.dart';
+import 'package:pilot_refresh/screens/auth/registration.dart';
 import 'package:pilot_refresh/widget/make_a_phone_call.dart';
 import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -215,7 +216,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Image.asset("assets/images/facebook1.png"),
+                      InkWell(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>NewLoginScreen()));
+                        },
+                        child: Image.asset("assets/images/facebook1.png")),
                       Image.asset('assets/images/instagram1.png'),
                       Image.asset('assets/images/pinterest1.png'),
                       Image.asset('assets/images/linkedin1.png'),

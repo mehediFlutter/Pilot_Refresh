@@ -211,7 +211,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
 
                 Container(
                   width: double.infinity,
-                  height: 320,
+                  height: size.height/2.7,
                   child: Expanded(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -220,6 +220,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              SizedBox(height: size.height/50,),
                               features_unit_left_side(context, "Brand : ",
                                   widget.brandName.toString()),
                               features_unit_left_side(
@@ -236,16 +237,21 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium!
-                                          .copyWith(fontSize: 17)),
+                                          .copyWith(fontSize: 12)),
                                   Expanded(
                                       child: Text(
                                           widget.detailsTransmission.toString(),
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyMedium!
-                                              .copyWith(fontSize: 17))),
+                                              .copyWith(fontSize: 12))),
+                                              SizedBox(height: 10,),
+                                              
                                 ],
                               ),
+                             // SizedBox(height: 15),
+                               features_unit_left_side(context, "Color : ",
+                                    widget.color.toString()),
                             ],
                           ),
                         ),
@@ -255,8 +261,8 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                features_unit_right_side(context, "Color : ",
-                                    widget.color.toString()),
+                                SizedBox(height: size.height/50,),
+                               
                                 features_unit_right_side(
                                     context,
                                     "Trim & Edition : ",
@@ -266,13 +272,13 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                                 features_unit_right_side(
                                     context,
                                     "Skeleton  : ",
-                                    widget.detailsFuel.toString()),
+                                    widget.skeleton.toString()),
                                 features_unit_right_side(
                                     context,
-                                    "Registration : ",
-                                    widget.detailsFuel.toString()),
+                                    "Registration :",
+                                    widget.registration.toString()),
                                 features_unit_right_side(context, "Grade : ",
-                                    widget.detailsFuel.toString()),
+                                    widget.detailsGrade.toString()),
                                 features_unit_right_side(
                                     context,
                                     "Manufacture : ",
@@ -308,7 +314,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                                   child: Text(unicTitle[index],
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodyMedium)),
+                                          .bodySmall)),
                               //Text(":",style: TextStyle(color: Colors.white),),
                               SizedBox(
                                 width: size.width / 20,
@@ -318,7 +324,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                                   child: Text(details[index],
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodyMedium)),
+                                          .bodySmall)),
                             ],
                           ),
                         );
@@ -344,14 +350,14 @@ class _VehicleDetailsState extends State<VehicleDetails> {
     String details,
   ) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 15),
+      padding: const EdgeInsets.only(bottom: 20),
       child: Row(
         children: [
           SizedBox(
             height: 10,
           ),
-          Text(title, style: Theme.of(context).textTheme.bodyMedium),
-          Text(details, style: Theme.of(context).textTheme.bodyMedium),
+          Text(title, style: Theme.of(context).textTheme.bodySmall),
+          Text(details, style: Theme.of(context).textTheme.bodySmall),
         ],
       ),
     );
@@ -359,14 +365,14 @@ class _VehicleDetailsState extends State<VehicleDetails> {
 
   features_unit_right_side(BuildContext context, String title, String details) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 15),
+      padding: const EdgeInsets.only(bottom: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           //Spacer(),
           //SizedBox(height: 10,),
-          Text(title, style: Theme.of(context).textTheme.bodyMedium),
-          Text(details, style: Theme.of(context).textTheme.bodyMedium),
+          Text(title, style: Theme.of(context).textTheme.bodySmall),
+          Text(details, style: Theme.of(context).textTheme.bodySmall),
         ],
       ),
     );

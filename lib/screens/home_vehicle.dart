@@ -352,11 +352,27 @@ class _HomeVehicleState extends State<HomeVehicle> {
               onTap: () {
                 print("pressed");
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => AlartDialogClass(
-                            id: products[x].id,
-                            vehicleName: products[x].vehicleName)));
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AlartDialogClass(
+                      id: products[x].id,
+                      vehicleName: products[x].vehicleName,
+                     
+                      brandName: products[x].brandName,
+                      engine: products[x].engine,
+                      detailsCondition: products[x].condition,
+                      detailsMillege: products[x].mileage,
+                      detailsTransmission: products[x].transmission,
+                      detailsFuel: products[x].fuel,
+                      skeleton: products[x].skeleton,
+                      registration: products[x].registration,
+                      detailsVehicleManuConditioin:
+                          products[x].manufacture.toString(),
+                      detailsVehicleManufacture:
+                          products[x].manufacture.toString(),
+                    ),
+                  ),
+                );
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -491,24 +507,23 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
                           print("Length is ");
                           print(unicTitle.length);
-                        late String info;
-                          
+                          late String info;
 
                           String message =
                               "Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 0196-99-444-00\n";
-                          
+
                           if (unicTitle.length != 0) {
-                             info = "\n${unicTitle[0]} : ${details[0]}";
+                            info = "\n${unicTitle[0]} : ${details[0]}";
                             _detailsInProgress = true;
                             setState(() {});
                             for (int b = 1; b < unicTitle.length; b++) {
-                            info += "\n${unicTitle[b]} : ${details[b]}";
+                              info += "\n${unicTitle[b]} : ${details[b]}";
+                            }
                           }
-                          }
-                         
+
                           await Share.shareXFiles([image],
                               text: _detailsInProgress
-                                  ? message+info
+                                  ? message + info
                                   : message);
                           //"Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 017xxxxxxxx\n"
                           unicTitle.clear();
@@ -537,15 +552,6 @@ class _HomeVehicleState extends State<HomeVehicle> {
   }
 
   static int j = x;
-
-  void _showAlertDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlartDialogPage();
-      },
-    );
-  }
 
   void updateBooked(int index) async {
     final body = {
@@ -611,117 +617,5 @@ class _HomeVehicleState extends State<HomeVehicle> {
               fixed_price: products[index].fixed_price,
             ));
     Navigator.push(context, route);
-  }
-}
-
-class AlartDialogPage extends StatelessWidget {
-  const AlartDialogPage({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Color(0xFF232323),
-      contentPadding: EdgeInsets.zero,
-      title: Text(
-        "Fuatures and ",
-        style: Theme.of(context).textTheme.titleLarge,
-      ),
-      content: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Column(
-          children: [
-            Row(
-              //crossAxisAlignment: CrossAxisAlignment.start,
-
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Roof",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    Text(
-                      "sunroof",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    Text(
-                      "moon roof",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    Text(
-                      "moon roof",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    Text(
-                      "moon roof",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    Text(
-                      "moon roof",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    Text(
-                      "moon roof",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text(
-                      "Seat",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    Text(
-                      "1 set",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    Text(
-                      "2 set",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    Text(
-                      "2 set",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    Text(
-                      "2 set",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    Text(
-                      "2 set",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    Text(
-                      "2 set",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-      actions: <Widget>[
-        IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(Icons.close),
-          color: Colors.white,
-        ),
-        // TextButton(
-        //   child: const Text('Confirm'),
-        //   onPressed: () {
-        //     // Handle the confirm action
-        //   },
-        // ),
-      ],
-    );
   }
 }
