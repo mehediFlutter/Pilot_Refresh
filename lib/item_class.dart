@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
@@ -6,6 +8,8 @@ import 'package:pilot_refresh/screens/edit_price.dart';
 import 'package:pilot_refresh/screens/edit_screen.dart';
 import 'package:pilot_refresh/screens/home_vehicle.dart';
 import 'package:pilot_refresh/screens/vehicle-details.dart';
+import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
+import 'package:pilot_refresh/widget/alart_dialog_class.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -79,6 +83,45 @@ class Item extends StatefulWidget {
 class _ItemState extends State<Item> {
   // yVjInK9erYHC0iHW9ehY8c6J4y79fbNzCEIWtZvQ.jpg
   //https://pilotbazar.com/storage/vehicles/
+late int id;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+     id=widget.id??0;
+  }
+  bool _detailsInProgress = false;
+static List unicTitle = [];
+  static List details = [];
+  
+  bool _getDataInProgress = false;
+    Future getDetails(int id) async {
+    _getDataInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    Response response = await get(Uri.parse(
+        "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
+    //https://pilotbazar.com/api/vehicle?page=0
+    //https://crud.teamrabbil.com/api/v1/ReadProduct
+    print(response.statusCode);
+    final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
+    List<dynamic> vehicleFeatures =
+        decodedResponse['payload']['vehicle_feature'];
+
+    List<FeatureDetailPair> featureDetailPairs =
+        extractFeatureDetails(vehicleFeatures);
+
+    for (var pair in featureDetailPairs) {
+      unicTitle.add(pair.featureTitle);
+      details.add(pair.detailTitles.join(', '));
+    }
+    _getDataInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
+    //return unicTitle+details;
+  }
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -130,10 +173,31 @@ class _ItemState extends State<Item> {
                       ),
                     ),
                     subtitle: InkWell(
-                      onTap: () {
-                        _showAlertDialog(context);
-                        print("i am pressed");
-                      },
+                         onTap: () {
+                      print("pressed");
+                      print(widget.id);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AlartDialogClass(
+                            id: widget.id,
+                            vehicleName: widget.vehiclaName,
+                            brandName: widget.brandName,
+                            engine: widget.engine,
+                            detailsCondition: widget.condition,
+                            detailsMillege: widget.nMillage,
+                            detailsTransmission: widget.transmission,
+                            detailsFuel: widget.fuel,
+                            skeleton: widget.skeleton,
+                            registration: widget.registration,
+                            detailsVehicleManuConditioin:
+                                widget.manufacture.toString(),
+                            detailsVehicleManufacture:
+                                widget.manufacture.toString(),
+                          ),
+                        ),
+                      );
+                    },
                       child: ListTile(
                         contentPadding: EdgeInsets.zero,
                         title: Column(
@@ -142,6 +206,7 @@ class _ItemState extends State<Item> {
                           children: [
                             Text(widget.vehiclaName.toString(),
                                 style: Theme.of(context).textTheme.bodyLarge),
+                            
                             Row(
                               children: [
                                 Text(
@@ -181,26 +246,53 @@ class _ItemState extends State<Item> {
                                 Text(widget.price.toString(),
                                     style:
                                         Theme.of(context).textTheme.bodyLarge),
-                                SizedBox(width: 10),
+                                Spacer(),
+                                
 
                                 InkWell(
                                   onTap: () async {
-                                    final uri = Uri.parse(
-                                        "https://pilotbazar.com/storage/vehicles/${widget.imageName}");
-                                    final response = await http.get(uri);
-                                    final imageBytes = response.bodyBytes;
-                                    final tempDirectory =
-                                        await getTemporaryDirectory();
-                                    final tempFile = await File(
-                                            '${tempDirectory.path}/sharedImage.jpg')
-                                        .create();
-                                    await tempFile.writeAsBytes(imageBytes);
+                      if (mounted) {
+                        setState(() {});
+                      }
+                      //setState() {});
+                      final uri = Uri.parse(
+                          "https://pilotbazar.com/storage/vehicles/${widget.imageName}");
+                      final response = await http.get(uri);
+                      final imageBytes = response.bodyBytes;
+                      final tempDirectory = await getTemporaryDirectory();
+                      final tempFile =
+                          await File('${tempDirectory.path}/sharedImage.jpg')
+                              .create();
+                      await tempFile.writeAsBytes(imageBytes);
 
-                                    final image = XFile(tempFile.path);
-                                    await Share.shareXFiles([image],
-                                        text:
-                                            "Vehicle Name: ${widget.vehiclaName} \nManufacture:  ${widget.manufacture} \nConditiion: ${widget.condition} \nRegistration: ${widget.registration} \nMillage: ${widget.nMillage}, \nOur HotLine Number: 017xxxxxxxx");
-                                  },
+                      await getDetails(widget.id);
+                      final image = XFile(tempFile.path);
+
+                      print("Length is ");
+                      print(unicTitle.length);
+                      late String info;
+
+                      String message =
+                          "Vehicle Name: ${widget.vehiclaName} \nManufacture:  ${widget.manufacture} \nConditiion: ${widget.condition} \nRegistration: ${widget.registration} \nMillage: ${widget.nMillage}, \nPrice: ${widget..price} \nOur HotLine Number: 0196-99-444-00\n";
+
+                      if (unicTitle.length != 0) {
+                        info = "\n${unicTitle[0]} : ${details[0]}";
+                        _detailsInProgress = true;
+                        setState(() {});
+                        for (int b = 1; b < unicTitle.length; b++) {
+                          info += "\n${unicTitle[b]} : ${details[b]}";
+                        }
+                      }
+
+                      await Share.shareXFiles([image],
+                          text: _detailsInProgress ? message + info : message);
+                      //"Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 017xxxxxxxx\n"
+                      unicTitle.clear();
+                      details.clear();
+                      _detailsInProgress = false;
+
+                      setState(() {});
+                    },
                                   child: Icon(
                                     Icons.share,
                                     size: 15,
@@ -208,6 +300,7 @@ class _ItemState extends State<Item> {
                                   ),
                                 ),
                                 // popup menu
+                                Spacer(),
                                 PopupMenuButton(
                                   child: Icon(
                                     Icons.more_vert,
@@ -264,10 +357,7 @@ class _ItemState extends State<Item> {
                                   },
                                 ),
 
-                                Text(
-                                  widget.id.toString(),
-                                  style: TextStyle(color: Colors.white),
-                                ),
+                               
                               ],
                             ),
                           ],
@@ -275,16 +365,7 @@ class _ItemState extends State<Item> {
                       ),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: InkWell(
-                            onTap: () {
-                              navigateToEditPage(widget.id);
-                            },
-                            child: Image.asset('assets/images/edit_icon.png'))),
-                  ),
+                
                 ],
               ),
             ),

@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
           Center(
             child: Image.asset('assets/images/pilot_icon.png'),
           ),
-          Center(child: Text("PilotBazar.con"),),
+          Center(child: Text("PilotBazar.con",style: TextStyle(color: Colors.black87, fontSize: 20),),),
           Center(
             child: Text(
               " Do Business with Us",

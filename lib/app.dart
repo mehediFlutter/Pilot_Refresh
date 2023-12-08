@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pilot_refresh/screens/auth/login_screen.dart';
 import 'package:pilot_refresh/screens/splash_screen.dart';
 
 class App extends StatefulWidget {
@@ -54,12 +53,12 @@ class _AppState extends State<App> {
 
           textTheme: TextTheme(
             titleLarge: TextStyle(
-                fontSize: 22,
+                fontSize: 19.2,
                 fontFamily: "Roboto",
                 color: Color.fromARGB(255, 226, 221, 221),
                 fontWeight: FontWeight.w500),
             titleMedium: TextStyle(
-              fontSize: 16,
+              fontSize: 11,
               fontFamily: "Roboto",
               //fontWeight: FontWeight.w400,
               color: Colors.white,
@@ -72,7 +71,7 @@ class _AppState extends State<App> {
                height: 0
             ),
             bodyMedium: TextStyle(
-                fontSize: 16,
+                fontSize: 13.5,
                 fontFamily: "Roboto",
                 //fontFamily: "AbhayaLibre",
                 color: Colors.white,

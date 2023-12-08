@@ -6,21 +6,16 @@ import 'package:pilot_refresh/product.dart';
 import 'package:pilot_refresh/screens/edit_price.dart';
 import 'package:pilot_refresh/screens/edit_screen.dart';
 import 'package:pilot_refresh/screens/vehicle-details.dart';
-import 'package:pilot_refresh/screens/vehicle_details_demo_screen.dart';
-import 'package:pilot_refresh/search/pilot_search.dart';
 import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
 import 'package:pilot_refresh/widget/alart_dialog_class.dart';
-import 'package:pilot_refresh/widget/app_bar.dart';
 import 'package:pilot_refresh/widget/end_drawer.dart';
 import 'package:pilot_refresh/widget/search_bar.dart';
-import 'package:pilot_refresh/widget/search_deligate.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
 class HomeVehicle extends StatefulWidget {
-  HomeVehicle({super.key});
+  const HomeVehicle({super.key});
 
   @override
   State<HomeVehicle> createState() => _HomeVehicleState();
@@ -29,10 +24,10 @@ class HomeVehicle extends StatefulWidget {
 class _HomeVehicleState extends State<HomeVehicle> {
   // yVjInK9erYHC0iHW9ehY8c6J4y79fbNzCEIWtZvQ.jpg
   //https://pilotbazar.com/storage/vehicles/
-  static String imagePath = "https://pilotbazar.com/storage/vehicles/";
+  //static String imagePath = "https://pilotbazar.com/storage/vehicles/";
   static late int page;
   static late int i;
-  static List allSearchProducts = [];
+  //static List allSearchProducts = [];
   static List newSearchProducts = [];
   String searchValue = '';
   bool searchInProgress = false;
@@ -349,239 +344,261 @@ class _HomeVehicleState extends State<HomeVehicle> {
                         ),
                 ),
               ),
+              subtitle: Row(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      print("pressed");
+                      print(products[x].id);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AlartDialogClass(
+                            id: products[x].id,
+                            vehicleName: products[x].vehicleName,
+                            brandName: products[x].brandName,
+                            engine: products[x].engine,
+                            detailsCondition: products[x].condition,
+                            detailsMillege: products[x].mileage,
+                            detailsTransmission: products[x].transmission,
+                            detailsFuel: products[x].fuel,
+                            skeleton: products[x].skeleton,
+                            registration: products[x].registration,
+                            detailsVehicleManuConditioin:
+                                products[x].manufacture.toString(),
+                            detailsVehicleManufacture:
+                                products[x].manufacture.toString(),
+                          ),
+                        ),
+                      );
+                    },
+
+                    // here vehicle name
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 5),
+                        Text(
+                          products[x].vehicleName.toString(),
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+
+                        // R 2017 Used
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 6,
+                              backgroundColor: Colors.white,
+                              child: Text(
+                                "R",
+                                style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w700),
+                              ),
+                            ),
+                            SizedBox(width: 3.5),
+                            Text(
+                              products[x].manufacture.toString(),
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            Text(
+                              " | ",
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+
+                            //Text(products[x].id.toString()),
+                            Text(
+                              products[x].condition.toString(),
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            Text(
+                              " | ",
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            Text(
+                              products[x].mileage.toString(),
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                  Spacer(),
+                  CircleAvatar(
+                    backgroundColor: const Color.fromARGB(221, 73, 73, 73),
+                    radius: 25,
+                    child: PopupMenuButton(
+                      child: Icon(
+                        Icons.more_vert,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                      onSelected: (value) {
+                        if (value == 'Edit') {
+                          // Open Edit Popup
+                          navigateToEditPage(x);
+                        } else if (value == 'Delete') {
+                          // Open Delete Popup
+                          //deleteById(id);
+                        } else if (value == 'Edit Price') {
+                          navigateToPriceEditPage(x);
+                        } else if (value == 'Booked') {
+                          updateBooked(x);
+                        } else if (value == 'Sold') {
+                          updateSold(x);
+                        }
+                      },
+                      itemBuilder: (context) {
+                        return [
+                          PopupMenuItem(
+                            child: Text("Edit Price"),
+                            value: 'Edit Price',
+                          ),
+                          PopupMenuItem(
+                            child: Text("Booked"),
+                            value: 'Booked',
+                          ),
+                          PopupMenuItem(
+                            child: Text("Sold"),
+                            value: 'Sold',
+                          ),
+                          PopupMenuItem(
+                            child: Text("Edit"),
+                            value: 'Edit',
+                          ),
+                          PopupMenuItem(
+                            child: Text("Availability"),
+                            value: 'Availability',
+                          ),
+                          PopupMenuItem(
+                            child: Text("Advance"),
+                            value: 'Advance',
+                          ),
+                          PopupMenuItem(
+                            child: Text("Delete"),
+                            value: 'Delete',
+                          ),
+                        ];
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              //trailing: Icon(Icons.add),
               // subtitle: IconButton(onPressed: (){}, icon: Icon(Icons.home)),
             ),
             ListTile(
-              contentPadding: EdgeInsets.zero,
-              title: InkWell(
-                onTap: () {
-                  print("pressed");
-                  print(products[x].id);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AlartDialogClass(
-                        id: products[x].id,
-                        vehicleName: products[x].vehicleName,
-                        brandName: products[x].brandName,
-                        engine: products[x].engine,
-                        detailsCondition: products[x].condition,
-                        detailsMillege: products[x].mileage,
-                        detailsTransmission: products[x].transmission,
-                        detailsFuel: products[x].fuel,
-                        skeleton: products[x].skeleton,
-                        registration: products[x].registration,
-                        detailsVehicleManuConditioin:
-                            products[x].manufacture.toString(),
-                        detailsVehicleManufacture:
-                            products[x].manufacture.toString(),
-                      ),
-                    ),
-                  );
-                },
-
-                // here vehicle name
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 5),
-                    Text(
-                      products[x].vehicleName.toString(),
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-
-                    // R 2017 Used
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 8,
-                          backgroundColor: Colors.white,
-                          child: Text(
-                            "R",
-                            style:
-                                TextStyle(fontSize: 12, color: Colors.black87),
-                          ),
-                        ),
-                        SizedBox(width: 5),
-                        Text(
+              onTap: () {
+                print("pressed");
+                print(products[x].id);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AlartDialogClass(
+                      id: products[x].id,
+                      vehicleName: products[x].vehicleName,
+                      brandName: products[x].brandName,
+                      engine: products[x].engine,
+                      detailsCondition: products[x].condition,
+                      detailsMillege: products[x].mileage,
+                      detailsTransmission: products[x].transmission,
+                      detailsFuel: products[x].fuel,
+                      skeleton: products[x].skeleton,
+                      registration: products[x].registration,
+                      detailsVehicleManuConditioin:
                           products[x].manufacture.toString(),
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        Text(
-                          " | ",
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-
-                        //Text(products[x].id.toString()),
-                        Text(
-                          products[x].condition.toString(),
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        Text(
-                          " | ",
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        Text(
-                          products[x].mileage.toString(),
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ],
+                      detailsVehicleManufacture:
+                          products[x].manufacture.toString(),
                     ),
-                    SizedBox(height: 20),
-
-                    Text(
-                      products[x].available,
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium!
-                          .copyWith(fontWeight: FontWeight.w100),
-                    ),
-                  ],
-                ),
-              ),
-              subtitle: Row(
+                  ),
+                );
+              },
+              contentPadding: EdgeInsets.zero,
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Tk .",
-                    style: Theme.of(context).textTheme.titleLarge,
+                    products[x].available,
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
-                  SizedBox(width: 5),
-                  Text(
-                    products[x].price.toString(),
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-
-                  //  SizedBox(width: 100,),
-                  Spacer(),
-
-                  SizedBox(
-                    width: 20,
-                  )
-                ],
-              ),
-              trailing: Column(
-                children: [
-                 
-                  PopupMenuButton(
-                    child: Icon(
-                      Icons.more_vert,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                    onSelected: (value) {
-                      if (value == 'Edit') {
-                        // Open Edit Popup
-                        navigateToEditPage(x);
-                      } else if (value == 'Delete') {
-                        // Open Delete Popup
-                        //deleteById(id);
-                      } else if (value == 'Edit Price') {
-                        navigateToPriceEditPage(x);
-                      } else if (value == 'Booked') {
-                        updateBooked(x);
-                      } else if (value == 'Sold') {
-                        updateSold(x);
-                      }
-                    },
-                    itemBuilder: (context) {
-                      return [
-                        PopupMenuItem(
-                          child: Text("Edit Price"),
-                          value: 'Edit Price',
-                        ),
-                        PopupMenuItem(
-                          child: Text("Booked"),
-                          value: 'Booked',
-                        ),
-                        PopupMenuItem(
-                          child: Text("Sold"),
-                          value: 'Sold',
-                        ),
-                        PopupMenuItem(
-                          child: Text("Edit"),
-                          value: 'Edit',
-                        ),
-                        PopupMenuItem(
-                          child: Text("Availability"),
-                          value: 'Availability',
-                        ),
-                        PopupMenuItem(
-                          child: Text("Advance"),
-                          value: 'Advance',
-                        ),
-                        PopupMenuItem(
-                          child: Text("Delete"),
-                          value: 'Delete',
-                        ),
-                      ];
-                    },
-                  ),
-                  //SizedBox(height: 30),
-
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 10),
-                      child: IconButton(
-                        onPressed: () async {
-                          if (mounted) {
-                            setState(() {});
-                          }
-                          //setState() {});
-                          final uri = Uri.parse(
-                              "https://pilotbazar.com/storage/vehicles/${products[x].imageName}");
-                          final response = await http.get(uri);
-                          final imageBytes = response.bodyBytes;
-                          final tempDirectory = await getTemporaryDirectory();
-                          final tempFile = await File(
-                                  '${tempDirectory.path}/sharedImage.jpg')
-                              .create();
-                          await tempFile.writeAsBytes(imageBytes);
-
-                          await getDetails(products[x].id);
-                          final image = XFile(tempFile.path);
-
-                          print("Length is ");
-                          print(unicTitle.length);
-                          late String info;
-
-                          String message =
-                              "Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 0196-99-444-00\n";
-
-                          if (unicTitle.length != 0) {
-                            info = "\n${unicTitle[0]} : ${details[0]}";
-                            _detailsInProgress = true;
-                            setState(() {});
-                            for (int b = 1; b < unicTitle.length; b++) {
-                              info += "\n${unicTitle[b]} : ${details[b]}";
-                            }
-                          }
-
-                          await Share.shareXFiles([image],
-                              text: _detailsInProgress
-                                  ? message + info
-                                  : message);
-                          //"Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 017xxxxxxxx\n"
-                          unicTitle.clear();
-                          details.clear();
-                          _detailsInProgress = false;
-
-                          setState(() {});
-                        },
-
-                        icon: Icon(
-                          Icons.share,
-                          size: 30,
-                          color: Colors.white,
-                        ),
-
-                        // label: Text("SHARE"),
+                  Row(
+                    children: [
+                      Text(
+                        "Tk .",
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
-                    ),
+                      SizedBox(width: 5),
+                      Text(
+                        products[x].price.toString(),
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+
+                      //  SizedBox(width: 100,),
+                    ],
                   ),
                 ],
+              ),
+              trailing: Expanded(
+                child: CircleAvatar(
+                  backgroundColor: Color.fromARGB(221, 65, 64, 64),
+                  radius: 25,
+                  child: IconButton(
+                    onPressed: () async {
+                      if (mounted) {
+                        setState(() {});
+                      }
+                      //setState() {});
+                      final uri = Uri.parse(
+                          "https://pilotbazar.com/storage/vehicles/${products[x].imageName}");
+                      final response = await http.get(uri);
+                      final imageBytes = response.bodyBytes;
+                      final tempDirectory = await getTemporaryDirectory();
+                      final tempFile =
+                          await File('${tempDirectory.path}/sharedImage.jpg')
+                              .create();
+                      await tempFile.writeAsBytes(imageBytes);
+
+                      await getDetails(products[x].id);
+                      final image = XFile(tempFile.path);
+
+                      print("Length is ");
+                      print(unicTitle.length);
+                      late String info;
+
+                      String message =
+                          "Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 0196-99-444-00\n";
+
+                      if (unicTitle.length != 0) {
+                        info = "\n${unicTitle[0]} : ${details[0]}";
+                        _detailsInProgress = true;
+                        setState(() {});
+                        for (int b = 1; b < unicTitle.length; b++) {
+                          info += "\n${unicTitle[b]} : ${details[b]}";
+                        }
+                      }
+
+                      await Share.shareXFiles([image],
+                          text: _detailsInProgress ? message + info : message);
+                      //"Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 017xxxxxxxx\n"
+                      unicTitle.clear();
+                      details.clear();
+                      _detailsInProgress = false;
+
+                      setState(() {});
+                    },
+
+                    icon: Icon(
+                      Icons.share,
+                      size: 30,
+                      color: Colors.white,
+                    ),
+
+                    // label: Text("SHARE"),
+                  ),
+                ),
               ),
               tileColor: Color(0xFF313131),
             ),
