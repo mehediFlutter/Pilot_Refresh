@@ -44,9 +44,9 @@ class Item extends StatefulWidget {
     super.key,
     required this.id,
     required this.imageName,
-     this.price,
-     this.purchase_price,
-     this.fixed_price,
+    this.price,
+    this.purchase_price,
+    this.fixed_price,
     this.dropdownFontLight,
     this.dropdownFontLightAnswer,
     this.dropdownSeat,
@@ -85,6 +85,7 @@ class _ItemState extends State<Item> {
       child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 0),
           child: Card(
+            color: Color(0xFF313131),
             margin: EdgeInsets.only(bottom: 1, top: 0),
             elevation: 7,
             child: Padding(
@@ -102,7 +103,7 @@ class _ItemState extends State<Item> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => VehicleDetails(
-                                     id: widget.id,
+                                        id: widget.id,
                                         vehicleName: widget.vehiclaName,
                                         detailsVehicleImageName:
                                             "https://pilotbazar.com/storage/vehicles/${widget.imageName}",
@@ -139,80 +140,47 @@ class _ItemState extends State<Item> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                           
                             Text(widget.vehiclaName.toString(),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleSmall!
-                                    .copyWith(fontSize: 14,height: 0)),
+                                style: Theme.of(context).textTheme.bodyLarge),
                             Row(
                               children: [
                                 Text(
                                   "R:",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall!
-                                      .copyWith(fontSize: 13),
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                                 Text(
                                   widget.registration.toString(),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall!
-                                      .copyWith(fontSize: 13),
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 ),
-                                Text(
-                                  "Used",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall!
-                                      .copyWith(fontSize: 13),
-                                ),
+                                Text("Used",
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge),
                                 Text(
                                   " | ",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall!
-                                      .copyWith(fontSize: 13),
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 ),
 
                                 //Text(products[x].id.toString()),
-                                Text(
-                                  "m: ",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall!
-                                      .copyWith(fontSize: 13),
-                                ),
-                                Text(
-                                  " | ",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall!
-                                      .copyWith(fontSize: 13),
-                                ),
-                                Text(
-                                  "321457km",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall!
-                                      .copyWith(fontSize: 13),
-                                ),
+                                Text("m: ",
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge),
+                                Text(" | ",
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge),
+                                Text(widget.nMillage.toString(),
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge),
                               ],
                             ),
                             Row(
                               //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text("Tk: ",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleSmall!
-                                        .copyWith(height: 0)),
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge),
                                 Text(widget.price.toString(),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleSmall!
-                                        .copyWith(height: 0)),
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge),
                                 SizedBox(width: 10),
 
                                 InkWell(
@@ -295,12 +263,11 @@ class _ItemState extends State<Item> {
                                     ];
                                   },
                                 ),
-                              
-                               Text(
-                              widget.id.toString(),
-                              style: TextStyle(color: Colors.white),
-                            ),
-                              
+
+                                Text(
+                                  widget.id.toString(),
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ],
                             ),
                           ],
@@ -347,38 +314,38 @@ class _ItemState extends State<Item> {
           //         children: [
           //           // product name
           //           Text(widget.vehiclaName.toString(),
-          //               style: Theme.of(context).textTheme.bodySmall),
+          //               style: Theme.of(context).textTheme.bodyLarge),
           //           Row(
           //             children: [
           //               Text(
           //                 "R:",
-          //                 style: Theme.of(context).textTheme.bodySmall,
+          //                 style: Theme.of(context).textTheme.bodyLarge,
           //               ),
           //               Text(
           //                 widget.registration.toString(),
-          //                 style: Theme.of(context).textTheme.bodySmall,
+          //                 style: Theme.of(context).textTheme.bodyLarge,
           //               ),
           //               Text(
           //                 "",
-          //                 style: Theme.of(context).textTheme.bodySmall,
+          //                 style: Theme.of(context).textTheme.bodyLarge,
           //               ),
           //               Text(
           //                 " | ",
-          //                 style: Theme.of(context).textTheme.bodySmall,
+          //                 style: Theme.of(context).textTheme.bodyLarge,
           //               ),
 
           //               //Text(products[x].id.toString()),
           //               Text(
           //                 "fdf",
-          //                 style: Theme.of(context).textTheme.bodySmall,
+          //                 style: Theme.of(context).textTheme.bodyLarge,
           //               ),
           //               Text(
           //                 " | ",
-          //                 style: Theme.of(context).textTheme.bodySmall,
+          //                 style: Theme.of(context).textTheme.bodyLarge,
           //               ),
           //               Text(
           //                 "my write",
-          //                 style: Theme.of(context).textTheme.bodySmall,
+          //                 style: Theme.of(context).textTheme.bodyLarge,
           //               ),
           //             ],
           //           ),
@@ -386,7 +353,7 @@ class _ItemState extends State<Item> {
           //             children: [
           //               Text(
           //                 "Available At (PBL)",
-          //                 style: Theme.of(context).textTheme.bodySmall,
+          //                 style: Theme.of(context).textTheme.bodyLarge,
           //               ),
           //               Spacer(),
           //               InkWell(
@@ -410,7 +377,7 @@ class _ItemState extends State<Item> {
           //               ),
           //               Text(
           //                 "gfg",
-          //                 style: Theme.of(context).textTheme.bodySmall,
+          //                 style: Theme.of(context).textTheme.bodyLarge,
           //               ),
 
           //               // ElevatedButton(
@@ -460,7 +427,7 @@ class _ItemState extends State<Item> {
   navigateToPriceEditPage(int index) {
     final route = MaterialPageRoute(
         builder: (context) => PriceEditScreen(
-              id:widget.id,
+              id: widget.id,
               name: widget.nMillage.toString(),
               price: widget.price.toString(),
               purchase_price: widget.purchase_price,

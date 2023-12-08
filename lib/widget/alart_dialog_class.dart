@@ -81,8 +81,25 @@ class _AlartDialogClassState extends State<AlartDialogClass> {
     if (mounted) {
       setState(() {});
     }
+    print(unicTitle);
+    print(details);
   }
 
+  List<String> featuresTitle = [
+    'Brand : ',
+    'Model : ',
+    'Engine : ',
+    'Condition : ',
+    'Mileage : ',
+    'Transmission : ',
+    'color : ',
+    'Trim & Edition : ',
+    'Fuel : ',
+    'Skeletio : ',
+    'Registration : ',
+    'Grade : ',
+    'Manufacture : '
+  ];
   List featureDetails = [];
 
   @override
@@ -90,6 +107,7 @@ class _AlartDialogClassState extends State<AlartDialogClass> {
     // TODO: implement initState
     super.initState();
     getDetails();
+    featuresTitle;
     featureDetails = [
       widget.brandName ?? '',
       widget.model ?? '-',
@@ -112,41 +130,19 @@ class _AlartDialogClassState extends State<AlartDialogClass> {
     String title,
     String details,
   ) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 15),
-        child: Row(
-          children: [
-            SizedBox(
-              height: 10,
-            ),
-            Expanded(
-                child:
-                    Text(title, style: Theme.of(context).textTheme.bodySmall)),
-            Expanded(
-                child: Text(details,
-                    style: Theme.of(context).textTheme.bodySmall)),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Row(
+        children: [
+          SizedBox(
+            height: 10,
+          ),
+          Text(title, style: Theme.of(context).textTheme.bodySmall),
+          Text(details, style: Theme.of(context).textTheme.bodySmall),
+        ],
       ),
     );
   }
-
-  List<String> featuresTitle = [
-    'Brand : ',
-    'Model : ',
-    'Engine : ',
-    'Condition : ',
-    'Mileage : ',
-    'Transmission : ',
-    'color : ',
-    'Trim & Edition : ',
-    'Fuel : ',
-    'Skeletio : ',
-    'Registration : ',
-    'Grade : ',
-    'Manufacture : '
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -202,42 +198,62 @@ class _AlartDialogClassState extends State<AlartDialogClass> {
           : Expanded(
               child: SingleChildScrollView(
                 child: Column(
+                  
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20),
-                      child: Text(
-                        "Features: ",
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium!
-                            .copyWith(fontWeight: FontWeight.bold),
-                      ),
+                    Text(
+                      "Features: ",
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 5),
-                    ListView.separated(
-                      primary: false,
-                      shrinkWrap: true,
-                      itemCount: featuresTitle.length,
-                      itemBuilder: (context, index) {
-                        return features_unit_left_side(
-                            context,
-                            featuresTitle[index].toString(),
-                            featureDetails[index].toString());
-                      },
-                      separatorBuilder: (BuildContext context, int index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 5),
-                          child: Divider(
-                            height: 8,
-                          ),
-                        );
-                      },
+
+                 
+                       Container(
+                      height: 250,
+                      width: 350,
+                      child: ListView.separated(
+                        primary: false,
+                        shrinkWrap: true,
+                        itemCount: featuresTitle.length,
+                        itemBuilder: (context, index) {
+                          return Expanded(
+                            child: ListTile(
+                              title: Expanded(
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                        child: Text(
+                                      featuresTitle[index].toString(),
+                                      style:
+                                          Theme.of(context).textTheme.bodySmall,
+                                    )),
+                                    Expanded(
+                                        child: Text(
+                                      featureDetails[index].toString(),
+                                      style:
+                                          Theme.of(context).textTheme.bodySmall,
+                                    )),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return Divider(
+                            height: 0,
+                          );
+                        },
+                      ),
                     ),
+              
+
                     SizedBox(height: 20),
                     Padding(
-                      padding: const EdgeInsets.only(left: 20,bottom: 10),
+                      padding: const EdgeInsets.only(left: 20, bottom: 10),
                       child: Text(
                         'Special Features :',
                         style: Theme.of(context)

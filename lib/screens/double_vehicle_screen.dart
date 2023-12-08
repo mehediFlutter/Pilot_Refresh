@@ -209,7 +209,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           //childAspectRatio: 1.0,
-                          mainAxisSpacing: 0.0,
+                          mainAxisSpacing: 2.0,
                           crossAxisSpacing: 0.0,
                         ),
                         controller: _scrollController,

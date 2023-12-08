@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pilot_refresh/screens/auth/login_screen.dart';
+import 'package:pilot_refresh/screens/splash_screen.dart';
 
 class App extends StatefulWidget {
   App({super.key});
@@ -60,23 +61,33 @@ class _AppState extends State<App> {
             titleMedium: TextStyle(
               fontSize: 16,
               fontFamily: "Roboto",
-              fontWeight: FontWeight.w400,
-              color: Color.fromARGB(255, 194, 191, 191),
+              //fontWeight: FontWeight.w400,
+              color: Colors.white,
+              height: 0
             ),
             titleSmall: TextStyle(
               fontSize: 17,
               fontFamily: "Roboto",
-              color: Colors.grey,
+              color: Colors.white,
+               height: 0
             ),
             bodyMedium: TextStyle(
                 fontSize: 16,
                 fontFamily: "Roboto",
                 //fontFamily: "AbhayaLibre",
-                color: Color.fromARGB(255, 226, 221, 221),
+                color: Colors.white,
                 fontWeight: FontWeight.w100),
             bodySmall: TextStyle(
                 height: 0,
                 fontSize: 12,
+                fontFamily: "Roboto",
+                color: Color.fromARGB(255, 226, 221, 221),
+                fontWeight: FontWeight.w100
+                // color: Colors.grey,
+                ),
+            bodyLarge: TextStyle(
+                height: 0,
+                fontSize: 10,
                 fontFamily: "Roboto",
                 color: Color.fromARGB(255, 226, 221, 221),
                 fontWeight: FontWeight.w100
@@ -89,6 +100,6 @@ class _AppState extends State<App> {
                 Colors.blue, // Change this color to your desired cursor color
           ),
         ),
-        home: LoginScreen());
+        home: SplashScreen());
   }
 }

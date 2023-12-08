@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pilot_refresh/screens/auth/new_registration_screen.dart';
+import 'package:pilot_refresh/screens/home_vehicle.dart';
+import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
 
 class NewLoginScreen extends StatefulWidget {
   const NewLoginScreen({super.key});
@@ -21,8 +23,12 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: size.height / 10),
+              SizedBox(height: size.height / 30),
               Image.asset('assets/images/pilot_logo3.png',width: 170,height: 80,fit: BoxFit.cover,),
+                Text(
+              " Do Business with Us",
+              style: TextStyle(color: Colors.black87, fontSize: 13),
+            ),
               SizedBox(height: size.height / 10),
               Theme(
                 data: Theme.of(context).copyWith(
@@ -40,7 +46,7 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                 child: TextField(
                   style: TextStyle(color: Colors.black),
                   decoration: InputDecoration(
-                    labelText: "Mobile No / Email",
+                    labelText: "Mobile No",
                     labelStyle: TextStyle(color: Colors.grey, fontSize: 13),
                   ),
                 ),
@@ -80,7 +86,7 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                 child: TextButton(
                   onPressed: () {},
                   child: Text(
-                    " Forget Password ? ",
+                    " Forgot password ? ",
                     style: TextStyle(color: Colors.black87, fontSize: 13),
                   ),
                 ),
@@ -92,11 +98,13 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                     style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
-                              20.0), // Adjust the value as needed
+                              10.0), // Adjust the value as needed
                         ),
                         backgroundColor:
                             const Color.fromARGB(255, 89, 170, 236)),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>BottomNavBaseScreen()));
+                    },
                     child: Text(
                       "Login",
                       style: TextStyle(color: Colors.white),
@@ -113,7 +121,7 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                             builder: (context) => NewRegistrationScreen()));
                   },
                   child: Text(
-                    "New Register Here",
+                    " Registration",
                     style: TextStyle(color: Colors.black87, fontSize: 13),
                   ),
                 ),

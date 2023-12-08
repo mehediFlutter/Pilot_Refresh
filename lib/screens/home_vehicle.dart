@@ -279,29 +279,91 @@ class _HomeVehicleState extends State<HomeVehicle> {
   }
 
   productList(int x) {
-    return Expanded(
+    return Card(
+      elevation: 20,
+      color: Color(0xFF313131),
       child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Card(
-          elevation: 20,
-          child: ListTile(
-            tileColor: Color(0xFF313131),
-            title: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: InkWell(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Column(
+          children: [
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              tileColor: Color(0xFF313131),
+              title: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: InkWell(
+                  onTap: () {
+                    print(x);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VehicleDetails(
+                          id: products[x].id,
+                          detailsVehicleImageName:
+                              "https://pilotbazar.com/storage/vehicles/${products[x].imageName}",
+                          price: products[x].price,
+                          brandName: products[x].brandName,
+                          vehicleName: products[x].vehicleName,
+                          engine: products[x].engine,
+                          detailsCondition: products[x].condition,
+                          detailsMillege: products[x].mileage,
+                          detailsTransmission: products[x].transmission,
+                          detailsFuel: products[x].fuel,
+                          skeleton: products[x].skeleton,
+                          registration: products[x].registration,
+                          detailsVehicleManuConditioin:
+                              products[x].manufacture.toString(),
+                          detailsVehicleManufacture:
+                              products[x].manufacture.toString(),
+                        ),
+                      ),
+                    );
+                  },
+                  child: searchInProgress
+                      ? Column(
+                          children: [
+                            Text(newSearchProducts[x].id.toString()),
+                            Text(newSearchProducts[x].vehicleName.toString()),
+                          ],
+                        )
+                      : Stack(
+                          children: [
+                            Image.network(
+                                "https://pilotbazar.com/storage/vehicles/${products[x].imageName}"
+                                // width: 90,
+                                // height: 100,
+                                // fit: BoxFit.fill,
+                                ),
+                            // Align(
+                            //   alignment: Alignment.topRight,
+                            //   child: Padding(
+                            //       padding: const EdgeInsets.all(8.0),
+                            //       child: InkWell(
+                            //           onTap: () {
+                            //             navigateToEditPage(x);
+                            //           },
+                            //           child: Image.asset(
+                            //               'assets/images/edit_icon.png'))),
+                            // ),
+                          ],
+                        ),
+                ),
+              ),
+              // subtitle: IconButton(onPressed: (){}, icon: Icon(Icons.home)),
+            ),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: InkWell(
                 onTap: () {
-                  print("Index number is ");
-                  print(x);
+                  print("pressed");
+                  print(products[x].id);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => VehicleDetails(
+                      builder: (context) => AlartDialogClass(
                         id: products[x].id,
-                        detailsVehicleImageName:
-                            "https://pilotbazar.com/storage/vehicles/${products[x].imageName}",
-                        price: products[x].price,
-                        brandName: products[x].brandName,
                         vehicleName: products[x].vehicleName,
+                        brandName: products[x].brandName,
                         engine: products[x].engine,
                         detailsCondition: products[x].condition,
                         detailsMillege: products[x].mileage,
@@ -317,176 +379,152 @@ class _HomeVehicleState extends State<HomeVehicle> {
                     ),
                   );
                 },
-                child: searchInProgress
-                    ? Column(
-                        children: [
-                          Text(newSearchProducts[x].id.toString()),
-                          Text(newSearchProducts[x].vehicleName.toString()),
-                        ],
-                      )
-                    : Stack(
-                        children: [
-                          Image.network(
-                              "https://pilotbazar.com/storage/vehicles/${products[x].imageName}"
-                              // width: 90,
-                              // height: 100,
-                              // fit: BoxFit.fill,
-                              ),
-                          Align(
-                            alignment: Alignment.topRight,
-                            child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: InkWell(
-                                    onTap: () {
-                                      navigateToEditPage(x);
-                                    },
-                                    child: Image.asset(
-                                        'assets/images/edit_icon.png'))),
-                          ),
-                        ],
-                      ),
-              ),
-            ),
-            //"https://pilotbazar.com/storage/vehicles/${products[x].imageName}"
-            subtitle: InkWell(
-              onTap: () {
-                print("pressed");
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AlartDialogClass(
-                      id: products[x].id,
-                      vehicleName: products[x].vehicleName,
-                     
-                      brandName: products[x].brandName,
-                      engine: products[x].engine,
-                      detailsCondition: products[x].condition,
-                      detailsMillege: products[x].mileage,
-                      detailsTransmission: products[x].transmission,
-                      detailsFuel: products[x].fuel,
-                      skeleton: products[x].skeleton,
-                      registration: products[x].registration,
-                      detailsVehicleManuConditioin:
-                          products[x].manufacture.toString(),
-                      detailsVehicleManufacture:
-                          products[x].manufacture.toString(),
+
+                // here vehicle name
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 5),
+                    Text(
+                      products[x].vehicleName.toString(),
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                  ),
-                );
-              },
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+
+                    // R 2017 Used
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 8,
+                          backgroundColor: Colors.white,
+                          child: Text(
+                            "R",
+                            style:
+                                TextStyle(fontSize: 12, color: Colors.black87),
+                          ),
+                        ),
+                        SizedBox(width: 5),
+                        Text(
+                          products[x].manufacture.toString(),
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        Text(
+                          " | ",
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+
+                        //Text(products[x].id.toString()),
+                        Text(
+                          products[x].condition.toString(),
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        Text(
+                          " | ",
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        Text(
+                          products[x].mileage.toString(),
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+
+                    Text(
+                      products[x].available,
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(fontWeight: FontWeight.w100),
+                    ),
+                  ],
+                ),
+              ),
+              subtitle: Row(
                 children: [
                   Text(
-                    products[x].id.toString(),
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    products[x].vehicleName.toString(),
+                    "Tk .",
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Text(
-                        "R: ",
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      Text(
-                        products[x].manufacture.toString(),
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      Text(
-                        " | ",
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-
-                      //Text(products[x].id.toString()),
-                      Text(
-                        products[x].condition.toString(),
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      Text(
-                        " | ",
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      Text(
-                        products[x].mileage.toString(),
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ],
-                  ),
+                  SizedBox(width: 5),
                   Text(
-                    products[x].available,
-                    style: Theme.of(context).textTheme.titleMedium,
+                    products[x].price.toString(),
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  Row(
-                    children: [
-                      Text(
-                        "Tk .",
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      SizedBox(width: 5),
-                      Text(
-                        products[x].price.toString(),
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      Spacer(),
-                      PopupMenuButton(
-                        iconColor: Colors.white,
-                        iconSize: 30,
-                        onSelected: (value) {
-                          if (value == 'Edit') {
-                            // Open Edit Popup
-                            navigateToEditPage(x);
-                          } else if (value == 'Delete') {
-                            // Open Delete Popup
-                            //deleteById(id);
-                          } else if (value == 'Edit Price') {
-                            navigateToPriceEditPage(x);
-                          } else if (value == 'Booked') {
-                            updateBooked(x);
-                          } else if (value == 'Sold') {
-                            updateSold(x);
-                          }
-                        },
-                        itemBuilder: (context) {
-                          return [
-                            PopupMenuItem(
-                              child: Text("Edit Price"),
-                              value: 'Edit Price',
-                            ),
-                            PopupMenuItem(
-                              child: Text("Booked"),
-                              value: 'Booked',
-                            ),
-                            PopupMenuItem(
-                              child: Text("Sold"),
-                              value: 'Sold',
-                            ),
-                            PopupMenuItem(
-                              child: Text("Edit"),
-                              value: 'Edit',
-                            ),
-                            PopupMenuItem(
-                              child: Text("Availability"),
-                              value: 'Availability',
-                            ),
-                            PopupMenuItem(
-                              child: Text("Advance"),
-                              value: 'Advance',
-                            ),
-                            PopupMenuItem(
-                              child: Text("Delete"),
-                              value: 'Delete',
-                            ),
-                          ];
-                        },
-                      ),
-                      ElevatedButton(
+                  SizedBox(
+                    width: 20,
+                  ),
+
+                  //  SizedBox(width: 100,),
+                  Spacer(),
+
+                  SizedBox(
+                    width: 20,
+                  )
+                ],
+              ),
+              trailing: Column(
+                children: [
+                 
+                  PopupMenuButton(
+                    child: Icon(
+                      Icons.more_vert,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                    onSelected: (value) {
+                      if (value == 'Edit') {
+                        // Open Edit Popup
+                        navigateToEditPage(x);
+                      } else if (value == 'Delete') {
+                        // Open Delete Popup
+                        //deleteById(id);
+                      } else if (value == 'Edit Price') {
+                        navigateToPriceEditPage(x);
+                      } else if (value == 'Booked') {
+                        updateBooked(x);
+                      } else if (value == 'Sold') {
+                        updateSold(x);
+                      }
+                    },
+                    itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                          child: Text("Edit Price"),
+                          value: 'Edit Price',
+                        ),
+                        PopupMenuItem(
+                          child: Text("Booked"),
+                          value: 'Booked',
+                        ),
+                        PopupMenuItem(
+                          child: Text("Sold"),
+                          value: 'Sold',
+                        ),
+                        PopupMenuItem(
+                          child: Text("Edit"),
+                          value: 'Edit',
+                        ),
+                        PopupMenuItem(
+                          child: Text("Availability"),
+                          value: 'Availability',
+                        ),
+                        PopupMenuItem(
+                          child: Text("Advance"),
+                          value: 'Advance',
+                        ),
+                        PopupMenuItem(
+                          child: Text("Delete"),
+                          value: 'Delete',
+                        ),
+                      ];
+                    },
+                  ),
+                  //SizedBox(height: 30),
+
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: IconButton(
                         onPressed: () async {
                           if (mounted) {
                             setState(() {});
@@ -533,19 +571,21 @@ class _HomeVehicleState extends State<HomeVehicle> {
                           setState(() {});
                         },
 
-                        child: Icon(
+                        icon: Icon(
                           Icons.share,
-                          size: 20,
+                          size: 30,
+                          color: Colors.white,
                         ),
 
                         // label: Text("SHARE"),
                       ),
-                    ],
+                    ),
                   ),
                 ],
               ),
+              tileColor: Color(0xFF313131),
             ),
-          ),
+          ],
         ),
       ),
     );

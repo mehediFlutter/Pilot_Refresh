@@ -24,6 +24,10 @@ class _NewRegistrationScreenState extends State<NewRegistrationScreen> {
             children: [
               SizedBox(height: size.height/10,),
               Image.asset('assets/images/pilot_logo3.png',width: 170,height: 80,fit: BoxFit.cover,),
+              Text(
+              " Do Business with Us",
+              style: TextStyle(color: Colors.black87, fontSize: 13),
+            ),
 
               SizedBox(height: size.height/15),
               Theme(
@@ -177,7 +181,7 @@ class _NewRegistrationScreenState extends State<NewRegistrationScreen> {
                 height: size.height / 60,
               ),
               Text(
-                "Connect With Us",
+                "Connect with Us",
                 style: TextStyle(color: Colors.black87, fontSize: 13),
               ),
               SizedBox(height: size.height / 50),
@@ -210,7 +214,7 @@ class _NewRegistrationScreenState extends State<NewRegistrationScreen> {
                 style: TextStyle(color: Colors.black87, fontSize: 13),
               ),
               const Text(
-                "Term and privacy policy",
+                "Term and Privacy Policy",
                 style: TextStyle(
                     color: Colors.blue,
                     fontSize: 12,
