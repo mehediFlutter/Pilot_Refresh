@@ -6,14 +6,14 @@ import 'package:pilot_refresh/item_class.dart';
 import 'package:pilot_refresh/product.dart';
 import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
 
-class DoublVehicle extends StatefulWidget {
-  DoublVehicle({super.key});
+class AllVehicle extends StatefulWidget {
+  AllVehicle({super.key});
 
   @override
-  State<DoublVehicle> createState() => _DoublVehicleState();
+  State<AllVehicle> createState() => _AllVehicleState();
 }
 
-class _DoublVehicleState extends State<DoublVehicle> {
+class _AllVehicleState extends State<AllVehicle> {
   @override
   static String imagePath = "https://pilotbazar.com/storage/vehicles/";
   static late int page;
@@ -90,18 +90,12 @@ class _DoublVehicleState extends State<DoublVehicle> {
             purchase_price: e['purchase_price']??'',
            fixed_price: e['fixed_price']??'',
            imageName: e['image']?['name'] ?? '',
-           //registration: e['registration'] ?? '',
-         registration: e['registration'] ?? '',
+           registration: e['registration'] ?? '',
            engine: e['engine']?['translate'][0]?['title'] ?? '',
            brandName: e['brand']?['translate'][0]?['title'] ?? '',
            transmission: e['transmission']?['translate'][0]?['title'] ?? '',
            fuel: e['fuel']?['translate'][0]?['title'] ?? '',
            skeleton: e['skeleton']?['translate'][0]?['title'] ?? '',
-           code: e['code']??'',
-             available:e['available']?['translate'][0]
-                  ?['title'] ??
-              '-',
-              
         ));
       });
 
@@ -156,7 +150,6 @@ class _DoublVehicleState extends State<DoublVehicle> {
         purchase_price: decodedResponse['data'][i]?['purchase_price']??'',
         fixed_price: decodedResponse['data'][i]?['fixed_price']??'',
         imageName: decodedResponse['data'][i]?['image']?['name']??'',
-        // registratin
         registration: decodedResponse['data'][i]?['registration'] ?? '-',
         engine: decodedResponse['data'][i]?['engine']?['translate'][0]?['title']??'',
         brandName: decodedResponse['data'][i]?['brand']?['translate'][0]?['title']??'',
@@ -165,11 +158,6 @@ class _DoublVehicleState extends State<DoublVehicle> {
         fuel: decodedResponse['data'][i]?['fuel']?['translate'][0]?['title']??'',
         skeleton: decodedResponse['data'][i]?['skeleton']?['translate'][0]?
             ['title']??'',
-            code: decodedResponse['data'][i]?['code']??'',
-            available: decodedResponse['data'][i]?['available']?['translate'][0]
-                  ?['title'] ??
-              '',
-              
       ));
     }
     if (decodedResponse['data'] == null) {
@@ -248,11 +236,6 @@ class _DoublVehicleState extends State<DoublVehicle> {
                               model: "",
                               fuel: products[index+j].fuel,
                               skeleton: products[index+j].skeleton,
-                              code: products[index+j].code,
-                              registration: products[index+j].registration,
-                              available: products[index+j].available,
-                              
-                              
 
                               
                             

@@ -53,12 +53,12 @@ class _AppState extends State<App> {
 
           textTheme: TextTheme(
             titleLarge: TextStyle(
-                fontSize: 19.2,
+                fontSize: 17.2,
                 fontFamily: "Roboto",
                 color: Color.fromARGB(255, 226, 221, 221),
                 fontWeight: FontWeight.w500),
             titleMedium: TextStyle(
-              fontSize: 11,
+              fontSize: 10.5,
               fontFamily: "Roboto",
               //fontWeight: FontWeight.w400,
               color: Colors.white,

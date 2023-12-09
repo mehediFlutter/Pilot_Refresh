@@ -1,5 +1,6 @@
 class Product {
   final int? id;
+  final String? code;
   final String? slug;
   final String? vehicleName;
   final String? manufacture;
@@ -29,6 +30,7 @@ class Product {
   Product(
       {this.imageName,
       this.id,
+      this.code,
       this.slug,
       this.vehicleName,
       this.manufacture,

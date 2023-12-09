@@ -6,6 +6,7 @@ import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
 
 class VehicleDetails extends StatefulWidget {
   final int id;
+  final String? code;
   final String? brandName;
   final String? detailsVehicleManufacture;
   final String? detailsVehicleManuConditioin;
@@ -37,6 +38,7 @@ class VehicleDetails extends StatefulWidget {
   const VehicleDetails(
       {super.key,
       required this.id,
+      this.code,
       this.brandName,
       this.detailsVehicleManufacture,
       this.detailsVehicleManuConditioin,
@@ -144,7 +146,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                 SizedBox(height: 5),
                 Container(
                   width: double.infinity,
-                  height: 120,
+                  height: 100,
                   decoration: BoxDecoration(
                       color: const Color.fromARGB(255, 178, 224, 179),
                       borderRadius: BorderRadius.circular(10)),
@@ -160,32 +162,48 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                             .copyWith(color: Colors.black),
                       ),
                     ),
+                    
                     subtitle: Text(
                       "Negotiable | T&C will be applicable",
                       style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          fontSize: 18,
-                          color: Colors.black,
+                          fontSize: 15,
+                          color: Colors.black87,
                           fontWeight: FontWeight.w500),
                     ),
+
                     trailing: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          "Code",
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium!
-                              .copyWith(color: Colors.black, fontSize: 15),
+                        SizedBox(
+                          height: 5,
                         ),
-                        Expanded(
-                            child: Text(
-                          "PS-99",
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium!
-                              .copyWith(color: Colors.black, fontSize: 10),
-                        )),
+                        Text("Code",style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.black,)),
+                        Text(widget.code.toString(),style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.black,)),
+                        
                       ],
                     ),
+                
+                
+                    // trailing: Column(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     Text(
+                    //       "Code",
+                    //       style: Theme.of(context)
+                    //           .textTheme
+                    //           .bodyMedium!
+                    //           .copyWith(color: Colors.black, fontSize: 15),
+                    //     ),
+                    //     Expanded(
+                    //         child: Text(
+                    //       "PS-99",
+                    //       style: Theme.of(context)
+                    //           .textTheme
+                    //           .bodyMedium!
+                    //           .copyWith(color: Colors.black, fontSize: 10),
+                    //     )),
+                    //   ],
+                    // ),
                   ),
                 ),
                 SizedBox(
@@ -211,7 +229,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
 
                 Container(
                   width: double.infinity,
-                  height: size.height/2.7,
+                  height: size.height / 2.7,
                   child: Expanded(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -220,7 +238,9 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(height: size.height/50,),
+                              SizedBox(
+                                height: size.height / 40,
+                              ),
                               features_unit_left_side(context, "Brand : ",
                                   widget.brandName.toString()),
                               features_unit_left_side(
@@ -245,13 +265,14 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                                               .textTheme
                                               .bodyMedium!
                                               .copyWith(fontSize: 12))),
-                                              SizedBox(height: 10,),
-                                              
+                                  SizedBox(
+                                    height: 10,
+                                  ),
                                 ],
                               ),
-                             // SizedBox(height: 15),
-                               features_unit_left_side(context, "Color : ",
-                                    widget.color.toString()),
+                               SizedBox(height: 20),
+                              features_unit_left_side(
+                                  context, "Color : ", widget.color.toString()),
                             ],
                           ),
                         ),
@@ -261,18 +282,17 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                SizedBox(height: size.height/50,),
-                               
+                                SizedBox(
+                                  height: size.height / 50,
+                                ),
                                 features_unit_right_side(
                                     context,
                                     "Trim & Edition : ",
                                     widget.term_and_edition.toString()),
                                 features_unit_right_side(context, "Fuel : ",
                                     widget.detailsFuel.toString()),
-                                features_unit_right_side(
-                                    context,
-                                    "Skeleton  : ",
-                                    widget.skeleton.toString()),
+                                features_unit_right_side(context,
+                                    "Skeleton  : ", widget.skeleton.toString()),
                                 features_unit_right_side(
                                     context,
                                     "Registration :",
@@ -292,14 +312,18 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                     ),
                   ),
                 ),
-                Text(
-                  "Special Features",
-                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        decoration: TextDecoration.underline,
-                        decorationColor:
-                            const Color.fromARGB(255, 175, 173, 173),
+                _getDataInProgress
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : Text(
+                        "Special Features",
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                              decoration: TextDecoration.underline,
+                              decorationColor:
+                                  const Color.fromARGB(255, 175, 173, 173),
+                            ),
                       ),
-                ),
                 Container(
                     width: double.infinity,
                     child: ListView.separated(
@@ -335,7 +359,6 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                         );
                       },
                     )),
-
               ],
             ),
           ),
