@@ -5,6 +5,7 @@ import 'package:http/http.dart';
 import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
 
 class VehicleDetails extends StatefulWidget {
+  final Map? todo;
   final int id;
   final String? code;
   final String? brandName;
@@ -37,6 +38,7 @@ class VehicleDetails extends StatefulWidget {
 
   const VehicleDetails(
       {super.key,
+      this.todo,
       required this.id,
       this.code,
       this.brandName,
@@ -74,6 +76,8 @@ class _VehicleDetailsState extends State<VehicleDetails> {
   bool _getDataInProgress = false;
   List unicTitle = [];
   List details = [];
+  //final todo = widget.todo;
+
   void getDetails() async {
     _getDataInProgress = true;
     if (mounted) {
@@ -107,14 +111,24 @@ class _VehicleDetailsState extends State<VehicleDetails> {
         details[y],
       );
     }
+    
   }
+
+   static Map? todo;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getDetails();
+    todo = widget.todo;
+    if(todo!=null){
+    String name = todo?['vehicleName']??'';
+    print("Name is");
+    print(name);
   }
+  }
+
 
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
@@ -155,7 +169,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                     title: Padding(
                       padding: const EdgeInsets.only(top: 5),
                       child: Text(
-                        "BDT  ${widget.price} Tk",
+                        "BDT  ${todo?['price']??''} Tk",
                         style: Theme.of(context)
                             .textTheme
                             .titleLarge!
@@ -178,7 +192,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                           height: 5,
                         ),
                         Text("Code",style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.black,)),
-                        Text(widget.code.toString(),style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.black,)),
+                        Text(todo?['code']??''.toString(),style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.black,)),
                         
                       ],
                     ),

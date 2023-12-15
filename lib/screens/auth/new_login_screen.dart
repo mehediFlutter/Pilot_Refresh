@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:pilot_refresh/screens/auth/new_registration_screen.dart';
-import 'package:pilot_refresh/screens/home_vehicle.dart';
+import 'package:pilot_refresh/screens/double_vehicle_screen.dart';
 import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
 
 class NewLoginScreen extends StatefulWidget {
@@ -12,7 +15,46 @@ class NewLoginScreen extends StatefulWidget {
 
 class _NewLoginScreenState extends State<NewLoginScreen> {
   String phone = '01969944400';
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+
   @override
+  bool loginInProgress = false;
+  Future<void> loginFunction() async {
+    loginInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    Response response = await post(
+      Uri.parse("https://rm.guideasy.com/api/merchant/login"),
+      headers: {
+        "Accept": "application/vnd.api+json",
+        "Content-Type": "application/vnd.api+json"
+      },
+      body: jsonEncode({
+        "email": _emailController.text,
+        "password": _passwordController.text
+      },)
+    );
+    loginInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
+    print("Status Code is");
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Login Success!!")));
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => BottomNavBaseScreen()),
+          (route) => false);
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Login Faild Try Again!!")));
+    }
+  }
+
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
     return Scaffold(
@@ -24,11 +66,16 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(height: size.height / 30),
-              Image.asset('assets/images/pilot_logo3.png',width: 170,height: 80,fit: BoxFit.cover,),
-                Text(
-              " Do Business with Us",
-              style: TextStyle(color: Colors.black87, fontSize: 13),
-            ),
+              Image.asset(
+                'assets/images/pilot_logo3.png',
+                width: 170,
+                height: 80,
+                fit: BoxFit.cover,
+              ),
+              Text(
+                " Do Business with Us",
+                style: TextStyle(color: Colors.black87, fontSize: 13),
+              ),
               SizedBox(height: size.height / 10),
               Theme(
                 data: Theme.of(context).copyWith(
@@ -44,10 +91,13 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                   ),
                 ),
                 child: TextField(
-                  style: TextStyle(color: Colors.black),
+                  
+                  controller: _emailController,
+                  style: TextStyle(color: Colors.black,fontSize: 17),
                   decoration: InputDecoration(
+                    
                     labelText: "Mobile No",
-                    labelStyle: TextStyle(color: Colors.grey, fontSize: 13),
+                    labelStyle: TextStyle(color: Colors.grey, fontSize: 15),
                   ),
                 ),
               ),
@@ -65,16 +115,17 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                          color: const Color.fromARGB(
-                              255, 243, 237, 237)), // Focused border color
+                        color: const Color.fromARGB(255, 243, 237, 237),
+                      ), // Focused border color
                     ),
                   ),
                 ),
                 child: TextField(
-                  style: TextStyle(color: Colors.black),
+                  controller: _passwordController,
+                  style: TextStyle(color: Colors.black,fontSize: 17),
                   decoration: InputDecoration(
                     labelText: "Password",
-                    labelStyle: TextStyle(color: Colors.grey, fontSize: 13),
+                    labelStyle: TextStyle(color: Colors.grey, fontSize: 15),
                   ),
                 ),
               ),
@@ -94,7 +145,7 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
               SizedBox(height: 15),
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
+                child:loginInProgress?Center(child: CircularProgressIndicator()): ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
@@ -103,7 +154,7 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                         backgroundColor:
                             const Color.fromARGB(255, 89, 170, 236)),
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>BottomNavBaseScreen()));
+                      loginFunction();
                     },
                     child: Text(
                       "Login",
@@ -126,8 +177,10 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: size.height/10,),
-               Text(
+              SizedBox(
+                height: size.height / 10,
+              ),
+              Text(
                 "By signing in your agreeing our",
                 style: TextStyle(color: Colors.black87, fontSize: 13),
               ),
