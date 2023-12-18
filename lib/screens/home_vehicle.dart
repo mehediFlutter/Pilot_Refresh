@@ -50,6 +50,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
     //getDetails(i);
   }
 
+<<<<<<< HEAD
   static List allProductsForSearch = [];
   static List newProductsForSearch = [];
 
@@ -112,6 +113,10 @@ class _HomeVehicleState extends State<HomeVehicle> {
   }
 
   List products = [];
+=======
+  //List products = [];
+  List<Map<String, dynamic>> products = [];
+>>>>>>> 137f4f9c055122fef255f4c1f64b47baf5ac2e32
 
   bool _getProductinProgress = false;
   bool _getNewProductinProgress = false;
@@ -145,6 +150,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
     if (response.statusCode == 200) {
       decodedResponse['data'].forEach((e) {
+<<<<<<< HEAD
         products.add(Product(
           vehicleName: e['translate'][0]['title'],
           id: e['id'],
@@ -165,6 +171,29 @@ class _HomeVehicleState extends State<HomeVehicle> {
           available: e['available']?['translate'][0]?['title'] ?? '',
           code: e['code'] ?? '',
         ));
+=======
+        products.add({
+          'vehicleName': e['translate'][0]['title'],
+          'id': e['id'],
+          'slug': e['slug'] ?? '',
+          'manufacture': e['manufacture'] ?? '',
+          'condition': e['condition']['translate'][0]?['title'] ?? '',
+          'mileage':
+              e['mileage']?['translate'][0]?['title'] ?? 'No mileage data',
+          'price': e['price'] ?? '',
+          'purchase_price': e['purchase_price'] ?? '',
+          'fixed_price': e['fixed_price'] ?? '',
+          'imageName': e['image']?['name'] ?? '',
+          'registration': e['registration'] ?? '',
+          'engine': e['engine']?['translate'][0]?['title'] ?? '',
+          'brandName': e['brand']?['translate'][0]?['title'] ?? '',
+          'transmission': e['transmission']?['translate'][0]?['title'] ?? '',
+          'fuel': e['fuel']?['translate'][0]?['title'] ?? '',
+          'skeleton': e['skeleton']?['translate'][0]?['title'] ?? '',
+          'available': e['available']?['translate'][0]?['title'] ?? '',
+          'code': e['code'] ?? '',
+        });
+>>>>>>> 137f4f9c055122fef255f4c1f64b47baf5ac2e32
       });
 
       x = j + 1;
@@ -194,35 +223,37 @@ class _HomeVehicleState extends State<HomeVehicle> {
     }
 
     for (i; i < decodedResponse['data'].length; i++) {
-      products.add(Product(
-          vehicleName: decodedResponse['data'][i]['translate'][0]['title'],
-          manufacture: decodedResponse['data'][i]['manufacture'],
-          slug: decodedResponse['data'][i]['slug'],
-          id: decodedResponse['data'][i]['id'],
-          condition: decodedResponse['data'][i]['condition']['translate'][0]
-              ['title'],
-          mileage: decodedResponse['data'][i]['mileage']?['translate'][0]
-                  ?['title'] ??
-              'No mileage data',
-          //price here
-          price: decodedResponse['data'][i]['price'] ?? '',
-          purchase_price: decodedResponse['data'][i]?['purchase_price'] ?? '',
-          fixed_price: decodedResponse['data'][i]?['fixed_price'] ?? '',
-          //price end
-          imageName: decodedResponse['data'][i]['image']['name'],
-          registration: decodedResponse['data'][i]['registration'] ?? '-',
-          engine: decodedResponse['data'][i]['engine']['translate'][0]['title'],
-          brandName: decodedResponse['data'][i]['brand']['translate'][0]
-              ['title'],
-          transmission: decodedResponse['data'][i]['transmission']['translate']
-              [0]['title'],
-          fuel: decodedResponse['data'][i]['fuel']['translate'][0]['title'],
-          skeleton: decodedResponse['data'][i]['skeleton']['translate'][0]
-              ['title'],
-          available: decodedResponse['data'][i]?['available']?['translate'][0]
-                  ?['title'] ??
-              '',
-          code: decodedResponse['data'][i]?['code'] ?? ''));
+      // List<Map<String, dynamic>> products = [];
+      products.add({
+        'vehicleName': decodedResponse['data'][i]['translate'][0]['title'],
+        'manufacture': decodedResponse['data'][i]['manufacture'],
+        'slug': decodedResponse['data'][i]['slug'],
+        'id': decodedResponse['data'][i]['id'],
+        'condition': decodedResponse['data'][i]['condition']['translate'][0]
+            ['title'],
+        'mileage': decodedResponse['data'][i]['mileage']?['translate'][0]
+                ?['title'] ??
+            'No mileage data',
+        //price here
+        'price': decodedResponse['data'][i]['price'] ?? '',
+        'purchase_price': decodedResponse['data'][i]?['purchase_price'] ?? '',
+        'fixed_price': decodedResponse['data'][i]?['fixed_price'] ?? '',
+        //price end
+        'imageName': decodedResponse['data'][i]['image']['name'],
+        'registration': decodedResponse['data'][i]['registration'] ?? '-',
+        'engine': decodedResponse['data'][i]['engine']['translate'][0]['title'],
+        'brandName': decodedResponse['data'][i]['brand']['translate'][0]
+            ['title'],
+        'transmission': decodedResponse['data'][i]['transmission']['translate']
+            [0]['title'],
+        'fuel': decodedResponse['data'][i]['fuel']['translate'][0]['title'],
+        'skeleton': decodedResponse['data'][i]['skeleton']['translate'][0]
+            ['title'],
+        'available': decodedResponse['data'][i]?['available']?['translate'][0]
+                ?['title'] ??
+            '',
+        'code': decodedResponse['data'][i]?['code'] ?? ''
+      });
     }
     if (decodedResponse['data'] == null) {
       return;
@@ -373,6 +404,8 @@ class _HomeVehicleState extends State<HomeVehicle> {
                     controller: _scrollController,
                     itemCount: products.length,
                     itemBuilder: (BuildContext context, index) {
+                      final item = products[index + j] as Map;
+                      print(item['vehicleName']);
                       return productList(index + j);
                     },
                     separatorBuilder: (BuildContext context, int index) {
@@ -413,30 +446,32 @@ class _HomeVehicleState extends State<HomeVehicle> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => VehicleDetails(
-                          id: products[x].id,
+
+                          todo: products[x],
+                          id: products[x]['id'],
                           detailsVehicleImageName:
-                              "https://pilotbazar.com/storage/vehicles/${products[x].imageName}",
-                          price: products[x].price,
-                          brandName: products[x].brandName,
-                          vehicleName: products[x].vehicleName,
-                          engine: products[x].engine,
-                          detailsCondition: products[x].condition,
-                          detailsMillege: products[x].mileage,
-                          detailsTransmission: products[x].transmission,
-                          detailsFuel: products[x].fuel,
-                          skeleton: products[x].skeleton,
-                          registration: products[x].registration,
+                              "https://pilotbazar.com/storage/vehicles/${products[x]['imageName']}",
+                         // price: products[x]['price'],
+                          brandName: products[x]['brandName'],
+                          vehicleName: products[x]['vehicleName'],
+                          engine: products[x]['engine'],
+                          detailsCondition: products[x]['condition'],
+                          detailsMillege: products[x]['mileage'],
+                          detailsTransmission: products[x]['transmission'],
+                          detailsFuel: products[x]['fuel'],
+                          skeleton: products[x]['skeleton'],
+                          registration: products[x]['registration'],
                           detailsVehicleManuConditioin:
-                              products[x].manufacture.toString(),
+                              products[x]['manufacture'].toString(),
                           detailsVehicleManufacture:
-                              products[x].manufacture.toString(),
-                          code: products[x].code,
+                              products[x]['manufacture'].toString(),
+                          //code: products[x]['code'],
                         ),
                       ),
                     );
                   },
                   child: Image.network(
-                      "https://pilotbazar.com/storage/vehicles/${products[x].imageName}"
+                      "https://pilotbazar.com/storage/vehicles/${products[x]['imageName']}"
                       // width: 90,
                       // height: 100,
                       // fit: BoxFit.fill,
@@ -450,25 +485,26 @@ class _HomeVehicleState extends State<HomeVehicle> {
                       InkWell(
                         onTap: () {
                           print("pressed");
-                          print(products[x].id);
+                          print(products[x]['id']);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => AlartDialogClass(
-                                id: products[x].id,
-                                vehicleName: products[x].vehicleName,
-                                brandName: products[x].brandName,
-                                engine: products[x].engine,
-                                detailsCondition: products[x].condition,
-                                detailsMillege: products[x].mileage,
-                                detailsTransmission: products[x].transmission,
-                                detailsFuel: products[x].fuel,
-                                skeleton: products[x].skeleton,
-                                registration: products[x].registration,
+                                id: products[x]['id'],
+                                vehicleName: products[x]['vehicleName'],
+                                brandName: products[x]['brandName'],
+                                engine: products[x]['engine'],
+                                detailsCondition: products[x]['condition'],
+                                detailsMillege: products[x]['mileage'],
+                                detailsTransmission: products[x]
+                                    ['transmission'],
+                                detailsFuel: products[x]['fuel'],
+                                skeleton: products[x]['skeleton'],
+                                registration: products[x]['registration'],
                                 detailsVehicleManuConditioin:
-                                    products[x].manufacture.toString(),
+                                    products[x]['manufacture'].toString(),
                                 detailsVehicleManufacture:
-                                    products[x].manufacture.toString(),
+                                    products[x]['manufacture'].toString(),
                               ),
                             ),
                           );
@@ -480,7 +516,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
                           children: [
                             SizedBox(height: 7),
                             Text(
-                              products[x].vehicleName.toString(),
+                              products[x]['vehicleName'].toString(),
                               style: Theme.of(context).textTheme.bodyMedium,
                               overflow: TextOverflow
                                   .ellipsis, // You can adjust this property as needed
@@ -507,7 +543,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
                                 ),
                                 SizedBox(width: 3.5),
                                 Text(
-                                  products[x].registration,
+                                  products[x]['registration'],
                                   style:
                                       Theme.of(context).textTheme.titleMedium,
                                 ),
@@ -519,7 +555,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
                                 //Text(products[x].id.toString()),
                                 Text(
-                                  products[x].condition.toString(),
+                                  products[x]['condition'].toString(),
                                   style:
                                       Theme.of(context).textTheme.titleMedium,
                                 ),
@@ -529,7 +565,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
                                       Theme.of(context).textTheme.titleMedium,
                                 ),
                                 Text(
-                                  products[x].mileage.toString(),
+                                  products[x]['mileage'].toString(),
                                   style:
                                       Theme.of(context).textTheme.titleMedium,
                                 ),
@@ -542,6 +578,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
                       Spacer(),
                       //Popup menu bottom
 
+<<<<<<< HEAD
                       InkWell(
                         onTap: () {
                           
@@ -565,6 +602,45 @@ class _HomeVehicleState extends State<HomeVehicle> {
                                   await getLink(products[x+j].id.toString());
                                   shareDetailsWithOneImage(products[x+j].imageName,products[x+j].vehicleName, products[x+j].manufacture,products[x+j].condition,products[x+j].registration,products[x+j].mileage,products[x+j].price,detailsLink);
                                   
+=======
+                      CircleAvatar(
+                        backgroundColor: Color.fromARGB(221, 65, 64, 64),
+                        radius: 25,
+                        child: Expanded(
+                          child: IconButton(
+                            onPressed: () async {
+                              if (mounted) {
+                                setState(() {});
+                              }
+                              //setState() {});
+                              final uri = Uri.parse(
+                                  "https://pilotbazar.com/storage/vehicles/${products[x]['imageName']}");
+                              final response = await http.get(uri);
+                              final imageBytes = response.bodyBytes;
+                              final tempDirectory =
+                                  await getTemporaryDirectory();
+                              final tempFile = await File(
+                                      '${tempDirectory.path}/sharedImage.jpg')
+                                  .create();
+                              await tempFile.writeAsBytes(imageBytes);
+
+                              await getDetails(products[x]['id']);
+                              final image = XFile(tempFile.path);
+
+                              print("Length is ");
+                              print(unicTitle.length);
+                              late String info;
+
+                              String message =
+                                  "Vehicle Name: ${products[x]['vehicleName']} \nManufacture:  ${products[x]['manufacture']} \nConditiion: ${products[x]['condition']} \nRegistration: ${products[x]['registration']} \nMillage: ${products[x]['mileage']}, \nPrice: ${products[x]['price']} \nOur HotLine Number: 0196-99-444-00\n";
+
+                              if (unicTitle.length != 0) {
+                                info = "\n${unicTitle[0]} : ${details[0]}";
+                                _detailsInProgress = true;
+                                setState(() {});
+                                for (int b = 1; b < unicTitle.length; b++) {
+                                  info += "\n${unicTitle[b]} : ${details[b]}";
+>>>>>>> 137f4f9c055122fef255f4c1f64b47baf5ac2e32
                                 }
                               },
                               itemBuilder: (context) {
@@ -593,25 +669,25 @@ class _HomeVehicleState extends State<HomeVehicle> {
             ListTile(
               onTap: () {
                 print("pressed");
-                print(products[x].id);
+                print(products[x]['id']);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => AlartDialogClass(
-                      id: products[x].id,
-                      vehicleName: products[x].vehicleName,
-                      brandName: products[x].brandName,
-                      engine: products[x].engine,
-                      detailsCondition: products[x].condition,
-                      detailsMillege: products[x].mileage,
-                      detailsTransmission: products[x].transmission,
-                      detailsFuel: products[x].fuel,
-                      skeleton: products[x].skeleton,
-                      registration: products[x].registration,
+                      id: products[x]['id'],
+                      vehicleName: products[x]['vehicleName'],
+                      brandName: products[x]['brandName'],
+                      engine: products[x]['engine'],
+                      detailsCondition: products[x]['condition'],
+                      detailsMillege: products[x]['mileage'],
+                      detailsTransmission: products[x]['transmission'],
+                      detailsFuel: products[x]['fuel'],
+                      skeleton: products[x]['skeleton'],
+                      registration: products[x]['registration'],
                       detailsVehicleManuConditioin:
-                          products[x].manufacture.toString(),
+                          products[x]['manufacture'].toString(),
                       detailsVehicleManufacture:
-                          products[x].manufacture.toString(),
+                          products[x]['manufacture'].toString(),
                     ),
                   ),
                 );
@@ -621,7 +697,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    products[x].available,
+                    products[x]['available'],
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   SizedBox(
@@ -635,7 +711,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
                       ),
                       SizedBox(width: 5),
                       Text(
-                        products[x].price.toString(),
+                        products[x]['price'].toString(),
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
 
@@ -785,14 +861,14 @@ class _HomeVehicleState extends State<HomeVehicle> {
     };
 
     final url =
-        "https://pilotbazar.com/api/merchants/vehicles/products/${products[index].id}/update/booked";
+        "https://pilotbazar.com/api/merchants/vehicles/products/${products[index]['id']}/update/booked";
     final uri = Uri.parse(url);
     final response = await http.put(uri, body: jsonEncode(body), headers: {
       'Content-Type': 'application/vnd.api+json',
       'Accept': 'application/vnd.api+json'
     });
     print(response.statusCode);
-    print(products[index].id);
+    print(products[index]['id']);
 
     if (response.statusCode == 200) {
       print("Succesfully Booked");
@@ -805,14 +881,14 @@ class _HomeVehicleState extends State<HomeVehicle> {
     };
 
     final url =
-        "https://pilotbazar.com/api/merchants/vehicles/products/${products[index].id}/update/sold";
+        "https://pilotbazar.com/api/merchants/vehicles/products/${products[index]['id']}/update/sold";
     final uri = Uri.parse(url);
     final response = await http.put(uri, body: jsonEncode(body), headers: {
       'Content-Type': 'application/vnd.api+json',
       'Accept': 'application/vnd.api+json'
     });
     print(response.statusCode);
-    print(products[index].id);
+    print(products[index]['id']);
 
     if (response.statusCode == 200) {
       print("Succesfully Sold");
@@ -822,13 +898,13 @@ class _HomeVehicleState extends State<HomeVehicle> {
   navigateToEditPage(int index) {
     final route = MaterialPageRoute(
         builder: (context) => EditScreen(
-              id: products[index].id,
-              name: products[index].vehicleName.toString(),
-              price: products[index].price.toString(),
-              manufacture: products[index].manufacture,
-              condition: products[index].condition,
-              registration: products[index].registration,
-              mileage: products[index].mileage,
+              id: products[index]['id'],
+              name: products[index]['vehicleName'].toString(),
+              price: products[index]['price'].toString(),
+              manufacture: products[index]['manufacture'],
+              condition: products[index]['condition'],
+              registration: products[index]['registration'],
+              mileage: products[index]['mileage'],
             ));
     Navigator.push(context, route);
   }
@@ -836,11 +912,11 @@ class _HomeVehicleState extends State<HomeVehicle> {
   navigateToPriceEditPage(int index) {
     final route = MaterialPageRoute(
         builder: (context) => PriceEditScreen(
-              id: products[index].id,
-              name: products[index].vehicleName.toString(),
-              price: products[index].price.toString(),
-              purchase_price: products[index].purchase_price,
-              fixed_price: products[index].fixed_price,
+              id: products[index]['id'],
+              name: products[index]['vehicleName'].toString(),
+              price: products[index]['price'].toString(),
+              purchase_price: products[index]['purchase_price'],
+              fixed_price: products[index]['fixed_price'],
             ));
     Navigator.push(context, route);
   }

@@ -81,6 +81,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
 
     if (response.statusCode == 200) {
       decodedResponse['data'].forEach((e) {
+       //  List<Product> products = [];
         products.add(Product(
           vehicleName: e['translate'][0]?['title'] ?? "",
           id: e['id'] ?? "",
