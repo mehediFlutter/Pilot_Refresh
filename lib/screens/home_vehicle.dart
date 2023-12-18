@@ -9,6 +9,7 @@ import 'package:pilot_refresh/screens/vehicle-details.dart';
 import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
 import 'package:pilot_refresh/widget/alart_dialog_class.dart';
 import 'package:pilot_refresh/widget/end_drawer.dart';
+import 'package:pilot_refresh/widget/image_class.dart';
 import 'package:pilot_refresh/widget/search_bar.dart';
 import 'package:share_plus/share_plus.dart';
 import 'dart:io';
@@ -41,9 +42,71 @@ class _HomeVehicleState extends State<HomeVehicle> {
     setState(() {});
 
     getProduct(page);
+    // getProductForSearch();
     //getDetails(products[0].id);
 
     //getDetails(i);
+  }
+
+  static List allProductsForSearch = [];
+  static List newProductsForSearch = [];
+
+  // ... (rest of your existing code)
+  int f = 1;
+  void getProductForSearch() async {
+    for (f; f < 14; f++) {
+      Response response =
+          await get(Uri.parse("https://pilotbazar.com/api/vehicle?page=$f"));
+      //https://pilotbazar.com/api/vehicle?page=0
+      //https://crud.teamrabbil.com/api/v1/ReadProduct
+      print(response.statusCode);
+      final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
+
+      print(decodedResponse['data']);
+      for (int i = 0; i < decodedResponse['data'].length; i++) {
+        allProductsForSearch.add(Product(
+          vehicleName:
+              decodedResponse['data'][i]?['translate'][0]['title'] ?? '',
+          manufacture: decodedResponse['data'][i]?['manufacture'] ?? '',
+          slug: decodedResponse['data'][i]?['slug'] ?? '',
+          id: decodedResponse['data'][i]['id'] ?? '',
+          condition: decodedResponse['data'][i]?['condition']['translate'][0]
+                  ?['title'] ??
+              '',
+          mileage: decodedResponse['data'][i]?['mileage']['translate'][0]
+                  ?['title'] ??
+              '',
+          price: decodedResponse['data'][i]?['price'] ?? '',
+          imageName: decodedResponse['data'][i]?['image']['name'] ?? '',
+          registration: decodedResponse['data'][i]?['registration'] ?? '-',
+        ));
+      }
+      setState(() {
+        allProductsForSearch;
+      });
+
+      //print(allproducts.toString());
+    }
+  }
+
+  void updateList(String val) {
+    setState(() {
+      searchValue = val; // Update the search term variable
+
+      if (val.isNotEmpty) {
+        newProductsForSearch = List.from(allProductsForSearch);
+      } else {
+        List<String> searchTerms = val.toLowerCase().split(' ');
+
+        newProductsForSearch = allProductsForSearch.where((element) {
+          String combinedText =
+              '${element.vehicleName} ${element.manufacture}'.toLowerCase();
+
+          // Check if all search terms are present in the combined text
+          return searchTerms.every((term) => combinedText.contains(term));
+        }).toList();
+      }
+    });
   }
 
   List products = [];
@@ -81,28 +144,25 @@ class _HomeVehicleState extends State<HomeVehicle> {
     if (response.statusCode == 200) {
       decodedResponse['data'].forEach((e) {
         products.add(Product(
-            vehicleName: e['translate'][0]['title'],
-            id: e['id'],
-            slug: e['slug'] ?? '',
-            manufacture: e['manufacture'] ?? '',
-            condition: e['condition']['translate'][0]?['title'] ?? '',
-            mileage:
-                e['mileage']?['translate'][0]?['title'] ?? 'No mileage data',
-            price: e['price'] ?? '',
-            purchase_price: e['purchase_price'] ?? '',
-            fixed_price: e['fixed_price'] ?? '',
-            imageName: e['image']?['name'] ?? '',
-            registration: e['registration'] ?? '',
-            engine: e['engine']?['translate'][0]?['title'] ?? '',
-            brandName: e['brand']?['translate'][0]?['title'] ?? '',
-            transmission: e['transmission']?['translate'][0]?['title'] ?? '',
-            fuel: e['fuel']?['translate'][0]?['title'] ?? '',
-            skeleton: e['skeleton']?['translate'][0]?['title'] ?? '',
-            available: e['available']?['translate'][0]?['title'] ?? '',
-            code: e['code'] ?? '',
-            
-
-            ));
+          vehicleName: e['translate'][0]['title'],
+          id: e['id'],
+          slug: e['slug'] ?? '',
+          manufacture: e['manufacture'] ?? '',
+          condition: e['condition']['translate'][0]?['title'] ?? '',
+          mileage: e['mileage']?['translate'][0]?['title'] ?? 'No mileage data',
+          price: e['price'] ?? '',
+          purchase_price: e['purchase_price'] ?? '',
+          fixed_price: e['fixed_price'] ?? '',
+          imageName: e['image']?['name'] ?? '',
+          registration: e['registration'] ?? '',
+          engine: e['engine']?['translate'][0]?['title'] ?? '',
+          brandName: e['brand']?['translate'][0]?['title'] ?? '',
+          transmission: e['transmission']?['translate'][0]?['title'] ?? '',
+          fuel: e['fuel']?['translate'][0]?['title'] ?? '',
+          skeleton: e['skeleton']?['translate'][0]?['title'] ?? '',
+          available: e['available']?['translate'][0]?['title'] ?? '',
+          code: e['code'] ?? '',
+        ));
       });
 
       x = j + 1;
@@ -190,6 +250,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
   bool _getDataInProgress = false;
   static List unicTitle = [];
   static List details = [];
+  static List imageLInk = [];
   Future getDetails(int id) async {
     _getDataInProgress = true;
     if (mounted) {
@@ -211,10 +272,14 @@ class _HomeVehicleState extends State<HomeVehicle> {
       unicTitle.add(pair.featureTitle);
       details.add(pair.detailTitles.join(', '));
     }
+
+    // get image link in list
+
     _getDataInProgress = false;
     if (mounted) {
       setState(() {});
     }
+  
     //return unicTitle+details;
   }
 
@@ -235,6 +300,8 @@ class _HomeVehicleState extends State<HomeVehicle> {
         //leading:Image.asset('assets/images/pilot_logo.png',width: 80,height:30,fit: BoxFit.cover,),
         title: SearchBarClass(
           onChanged: (value) {
+            print("print my value");
+            print(value);
             //updateList(value);
           },
         ),
@@ -447,9 +514,6 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
                               await getDetails(products[x].id);
                               final image = XFile(tempFile.path);
-
-                              print("Length is ");
-                              print(unicTitle.length);
                               late String info;
 
                               String message =

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pilot_refresh/screens/auth/auth_utility.dart';
 import 'package:pilot_refresh/screens/auth/new_login_screen.dart';
+import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -18,12 +20,13 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> navigateToLogin() async {
     //final bool isLoggedIn = await AuthUtility.checkIfUserLoggedIn();
+    final bool   isLoggedIn = await AuthUtility.checkIfUserLoggedIn();
 
     Future.delayed(const Duration(seconds: 2)).then((_) =>
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-                builder: (context) =>
+                builder: (context) => isLoggedIn? BottomNavBaseScreen():const
                     NewLoginScreen() /*isLoggedIn? const BottomNavBaseScreen(): const LoginScreen()*/),
             (route) => false));
   }

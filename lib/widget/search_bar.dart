@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class SearchBarClass extends StatefulWidget {
   //final Function? onchangedfunction;
   final Function onChanged;
+  final String? value;
 
-  SearchBarClass({super.key, required this.onChanged});
+  SearchBarClass({super.key, required this.onChanged, this.value});
   @override
   State<SearchBarClass> createState() => _SearchBarClassState();
 }

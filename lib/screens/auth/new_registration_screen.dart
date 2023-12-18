@@ -11,6 +11,11 @@ class NewRegistrationScreen extends StatefulWidget {
 class _NewRegistrationScreenState extends State<NewRegistrationScreen> {
   String phone = '01969944400';
   final websiteUrl = Uri.parse('https://facebook.com');
+  TextEditingController _mobileController = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _companyController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +50,8 @@ class _NewRegistrationScreenState extends State<NewRegistrationScreen> {
                     ),
                   ),
                 ),
-                child: TextField(
+                child: TextFormField(
+                  controller: _mobileController,
                   style: TextStyle(color: Colors.black),
                   decoration: InputDecoration(
                     labelText: "Mobile No / Email ",
@@ -71,7 +77,8 @@ class _NewRegistrationScreenState extends State<NewRegistrationScreen> {
                     ),
                   ),
                 ),
-                child: TextField(
+                child: TextFormField(
+                  controller: _nameController,
                   style: TextStyle(color: Colors.black),
                   decoration: InputDecoration(
                     labelText: "Name",
@@ -97,7 +104,8 @@ class _NewRegistrationScreenState extends State<NewRegistrationScreen> {
                     ),
                   ),
                 ),
-                child: TextField(
+                child: TextFormField(
+                  controller: _companyController,
                   style: TextStyle(color: Colors.black),
                   decoration: InputDecoration(
                     labelText: "Company Name",
@@ -123,7 +131,8 @@ class _NewRegistrationScreenState extends State<NewRegistrationScreen> {
                     ),
                   ),
                 ),
-                child: TextField(
+                child: TextFormField(
+                  controller: _emailController,
                   style: TextStyle(color: Colors.black),
                   decoration: InputDecoration(
                     labelText: "Email",
@@ -151,6 +160,7 @@ class _NewRegistrationScreenState extends State<NewRegistrationScreen> {
                   ),
                 ),
                 child: TextField(
+                  controller: _passwordController,
                   style: TextStyle(color: Colors.black),
                   decoration: InputDecoration(
                     labelText: "Password",
