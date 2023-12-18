@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:pilot_refresh/item_class.dart';
 import 'package:pilot_refresh/product.dart';
+import 'package:pilot_refresh/screens/auth/auth_utility.dart';
+import 'package:pilot_refresh/screens/auth/new_login_screen.dart';
 import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
 
 class DoublVehicle extends StatefulWidget {
@@ -66,7 +68,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
     print(response.statusCode);
     final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
     List<dynamic> vehicleFeatures =
-        decodedResponse['data'][0]?['vehicle_feature']??'';
+        decodedResponse['data'][0]?['vehicle_feature'] ?? '';
     List<FeatureDetailPair> featureDetailPairs =
         extractFeatureDetails(vehicleFeatures);
 
@@ -80,28 +82,26 @@ class _DoublVehicleState extends State<DoublVehicle> {
     if (response.statusCode == 200) {
       decodedResponse['data'].forEach((e) {
         products.add(Product(
-          vehicleName: e['translate'][0]?['title']??"",
-          id: e['id']??"",
-          slug: e['slug']??'',
-          manufacture: e['manufacture']??'',
+          vehicleName: e['translate'][0]?['title'] ?? "",
+          id: e['id'] ?? "",
+          slug: e['slug'] ?? '',
+          manufacture: e['manufacture'] ?? '',
           condition: e['condition']['translate'][0]?['title'] ?? '',
           mileage: e['mileage']?['translate'][0]?['title'] ?? 'No mileage data',
-           price: e['price'] ?? '',
-            purchase_price: e['purchase_price']??'',
-           fixed_price: e['fixed_price']??'',
-           imageName: e['image']?['name'] ?? '',
-           //registration: e['registration'] ?? '',
-         registration: e['registration'] ?? '',
-           engine: e['engine']?['translate'][0]?['title'] ?? '',
-           brandName: e['brand']?['translate'][0]?['title'] ?? '',
-           transmission: e['transmission']?['translate'][0]?['title'] ?? '',
-           fuel: e['fuel']?['translate'][0]?['title'] ?? '',
-           skeleton: e['skeleton']?['translate'][0]?['title'] ?? '',
-           code: e['code']??'',
-             available:e['available']?['translate'][0]
-                  ?['title'] ??
-              '-',
-              
+          price: e['price'] ?? '',
+          purchase_price: e['purchase_price'] ?? '',
+          fixed_price: e['fixed_price'] ?? '',
+          imageName: e['image']?['name'] ?? '',
+          //registration: e['registration'] ?? '',
+          registration: e['registration'] ?? '',
+          engine: e['engine']?['translate'][0]?['title'] ?? '',
+          brandName: e['brand']?['translate'][0]?['title'] ?? '',
+          transmission: e['transmission']?['translate'][0]?['title'] ?? '',
+          fuel: e['fuel']?['translate'][0]?['title'] ?? '',
+          skeleton: e['skeleton']?['translate'][0]?['title'] ?? '',
+          code: e['code'] ?? '',
+          available: e['available']?['translate'][0]?['title'] ?? '-',
+           
         ));
       });
 
@@ -111,6 +111,56 @@ class _DoublVehicleState extends State<DoublVehicle> {
     if (mounted) {
       setState(() {});
     }
+  }
+
+  // Alart dialog function/methode
+  void _showAlertDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          // title: Text(''),
+          content: Padding(
+            padding: const EdgeInsets.only(left: 25),
+            child: Text(
+              'Do you want to logout?',
+              style: TextStyle(color: Colors.black87, fontSize: 15),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Row(
+                children: [
+                  Spacer(),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text('No'),
+                  ),
+                  SizedBox(width: 5),
+                  TextButton(
+                    onPressed: () async {
+                      await AuthUtility.clearUserInfo();
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => NewLoginScreen()),
+                          (route) => false);
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Successfully Logout")));
+                    },
+                    child: Text('Yes'),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   bool isLoading = false;
@@ -143,33 +193,41 @@ class _DoublVehicleState extends State<DoublVehicle> {
 
     for (i; i < decodedResponse['data'].length; i++) {
       products.add(Product(
-        vehicleName: decodedResponse['data'][i]['translate'][0]?['title']??"",
-        manufacture: decodedResponse['data'][i]?['manufacture']??'',
-        slug: decodedResponse['data'][i]?['slug']??'',
-        id: decodedResponse['data'][i]?['id']??'',
-        condition: decodedResponse['data'][i]?['condition']?['translate'][0]?
-            ['title']??'',
+        vehicleName: decodedResponse['data'][i]['translate'][0]?['title'] ?? "",
+        manufacture: decodedResponse['data'][i]?['manufacture'] ?? '',
+        slug: decodedResponse['data'][i]?['slug'] ?? '',
+        id: decodedResponse['data'][i]?['id'] ?? '',
+        condition: decodedResponse['data'][i]?['condition']?['translate'][0]
+                ?['title'] ??
+            '',
         mileage: decodedResponse['data'][i]['mileage']?['translate'][0]
                 ?['title'] ??
             'No mileage data',
-        price: decodedResponse['data'][i]?['price']??'',
-        purchase_price: decodedResponse['data'][i]?['purchase_price']??'',
-        fixed_price: decodedResponse['data'][i]?['fixed_price']??'',
-        imageName: decodedResponse['data'][i]?['image']?['name']??'',
+        price: decodedResponse['data'][i]?['price'] ?? '',
+        purchase_price: decodedResponse['data'][i]?['purchase_price'] ?? '',
+        fixed_price: decodedResponse['data'][i]?['fixed_price'] ?? '',
+        imageName: decodedResponse['data'][i]?['image']?['name'] ?? '',
         // registratin
         registration: decodedResponse['data'][i]?['registration'] ?? '-',
-        engine: decodedResponse['data'][i]?['engine']?['translate'][0]?['title']??'',
-        brandName: decodedResponse['data'][i]?['brand']?['translate'][0]?['title']??'',
-        transmission: decodedResponse['data'][i]?['transmission']?['translate'][0]?
-            ['title']??'',
-        fuel: decodedResponse['data'][i]?['fuel']?['translate'][0]?['title']??'',
-        skeleton: decodedResponse['data'][i]?['skeleton']?['translate'][0]?
-            ['title']??'',
-            code: decodedResponse['data'][i]?['code']??'',
-            available: decodedResponse['data'][i]?['available']?['translate'][0]
-                  ?['title'] ??
-              '',
-              
+        engine: decodedResponse['data'][i]?['engine']?['translate'][0]
+                ?['title'] ??
+            '',
+        brandName: decodedResponse['data'][i]?['brand']?['translate'][0]
+                ?['title'] ??
+            '',
+        transmission: decodedResponse['data'][i]?['transmission']?['translate']
+                [0]?['title'] ??
+            '',
+        fuel: decodedResponse['data'][i]?['fuel']?['translate'][0]?['title'] ??
+            '',
+        skeleton: decodedResponse['data'][i]?['skeleton']?['translate'][0]
+                ?['title'] ??
+            '',
+        code: decodedResponse['data'][i]?['code'] ?? '',
+        available: decodedResponse['data'][i]?['available']?['translate'][0]
+                ?['title'] ??
+            '',
+            detailsLink: decodedResponse['message']
       ));
     }
     if (decodedResponse['data'] == null) {
@@ -207,9 +265,16 @@ class _DoublVehicleState extends State<DoublVehicle> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
         child: Scaffold(
-         backgroundColor: Color(0xFF313131),
+            backgroundColor: Color(0xFF313131),
             appBar: AppBar(
               title: Text(page.toString()),
+              actions: [
+                IconButton(
+                    onPressed: () async {
+                      _showAlertDialog(context);
+                    },
+                    icon: Icon(Icons.logout))
+              ],
             ),
             body: _getProductinProgress
                 ? Center(
@@ -230,40 +295,42 @@ class _DoublVehicleState extends State<DoublVehicle> {
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: Item(
-                              id: products[index+j].id!,
-                              imageName: products[index+j].imageName.toString(),
-                              price: products[index+j].price.toString(),
-                              purchase_price: products[index+j].purchase_price,
-                              fixed_price: products[index+j].fixed_price,
-                              featureSeat: featureUnicTitle[index+j].toString(),
+                              id: products[index + j].id!,
+                              imageName:
+                                  products[index + j].imageName.toString(),
+                              price: products[index + j].price.toString(),
+                              purchase_price:
+                                  products[index + j].purchase_price,
+                              fixed_price: products[index + j].fixed_price,
+                              featureSeat:
+                                  featureUnicTitle[index + j].toString(),
                               featureSeatDetails:
-                                  featureDetails[index+j].toString(),
-                              vehiclaName: products[index+j].vehicleName,
-                              manufacture: products[index+j].manufacture,
-                              condition: products[index+j].condition,
-                              nMillage: products[index+j].mileage,
-                              brandName: products[index+j].brandName,
-                              engine: products[index+j].engine,
-                              transmission: products[index+j].transmission,
+                                  featureDetails[index + j].toString(),
+                              vehiclaName: products[index + j].vehicleName,
+                              manufacture: products[index + j].manufacture,
+                              condition: products[index + j].condition,
+                              nMillage: products[index + j].mileage,
+                              brandName: products[index + j].brandName,
+                              engine: products[index + j].engine,
+                              transmission: products[index + j].transmission,
                               model: "",
-                              fuel: products[index+j].fuel,
-                              skeleton: products[index+j].skeleton,
-                              code: products[index+j].code,
-                              registration: products[index+j].registration,
-                              available: products[index+j].available,
-                              
-                              
+                              fuel: products[index + j].fuel,
+                              skeleton: products[index + j].skeleton,
+                              code: products[index + j].code,
+                              registration: products[index + j].registration,
+                              available: products[index + j].available,
+                              detailsLink: products[index+j].detailsLink,
 
-                              
-                            
                               //dropdownFontLight: products[index+j],
                             ),
                           );
                         },
                       ),
                       Visibility(
-                      visible: _getNewProductinProgress,
-                       child: Align( alignment: Alignment.bottomCenter, child: CircularProgressIndicator())),
+                          visible: _getNewProductinProgress,
+                          child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: CircularProgressIndicator())),
                     ],
                   )),
       ),

@@ -19,6 +19,7 @@ class Product {
     final String? model;
 
 
+
   // productCode,
   // image,
   // unitPrice,
@@ -46,6 +47,7 @@ class Product {
     this.registration,
     this.grede,
     this.model,
+  
     // required this.productCode,
     // required this.image,
     // required this.unitPrice,

@@ -94,7 +94,7 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                   ),
                   child: TextFormField(
                     controller: _mobileController,
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.black,fontSize: 15),
                     decoration: InputDecoration(
                       labelText: "Mobile No",
                       labelStyle: TextStyle(color: Colors.grey, fontSize: 13),
@@ -128,7 +128,7 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                   ),
                   child: TextFormField(
                     controller: _passwordController,
-                    style: TextStyle(color: Colors.black),
+                     style: TextStyle(color: Colors.black,fontSize: 15),
                     decoration: InputDecoration(
                       labelText: "Password",
                       labelStyle: TextStyle(color: Colors.grey, fontSize: 13),

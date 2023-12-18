@@ -32,6 +32,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
   static List newSearchProducts = [];
   String searchValue = '';
   bool searchInProgress = false;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -42,6 +43,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
     setState(() {});
 
     getProduct(page);
+
     // getProductForSearch();
     //getDetails(products[0].id);
 
@@ -251,6 +253,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
   static List unicTitle = [];
   static List details = [];
   static List imageLInk = [];
+
   Future getDetails(int id) async {
     _getDataInProgress = true;
     if (mounted) {
@@ -279,10 +282,58 @@ class _HomeVehicleState extends State<HomeVehicle> {
     if (mounted) {
       setState(() {});
     }
-  
+
     //return unicTitle+details;
   }
+  static  String? detailsLink;
 
+  Future<void> shareDetailsWithOneImage(String ImageName,vehicleName, manufacture,condition,registration,mileage,price,detailsLink) async {
+    if (mounted) {
+      setState(() {});
+    }
+    //setState() {});
+    final uri = Uri.parse(
+        "https://pilotbazar.com/storage/vehicles/$ImageName");
+    final response = await http.get(uri);
+    final imageBytes = response.bodyBytes;
+    final tempDirectory = await getTemporaryDirectory();
+    final tempFile =
+        await File('${tempDirectory.path}/sharedImage.jpg').create();
+    await tempFile.writeAsBytes(imageBytes);
+
+    //await getDetails(widget.id);
+    final image = XFile(tempFile.path);
+    late String info;
+
+    String message =
+       "Vehicle Name:$vehicleName  \nManufacture:$manufacture   \nConditiion:$condition  \nRegistration:$registration  \nMillage:$mileage  \nPrice:$price \nSee more\n$detailsLink ";
+
+    if (unicTitle.length != 0) {
+      info = "\n${unicTitle[0]} : ${details[0]}";
+      _detailsInProgress = true;
+      setState(() {});
+      for (int b = 1; b < unicTitle.length; b++) {
+        info += "\n${unicTitle[b]} : ${details[b]}";
+      }
+    }
+    await Share.shareXFiles([image],
+        text: _detailsInProgress ? message + info : message);
+    //"Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 017xxxxxxxx\n"
+    unicTitle.clear();
+    details.clear();
+    _detailsInProgress = false;
+
+    setState(() {});
+  }
+    Future getLink(String id) async {
+    Response response1 = await get(Uri.parse(
+        "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
+    final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
+    detailsLink = decodedResponse1['message'];
+    setState(() {});
+    print(detailsLink);
+    
+  }
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -491,62 +542,44 @@ class _HomeVehicleState extends State<HomeVehicle> {
                       Spacer(),
                       //Popup menu bottom
 
-                      CircleAvatar(
-                        backgroundColor: Color.fromARGB(221, 65, 64, 64),
-                        radius: 25,
-                        child: Expanded(
-                          child: IconButton(
-                            onPressed: () async {
-                              if (mounted) {
-                                setState(() {});
-                              }
-                              //setState() {});
-                              final uri = Uri.parse(
-                                  "https://pilotbazar.com/storage/vehicles/${products[x].imageName}");
-                              final response = await http.get(uri);
-                              final imageBytes = response.bodyBytes;
-                              final tempDirectory =
-                                  await getTemporaryDirectory();
-                              final tempFile = await File(
-                                      '${tempDirectory.path}/sharedImage.jpg')
-                                  .create();
-                              await tempFile.writeAsBytes(imageBytes);
-
-                              await getDetails(products[x].id);
-                              final image = XFile(tempFile.path);
-                              late String info;
-
-                              String message =
-                                  "Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 0196-99-444-00\n";
-
-                              if (unicTitle.length != 0) {
-                                info = "\n${unicTitle[0]} : ${details[0]}";
-                                _detailsInProgress = true;
-                                setState(() {});
-                                for (int b = 1; b < unicTitle.length; b++) {
-                                  info += "\n${unicTitle[b]} : ${details[b]}";
+                      InkWell(
+                        onTap: () {
+                          
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: Color.fromARGB(221, 65, 64, 64),
+                          radius: 25,
+                          child: Expanded(
+                            child: PopupMenuButton(
+                              child: Icon(
+                                Icons.share,
+                                color: Colors.white,
+                                size: 25,
+                              ),
+                              onSelected: (value)async {
+                                if (value == 'image') {
+                                 
+                                  sendWhatsImage(products[x+j].id);
+                                  
+                                } else if (value == 'details') {
+                                  await getLink(products[x+j].id.toString());
+                                  shareDetailsWithOneImage(products[x+j].imageName,products[x+j].vehicleName, products[x+j].manufacture,products[x+j].condition,products[x+j].registration,products[x+j].mileage,products[x+j].price,detailsLink);
+                                  
                                 }
-                              }
-
-                              await Share.shareXFiles([image],
-                                  text: _detailsInProgress
-                                      ? message + info
-                                      : message);
-                              //"Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 017xxxxxxxx\n"
-                              unicTitle.clear();
-                              details.clear();
-                              _detailsInProgress = false;
-
-                              setState(() {});
-                            },
-
-                            icon: Icon(
-                              Icons.share,
-                              size: 30,
-                              color: Colors.white,
+                              },
+                              itemBuilder: (context) {
+                                return [
+                                  PopupMenuItem(
+                                    child: Text("Share One Image"),
+                                    value: 'details',
+                                  ),
+                                  PopupMenuItem(
+                                    child: Text("Share All Image"),
+                                    value: 'image',
+                                  ),
+                                ];
+                              },
                             ),
-
-                            // label: Text("SHARE"),
                           ),
                         ),
                       ),
@@ -678,6 +711,73 @@ class _HomeVehicleState extends State<HomeVehicle> {
   }
 
   static int j = x;
+
+
+
+
+  static List showImageList = [];
+  late String ImageLink;
+  late List ImageLinkList = [];
+  bool _shareAllImageInProgress=false;
+
+  Future<void> sendWhatsImage(int id) async {
+    _shareAllImageInProgress=true;
+    try {
+      Response response1 = await get(Uri.parse(
+          "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
+      print(response1.statusCode);
+      final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
+
+      for (int b = 0; b < decodedResponse1['payload']['gallery'].length; b++) {
+        ImageLink = decodedResponse1['payload']["gallery"][b]?['name'] ?? '';
+        ImageLinkList.add(ImageLink);
+      }
+
+      print("From List Image Links are");
+      for (int c = 0; c < ImageLinkList.length; c++) {
+        print(ImageLinkList[c]);
+      }
+
+      List<XFile> showImageList = [];
+      for (int y = 0; y < ImageLinkList.length; y++) {
+        final uri = Uri.parse(
+            "https://pilotbazar.com/storage/galleries/${ImageLinkList[y]}");
+        final response = await http.get(uri);
+        final imageBytes = response.bodyBytes;
+        final tempDirectory = await getTemporaryDirectory();
+        print("hello");
+        final tempFile = await File('${tempDirectory.path}/sharedImage$y.jpg')
+            .writeAsBytes(imageBytes);
+
+        final image = XFile(tempFile.path);
+        showImageList.add(image);
+      }
+
+      print("Length is Unic title");
+      print(unicTitle.length);
+      late String info;
+
+      if (showImageList.isNotEmpty) {
+        // Share all images with text
+        await Share.shareXFiles(
+          showImageList.map((image) => image as XFile).toList(),
+        );
+
+        // Clear lists and reset state
+        unicTitle.clear();
+        details.clear();
+        ImageLinkList.clear();
+        showImageList.clear();
+        _detailsInProgress = false;
+
+        setState(() {});
+      } else {
+        print("No images to share.");
+      }
+    } catch (error) {
+      print("Error: $error");
+    }
+  }
 
   void updateBooked(int index) async {
     final body = {

@@ -19,6 +19,7 @@ class Product {
   final String? transmission;
   final String? fuel;
   final String? skeleton;
+  final String? detailsLink;
 
   // productCode,
   // image,
@@ -48,6 +49,7 @@ class Product {
       this.transmission,
       this.fuel,
       this.skeleton,
+      this.detailsLink,
       // required this.productCode,
       // required this.image,
       // required this.unitPrice,

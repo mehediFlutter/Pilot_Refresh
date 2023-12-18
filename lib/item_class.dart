@@ -15,6 +15,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+
 class Item extends StatefulWidget {
   final int id;
   final String? code;
@@ -46,6 +47,7 @@ class Item extends StatefulWidget {
   final String? skeleton;
   final String? transmission;
   final String? termAndCondition;
+  final String? detailsLink;
   Item({
     super.key,
     required this.id,
@@ -78,6 +80,7 @@ class Item extends StatefulWidget {
     this.fuel,
     this.skeleton,
     this.termAndCondition,
+    this.detailsLink,
   });
 
   @override
@@ -88,11 +91,23 @@ class _ItemState extends State<Item> {
   // yVjInK9erYHC0iHW9ehY8c6J4y79fbNzCEIWtZvQ.jpg
   //https://pilotbazar.com/storage/vehicles/
   late int id;
+  late String detailsLink;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     id = widget.id ?? 0;
+    getLink();
+  }
+
+  Future getLink() async {
+    Response response1 = await get(Uri.parse(
+        "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
+    final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
+    detailsLink = decodedResponse1['message'];
+    print(detailsLink);
+    setState(() {});
   }
 
   bool _detailsInProgress = false;
@@ -115,6 +130,9 @@ class _ItemState extends State<Item> {
     //https://crud.teamrabbil.com/api/v1/ReadProduct
     print(response.statusCode);
     final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
+    detailsLink = decodedResponse['message'];
+    setState(() {});
+
     List<dynamic> vehicleFeatures =
         decodedResponse['payload']['vehicle_feature'];
 
@@ -178,7 +196,7 @@ class _ItemState extends State<Item> {
       late String info;
 
       String message =
-          "Vehicle Name: ${widget.vehiclaName} \nManufacture:  ${widget.manufacture} \nCondition: ${widget.condition} \nRegistration: ${widget.registration} \nMileage: ${widget.nMillage}, \nPrice: ${widget.price} \nOur HotLine Number: 0196-99-444-00\n";
+          "Vehicle Name: ${widget.vehiclaName} \nManufacture:  ${widget.manufacture} \nCondition: ${widget.condition} \nRegistration: ${widget.registration} \nMileage: ${widget.nMillage}, \nPrice: ${widget.price} \nOur HotLine Number: 0196-99-444-00\n \n See Details \n";
 
       if (unicTitle.length != 0) {
         info = "\n${unicTitle[0]} : ${details[0]}";
@@ -230,7 +248,7 @@ class _ItemState extends State<Item> {
     late String info;
 
     String message =
-        "Vehicle Name: ${widget.vehiclaName} \nManufacture:  ${widget..manufacture} \nConditiion: ${widget.condition} \nRegistration: ${widget.registration} \nMillage: ${widget.nMillage}, \nPrice: ${widget.price} \nOur HotLine Number: 0196-99-444-00\n \n Show More https://pilotbazar.com/vehicles/toyota-land-cruiser-prado-2015657ffea990eee/details";
+        "Vehicle Name: ${widget.vehiclaName} \nManufacture:  ${widget..manufacture} \nConditiion: ${widget.condition} \nRegistration: ${widget.registration} \nMillage: ${widget.nMillage}, \nPrice: ${widget.price} \nOur HotLine Number: 0196-99-444-00\n \n Show More\n $detailsLink";
 
     if (unicTitle.length != 0) {
       info = "\n${unicTitle[0]} : ${details[0]}";
@@ -434,7 +452,7 @@ class _ItemState extends State<Item> {
                                           },
                                           itemBuilder: (context) {
                                             return [
-                                                PopupMenuItem(
+                                              PopupMenuItem(
                                                 child: Text("Share One Image"),
                                                 value: 'details',
                                               ),
@@ -442,7 +460,6 @@ class _ItemState extends State<Item> {
                                                 child: Text("Share All Image"),
                                                 value: 'image',
                                               ),
-                                            
                                             ];
                                           },
                                         ),
