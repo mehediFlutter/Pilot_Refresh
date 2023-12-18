@@ -50,7 +50,6 @@ class _HomeVehicleState extends State<HomeVehicle> {
     //getDetails(i);
   }
 
-<<<<<<< HEAD
   static List allProductsForSearch = [];
   static List newProductsForSearch = [];
 
@@ -113,10 +112,6 @@ class _HomeVehicleState extends State<HomeVehicle> {
   }
 
   List products = [];
-=======
-  //List products = [];
-  List<Map<String, dynamic>> products = [];
->>>>>>> 137f4f9c055122fef255f4c1f64b47baf5ac2e32
 
   bool _getProductinProgress = false;
   bool _getNewProductinProgress = false;
@@ -150,7 +145,6 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
     if (response.statusCode == 200) {
       decodedResponse['data'].forEach((e) {
-<<<<<<< HEAD
         products.add(Product(
           vehicleName: e['translate'][0]['title'],
           id: e['id'],
@@ -171,29 +165,6 @@ class _HomeVehicleState extends State<HomeVehicle> {
           available: e['available']?['translate'][0]?['title'] ?? '',
           code: e['code'] ?? '',
         ));
-=======
-        products.add({
-          'vehicleName': e['translate'][0]['title'],
-          'id': e['id'],
-          'slug': e['slug'] ?? '',
-          'manufacture': e['manufacture'] ?? '',
-          'condition': e['condition']['translate'][0]?['title'] ?? '',
-          'mileage':
-              e['mileage']?['translate'][0]?['title'] ?? 'No mileage data',
-          'price': e['price'] ?? '',
-          'purchase_price': e['purchase_price'] ?? '',
-          'fixed_price': e['fixed_price'] ?? '',
-          'imageName': e['image']?['name'] ?? '',
-          'registration': e['registration'] ?? '',
-          'engine': e['engine']?['translate'][0]?['title'] ?? '',
-          'brandName': e['brand']?['translate'][0]?['title'] ?? '',
-          'transmission': e['transmission']?['translate'][0]?['title'] ?? '',
-          'fuel': e['fuel']?['translate'][0]?['title'] ?? '',
-          'skeleton': e['skeleton']?['translate'][0]?['title'] ?? '',
-          'available': e['available']?['translate'][0]?['title'] ?? '',
-          'code': e['code'] ?? '',
-        });
->>>>>>> 137f4f9c055122fef255f4c1f64b47baf5ac2e32
       });
 
       x = j + 1;
@@ -578,7 +549,6 @@ class _HomeVehicleState extends State<HomeVehicle> {
                       Spacer(),
                       //Popup menu bottom
 
-<<<<<<< HEAD
                       InkWell(
                         onTap: () {
                           
@@ -602,45 +572,6 @@ class _HomeVehicleState extends State<HomeVehicle> {
                                   await getLink(products[x+j].id.toString());
                                   shareDetailsWithOneImage(products[x+j].imageName,products[x+j].vehicleName, products[x+j].manufacture,products[x+j].condition,products[x+j].registration,products[x+j].mileage,products[x+j].price,detailsLink);
                                   
-=======
-                      CircleAvatar(
-                        backgroundColor: Color.fromARGB(221, 65, 64, 64),
-                        radius: 25,
-                        child: Expanded(
-                          child: IconButton(
-                            onPressed: () async {
-                              if (mounted) {
-                                setState(() {});
-                              }
-                              //setState() {});
-                              final uri = Uri.parse(
-                                  "https://pilotbazar.com/storage/vehicles/${products[x]['imageName']}");
-                              final response = await http.get(uri);
-                              final imageBytes = response.bodyBytes;
-                              final tempDirectory =
-                                  await getTemporaryDirectory();
-                              final tempFile = await File(
-                                      '${tempDirectory.path}/sharedImage.jpg')
-                                  .create();
-                              await tempFile.writeAsBytes(imageBytes);
-
-                              await getDetails(products[x]['id']);
-                              final image = XFile(tempFile.path);
-
-                              print("Length is ");
-                              print(unicTitle.length);
-                              late String info;
-
-                              String message =
-                                  "Vehicle Name: ${products[x]['vehicleName']} \nManufacture:  ${products[x]['manufacture']} \nConditiion: ${products[x]['condition']} \nRegistration: ${products[x]['registration']} \nMillage: ${products[x]['mileage']}, \nPrice: ${products[x]['price']} \nOur HotLine Number: 0196-99-444-00\n";
-
-                              if (unicTitle.length != 0) {
-                                info = "\n${unicTitle[0]} : ${details[0]}";
-                                _detailsInProgress = true;
-                                setState(() {});
-                                for (int b = 1; b < unicTitle.length; b++) {
-                                  info += "\n${unicTitle[b]} : ${details[b]}";
->>>>>>> 137f4f9c055122fef255f4c1f64b47baf5ac2e32
                                 }
                               },
                               itemBuilder: (context) {
