@@ -7,6 +7,8 @@ import 'package:pilot_refresh/product.dart';
 import 'package:pilot_refresh/screens/auth/auth_utility.dart';
 import 'package:pilot_refresh/screens/auth/new_login_screen.dart';
 import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
+import 'package:pilot_refresh/widget/end_drawer.dart';
+import 'package:pilot_refresh/widget/search_bar.dart';
 
 class DoublVehicle extends StatefulWidget {
   DoublVehicle({super.key});
@@ -262,80 +264,94 @@ class _DoublVehicleState extends State<DoublVehicle> {
     _scrollController.addListener(() {
       print(_scrollController.offset);
     });
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5),
-        child: Scaffold(
-            backgroundColor: Color(0xFF313131),
-            appBar: AppBar(
-              title: Text(page.toString()),
-              actions: [
-                IconButton(
-                    onPressed: () async {
-                      _showAlertDialog(context);
-                    },
-                    icon: Icon(Icons.logout))
-              ],
-            ),
-            body: _getProductinProgress
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Stack(
-                    children: [
-                      GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          //childAspectRatio: 1.0,
-                          mainAxisSpacing: 2.0,
-                          crossAxisSpacing: 0.0,
+    return Scaffold(
+        backgroundColor: Color(0xFF313131),
+    
+        appBar: AppBar(
+        
+         // leading: Image.asset('assets/images/pilot_icon.png',width: 50,height: 20, fit: BoxFit.fitHeight,),
+    backgroundColor: Color(0xFF666666),
+  //  leading: Icon(Icons.image,size: 50,),
+    //
+    leading:Image.asset('assets/images/pilot_logo2.png',),
+    title: SearchBarClass(
+      onChanged: (value) {
+        print("print my value");
+        print(value);
+        //updateList(value);
+      },
+    ),
+   
+          ),
+            endDrawer: EndDrawer(mounted: mounted),
+        // appBar: AppBar(
+    
+         
+        //   actions: [
+        //     IconButton(
+        //         onPressed: () async {
+        //           _showAlertDialog(context);
+        //         },
+        //         icon: Icon(Icons.logout))
+        //   ],
+        // ),
+        body: _getProductinProgress
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Stack(
+                children: [
+                  GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      //childAspectRatio: 1.0,
+                      mainAxisSpacing: 2.0,
+                      crossAxisSpacing: 0.0,
+                    ),
+                    controller: _scrollController,
+                    itemCount: products.length,
+                    itemBuilder: (BuildContext context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: Item(
+                          id: products[index + j].id!,
+                          imageName:
+                              products[index + j].imageName.toString(),
+                          price: products[index + j].price.toString(),
+                          purchase_price:
+                              products[index + j].purchase_price.toString(),
+                          fixed_price: products[index + j].fixed_price.toString(),
+                          featureSeat:
+                              featureUnicTitle[index + j].toString(),
+                          featureSeatDetails:
+                              featureDetails[index + j].toString(),
+                          vehiclaName: products[index + j].vehicleName,
+                          manufacture: products[index + j].manufacture,
+                          condition: products[index + j].condition,
+                          nMillage: products[index + j].mileage,
+                          brandName: products[index + j].brandName,
+                          engine: products[index + j].engine,
+                          transmission: products[index + j].transmission,
+                          model: "",
+                          fuel: products[index + j].fuel,
+                          skeleton: products[index + j].skeleton,
+                          code: products[index + j].code,
+                          registration: products[index + j].registration,
+                          available: products[index + j].available,
+                          detailsLink: products[index+j].detailsLink,
+    
+                          //dropdownFontLight: products[index+j],
                         ),
-                        controller: _scrollController,
-                        itemCount: products.length,
-                        itemBuilder: (BuildContext context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 5),
-                            child: Item(
-                              id: products[index + j].id!,
-                              imageName:
-                                  products[index + j].imageName.toString(),
-                              price: products[index + j].price.toString(),
-                              purchase_price:
-                                  products[index + j].purchase_price,
-                              fixed_price: products[index + j].fixed_price,
-                              featureSeat:
-                                  featureUnicTitle[index + j].toString(),
-                              featureSeatDetails:
-                                  featureDetails[index + j].toString(),
-                              vehiclaName: products[index + j].vehicleName,
-                              manufacture: products[index + j].manufacture,
-                              condition: products[index + j].condition,
-                              nMillage: products[index + j].mileage,
-                              brandName: products[index + j].brandName,
-                              engine: products[index + j].engine,
-                              transmission: products[index + j].transmission,
-                              model: "",
-                              fuel: products[index + j].fuel,
-                              skeleton: products[index + j].skeleton,
-                              code: products[index + j].code,
-                              registration: products[index + j].registration,
-                              available: products[index + j].available,
-                              detailsLink: products[index+j].detailsLink,
-
-                              //dropdownFontLight: products[index+j],
-                            ),
-                          );
-                        },
-                      ),
-                      Visibility(
-                          visible: _getNewProductinProgress,
-                          child: Align(
-                              alignment: Alignment.bottomCenter,
-                              child: CircularProgressIndicator())),
-                    ],
-                  )),
-      ),
-    );
+                      );
+                    },
+                  ),
+                  Visibility(
+                      visible: _getNewProductinProgress,
+                      child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: CircularProgressIndicator())),
+                ],
+              ));
   }
 
   static int j = x;

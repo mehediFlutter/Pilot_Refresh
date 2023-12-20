@@ -173,6 +173,8 @@ class _HomeVehicleState extends State<HomeVehicle> {
     if (mounted) {
       setState(() {});
     }
+    print("Page Number is");
+    print(page);
   }
 
   bool isLoading = false;
@@ -285,15 +287,16 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
     //return unicTitle+details;
   }
-  static  String? detailsLink;
 
-  Future<void> shareDetailsWithOneImage(String ImageName,vehicleName, manufacture,condition,registration,mileage,price,detailsLink) async {
+  static String? detailsLink;
+
+  Future<void> shareDetailsWithOneImage(String ImageName, vehicleName,
+      manufacture, condition, registration, mileage, price, detailsLink) async {
     if (mounted) {
       setState(() {});
     }
     //setState() {});
-    final uri = Uri.parse(
-        "https://pilotbazar.com/storage/vehicles/$ImageName");
+    final uri = Uri.parse("https://pilotbazar.com/storage/vehicles/$ImageName");
     final response = await http.get(uri);
     final imageBytes = response.bodyBytes;
     final tempDirectory = await getTemporaryDirectory();
@@ -306,7 +309,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
     late String info;
 
     String message =
-       "Vehicle Name:$vehicleName  \nManufacture:$manufacture   \nConditiion:$condition  \nRegistration:$registration  \nMillage:$mileage  \nPrice:$price \nSee more\n$detailsLink ";
+        "Vehicle Name:$vehicleName  \nManufacture:$manufacture   \nConditiion:$condition  \nRegistration:$registration  \nMillage:$mileage  \nPrice:$price \nSee more\n$detailsLink ";
 
     if (unicTitle.length != 0) {
       info = "\n${unicTitle[0]} : ${details[0]}";
@@ -325,15 +328,112 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
     setState(() {});
   }
-    Future getLink(String id) async {
+
+  Future getLink(String id) async {
     Response response1 = await get(Uri.parse(
         "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
     final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
     detailsLink = decodedResponse1['message'];
     setState(() {});
     print(detailsLink);
-    
   }
+
+  static List showImageList = [];
+  late String ImageLink;
+  late List ImageLinkList = [];
+  bool _shareAllImageInProgress = false;
+
+  Future<void> sendWhatsImage(int id) async {
+    _shareAllImageInProgress = true;
+    try {
+      Response response1 = await get(Uri.parse(
+          "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
+      print(response1.statusCode);
+      final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
+
+      for (int b = 0; b < decodedResponse1['payload']['gallery'].length; b++) {
+        ImageLink = decodedResponse1['payload']["gallery"][b]?['name'] ?? '';
+        ImageLinkList.add(ImageLink);
+      }
+
+      print("From List Image Links are");
+      for (int c = 0; c < ImageLinkList.length; c++) {
+        print(ImageLinkList[c]);
+      }
+
+      List<XFile> showImageList = [];
+      for (int y = 0; y < ImageLinkList.length; y++) {
+        final uri = Uri.parse(
+            "https://pilotbazar.com/storage/galleries/${ImageLinkList[y]}");
+        final response = await http.get(uri);
+        final imageBytes = response.bodyBytes;
+        final tempDirectory = await getTemporaryDirectory();
+        print("hello");
+        final tempFile = await File('${tempDirectory.path}/sharedImage$y.jpg')
+            .writeAsBytes(imageBytes);
+
+        final image = XFile(tempFile.path);
+        showImageList.add(image);
+      }
+
+      print("Length is Unic title");
+      print(unicTitle.length);
+      late String info;
+
+      if (showImageList.isNotEmpty) {
+        // Share all images with text
+        await Share.shareXFiles(
+          showImageList.map((image) => image as XFile).toList(),
+        );
+
+        // Clear lists and reset state
+        unicTitle.clear();
+        details.clear();
+        ImageLinkList.clear();
+        showImageList.clear();
+        _detailsInProgress = false;
+
+        setState(() {});
+      } else {
+        print("No images to share.");
+      }
+    } catch (error) {
+      print("Error: $error");
+    }
+  }
+
+  List searchProducts = [];
+  bool searchProductsInProgress = false;
+  Future<void> search(String value) async {
+    searchProductsInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    Response response = await get(
+      Uri.parse(
+          'https://pilotbazar.com/api/merchants/vehicles/products/search?search=$value'),
+      headers: {
+        'Accept': 'application/vnd.api+json',
+        'Content-Type': 'application/vnd.api+json'
+      },
+    );
+    Map<String, dynamic> decodedResponse = jsonDecode(response.body);
+    int i = 0;
+
+    for (i; i < decodedResponse['payload'].length; i++) {
+      searchProducts.add(Product(
+        vehicleName: decodedResponse['payload'][i]['slug'],
+        id: decodedResponse['payload'][i]['id'],
+      ));
+    }
+    if (mounted) {
+      setState(() {});
+    }
+    if (decodedResponse['data'] == null) {
+      return;
+    }
+  }
+
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -349,6 +449,9 @@ class _HomeVehicleState extends State<HomeVehicle> {
         //leading: Icon(Icons.image,size: 100,),
         //
         //leading:Image.asset('assets/images/pilot_logo.png',width: 80,height:30,fit: BoxFit.cover,),
+        leading: Image.asset(
+          'assets/images/pilot_logo2.png',
+        ),
         title: SearchBarClass(
           onChanged: (value) {
             print("print my value");
@@ -383,10 +486,12 @@ class _HomeVehicleState extends State<HomeVehicle> {
                     },
                   ),
                   Visibility(
-                      visible: _getNewProductinProgress,
-                      child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: CircularProgressIndicator()))
+                    visible: _getNewProductinProgress,
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
                 ],
               ),
             ),
@@ -407,12 +512,14 @@ class _HomeVehicleState extends State<HomeVehicle> {
               title: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
-                  onTap: () {
+                  onTap: () async {
+                    //  await sendWhatsImage(products[x].id);
                     print(x);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => VehicleDetails(
+                          // ImageLinkListForVehicleDetails: [ImageLinkList],
                           id: products[x].id,
                           detailsVehicleImageName:
                               "https://pilotbazar.com/storage/vehicles/${products[x].imageName}",
@@ -480,6 +587,10 @@ class _HomeVehicleState extends State<HomeVehicle> {
                           children: [
                             SizedBox(height: 7),
                             Text(
+                              products[x].id.toString(),
+                              style: TextStyle(fontSize: 20),
+                            ),
+                            Text(
                               products[x].vehicleName.toString(),
                               style: Theme.of(context).textTheme.bodyMedium,
                               overflow: TextOverflow
@@ -543,9 +654,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
                       //Popup menu bottom
 
                       InkWell(
-                        onTap: () {
-                          
-                        },
+                        onTap: () {},
                         child: CircleAvatar(
                           backgroundColor: Color.fromARGB(221, 65, 64, 64),
                           radius: 25,
@@ -556,15 +665,20 @@ class _HomeVehicleState extends State<HomeVehicle> {
                                 color: Colors.white,
                                 size: 25,
                               ),
-                              onSelected: (value)async {
+                              onSelected: (value) async {
                                 if (value == 'image') {
-                                 
-                                  sendWhatsImage(products[x+j].id);
-                                  
+                                  sendWhatsImage(products[x + j].id);
                                 } else if (value == 'details') {
-                                  await getLink(products[x+j].id.toString());
-                                  shareDetailsWithOneImage(products[x+j].imageName,products[x+j].vehicleName, products[x+j].manufacture,products[x+j].condition,products[x+j].registration,products[x+j].mileage,products[x+j].price,detailsLink);
-                                  
+                                  await getLink(products[x + j].id.toString());
+                                  shareDetailsWithOneImage(
+                                      products[x + j].imageName,
+                                      products[x + j].vehicleName,
+                                      products[x + j].manufacture,
+                                      products[x + j].condition,
+                                      products[x + j].registration,
+                                      products[x + j].mileage,
+                                      products[x + j].price,
+                                      detailsLink);
                                 }
                               },
                               itemBuilder: (context) {
@@ -712,73 +826,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
   static int j = x;
 
-
-
-
-  static List showImageList = [];
-  late String ImageLink;
-  late List ImageLinkList = [];
-  bool _shareAllImageInProgress=false;
-
-  Future<void> sendWhatsImage(int id) async {
-    _shareAllImageInProgress=true;
-    try {
-      Response response1 = await get(Uri.parse(
-          "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
-      print(response1.statusCode);
-      final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
-
-      for (int b = 0; b < decodedResponse1['payload']['gallery'].length; b++) {
-        ImageLink = decodedResponse1['payload']["gallery"][b]?['name'] ?? '';
-        ImageLinkList.add(ImageLink);
-      }
-
-      print("From List Image Links are");
-      for (int c = 0; c < ImageLinkList.length; c++) {
-        print(ImageLinkList[c]);
-      }
-
-      List<XFile> showImageList = [];
-      for (int y = 0; y < ImageLinkList.length; y++) {
-        final uri = Uri.parse(
-            "https://pilotbazar.com/storage/galleries/${ImageLinkList[y]}");
-        final response = await http.get(uri);
-        final imageBytes = response.bodyBytes;
-        final tempDirectory = await getTemporaryDirectory();
-        print("hello");
-        final tempFile = await File('${tempDirectory.path}/sharedImage$y.jpg')
-            .writeAsBytes(imageBytes);
-
-        final image = XFile(tempFile.path);
-        showImageList.add(image);
-      }
-
-      print("Length is Unic title");
-      print(unicTitle.length);
-      late String info;
-
-      if (showImageList.isNotEmpty) {
-        // Share all images with text
-        await Share.shareXFiles(
-          showImageList.map((image) => image as XFile).toList(),
-        );
-
-        // Clear lists and reset state
-        unicTitle.clear();
-        details.clear();
-        ImageLinkList.clear();
-        showImageList.clear();
-        _detailsInProgress = false;
-
-        setState(() {});
-      } else {
-        print("No images to share.");
-      }
-    } catch (error) {
-      print("Error: $error");
-    }
-  }
-
+  // Update Booked
   void updateBooked(int index) async {
     final body = {
       "available_id": 20,
@@ -799,11 +847,11 @@ class _HomeVehicleState extends State<HomeVehicle> {
     }
   }
 
+  // Update Sold
   void updateSold(int index) async {
     final body = {
-      "available_id": 20,
+      "available_id": 22,
     };
-
     final url =
         "https://pilotbazar.com/api/merchants/vehicles/products/${products[index].id}/update/sold";
     final uri = Uri.parse(url);

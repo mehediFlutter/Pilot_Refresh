@@ -14,42 +14,29 @@ class _AppState extends State<App> {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
+          
+          
+
+       
          
 
-          //primarySwatch: Colors.blue,
-          // TextField(
-          //             // scrollPadding: EdgeInsets.zero,
-          //             decoration: InputDecoration(
-          //               contentPadding: const EdgeInsets.only(top: 10),
-          //               enabledBorder: UnderlineInputBorder(
-          //                   borderSide: BorderSide(color: Colors.white)),
-          //               prefixIcon: Padding(
-          //                 padding: EdgeInsetsDirectional.only(start: 1.0,end: 30),
-          //                 child: Icon(
-          //                   Icons.lock_outline_sharp,
-          //                   color: Colors.white,
-          //                   size: 30,
-          //                 ),
-          //               ),
-          //               suffixIcon: Icon(
-          //                 Icons.remove_red_eye_outlined,
-          //                 color: Colors.white,
-          //                 size: 30,
-          //               ),
-          //               hintText: "Password",
-          //               hintStyle:  Theme.of(context).textTheme.titleMedium,
-          //             ),
-          //           ),
-          // inputDecorationTheme: InputDecorationTheme(
-          //   labelStyle: TextStyle(
-          //     color: Colors.blue,
-          //     // Change this color to your desired label text color
-          //   ),
-          //   contentPadding: EdgeInsets.only(left: 20, top: 15),
-          //   enabledBorder: UnderlineInputBorder(
-          //     borderSide: BorderSide(color: Colors.white),
-          //   ),
-          // ),
+//  inputDecorationTheme: InputDecorationTheme(
+//          //  contentPadding: EdgeInsets.only(left: 50),
+          
+//           border: OutlineInputBorder(
+            
+            
+//             borderSide: BorderSide(
+//               color: Colors.grey
+//             )
+//           ),
+//           focusedBorder: OutlineInputBorder(
+//             borderSide: BorderSide(
+//               color: Colors.white
+//             )
+//           ),
+          
+//         ),
 
           textTheme: TextTheme(
             titleLarge: TextStyle(
@@ -94,10 +81,7 @@ class _AppState extends State<App> {
                 ),
           ),
 
-          textSelectionTheme: TextSelectionThemeData(
-            cursorColor:
-                Colors.blue, // Change this color to your desired cursor color
-          ),
+        
         ),
         home: SplashScreen());
   }

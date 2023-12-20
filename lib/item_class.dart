@@ -229,6 +229,79 @@ class _ItemState extends State<Item> {
     }
   }
 
+// Share with Email
+Future<void> shareViaEmail() async{
+     try {
+      Response response1 = await get(Uri.parse(
+          "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
+      print(response1.statusCode);
+      final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
+
+      for (int b = 0; b < decodedResponse1['payload']['gallery'].length; b++) {
+        ImageLink = decodedResponse1['payload']["gallery"][b]?['name'] ?? '';
+        ImageLinkList.add(ImageLink);
+      }
+
+      print("From List Image Links are");
+      for (int c = 0; c < ImageLinkList.length; c++) {
+        print(ImageLinkList[c]);
+      }
+
+      List<XFile> showImageList = [];
+      for (int y = 0; y < ImageLinkList.length; y++) {
+        final uri = Uri.parse(
+            "https://pilotbazar.com/storage/galleries/${ImageLinkList[y]}");
+        final response = await http.get(uri);
+        final imageBytes = response.bodyBytes;
+        final tempDirectory = await getTemporaryDirectory();
+        print("hello");
+        final tempFile = await File('${tempDirectory.path}/sharedImage$y.jpg')
+            .writeAsBytes(imageBytes);
+
+        final image = XFile(tempFile.path);
+        showImageList.add(image);
+      }
+
+      print("Length is Unic title");
+      print(unicTitle.length);
+      late String info;
+
+      String message =
+          "Vehicle Name: ${widget.vehiclaName} \nManufacture:  ${widget.manufacture} \nCondition: ${widget.condition} \nRegistration: ${widget.registration} \nMileage: ${widget.nMillage}, \nPrice: ${widget.price} \nOur HotLine Number: 0196-99-444-00\n \n See Details \n$detailsLink";
+
+      if (unicTitle.length != 0) {
+        info = "\n${unicTitle[0]} : ${details[0]}";
+        _detailsInProgress = true;
+        setState(() {});
+        for (int b = 1; b < unicTitle.length; b++) {
+          info += "\n${unicTitle[b]} : ${details[b]}";
+        }
+      }
+
+      if (showImageList.isNotEmpty) {
+        // Share all images with text
+        await Share.shareXFiles(
+          showImageList.map((image) => image as XFile).toList(),text: _detailsInProgress ? message + info : message
+        );
+
+        // Clear lists and reset state
+        unicTitle.clear();
+        details.clear();
+        ImageLinkList.clear();
+        showImageList.clear();
+        _detailsInProgress = false;
+
+        setState(() {});
+      } else {
+        print("No images to share.");
+      }
+    } catch (error) {
+      print("Error: $error");
+    }
+
+}
+  
+  
   Future<void> shareDetailsWithOneImage() async {
     if (mounted) {
       setState(() {});
@@ -272,7 +345,7 @@ class _ItemState extends State<Item> {
   Widget build(BuildContext context) {
     return InkWell(
       child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 0),
+          padding: EdgeInsets.symmetric(horizontal: 5),
           child: Card(
             color: Color(0xFF313131),
             margin: EdgeInsets.only(bottom: 1, top: 0),
@@ -285,7 +358,7 @@ class _ItemState extends State<Item> {
                     tileColor: Color(0xFF313131),
                     contentPadding: EdgeInsets.zero,
                     title: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(17),
                       child: InkWell(
                         onTap: () {
                           Navigator.push(
@@ -311,11 +384,14 @@ class _ItemState extends State<Item> {
                                         code: widget.code,
                                       )));
                         },
-                        child: Image.network(
-                          "https://pilotbazar.com/storage/vehicles/${widget.imageName}",
-                          width: 50,
-                          height: 100,
-                          fit: BoxFit.fill,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                          child: Image.network(
+                            "https://pilotbazar.com/storage/vehicles/${widget.imageName}",
+                            width: 50,
+                            height: 105,
+                            fit: BoxFit.fill,
+                          ),
                         ),
                       ),
                     ),
@@ -323,214 +399,229 @@ class _ItemState extends State<Item> {
                       onTap: () {
                         print("pressed");
                         print(widget.id);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AlartDialogClass(
-                              id: widget.id,
-                              vehicleName: widget.vehiclaName,
-                              brandName: widget.brandName,
-                              engine: widget.engine,
-                              detailsCondition: widget.condition,
-                              detailsMillege: widget.nMillage,
-                              detailsTransmission: widget.transmission,
-                              detailsFuel: widget.fuel,
-                              skeleton: widget.skeleton,
-                              registration: widget.registration,
-                              detailsVehicleManuConditioin:
-                                  widget.manufacture.toString(),
-                              detailsVehicleManufacture:
-                                  widget.manufacture.toString(),
-                            ),
-                          ),
-                        );
+                        // Alart Dialog is off now 
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => AlartDialogClass(
+                        //       id: widget.id,
+                        //       vehicleName: widget.vehiclaName,
+                        //       brandName: widget.brandName,
+                        //       engine: widget.engine,
+                        //       detailsCondition: widget.condition,
+                        //       detailsMillege: widget.nMillage,
+                        //       detailsTransmission: widget.transmission,
+                        //       detailsFuel: widget.fuel,
+                        //       skeleton: widget.skeleton,
+                        //       registration: widget.registration,
+                        //       detailsVehicleManuConditioin:
+                        //           widget.manufacture.toString(),
+                        //       detailsVehicleManufacture:
+                        //           widget.manufacture.toString(),
+                        //     ),
+                        //   ),
+                        // );
                       },
                       child: ListTile(
                         contentPadding: EdgeInsets.zero,
                         title: Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(widget.vehiclaName.toString(),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(fontSize: 8)),
-                              Row(
-                                children: [
-                                  Text(
-                                    "R : ",
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 7),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                               // Text(widget.id.toString(),style: TextStyle(fontSize: 20),),
+                                Text(widget.vehiclaName.toString(),
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyLarge!
-                                        .copyWith(fontSize: 8),
-                                  ),
-                                  Text(
-                                    widget.registration.toString(),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .copyWith(fontSize: 8),
-                                  ),
-                                  Text(" | ",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge),
-                                  Text(
-                                    widget.condition.toString(),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .copyWith(fontSize: 8),
-                                  ),
-                                  Text(
-                                    " | ",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .copyWith(fontSize: 8),
-                                  ),
-
-                                  //Text(products[x].id.toString()),
-                                  Text("m: ",
+                                        .copyWith(fontSize: 8)),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "R : ",
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyLarge!
-                                          .copyWith(fontSize: 8)),
-
-                                  Text(widget.nMillage.toString(),
+                                          .copyWith(fontSize: 8),
+                                    ),
+                                    Text(
+                                      widget.registration.toString(),
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyLarge!
-                                          .copyWith(fontSize: 8)),
-                                ],
-                              ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  //SizedBox(height: 10),
-                                  Text(
-                                    widget.available.toString(),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .copyWith(fontSize: 8),
-                                  ),
-                                  Row(
-                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text("Tk: ",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge!
-                                              .copyWith(fontSize: 8)),
-                                      Text(widget.price.toString(),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge!
-                                              .copyWith(fontSize: 8)),
-                                      Spacer(),
-
-                                      CircleAvatar(
-                                        backgroundColor:
-                                            Color.fromARGB(221, 65, 64, 64),
-                                        radius: 15,
-                                        child: PopupMenuButton(
-                                          child: Icon(
-                                            Icons.share,
-                                            color: Colors.white,
-                                            size: 17,
+                                          .copyWith(fontSize: 8),
+                                    ),
+                                    Text(" | ",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge),
+                                    Text(
+                                      widget.condition.toString(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(fontSize: 8),
+                                    ),
+                                    Text(
+                                      " | ",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(fontSize: 8),
+                                    ),
+                            
+                                    //Text(products[x].id.toString()),
+                                    Text("m: ",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge!
+                                            .copyWith(fontSize: 8)),
+                            
+                                    Text(widget.nMillage.toString(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge!
+                                            .copyWith(fontSize: 8)),
+                                  ],
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    //SizedBox(height: 10),
+                                    Text(
+                                      widget.available.toString(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(fontSize: 8),
+                                    ),
+                                    Row(
+                                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text("Tk: ",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge!
+                                                .copyWith(fontSize: 10)),
+                                        Text(widget.price.toString(),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge!
+                                                .copyWith(fontSize: 10)),
+                                        Spacer(),
+                            
+                                        CircleAvatar(
+                                          backgroundColor:
+                                              Color.fromARGB(221, 65, 64, 64),
+                                          radius: 15,
+                                          child: PopupMenuButton(
+                                            child: Icon(
+                                              Icons.share,
+                                              color: Colors.white,
+                                              size: 17,
+                                            ),
+                                            onSelected: (value) {
+                                              if (value == 'image') {
+                                                sendWhatsImage();
+                                              } else if (value == 'details') {
+                                                shareDetailsWithOneImage();
+                                              }
+                                              else if(value=='email'){
+                                                shareViaEmail();
+                                              }
+                                            },
+                                            itemBuilder: (context) {
+                                              return [
+                                                PopupMenuItem(
+                                                  child: Text("Send Details"),
+                                                  value: 'details',
+                                                ),
+                                                PopupMenuItem(
+                                                  child: Text("Send All Image"),
+                                                  value: 'image',
+                                                ),
+                                                PopupMenuItem(
+                                                  child: Text("Send Email"),
+                                                  value: 'email',
+                                                ),
+                                              ];
+                                            },
                                           ),
-                                          onSelected: (value) {
-                                            if (value == 'image') {
-                                              sendWhatsImage();
-                                            } else if (value == 'details') {
-                                              shareDetailsWithOneImage();
-                                            }
-                                          },
-                                          itemBuilder: (context) {
-                                            return [
-                                              PopupMenuItem(
-                                                child: Text("Share One Image"),
-                                                value: 'details',
-                                              ),
-                                              PopupMenuItem(
-                                                child: Text("Share All Image"),
-                                                value: 'image',
-                                              ),
-                                            ];
-                                          },
                                         ),
-                                      ),
-                                      // popup menu
-                                      Spacer(),
-                                      CircleAvatar(
-                                        backgroundColor:
-                                            Color.fromARGB(221, 65, 64, 64),
-                                        radius: 15,
-                                        child: PopupMenuButton(
-                                          child: Icon(
-                                            Icons.more_vert,
-                                            color: Colors.white,
+                                        // popup menu
+                                        Spacer(),
+                                        CircleAvatar(
+                                          backgroundColor:
+                                              Color.fromARGB(221, 65, 64, 64),
+                                          radius: 15,
+                                          child: PopupMenuButton(
+                                            child: Icon(
+                                              Icons.more_vert,
+                                              color: Colors.white,
+                                            ),
+                                            padding: EdgeInsets.zero,
+                                            iconSize: 15,
+                                            onSelected: (value) {
+                                              if (value == 'Edit') {
+                                                // Open Edit Popup
+                                                navigateToEditPage(widget.id);
+                                              } else if (value == 'Delete') {
+                                                // Open Delete Popup
+                                                //deleteById(id);
+                                              } else if (value == 'Edit price') {
+                                                navigateToPriceEditPage(widget.id);
+                                              }
+                                              else if(value == 'Booked'){
+                                                updateBooked(widget.id);
+                            
+                                              }
+                                              else if(value== 'Sold'){
+                                                updateSold(widget.id);
+                                              }
+                                            },
+                                            itemBuilder: (context) {
+                                              return [
+                                                PopupMenuItem(
+                                                  child: Text("Edit price"),
+                                                  value: 'Edit price',
+                                                ),
+                                                PopupMenuItem(
+                                                  child: Text("Booked"),
+                                                  value: 'Booked',
+                                                ),
+                                                PopupMenuItem(
+                                                  child: Text("Sold"),
+                                                  value: 'Sold',
+                                                ),
+                                                PopupMenuItem(
+                                                  child: Text("Edit"),
+                                                  value: 'Edit',
+                                                ),
+                                                PopupMenuItem(
+                                                  child: Text("Availability"),
+                                                  value: 'Availability',
+                                                ),
+                                                PopupMenuItem(
+                                                  child: Text("Advance"),
+                                                  value: 'Advance',
+                                                ),
+                                                PopupMenuItem(
+                                                  child: Text("Delete"),
+                                                  value: 'Delete',
+                                                ),
+                                              ];
+                                            },
                                           ),
-                                          padding: EdgeInsets.zero,
-                                          iconSize: 15,
-                                          onSelected: (value) {
-                                            if (value == 'Edit') {
-                                              // Open Edit Popup
-                                              navigateToEditPage(widget.id);
-                                            } else if (value == 'Delete') {
-                                              // Open Delete Popup
-                                              //deleteById(id);
-                                            } else if (value == 'edit price') {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          PriceEditScreen()));
-                                            }
-                                          },
-                                          itemBuilder: (context) {
-                                            return [
-                                              PopupMenuItem(
-                                                child: Text("edit price"),
-                                                value: 'edit price',
-                                              ),
-                                              PopupMenuItem(
-                                                child: Text("Booked"),
-                                                value: 'Booked',
-                                              ),
-                                              PopupMenuItem(
-                                                child: Text("Sold"),
-                                                value: 'Sold',
-                                              ),
-                                              PopupMenuItem(
-                                                child: Text("Edit"),
-                                                value: 'Edit',
-                                              ),
-                                              PopupMenuItem(
-                                                child: Text("Availability"),
-                                                value: 'Availability',
-                                              ),
-                                              PopupMenuItem(
-                                                child: Text("Advance"),
-                                                value: 'Advance',
-                                              ),
-                                              PopupMenuItem(
-                                                child: Text("Delete"),
-                                                value: 'Delete',
-                                              ),
-                                            ];
-                                          },
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -541,6 +632,46 @@ class _ItemState extends State<Item> {
             ),
           )),
     );
+  }
+  
+   // Update Booked 
+  void updateBooked(int index) async {
+    final body = {
+      "available_id": 20,
+    };
+
+    final url =
+        "https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/update/booked";
+    final uri = Uri.parse(url);
+    final response = await http.put(uri, body: jsonEncode(body), headers: {
+      'Content-Type': 'application/vnd.api+json',
+      'Accept': 'application/vnd.api+json'
+    });
+    print(response.statusCode);
+    print(widget.id);
+
+    if (response.statusCode == 200) {
+      print("Succesfully Booked");
+    }
+  }
+   // Update Sold  
+  void updateSold(int index) async {
+    final body = {
+      "available_id": 22,
+    };
+    final url =
+        "https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/update/sold";
+    final uri = Uri.parse(url);
+    final response = await http.put(uri, body: jsonEncode(body), headers: {
+      'Content-Type': 'application/vnd.api+json',
+      'Accept': 'application/vnd.api+json'
+    });
+    print(response.statusCode);
+    print(widget.id);
+
+    if (response.statusCode == 200) {
+      print("Succesfully Sold");
+    }
   }
 
   navigateToEditPage(int index) {
@@ -559,7 +690,7 @@ class _ItemState extends State<Item> {
     final route = MaterialPageRoute(
         builder: (context) => PriceEditScreen(
               id: widget.id,
-              name: widget.nMillage.toString(),
+              name: widget.vehiclaName.toString(),
               price: widget.price.toString(),
               purchase_price: widget.purchase_price,
               fixed_price: widget.fixed_price,

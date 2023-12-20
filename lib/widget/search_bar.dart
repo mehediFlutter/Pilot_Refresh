@@ -15,18 +15,26 @@ class _SearchBarClassState extends State<SearchBarClass> {
   Widget build(BuildContext context) {
     return Container(
       color: Color(0xFF666666),
-      margin: EdgeInsets.only(right: 20, left: 0, bottom: 10),
+      margin: EdgeInsets.only(right: 20, left: 0, bottom: 10,top: 10),
       child: Material(
         elevation: 20,
         borderRadius: BorderRadius.circular(30),
         child: Container(
-          padding: EdgeInsets.symmetric(),
+          
           child: TextField(
+            style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: Colors.white, fontSize: 15),
+                  //style: TextStyle(color: Colors.white,fontSize: 20),
+                  cursorColor: Colors.white,
           
             onChanged: (value) {
               widget.onChanged(value);
             },
             decoration: InputDecoration(
+          
+              
             
               prefixIcon: Icon(
                 Icons.search,
@@ -38,7 +46,7 @@ class _SearchBarClassState extends State<SearchBarClass> {
               ),
 
               disabledBorder: InputBorder.none,
-              hintText: 'Search',hintStyle: Theme.of(context).textTheme.titleMedium,
+              hintText: 'Search',hintStyle: Theme.of(context).textTheme.titleMedium!.copyWith(fontSize: 15),
               //focusedBorder: InputBorder.none, // Remove border when focused
               enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide.none,
@@ -55,7 +63,7 @@ class _SearchBarClassState extends State<SearchBarClass> {
                   borderRadius: BorderRadius.circular(30),
                   borderSide: BorderSide.none),
             ),
-            style: Theme.of(context).textTheme.titleMedium,
+           // style: Theme.of(context).textTheme.titleMedium,
             keyboardType: TextInputType.text,
             textInputAction: TextInputAction.search,
             onSubmitted: (value) {
