@@ -358,7 +358,7 @@ Future<void> shareViaEmail() async{
                     tileColor: Color(0xFF313131),
                     contentPadding: EdgeInsets.zero,
                     title: ClipRRect(
-                      borderRadius: BorderRadius.circular(17),
+                      borderRadius: BorderRadius.horizontal(right: Radius.circular(30),left: Radius.circular(5)),
                       child: InkWell(
                         onTap: () {
                           Navigator.push(
@@ -385,11 +385,11 @@ Future<void> shareViaEmail() async{
                                       )));
                         },
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                          padding: const EdgeInsets.only(right: 20),
                           child: Image.network(
                             "https://pilotbazar.com/storage/vehicles/${widget.imageName}",
                             width: 50,
-                            height: 105,
+                            height: 100,
                             fit: BoxFit.fill,
                           ),
                         ),
@@ -426,7 +426,7 @@ Future<void> shareViaEmail() async{
                         contentPadding: EdgeInsets.zero,
                         title: Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 7),
+                            padding: const EdgeInsets.symmetric(horizontal: 0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.start,

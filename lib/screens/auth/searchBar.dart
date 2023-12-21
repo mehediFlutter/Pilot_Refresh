@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-class SearchBarClass extends StatefulWidget {
+class SearchBarClassGithub extends StatefulWidget {
   //final Function? onchangedfunction;
-  final Function onChanged;
+final Function onSubmitted;
   final String? value;
-  
+  final TextEditingController? searchController;
 
-  SearchBarClass({super.key, required this.onChanged, this.value});
+  SearchBarClassGithub({super.key, required this.onSubmitted, this.value, this.searchController});
   @override
-  State<SearchBarClass> createState() => _SearchBarClassState();
+  State<SearchBarClassGithub> createState() => _SearchBarClassGithubState();
 }
 
-class _SearchBarClassState extends State<SearchBarClass> {
+class _SearchBarClassGithubState extends State<SearchBarClassGithub> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -23,7 +23,7 @@ class _SearchBarClassState extends State<SearchBarClass> {
         child: Container(
           
           child: TextField(
-            controller: widget.onChanged(),
+            controller: widget.searchController,
             style: Theme.of(context)
                       .textTheme
                       .bodyMedium!
@@ -32,7 +32,7 @@ class _SearchBarClassState extends State<SearchBarClass> {
                   cursorColor: Colors.white,
           
             onChanged: (value) {
-              widget.onChanged(value);
+              widget.onSubmitted(value);
             },
             decoration: InputDecoration(
           

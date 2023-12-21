@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:pilot_refresh/product.dart';
+import 'package:pilot_refresh/screens/auth/searchBar.dart';
 import 'package:pilot_refresh/screens/edit_price.dart';
 import 'package:pilot_refresh/screens/edit_screen.dart';
 import 'package:pilot_refresh/screens/vehicle-details.dart';
@@ -35,14 +36,27 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    super.initState();
-    _scrollController.addListener(_listenToScroolMoments);
     page = 1;
     i = 0;
-    setState(() {});
-
+    searchController.text = ' ';
+    super.initState();
+     _scrollController.addListener(_listenToScroolMoments);
     getProduct(page);
+    searchController.addListener(() {  
+      page = 1;
+      i = 0;
+
+      // Clear the searchProducts list when the text field is empty
+      if (searchController.text.isEmpty) {
+        searchProducts.clear();
+        products.clear();
+        getProduct(page);
+        setState(() {});
+      }
+     
+    });
+
+    setState(() {});
 
     // getProductForSearch();
     //getDetails(products[0].id);
@@ -180,6 +194,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
   bool isLoading = false;
   @override
   void getProduct(int page) async {
+    products.clear();
     _getProductinProgress = true;
     if (mounted) {
       setState(() {});
@@ -205,7 +220,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
               ['title'],
           mileage: decodedResponse['data'][i]['mileage']?['translate'][0]
                   ?['title'] ??
-              'No mileage data',
+              '-',
           //price here
           price: decodedResponse['data'][i]['price'] ?? '',
           purchase_price: decodedResponse['data'][i]?['purchase_price'] ?? '',
@@ -402,10 +417,89 @@ class _HomeVehicleState extends State<HomeVehicle> {
     }
   }
 
+    Future<void> shareViaEmail( int id,String ImageName, vehicleName, manufacture,
+      condition, registration, mileage, price, detailsLink) async {
+    try {
+      Response response1 = await get(Uri.parse(
+          "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
+      print(response1.statusCode);
+      final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
+
+      for (int b = 0; b < decodedResponse1['payload']['gallery'].length; b++) {
+        ImageLink = decodedResponse1['payload']["gallery"][b]?['name'] ?? '';
+        ImageLinkList.add(ImageLink);
+      }
+
+      print("From List Image Links are");
+      for (int c = 0; c < ImageLinkList.length; c++) {
+        print(ImageLinkList[c]);
+      }
+
+      List<XFile> showImageList = [];
+      for (int y = 0; y < ImageLinkList.length; y++) {
+        final uri = Uri.parse(
+            "https://pilotbazar.com/storage/galleries/${ImageLinkList[y]}");
+        final response = await http.get(uri);
+        final imageBytes = response.bodyBytes;
+        final tempDirectory = await getTemporaryDirectory();
+        print("hello");
+        final tempFile = await File('${tempDirectory.path}/sharedImage$y.jpg')
+            .writeAsBytes(imageBytes);
+
+        final image = XFile(tempFile.path);
+        showImageList.add(image);
+      }
+
+      print("Length is Unic title");
+      print(unicTitle.length);
+      late String info;
+
+      String message =
+          "Vehicle Name:$vehicleName  \nManufacture:$manufacture   \nConditiion:$condition  \nRegistration:$registration  \nMillage:$mileage  \nPrice:$price \nSee more\n$detailsLink ";
+
+      if (unicTitle.length != 0) {
+        info = "\n${unicTitle[0]} : ${details[0]}";
+        _detailsInProgress = true;
+        setState(() {});
+        for (int b = 1; b < unicTitle.length; b++) {
+          info += "\n${unicTitle[b]} : ${details[b]}";
+        }
+      }
+
+      if (showImageList.isNotEmpty) {
+        // Share all images with text
+        await Share.shareXFiles(
+            showImageList.map((image) => image as XFile).toList(),
+            text: _detailsInProgress ? message + info : message);
+
+        // Clear lists and reset state
+        unicTitle.clear();
+        details.clear();
+        ImageLinkList.clear();
+        showImageList.clear();
+        _detailsInProgress = false;
+
+        setState(() {});
+      } else {
+        print("No images to share.");
+      }
+    } catch (error) {
+      print("Error: $error");
+    }
+  }
+
+  
   List searchProducts = [];
-  bool searchProductsInProgress = false;
+  bool _searchInProgress = false;
+  TextEditingController searchController = TextEditingController();
+
   Future<void> search(String value) async {
-    searchProductsInProgress = true;
+    searchProducts.clear();
+    products.clear();
+    if (searchController.text.isEmpty) {
+      getProduct(page);
+    }
+    _searchInProgress = true;
     if (mounted) {
       setState(() {});
     }
@@ -422,10 +516,31 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
     for (i; i < decodedResponse['payload'].length; i++) {
       searchProducts.add(Product(
-        vehicleName: decodedResponse['payload'][i]['slug'],
-        id: decodedResponse['payload'][i]['id'],
-      ));
+          vehicleName:
+              decodedResponse['payload'][i]?['translate'][0]?['title'] ?? '-',
+          manufacture: decodedResponse['payload'][i]?['manufacture'] ?? '',
+          slug: decodedResponse['payload'][i]?['slug'] ?? '',
+          id: decodedResponse['payload'][i]?['id'] ?? '',
+          condition: "API?",
+          price: decodedResponse['payload'][i]?['price'] ?? '',
+          purchase_price:
+              decodedResponse['payload'][i]?['purchase_price'] ?? '',
+          fixed_price: decodedResponse['payload'][i]?['fixed_price'] ?? '',
+          imageName: decodedResponse['payload'][i]?['image']['name'] ?? '',
+          registration: "API?",
+          engine: decodedResponse['payload'][i]?['engines'] ?? '-',
+          brandName: decodedResponse['payload'][i]?['brand']['slug'],
+          transmission: "API?",
+          fuel: "API?",
+          skeleton: "API?",
+          available: decodedResponse['payload'][i]?['available']['slug'] ?? '-',
+          code: decodedResponse['payload'][i]?['code'] ?? '-'));
+
+      products.addAll(searchProducts);
+      searchProducts.clear();
     }
+
+    _searchInProgress = false;
     if (mounted) {
       setState(() {});
     }
@@ -452,48 +567,64 @@ class _HomeVehicleState extends State<HomeVehicle> {
         leading: Image.asset(
           'assets/images/pilot_logo2.png',
         ),
-        title: SearchBarClass(
-          onChanged: (value) {
-            print("print my value");
-            print(value);
-            //updateList(value);
+
+        title: TextField(
+          style: TextStyle(color: Colors.white, fontSize: 15),
+          controller: searchController,
+          onSubmitted: (value) async {
+            await search(value);
           },
+          decoration: InputDecoration(
+            contentPadding: EdgeInsets.symmetric(horizontal: 25),
+            hintText: "Search",
+            hintStyle: TextStyle(color: Colors.white),
+            border: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.white, width: 2),
+                borderRadius: BorderRadius.circular(40)),
+            prefixIcon: Icon(
+              Icons.search,
+              color: Colors.white,
+            ),
+            suffixIcon: Icon(
+              Icons.send,
+              color: Colors.white,
+            ),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(40),
+                borderSide: BorderSide(color: Colors.white)),
+          ),
         ),
       ),
       endDrawer: EndDrawer(mounted: mounted),
-      body: _getProductinProgress
+      body: (_getProductinProgress || _searchInProgress)
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : Visibility(
-              visible: products.isNotEmpty,
-              replacement: Text("No Data", style: TextStyle(fontSize: 20)),
-              child: Stack(
-                children: [
-                  ListView.separated(
-                    primary: false,
-                    shrinkWrap: true,
-                    controller: _scrollController,
-                    itemCount: products.length,
-                    itemBuilder: (BuildContext context, index) {
-                      return productList(index + j);
-                    },
-                    separatorBuilder: (BuildContext context, int index) {
-                      return Divider(
-                        height: 4,
-                        color: Color(0xFF313131),
-                      );
-                    },
+          : Stack(
+              children: [
+                ListView.separated(
+                  primary: false,
+                  shrinkWrap: true,
+                  controller: _scrollController,
+                  itemCount: products.length,
+                  itemBuilder: (BuildContext context, index) {
+                    return productList(index + j);
+                  },
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Divider(
+                      height: 4,
+                      color: Color(0xFF313131),
+                    );
+                  },
+                ),
+                Visibility(
+                  visible: _getNewProductinProgress,
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: CircularProgressIndicator(),
                   ),
-                  Visibility(
-                    visible: _getNewProductinProgress,
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
-                ],
-              ),
+                )
+              ],
             ),
     );
   }
@@ -679,6 +810,21 @@ class _HomeVehicleState extends State<HomeVehicle> {
                                       products[x + j].mileage,
                                       products[x + j].price,
                                       detailsLink);
+                                    
+                                }
+                                else if(value=='email'){
+                                  await getLink(products[x + j].id.toString());
+                                  shareViaEmail(
+                                    products[x+j].id,
+                                    products[x + j].imageName,
+                                      products[x + j].vehicleName,
+                                      products[x + j].manufacture,
+                                      products[x + j].condition,
+                                      products[x + j].registration,
+                                      products[x + j].mileage,
+                                      products[x + j].price,
+                                      detailsLink);
+
                                 }
                               },
                               itemBuilder: (context) {
@@ -690,6 +836,10 @@ class _HomeVehicleState extends State<HomeVehicle> {
                                   PopupMenuItem(
                                     child: Text("Share All Image"),
                                     value: 'image',
+                                  ),
+                                  PopupMenuItem(
+                                    child: Text("Send Email"),
+                                    value: 'email',
                                   ),
                                 ];
                               },
@@ -780,7 +930,10 @@ class _HomeVehicleState extends State<HomeVehicle> {
                       updateBooked(x);
                     } else if (value == 'Sold') {
                       updateSold(x);
-                    }
+                    } 
+                    // else if (value == 'email') {
+                    //   shareViaEmail(products[x].imageName,products[x].vehicleName,products[x].manufacture,products[x].condition,products[x].registration,products[x].mileage,products[x].price,);
+                    // }
                   },
                   itemBuilder: (context) {
                     return [
@@ -795,6 +948,10 @@ class _HomeVehicleState extends State<HomeVehicle> {
                       PopupMenuItem(
                         child: Text("Sold"),
                         value: 'Sold',
+                      ),
+                      PopupMenuItem(
+                        child: Text("Send Email"),
+                        value: 'email',
                       ),
                       PopupMenuItem(
                         child: Text("Edit"),
