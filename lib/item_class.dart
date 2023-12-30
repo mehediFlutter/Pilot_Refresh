@@ -17,9 +17,10 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
 class Item extends StatefulWidget {
-  final int id;
+  final bool? myAskingPrice;
+  final int? id;
   final String? code;
-  final String imageName;
+  final String? imageName;
   final String? price;
   final String? purchase_price;
   final String? fixed_price;
@@ -50,8 +51,8 @@ class Item extends StatefulWidget {
   final String? detailsLink;
   Item({
     super.key,
-    required this.id,
-    required this.imageName,
+    this.id,
+    this.imageName,
     this.code,
     this.price,
     this.purchase_price,
@@ -81,6 +82,7 @@ class Item extends StatefulWidget {
     this.skeleton,
     this.termAndCondition,
     this.detailsLink,
+    this.myAskingPrice,
   });
 
   @override
@@ -92,13 +94,17 @@ class _ItemState extends State<Item> {
   //https://pilotbazar.com/storage/vehicles/
   late int id;
   late String detailsLink;
-
+  // bool myAskingPrice=false;
+  bool? priceBool;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     id = widget.id ?? 0;
     getLink();
+    print("This is value");
+    print(widget.myAskingPrice);
+    priceBool = widget.myAskingPrice ?? false;
   }
 
   Future getLink() async {
@@ -230,8 +236,8 @@ class _ItemState extends State<Item> {
   }
 
 // Share with Email
-Future<void> shareViaEmail() async{
-     try {
+  Future<void> shareViaEmail() async {
+    try {
       Response response1 = await get(Uri.parse(
           "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
       print(response1.statusCode);
@@ -281,8 +287,8 @@ Future<void> shareViaEmail() async{
       if (showImageList.isNotEmpty) {
         // Share all images with text
         await Share.shareXFiles(
-          showImageList.map((image) => image as XFile).toList(),text: _detailsInProgress ? message + info : message
-        );
+            showImageList.map((image) => image as XFile).toList(),
+            text: _detailsInProgress ? message + info : message);
 
         // Clear lists and reset state
         unicTitle.clear();
@@ -298,10 +304,8 @@ Future<void> shareViaEmail() async{
     } catch (error) {
       print("Error: $error");
     }
+  }
 
-}
-  
-  
   Future<void> shareDetailsWithOneImage() async {
     if (mounted) {
       setState(() {});
@@ -358,14 +362,15 @@ Future<void> shareViaEmail() async{
                     tileColor: Color(0xFF313131),
                     contentPadding: EdgeInsets.zero,
                     title: ClipRRect(
-                      borderRadius: BorderRadius.horizontal(right: Radius.circular(30),left: Radius.circular(5)),
+                      borderRadius: BorderRadius.horizontal(
+                          right: Radius.circular(30), left: Radius.circular(5)),
                       child: InkWell(
                         onTap: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => VehicleDetails(
-                                        id: widget.id,
+                                        id: widget.id ?? 0,
                                         vehicleName: widget.vehiclaName,
                                         detailsVehicleImageName:
                                             "https://pilotbazar.com/storage/vehicles/${widget.imageName}",
@@ -399,7 +404,7 @@ Future<void> shareViaEmail() async{
                       onTap: () {
                         print("pressed");
                         print(widget.id);
-                        // Alart Dialog is off now 
+                        // Alart Dialog is off now
                         // Navigator.push(
                         //   context,
                         //   MaterialPageRoute(
@@ -424,204 +429,208 @@ Future<void> shareViaEmail() async{
                       },
                       child: ListTile(
                         contentPadding: EdgeInsets.zero,
-                        title: Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                               // Text(widget.id.toString(),style: TextStyle(fontSize: 20),),
-                                Text(widget.vehiclaName.toString(),
+                        title: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              // Text(widget.id.toString(),style: TextStyle(fontSize: 20),),
+                              Text(widget.vehiclaName.toString(),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .copyWith(fontSize: 8)),
+                              Row(
+                                children: [
+                                  Text(
+                                    widget.myAskingPrice.toString(),
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  Text(
+                                    "R : ",
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyLarge!
-                                        .copyWith(fontSize: 8)),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "R : ",
+                                        .copyWith(fontSize: 8),
+                                  ),
+                                  Text(
+                                    widget.registration.toString(),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(fontSize: 8),
+                                  ),
+                                  Text(" | ",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge),
+                                  Text(
+                                    widget.condition.toString(),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(fontSize: 8),
+                                  ),
+                                  Text(
+                                    " | ",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(fontSize: 8),
+                                  ),
+
+                                  //Text(products[x].id.toString()),
+                                  Text("m: ",
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyLarge!
-                                          .copyWith(fontSize: 8),
-                                    ),
-                                    Text(
-                                      widget.registration.toString(),
+                                          .copyWith(fontSize: 8)),
+
+                                  Text(widget.nMillage.toString(),
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyLarge!
-                                          .copyWith(fontSize: 8),
-                                    ),
-                                    Text(" | ",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge),
-                                    Text(
-                                      widget.condition.toString(),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge!
-                                          .copyWith(fontSize: 8),
-                                    ),
-                                    Text(
-                                      " | ",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge!
-                                          .copyWith(fontSize: 8),
-                                    ),
-                            
-                                    //Text(products[x].id.toString()),
-                                    Text("m: ",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge!
-                                            .copyWith(fontSize: 8)),
-                            
-                                    Text(widget.nMillage.toString(),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge!
-                                            .copyWith(fontSize: 8)),
-                                  ],
-                                ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    //SizedBox(height: 10),
-                                    Text(
-                                      widget.available.toString(),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge!
-                                          .copyWith(fontSize: 8),
-                                    ),
-                                    Row(
-                                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text("Tk: ",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge!
-                                                .copyWith(fontSize: 10)),
-                                        Text(widget.price.toString(),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge!
-                                                .copyWith(fontSize: 10)),
-                                        Spacer(),
-                            
-                                        CircleAvatar(
-                                          backgroundColor:
-                                              Color.fromARGB(221, 65, 64, 64),
-                                          radius: 15,
-                                          child: PopupMenuButton(
-                                            child: Icon(
-                                              Icons.share,
-                                              color: Colors.white,
-                                              size: 17,
-                                            ),
-                                            onSelected: (value) {
-                                              if (value == 'image') {
-                                                sendWhatsImage();
-                                              } else if (value == 'details') {
-                                                shareDetailsWithOneImage();
-                                              }
-                                              else if(value=='email'){
-                                                shareViaEmail();
-                                              }
-                                            },
-                                            itemBuilder: (context) {
-                                              return [
-                                                PopupMenuItem(
-                                                  child: Text("Send Details"),
-                                                  value: 'details',
-                                                ),
-                                                PopupMenuItem(
-                                                  child: Text("Send All Image"),
-                                                  value: 'image',
-                                                ),
-                                                PopupMenuItem(
-                                                  child: Text("Send Email"),
-                                                  value: 'email',
-                                                ),
-                                              ];
-                                            },
+                                          .copyWith(fontSize: 8)),
+                                ],
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  //SizedBox(height: 10),
+                                  Text(
+                                    widget.available.toString(),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(fontSize: 8),
+                                  ),
+                                  Row(
+                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Tk: ",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .copyWith(fontSize: 10)),
+                                      Text(
+                                          widget.myAskingPrice!
+                                              ? widget.price.toString()
+                                              : widget.purchase_price
+                                                  .toString(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .copyWith(fontSize: 10)),
+                                      Spacer(),
+
+                                      CircleAvatar(
+                                        backgroundColor:
+                                            Color.fromARGB(221, 65, 64, 64),
+                                        radius: 15,
+                                        child: PopupMenuButton(
+                                          child: Icon(
+                                            Icons.share,
+                                            color: Colors.white,
+                                            size: 17,
                                           ),
+                                          onSelected: (value) {
+                                            if (value == 'image') {
+                                              sendWhatsImage();
+                                            } else if (value == 'details') {
+                                              shareDetailsWithOneImage();
+                                            } else if (value == 'email') {
+                                              shareViaEmail();
+                                            }
+                                          },
+                                          itemBuilder: (context) {
+                                            return [
+                                              PopupMenuItem(
+                                                child: Text("Send Details"),
+                                                value: 'details',
+                                              ),
+                                              PopupMenuItem(
+                                                child: Text("Send All Image"),
+                                                value: 'image',
+                                              ),
+                                              PopupMenuItem(
+                                                child: Text("Send Email"),
+                                                value: 'email',
+                                              ),
+                                            ];
+                                          },
                                         ),
-                                        // popup menu
-                                        Spacer(),
-                                        CircleAvatar(
-                                          backgroundColor:
-                                              Color.fromARGB(221, 65, 64, 64),
-                                          radius: 15,
-                                          child: PopupMenuButton(
-                                            child: Icon(
-                                              Icons.more_vert,
-                                              color: Colors.white,
-                                            ),
-                                            padding: EdgeInsets.zero,
-                                            iconSize: 15,
-                                            onSelected: (value) {
-                                              if (value == 'Edit') {
-                                                // Open Edit Popup
-                                                navigateToEditPage(widget.id);
-                                              } else if (value == 'Delete') {
-                                                // Open Delete Popup
-                                                //deleteById(id);
-                                              } else if (value == 'Edit price') {
-                                                navigateToPriceEditPage(widget.id);
-                                              }
-                                              else if(value == 'Booked'){
-                                                updateBooked(widget.id);
-                            
-                                              }
-                                              else if(value== 'Sold'){
-                                                updateSold(widget.id);
-                                              }
-                                            },
-                                            itemBuilder: (context) {
-                                              return [
-                                                PopupMenuItem(
-                                                  child: Text("Edit price"),
-                                                  value: 'Edit price',
-                                                ),
-                                                PopupMenuItem(
-                                                  child: Text("Booked"),
-                                                  value: 'Booked',
-                                                ),
-                                                PopupMenuItem(
-                                                  child: Text("Sold"),
-                                                  value: 'Sold',
-                                                ),
-                                                PopupMenuItem(
-                                                  child: Text("Edit"),
-                                                  value: 'Edit',
-                                                ),
-                                                PopupMenuItem(
-                                                  child: Text("Availability"),
-                                                  value: 'Availability',
-                                                ),
-                                                PopupMenuItem(
-                                                  child: Text("Advance"),
-                                                  value: 'Advance',
-                                                ),
-                                                PopupMenuItem(
-                                                  child: Text("Delete"),
-                                                  value: 'Delete',
-                                                ),
-                                              ];
-                                            },
+                                      ),
+                                      // popup menu
+                                      Spacer(),
+                                      CircleAvatar(
+                                        backgroundColor:
+                                            Color.fromARGB(221, 65, 64, 64),
+                                        radius: 15,
+                                        child: PopupMenuButton(
+                                          child: Icon(
+                                            Icons.more_vert,
+                                            color: Colors.white,
                                           ),
+                                          padding: EdgeInsets.zero,
+                                          iconSize: 15,
+                                          onSelected: (value) {
+                                            if (value == 'Edit') {
+                                              // Open Edit Popup
+                                              navigateToEditPage(
+                                                  widget.id ?? 0);
+                                            } else if (value == 'Delete') {
+                                              // Open Delete Popup
+                                              //deleteById(id);
+                                            } else if (value == 'Edit price') {
+                                              navigateToPriceEditPage(
+                                                  widget.id ?? 0);
+                                            } else if (value == 'Booked') {
+                                              updateBooked(widget.id ?? 0);
+                                            } else if (value == 'Sold') {
+                                              updateSold(widget.id ?? 0);
+                                            }
+                                          },
+                                          itemBuilder: (context) {
+                                            return [
+                                              PopupMenuItem(
+                                                child: Text("Edit price"),
+                                                value: 'Edit price',
+                                              ),
+                                              PopupMenuItem(
+                                                child: Text("Booked"),
+                                                value: 'Booked',
+                                              ),
+                                              PopupMenuItem(
+                                                child: Text("Sold"),
+                                                value: 'Sold',
+                                              ),
+                                              PopupMenuItem(
+                                                child: Text("Edit"),
+                                                value: 'Edit',
+                                              ),
+                                              PopupMenuItem(
+                                                child: Text("Availability"),
+                                                value: 'Availability',
+                                              ),
+                                              PopupMenuItem(
+                                                child: Text("Advance"),
+                                                value: 'Advance',
+                                              ),
+                                              PopupMenuItem(
+                                                child: Text("Delete"),
+                                                value: 'Delete',
+                                              ),
+                                            ];
+                                          },
                                         ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -633,8 +642,8 @@ Future<void> shareViaEmail() async{
           )),
     );
   }
-  
-   // Update Booked 
+
+  // Update Booked
   void updateBooked(int index) async {
     final body = {
       "available_id": 20,
@@ -654,7 +663,8 @@ Future<void> shareViaEmail() async{
       print("Succesfully Booked");
     }
   }
-   // Update Sold  
+
+  // Update Sold
   void updateSold(int index) async {
     final body = {
       "available_id": 22,

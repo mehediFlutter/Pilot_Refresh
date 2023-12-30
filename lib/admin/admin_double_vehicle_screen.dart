@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:pilot_refresh/admin/asking_fixed_stockList.dart';
 import 'package:pilot_refresh/item_class.dart';
 import 'package:pilot_refresh/product.dart';
 import 'package:pilot_refresh/screens/auth/auth_utility.dart';
@@ -11,18 +12,23 @@ import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
 import 'package:pilot_refresh/widget/end_drawer.dart';
 import 'package:pilot_refresh/widget/search_bar.dart';
 
-class DoublVehicle extends StatefulWidget {
-  DoublVehicle({super.key});
+class AdminDoublVehicle extends StatefulWidget {
+
+  AdminDoublVehicle({super.key,});
 
   @override
-  State<DoublVehicle> createState() => _DoublVehicleState();
+  State<AdminDoublVehicle> createState() => _DoublVehicleState();
 }
 
-class _DoublVehicleState extends State<DoublVehicle> {
+class _DoublVehicleState extends State<AdminDoublVehicle> {
   @override
   static String imagePath = "https://pilotbazar.com/storage/vehicles/";
   static late int page;
   static late int i;
+  bool fixedPriceChange=false;
+  bool askingPriceChange=false;
+  bool askingPriceInProgress=false;
+  
 
   // yVjInK9erYHC0iHW9ehY8c6J4y79fbNzCEIWtZvQ.jpg
   //https://pilotbazar.com/storage/vehicles/
@@ -30,20 +36,22 @@ class _DoublVehicleState extends State<DoublVehicle> {
   void initState() {
     page = 1;
     i = 0;
-
+   // searchController.text = ' ';
     super.initState();
+     _scrollController.addListener(_listenToScroolMoments);
+    getProduct(page);
     searchController.addListener(() {  
       page = 1;
       i = 0;
 
+      // Clear the searchProducts list when the text field is empty
       if (searchController.text.isEmpty) {
-       // searchProducts.clear();
-       // products.clear();
+        searchProducts.clear();
+        products.clear();
         getProduct(page);
-      //  setState(() {});
+        setState(() {});
       }
-    //  _listenToScroolMoments;
-      _scrollController.addListener(_listenToScroolMoments);
+      _listenToScroolMoments;
     });
 
     setState(() {});
@@ -220,7 +228,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
                   ?['title'] ??
               'No mileage data',
           price: decodedResponse['data'][i]?['price'] ?? '',
-          purchase_price: decodedResponse['data'][i]?['purchase_price'] ?? '',
+          purchase_price: decodedResponse['data'][i]?['purchase_price'] ?? '--',
           fixed_price: decodedResponse['data'][i]?['fixed_price'] ?? '',
           imageName: decodedResponse['data'][i]?['image']?['name'] ?? '',
           // registratin
@@ -271,7 +279,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
   List searchProducts = [];
   bool _searchInProgress = false;
   TextEditingController searchController = TextEditingController();
-
+ Item myItem = Item();
   Future<void> search(String value) async {
     searchProducts.clear();
     products.clear();
@@ -327,12 +335,25 @@ class _DoublVehicleState extends State<DoublVehicle> {
       return;
     }
   }
-
-  Widget build(BuildContext context) {
-
-    _searchInProgress?null: _scrollController.addListener(() {
-      print(_scrollController.offset);
+  
+   // update bool value
+   bool myBoolValue = true;
+  void updateAskingPriceFunction() {
+    setState(() {
+      myBoolValue = true; // Toggle the value
     });
+  }
+  void updateFixedPriceFunction() {
+    setState(() {
+      myBoolValue = false; // Toggle the value
+    });
+  }
+  Widget build(BuildContext context) {
+    _searchInProgress
+        ? null
+        : _scrollController.addListener(() {
+            print(_scrollController.offset);
+          });
     return Scaffold(
         backgroundColor: Color(0xFF313131),
         appBar: AppBar(
@@ -372,64 +393,88 @@ class _DoublVehicleState extends State<DoublVehicle> {
           ),
         ),
         endDrawer: EndDrawer(mounted: mounted),
-        // appBar: AppBar(
-
-        //   actions: [
-        //     IconButton(
-        //         onPressed: () async {
-        //           _showAlertDialog(context);
-        //         },
-        //         icon: Icon(Icons.logout))
-        //   ],
-        // ),
+ 
         body: (_getProductinProgress || _searchInProgress)
             ? Center(
                 child: CircularProgressIndicator(),
               )
             : Stack(
                 children: [
-                  GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      //childAspectRatio: 1.0,
-                      mainAxisSpacing: 2.0,
-                      crossAxisSpacing: 0.0,
-                    ),
-                    controller: _scrollController,
-                    itemCount: products.length,
-                    itemBuilder: (BuildContext context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 0),
-                        child: Item(
-                          id: products[index + j].id!,
-                          imageName: products[index + j].imageName.toString(),
-                          price: products[index + j].price.toString(),
-                          purchase_price:
-                              products[index + j].purchase_price.toString(),
-                          fixed_price:
-                              products[index + j].fixed_price.toString(),
-                          featureSeat: featureUnicTitle[index + j].toString(),
-                          featureSeatDetails:
-                              featureDetails[index + j].toString(),
-                          vehiclaName: products[index + j].vehicleName,
-                          manufacture: products[index + j].manufacture,
-                          condition: products[index + j].condition,
-                          nMillage: products[index + j].mileage,
-                          brandName: products[index + j].brandName,
-                          engine: products[index + j].engine,
-                          transmission: products[index + j].transmission,
-                          model: "",
-                          fuel: products[index + j].fuel,
-                          skeleton: products[index + j].skeleton,
-                          code: products[index + j].code,
-                          registration: products[index + j].registration,
-                          available: products[index + j].available,
-                          detailsLink: products[index + j].detailsLink,
+                  Column(
+                    children: [
+                      AskingFixedAndStockList(
+                        askingPriceFunction: () {
+                          print("Asking Price function is called");
+                          updateAskingPriceFunction();
+                          askingPriceInProgress=false;
+                          setState(() {
+                            
+                          });
+                          print(askingPriceInProgress);
+                             },
+                        fixedPriceFunction: () {
+                          print("Fixed Price Function is called");
+                          askingPriceInProgress=true;
+                          updateFixedPriceFunction();
+                          setState(() {});
+                          print(askingPriceInProgress);
+                        },
+                        stockListFunction: () {
+                          print("StockList Price Function is called");
+                        },
+                      ),
+                      Expanded(
+                        child: GridView.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            //childAspectRatio: 1.0,
+                            mainAxisSpacing: 2.0,
+                            crossAxisSpacing: 0.0,
+                          ),
+                          controller: _scrollController,
+                          itemCount: products.length,
+                          itemBuilder: (BuildContext context, index) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 0),
+                              child: Item(
+                                myAskingPrice: myBoolValue,
+                                id: products[index + j].id!,
+                                imageName:
+                                    products[index + j].imageName.toString(),
+                                price: products[index + j].price.toString(),
+                                purchase_price: products[index + j]
+                                    .purchase_price
+                                    .toString(),
+                                fixed_price:
+                                    products[index + j].fixed_price.toString(),
+                                featureSeat:
+                                    featureUnicTitle[index + j].toString(),
+                                featureSeatDetails:
+                                    featureDetails[index + j].toString(),
+                                vehiclaName: products[index + j].vehicleName,
+                                manufacture: products[index + j].manufacture,
+                                condition: products[index + j].condition,
+                                nMillage: products[index + j].mileage,
+                                brandName: products[index + j].brandName,
+                                engine: products[index + j].engine,
+                                transmission: products[index + j].transmission,
+                                model: "",
+                                fuel: products[index + j].fuel,
+                                skeleton: products[index + j].skeleton,
+                                code: products[index + j].code,
+                                registration: products[index + j].registration,
+                                available: products[index + j].available,
+                                detailsLink: products[index + j].detailsLink,
 
-                          //dropdownFontLight: products[index+j],
+                                //dropdownFontLight: products[index+j],
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
+                      ),
+                    ],
                   ),
                   Visibility(
                       visible: _getNewProductinProgress,

@@ -1,5 +1,8 @@
 class Product {
   final int? id;
+    final String? engineNumber;
+  final String? chassisNumber;
+  final String?edition;
   final String? code;
   final String? slug;
   final String? vehicleName;
@@ -31,6 +34,9 @@ class Product {
   Product(
       {this.imageName,
       this.id,
+           this.engineNumber,
+      this.chassisNumber,
+      this.edition,
       this.code,
       this.slug,
       this.vehicleName,
