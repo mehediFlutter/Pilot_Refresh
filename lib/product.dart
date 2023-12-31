@@ -4,6 +4,7 @@ class Product {
   final String? chassisNumber;
   final String?edition;
   final String? code;
+  final String? model;
   final String? slug;
   final String? vehicleName;
   final String? manufacture;
@@ -12,6 +13,7 @@ class Product {
   final String? price;
   final String? purchase_price;
   final String? fixed_price;
+  final String? asking_price;
   final String? available;
   final String? imageName;
   final String? dropdownFontLight;
@@ -23,6 +25,7 @@ class Product {
   final String? fuel;
   final String? skeleton;
   final String? detailsLink;
+  final String? grade;
 
   // productCode,
   // image,
@@ -38,6 +41,7 @@ class Product {
       this.chassisNumber,
       this.edition,
       this.code,
+      this.model,
       this.slug,
       this.vehicleName,
       this.manufacture,
@@ -46,6 +50,7 @@ class Product {
       this.price,
       this.purchase_price,
       this.fixed_price,
+      this.asking_price,
       this.available,
       this.dropdownFontLight,
       this.dropdownFontLightAnswer,
@@ -56,6 +61,7 @@ class Product {
       this.fuel,
       this.skeleton,
       this.detailsLink,
+      this.grade,
       // required this.productCode,
       // required this.image,
       // required this.unitPrice,
