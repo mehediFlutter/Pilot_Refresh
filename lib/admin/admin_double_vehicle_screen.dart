@@ -36,16 +36,16 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
   void initState() {
     page = 1;
     i = 0;
-   // searchController.text = ' ';
-    super.initState();
-     _scrollController.addListener(_listenToScroolMoments);
     getProduct(page);
+    _scrollController.addListener(_listenToScroolMoments);
+    
     searchController.addListener(() {  
-      page = 1;
-      i = 0;
+      
 
       // Clear the searchProducts list when the text field is empty
       if (searchController.text.isEmpty) {
+        page = 1;
+      i = 0;
         searchProducts.clear();
         products.clear();
         getProduct(page);
@@ -55,6 +55,11 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
     });
 
     setState(() {});
+
+    // getProductForSearch();
+    //getDetails(products[0].id);
+
+    //getDetails(i);
   }
 
   List products = [];
@@ -78,13 +83,14 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
   }
 
   void getNewProduct(int page) async {
+    
     _getNewProductinProgress = true;
     if (mounted) {
       setState(() {});
     }
 
     Response response =
-        await get(Uri.parse("https://pilotbazar.com/api/vehicle?page=$page"));
+        await get(Uri.parse("https://pilotbazar.com/api/vehicle?page=$page"),headers: {'Retry-After':'3600','Content-Type': 'text/html'});
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
     print(response.statusCode);
@@ -189,6 +195,7 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
   bool isLoading = false;
   @override
   void getProduct(int page) async {
+    products.clear();
     _getProductinProgress = true;
     if (mounted) {
       setState(() {});
@@ -257,21 +264,11 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
       setState(() {});
     }
 
-    // if (decodedResponse['data'] == null) {
-    //   return;
-    // }
+    if (decodedResponse['data'] == null) {
+      return;
+    }
 
-    // show title and details
-//      List unitTitles = [];
-//  List features = [];
-//     decodedResponse['data'].forEach((e) {
-//       e['vehicle_feature'].forEach((a) {
-//         unitTitles.add(a['feature']['title']);
 
-//         print(a['feature']['title']);
-//         print(a['detail']['title']);
-//       });
-//     });
   }
 
   final ScrollController _scrollController = ScrollController();
@@ -323,10 +320,10 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
           available: decodedResponse['payload'][i]?['available']['slug'] ?? '-',
           code: decodedResponse['payload'][i]?['code'] ?? '-'));
 
-      products.addAll(searchProducts);
-      searchProducts.clear();
+      
     }
-
+products.addAll(searchProducts);
+      searchProducts.clear();
     _searchInProgress = false;
     if (mounted) {
       setState(() {});
@@ -357,41 +354,43 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
     return Scaffold(
         backgroundColor: Color(0xFF313131),
         appBar: AppBar(
-          backgroundColor: Color(0xFF666666),
-          //leading: Icon(Icons.image,size: 100,),
-          //
-          //leading:Image.asset('assets/images/pilot_logo.png',width: 80,height:30,fit: BoxFit.cover,),
-          leading: Image.asset(
-            'assets/images/pilot_logo2.png',
-          ),
-
-          title: TextField(
-            style: TextStyle(color: Colors.white, fontSize: 15),
-            controller: searchController,
-            onSubmitted: (value) async {
-              await search(value);
-            },
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(horizontal: 25),
-              hintText: "Search",
-              hintStyle: TextStyle(color: Colors.white),
-              border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white, width: 2),
-                  borderRadius: BorderRadius.circular(40)),
-              prefixIcon: Icon(
-                Icons.search,
-                color: Colors.white,
-              ),
-              suffixIcon: Icon(
-                Icons.send,
-                color: Colors.white,
-              ),
-              focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(40),
-                  borderSide: BorderSide(color: Colors.white)),
-            ),
-          ),
-        ),
+  backgroundColor: Color(0xFF666666),
+  leading: Image.asset(
+    'assets/images/pilot_logo2.png',
+  ),
+  title: TextField(
+    style: TextStyle(color: Colors.white, fontSize: 15),
+    controller: searchController,
+    onSubmitted: (value) async {
+      print("onSubmitted: $value");
+      await search(value);
+    },
+    decoration: InputDecoration(
+      contentPadding: EdgeInsets.symmetric(horizontal: 25),
+      hintText: "Search",
+      hintStyle: TextStyle(color: Colors.white),
+      border: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.white, width: 2),
+        borderRadius: BorderRadius.circular(40),
+      ),
+      prefixIcon: Icon(
+        Icons.search,
+        color: Colors.white,
+      ),
+      suffixIcon: IconButton(
+        onPressed: () async {
+          print("Hello");
+          await search(searchController.text.toString());
+        },
+        icon: Icon(Icons.send, color: Colors.white),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(40),
+        borderSide: BorderSide(color: Colors.white),
+      ),
+    ),
+  ),
+),
         endDrawer: EndDrawer(mounted: mounted),
  
         body: (_getProductinProgress || _searchInProgress)

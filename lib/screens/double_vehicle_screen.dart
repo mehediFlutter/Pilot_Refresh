@@ -30,20 +30,24 @@ class _DoublVehicleState extends State<DoublVehicle> {
   void initState() {
     page = 1;
     i = 0;
+     getProduct(page);
 
     super.initState();
-    searchController.addListener(() {  
+     _scrollController.addListener(_listenToScroolMoments);
+
+
+   searchController.addListener(() {  
       page = 1;
       i = 0;
 
+      // Clear the searchProducts list when the text field is empty
       if (searchController.text.isEmpty) {
-       // searchProducts.clear();
-       // products.clear();
+        searchProducts.clear();
+        products.clear();
         getProduct(page);
-      //  setState(() {});
+        setState(() {});
       }
-    //  _listenToScroolMoments;
-      _scrollController.addListener(_listenToScroolMoments);
+      _listenToScroolMoments;
     });
 
     setState(() {});
@@ -290,7 +294,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
         'Content-Type': 'application/vnd.api+json'
       },
     );
-    Map<String, dynamic> decodedResponse = jsonDecode(response.body);
+    Map<String,dynamic> decodedResponse = jsonDecode(response.body);
     int i = 0;
 
     for (i; i < decodedResponse['payload'].length; i++) {
@@ -337,9 +341,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
         backgroundColor: Color(0xFF313131),
         appBar: AppBar(
           backgroundColor: Color(0xFF666666),
-          //leading: Icon(Icons.image,size: 100,),
-          //
-          //leading:Image.asset('assets/images/pilot_logo.png',width: 80,height:30,fit: BoxFit.cover,),
+
           leading: Image.asset(
             'assets/images/pilot_logo2.png',
           ),

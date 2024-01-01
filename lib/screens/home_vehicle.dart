@@ -38,22 +38,20 @@ class _HomeVehicleState extends State<HomeVehicle> {
   void initState() {
     page = 1;
     i = 0;
-    searchController.text = ' ';
-    super.initState();
-     _scrollController.addListener(_listenToScroolMoments);
     getProduct(page);
+    _scrollController.addListener(_listenToScroolMoments);
+    
     searchController.addListener(() {  
-      page = 1;
-      i = 0;
-
-      // Clear the searchProducts list when the text field is empty
+      
       if (searchController.text.isEmpty) {
+        page = 1;
+      i = 0;
         searchProducts.clear();
         products.clear();
         getProduct(page);
         setState(() {});
       }
-     
+      _listenToScroolMoments;
     });
 
     setState(() {});
@@ -536,10 +534,10 @@ class _HomeVehicleState extends State<HomeVehicle> {
           available: decodedResponse['payload'][i]?['available']['slug'] ?? '-',
           code: decodedResponse['payload'][i]?['code'] ?? '-'));
 
-      products.addAll(searchProducts);
-      searchProducts.clear();
+      
     }
-
+products.addAll(searchProducts);
+      searchProducts.clear();
     _searchInProgress = false;
     if (mounted) {
       setState(() {});
@@ -560,41 +558,43 @@ class _HomeVehicleState extends State<HomeVehicle> {
     return Scaffold(
       backgroundColor: Color(0xFF313131),
       appBar: AppBar(
-        backgroundColor: Color(0xFF666666),
-        //leading: Icon(Icons.image,size: 100,),
-        //
-        //leading:Image.asset('assets/images/pilot_logo.png',width: 80,height:30,fit: BoxFit.cover,),
-        leading: Image.asset(
-          'assets/images/pilot_logo2.png',
-        ),
-
-        title: TextField(
-          style: TextStyle(color: Colors.white, fontSize: 15),
-          controller: searchController,
-          onSubmitted: (value) async {
-            await search(value);
-          },
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(horizontal: 25),
-            hintText: "Search",
-            hintStyle: TextStyle(color: Colors.white),
-            border: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.white, width: 2),
-                borderRadius: BorderRadius.circular(40)),
-            prefixIcon: Icon(
-              Icons.search,
-              color: Colors.white,
-            ),
-            suffixIcon: Icon(
-              Icons.send,
-              color: Colors.white,
-            ),
-            focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(40),
-                borderSide: BorderSide(color: Colors.white)),
-          ),
-        ),
+  backgroundColor: Color(0xFF666666),
+  leading: Image.asset(
+    'assets/images/pilot_logo2.png',
+  ),
+  title: TextField(
+    style: TextStyle(color: Colors.white, fontSize: 15),
+    controller: searchController,
+    onSubmitted: (value) async {
+      print("onSubmitted: $value");
+      await search(value);
+    },
+    decoration: InputDecoration(
+      contentPadding: EdgeInsets.symmetric(horizontal: 25),
+      hintText: "Search",
+      hintStyle: TextStyle(color: Colors.white),
+      border: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.white, width: 2),
+        borderRadius: BorderRadius.circular(40),
       ),
+      prefixIcon: Icon(
+        Icons.search,
+        color: Colors.white,
+      ),
+      suffixIcon: IconButton(
+        onPressed: () async {
+          print("Hello");
+          await search(searchController.text.toString());
+        },
+        icon: Icon(Icons.send, color: Colors.white),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(40),
+        borderSide: BorderSide(color: Colors.white),
+      ),
+    ),
+  ),
+),
       endDrawer: EndDrawer(mounted: mounted),
       body: (_getProductinProgress || _searchInProgress)
           ? Center(
@@ -717,10 +717,10 @@ class _HomeVehicleState extends State<HomeVehicle> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(height: 7),
-                            Text(
-                              products[x].id.toString(),
-                              style: TextStyle(fontSize: 20),
-                            ),
+                            // Text(
+                            //   products[x].id.toString(),
+                            //   style: TextStyle(fontSize: 20),
+                            // ),
                             Text(
                               products[x].vehicleName.toString(),
                               style: Theme.of(context).textTheme.bodyMedium,

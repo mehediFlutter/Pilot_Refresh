@@ -16,6 +16,19 @@ class StockListItem extends StatefulWidget {
   final bool brandNamebool;
   final bool modelNamebool;
   final bool registratinbool;
+  final bool editionbool;
+  final bool manufacture;
+  final bool conditionbool;
+  final bool detailsbool;
+  final bool fuelbool;
+  final bool mileagebool;
+  final bool gradebool;
+  final bool powerBool;
+  final bool availavleBool;
+  final bool skeletonBool;
+  final bool titleBool;
+  final bool askingPriceBool;
+  final bool fixedPriceBool;
 
   StockListItem({
     Key? key,
@@ -26,12 +39,26 @@ class StockListItem extends StatefulWidget {
     this.brandNamebool = false,
     this.modelNamebool = false,
     this.registratinbool = false,
+    this.editionbool = false,
+    this.manufacture = false,
+    this.conditionbool = false,
+    this.detailsbool = false,
+    this.fuelbool = false,
+    this.mileagebool = false,
+    this.gradebool = false,
+    this.powerBool = false,
+    this.availavleBool = false,
+    this.skeletonBool = false,
+    this.titleBool = false,
+    this.askingPriceBool = false,
+    this.fixedPriceBool = false,
   }) : super(key: key);
 
   @override
   _StockListItemState createState() => _StockListItemState();
 
   static Future<File> generateCenteredText({
+
     bool addId = false,
     bool engineNumberbool = false,
     bool chasisNumberbool = false,
@@ -39,6 +66,19 @@ class StockListItem extends StatefulWidget {
     bool brandNamebool = false,
     bool modelNamebool = false,
     bool registratinbool = false,
+    bool editionbool = false,
+    bool manufacture = false,
+    bool conditionbool = false,
+    bool detailsbool = false,
+    bool fuelbool = false,
+    bool mileagebool = false,
+    bool gradebool = false,
+    bool powerBool = false,
+    bool availavleBool = false,
+    bool skeletonBool = false,
+    bool titleBool = false,
+    bool askingPriceBool = false,
+    bool fixedPriceBool = false,
   }) {
     return _StockListItemState()._generateCenteredText(
       addId: addId,
@@ -48,6 +88,19 @@ class StockListItem extends StatefulWidget {
       brandNamebool: brandNamebool,
       modelNamebool: modelNamebool,
       registratinbool: registratinbool,
+      editionbool: editionbool,
+      manufacture: manufacture,
+      conditionbool: conditionbool,
+      detailsbool: detailsbool,
+      fuelbool: fuelbool,
+      mileagebool: mileagebool,
+      gradebool: gradebool,
+      powerBool: powerBool,
+      availavleBool: availavleBool,
+      skeletonBool: skeletonBool,
+      titleBool: titleBool,
+      askingPriceBool: askingPriceBool,
+      fixedPriceBool: fixedPriceBool,
     );
   }
 
@@ -63,16 +116,12 @@ class _StockListItemState extends State<StockListItem> {
   bool getAllProductsInProgress = false;
 
   getProduct() async {
-    getAllProductsInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
+
 
     //  for (int b = 1; b < 11; b++) {
-    Response response = await get(Uri.parse(
+   Response response = await get(Uri.parse(
         "https://pilotbazar.com/api/merchants/vehicles/products/stocklist"));
-    //https://pilotbazar.com/api/vehicle?page=0
-    //https://crud.teamrabbil.com/api/v1/ReadProduct
+
     print(response.statusCode);
     final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
 
@@ -101,27 +150,19 @@ class _StockListItemState extends State<StockListItem> {
             grade: e['grade']?['translate'][0]?['title'] ?? '--',
             available: e['available']?['translate'][0]?['title'] ?? '--',
             asking_price: e['price'] ?? '--',
-
-            // slug: e['slug'] ?? '',
           ));
         },
       );
-      if (decodedResponse == null) {
+       if (decodedResponse == null) {
         return;
       }
+   
 
-      getAllProductsInProgress = false;
-      if (mounted) {
-        setState(() {});
-      }
     }
-    getAllProductsInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
-    print("Is Id added Stocklist ");
+   
   }
 
+  
   Future<File> _generateCenteredText({
     bool addId = false,
     bool engineNumberbool = false,
@@ -130,12 +171,28 @@ class _StockListItemState extends State<StockListItem> {
     bool brandNamebool = false,
     bool modelNamebool = false,
     bool registratinbool = false,
+    bool editionbool = false,
+    bool manufacture = false,
+    bool conditionbool = false,
+    bool detailsbool = false,
+    bool fuelbool = false,
+    bool mileagebool = false,
+    bool gradebool = false,
+    bool powerBool = false,
+    bool availavleBool = false,
+    bool skeletonBool = false,
+    bool titleBool = false,
+    bool askingPriceBool = false,
+    bool fixedPriceBool = false,
   }) async {
     await getProduct();
-    final totalPages = (products.length / 15).ceil();
+        final totalPages = (products.length / 15).ceil();
+
 
     final pdf = p.Document();
+
     for (int currentPage = 1; currentPage <= totalPages; currentPage++) {
+     
       pdf.addPage(
         p.Page(
           build: (context) {
@@ -148,22 +205,40 @@ class _StockListItemState extends State<StockListItem> {
                     child: p.Text("Page $currentPage")),
 
                 _buildProductListView(
-                    currentPage,
-                    addId,
-                    engineNumberbool,
-                    chasisNumberbool,
-                    vehicleNamebool,
-                    brandNamebool,
-                    modelNamebool,
-                    registratinbool),
+                  currentPage,
+                    
+                  addId,
+                
+                  engineNumberbool,
+                  chasisNumberbool,
+                  vehicleNamebool,
+                  brandNamebool,
+                  modelNamebool,
+                  registratinbool,
+                  editionbool,
+                  manufacture,
+                  conditionbool,
+                  detailsbool,
+                  fuelbool,
+                  mileagebool,
+                  gradebool,
+                  powerBool,
+                  availavleBool,
+                  skeletonBool,
+                  titleBool,
+                  askingPriceBool,
+                  fixedPriceBool,
+                ),
               ],
             );
           },
         ),
       );
+   
     }
-    return _saveDocument(name: 'my_example.pdf', pdf: pdf);
+    return _saveDocument(name: 'Pilot_Bazar_Stock_List.pdf', pdf: pdf);
   }
+
 
   titleStock(String title) {
     return p.Padding(
@@ -181,7 +256,22 @@ class _StockListItemState extends State<StockListItem> {
     bool brandNamebool,
     bool modelNamebool,
     bool registratinbool,
+    bool editionbool,
+    bool manufacturebool,
+    bool conditionbool,
+    bool detailsbool,
+    bool fuelbool,
+    bool mileagebool,
+    bool gradebool,
+    bool powerBool,
+    bool availavleBool,
+    bool skeletonBool,
+    bool titleBool,
+    bool askingPriceBool,
+    bool fixedPriceBool,
   ) {
+
+print(addId);
     return p.Table(
       border: p.TableBorder.all(
         style: p.BorderStyle.solid,
@@ -196,37 +286,39 @@ class _StockListItemState extends State<StockListItem> {
               p.BoxDecoration(color: PdfColor.fromInt(Colors.grey.value)),
           children: [
             titleStock('SL'),
+           
             //  if(widget.isIdIsAddedStockList??false)
             if (brandNamebool) titleStock('Brand Name'),
             if (modelNamebool) titleStock('Model'),
-            titleStock('Edition'),
-            titleStock('Manufacture'),
+            if (editionbool) titleStock('Edition'),
+            if (manufacturebool) titleStock('Manufacture'),
             if (registratinbool) titleStock('Registration'),
-            titleStock('Condition'),
-            titleStock('Details'),
-            titleStock('Fuel'),
+            if (conditionbool) titleStock('Condition'),
+            if (detailsbool) titleStock('Details'),
+            if (fuelbool) titleStock('Fuel'),
 
-            titleStock('Mileage'),
-            titleStock('Grade'),
-            titleStock('Power'),
+            if (mileagebool) titleStock('Mileage'),
+            if (gradebool) titleStock('Grade'),
+            if (powerBool) titleStock('Power'),
             if (engineNumberbool) titleStock('Engine Number'),
             if (chasisNumberbool) titleStock('Chassis Number'),
-            titleStock('Available'),
-            titleStock('Skeleton'),
+            if (availavleBool) titleStock('Available'),
+            if (skeletonBool) titleStock('Skeleton'),
 
-            if (vehicleNamebool) titleStock('"Vehicle Name "'),
-            titleStock('Asking Price'),
+            if (vehicleNamebool) titleStock('Title'),
+            if (askingPriceBool) titleStock('Asking Price'),
 
-            titleStock('"Fixed Price"'),
+            if (fixedPriceBool) titleStock('"Fixed Price"'),
 
             if (addId) titleStock('ID'),
 
             // p.Text("Code", style: p.TextStyle(fontSize: 10)),
           ],
         ),
-        for (int i = (currentPage - 1) * 15;
+       for (int i = (currentPage - 1) * 15;
             i < currentPage * 15 && i < products.length;
             i++)
+            
           p.TableRow(
             verticalAlignment: p.TableCellVerticalAlignment.middle,
             children: [
@@ -252,59 +344,68 @@ class _StockListItemState extends State<StockListItem> {
                   child: p.Text(products[i].model.toString(),
                       style: p.TextStyle(fontSize: 7)),
                 ),
-              p.Padding(
-                padding: p.EdgeInsets.all(2),
-                child: p.Text(products[i].edition.toString(),
-                    style: p.TextStyle(fontSize: 8)),
-              ),
-              p.Padding(
-                padding: p.EdgeInsets.all(2),
-                child: p.Text(products[i].manufacture.toString(),
-                    style: p.TextStyle(fontSize: 8)),
-              ),
+              if (editionbool)
+                p.Padding(
+                  padding: p.EdgeInsets.all(2),
+                  child: p.Text(products[i].edition.toString(),
+                      style: p.TextStyle(fontSize: 8)),
+                ),
+              if (manufacturebool)
+                p.Padding(
+                  padding: p.EdgeInsets.all(2),
+                  child: p.Text(products[i].manufacture.toString(),
+                      style: p.TextStyle(fontSize: 8)),
+                ),
+
               if (registratinbool)
                 p.Padding(
                   padding: p.EdgeInsets.all(2),
                   child: p.Text(products[i].registration.toString(),
                       style: p.TextStyle(fontSize: 8)),
                 ),
-              p.Padding(
-                padding: p.EdgeInsets.all(2),
-                child: p.Text(products[i].condition.toString(),
-                    style: p.TextStyle(fontSize: 8)),
-              ),
-              p.UrlLink(
-                // Use p.UrlLink for clickable links in PDF
-                child: p.Text("Details",
-                    style: p.TextStyle(
-                      fontSize: 5,
-                      color: PdfColor.fromInt(
-                          Color.fromARGB(255, 39, 87, 129).value),
-                    )),
-                destination: "https://pilotbazar.com", // Adjust URL as needed
-              ),
-              p.Padding(
-                padding: p.EdgeInsets.all(2),
-                child: p.Text(products[i].fuel.toString(),
-                    style: p.TextStyle(fontSize: 8)),
-              ),
+              if (conditionbool)
+                p.Padding(
+                  padding: p.EdgeInsets.all(2),
+                  child: p.Text(products[i].condition.toString(),
+                      style: p.TextStyle(fontSize: 8)),
+                ),
+              if (detailsbool)
+                p.UrlLink(
+                  // Use p.UrlLink for clickable links in PDF
+                  child: p.Text("Details",
+                      style: p.TextStyle(
+                        fontSize: 5,
+                        color: PdfColor.fromInt(
+                            Color.fromARGB(255, 39, 87, 129).value),
+                      )),
+                  destination: "https://pilotbazar.com", // Adjust URL as needed
+                ),
+              if (fuelbool)
+                p.Padding(
+                  padding: p.EdgeInsets.all(2),
+                  child: p.Text(products[i].fuel.toString(),
+                      style: p.TextStyle(fontSize: 8)),
+                ),
 
-              p.Padding(
-                padding: p.EdgeInsets.all(2),
-                child: p.Text(products[i].mileage.toString(),
-                    style: p.TextStyle(fontSize: 8)),
-              ),
-              p.Padding(
-                padding: p.EdgeInsets.all(2),
-                child: p.Text(products[i].grade.toString(),
-                    style: p.TextStyle(fontSize: 8)),
-              ),
+              if (mileagebool)
+                p.Padding(
+                  padding: p.EdgeInsets.all(2),
+                  child: p.Text(products[i].mileage.toString(),
+                      style: p.TextStyle(fontSize: 8)),
+                ),
+              if (gradebool)
+                p.Padding(
+                  padding: p.EdgeInsets.all(2),
+                  child: p.Text(products[i].grade.toString(),
+                      style: p.TextStyle(fontSize: 8)),
+                ),
 
-              p.Padding(
-                padding: p.EdgeInsets.all(2),
-                child: p.Text(products[i].engine.toString(),
-                    style: p.TextStyle(fontSize: 8)),
-              ),
+              if (powerBool)
+                p.Padding(
+                  padding: p.EdgeInsets.all(2),
+                  child: p.Text(products[i].engine.toString(),
+                      style: p.TextStyle(fontSize: 8)),
+                ),
               if (engineNumberbool)
                 p.Padding(
                   padding: p.EdgeInsets.all(2),
@@ -317,16 +418,18 @@ class _StockListItemState extends State<StockListItem> {
                   child: p.Text(products[i].chassisNumber.toString(),
                       style: p.TextStyle(fontSize: 8)),
                 ),
-              p.Padding(
-                padding: p.EdgeInsets.all(2),
-                child: p.Text(products[i].available.toString(),
-                    style: p.TextStyle(fontSize: 8)),
-              ),
-              p.Padding(
-                padding: p.EdgeInsets.all(2),
-                child: p.Text(products[i].skeleton.toString(),
-                    style: p.TextStyle(fontSize: 8)),
-              ),
+              if (availavleBool)
+                p.Padding(
+                  padding: p.EdgeInsets.all(2),
+                  child: p.Text(products[i].available.toString(),
+                      style: p.TextStyle(fontSize: 8)),
+                ),
+              if (skeletonBool)
+                p.Padding(
+                  padding: p.EdgeInsets.all(2),
+                  child: p.Text(products[i].skeleton.toString(),
+                      style: p.TextStyle(fontSize: 8)),
+                ),
 
               if (vehicleNamebool)
                 p.Padding(
@@ -340,16 +443,18 @@ class _StockListItemState extends State<StockListItem> {
 
               // p.Text(products[i].code.toString(), style: p.TextStyle(fontSize: 10)),
 
-              p.Padding(
-                padding: p.EdgeInsets.only(right: 15, left: 1),
-                child: p.Text(products[i].asking_price.toString(),
-                    style: p.TextStyle(fontSize: 7), softWrap: false),
-              ),
-              p.Padding(
-                padding: p.EdgeInsets.only(right: 15, left: 1),
-                child: p.Text(products[i].fixed_price.toString(),
-                    style: p.TextStyle(fontSize: 7), softWrap: false),
-              ),
+              if (askingPriceBool)
+                p.Padding(
+                  padding: p.EdgeInsets.only(right: 15, left: 1),
+                  child: p.Text(products[i].asking_price.toString(),
+                      style: p.TextStyle(fontSize: 7), softWrap: false),
+                ),
+              if (fixedPriceBool)
+                p.Padding(
+                  padding: p.EdgeInsets.only(right: 15, left: 1),
+                  child: p.Text(products[i].fixed_price.toString(),
+                      style: p.TextStyle(fontSize: 7), softWrap: false),
+                ),
 
               if (addId)
                 p.Padding(

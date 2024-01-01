@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pilot_refresh/pdf/stock_list_item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StockList extends StatefulWidget {
   @override
@@ -8,58 +9,77 @@ class StockList extends StatefulWidget {
 
 class _StockListState extends State<StockList> {
   @override
+  late bool myBoolValue;
+  late SharedPreferences prefs;
   List stockKeyList = [];
   void initState() {
     // TODO: implement initState
     super.initState();
-    stockKeyList = [
-      'SL',
-      'Vehicle Name',
-      'Edition',
-      'Condition',
-      'Engine',
-      'Fuel',
-      'Skeleton',
-      'Mileage',
-    ];
+    loadSavedValues();
+  }
 
+  Future<void> loadSavedValues() async {
+    prefs = await SharedPreferences.getInstance();
+    isBrandName = prefs.getBool('isBrandName') ?? true;
+    isVehicleName = prefs.getBool('isVehicleName') ?? true;
+    isModel = prefs.getBool('isModel') ?? true;
+    isEdition = prefs.getBool('isEdition') ?? true;
+    isManufacture = prefs.getBool('isManufacture') ?? true;
+    isRegistration = prefs.getBool('isRegistration') ?? true;
+    isCondition = prefs.getBool('isCondition') ?? false;
+
+    isDetails = prefs.getBool('isDetails') ?? true;
+    isFuel = prefs.getBool('isFuel') ?? true;
+    isMileage = prefs.getBool('isMileage') ?? true;
+    isGrade = prefs.getBool('isGrade') ?? true;
+    isPower = prefs.getBool('isPower') ?? false;
+    isEngineNumber = prefs.getBool('isEngineNumber') ?? false;
+    isChassisNumber = prefs.getBool('isChassisNumber') ?? true;
+    isAvailable = prefs.getBool('isAvailable') ?? true;
+    isSkeleton = prefs.getBool('isSkeleton') ?? false;
+    isTitle = prefs.getBool('isTitle') ?? false;
+    isAskingPrice = prefs.getBool('isAskingPrice') ?? true;
+    isFixedPrice = prefs.getBool('isFixedPrice') ?? false;
+
+    if (isBrandName) {
+      stockKeyList.add('Brand');
+    }
+    if (isVehicleName) {
+      stockKeyList.add('Vehicle Name');
+    }
+    if (isModel) {
+      stockKeyList.add('Model');
+    }
     setState(() {});
   }
 
+  Future<void> saveBoolValue(String key, bool value) async {
+    await prefs.setBool(key, value);
+  }
+
   @override
-  TextStyle stockText = TextStyle();
-  bool isIdAdded = false;
-  bool isVehicleName = false;
   bool isBrandName = false;
   bool isModel = false;
   bool isRegistration = false;
   bool isEngineNumber = false;
   bool isChassisNumber = false;
-
+  bool isEdition = false;
+  bool isManufacture = false;
   bool isCondition = false;
+  bool isDetails = false;
   bool isEngine = false;
   bool isFuel = false;
   bool isSkeleton = false;
   bool isMileage = false;
+  bool isGrade = false;
+  bool isPower = false;
+  bool isAvailable = false;
+  bool isTitle = false;
   bool isFixedPrice = false;
   bool isAskingPrice = false;
   bool isDetailsLink = false;
-
-  //    isVehicleName= !isVehicleName;
-  // isBrandName = !isBrandName;
-  // isEngineNumber !=isEngineNumber;
-  // isChassisNumber !=isChassisNumber;
-  // isEdition !=isEdition;
-  // isCondition !=isCondition;
-  // isEngine != isEngine;
-  // isCondition != isCondition;
-  // isEngine != isEngine;
-  // isFuel != isFuel;
-  // isSkeleton !=isSkeleton;
-  // isMileage !=isMileage;
-  // isFixedPrice !=isFixedPrice;
-  // isAskingPrice !=isAskingPrice;
-  // isDetailsLink != isDetailsLink;
+  bool isIdAdded = false;
+  bool isVehicleName = false;
 
   idBoolUpdate() {
     isIdAdded = !isIdAdded;
@@ -77,21 +97,32 @@ class _StockListState extends State<StockList> {
     }
   }
 
+  bool pdfInProgress = false;
   engineNumberBoolUpdate() {
+    pdfInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
     isEngineNumber = !isEngineNumber;
     setState(() {});
     if (isEngineNumber == true) {
       stockKeyList.add('Engine Number');
-
-      setState(() {});
     } else {
       stockKeyList.remove('Engine Number');
-
+    }
+    saveBoolValue('isEngineNumber', isEngineNumber);
+      pdfInProgress = false;
+    if (mounted) {
       setState(() {});
     }
+    setState(() {});
   }
 
   chasesNumberBoolUpdate() {
+      pdfInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
     isChassisNumber = !isChassisNumber;
     setState(() {});
     if (isChassisNumber == true) {
@@ -103,9 +134,18 @@ class _StockListState extends State<StockList> {
 
       setState(() {});
     }
+    saveBoolValue('isChassisNumber', isChassisNumber);
+      pdfInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   fixedPriceBoolUpdate() {
+      pdfInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
     isFixedPrice = !isFixedPrice;
     setState(() {});
     if (isFixedPrice == true) {
@@ -117,6 +157,11 @@ class _StockListState extends State<StockList> {
 
       setState(() {});
     }
+    saveBoolValue('isFixedPrice', isFixedPrice);
+      pdfInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   vechicleNameBoolUpdate() {
@@ -124,13 +169,11 @@ class _StockListState extends State<StockList> {
     setState(() {});
     if (isVehicleName == true) {
       stockKeyList.add('Vehicle Name');
-
-      setState(() {});
     } else {
       stockKeyList.remove('Vehicle Name');
-
-      setState(() {});
     }
+    saveBoolValue('isVehicleName', isVehicleName);
+    setState(() {});
   }
 
   brandNameBoolUpdate() {
@@ -138,13 +181,11 @@ class _StockListState extends State<StockList> {
     setState(() {});
     if (isBrandName == true) {
       stockKeyList.add('Brand');
-
-      setState(() {});
     } else {
       stockKeyList.remove('Brand');
-
-      setState(() {});
     }
+    saveBoolValue('isBrandName', isBrandName);
+    setState(() {});
   }
 
   modelBoolUpdate() {
@@ -159,6 +200,7 @@ class _StockListState extends State<StockList> {
 
       setState(() {});
     }
+    saveBoolValue('isModel', isModel);
   }
 
   registrationBoolUpdate() {
@@ -173,9 +215,128 @@ class _StockListState extends State<StockList> {
 
       setState(() {});
     }
+    saveBoolValue('isRegistration', isRegistration);
   }
 
-    bool isEdition = false;
+  fuelBoolUpdate() {
+    isFuel = !isFuel;
+    setState(() {});
+    if (isFuel == true) {
+      stockKeyList.add('Fuel');
+
+      setState(() {});
+    } else {
+      stockKeyList.remove('Fuel');
+
+      setState(() {});
+    }
+    saveBoolValue('isFuel', isFuel);
+  }
+
+  mileageBoolUpdate() {
+    isMileage = !isMileage;
+    setState(() {});
+    if (isMileage == true) {
+      stockKeyList.add('Mileage');
+
+      setState(() {});
+    } else {
+      stockKeyList.remove('Mileage');
+
+      setState(() {});
+    }
+    saveBoolValue('isMileage', isMileage);
+  }
+
+  gredeBoolUpdate() {
+    isGrade = !isGrade;
+    setState(() {});
+    if (isGrade == true) {
+      stockKeyList.add('Grade');
+
+      setState(() {});
+    } else {
+      stockKeyList.remove('Grade');
+
+      setState(() {});
+    }
+    saveBoolValue('isGrade', isGrade);
+  }
+
+  powerBoolUpdate() {
+    isPower = !isPower;
+    setState(() {});
+    if (isPower == true) {
+      stockKeyList.add('Power');
+
+      setState(() {});
+    } else {
+      stockKeyList.remove('Power');
+
+      setState(() {});
+    }
+    saveBoolValue('isPower', isPower);
+  }
+
+  availavleBoolUpdate() {
+    isAvailable = !isAvailable;
+    setState(() {});
+    if (isPower == true) {
+      stockKeyList.add('Available');
+
+      setState(() {});
+    } else {
+      stockKeyList.remove('Available');
+
+      setState(() {});
+    }
+    saveBoolValue('isAvailable', isAvailable);
+  }
+
+  skeletonBoolUpdate() {
+    isSkeleton = !isSkeleton;
+    setState(() {});
+    if (isSkeleton == true) {
+      stockKeyList.add('Skeleton');
+
+      setState(() {});
+    } else {
+      stockKeyList.remove('Skeleton');
+
+      setState(() {});
+    }
+    saveBoolValue('isSkeleton', isSkeleton);
+  }
+
+  titleBoolUpdate() {
+    isTitle = !isTitle;
+    setState(() {});
+    if (isTitle == true) {
+      stockKeyList.add('Title');
+
+      setState(() {});
+    } else {
+      stockKeyList.remove('Title');
+
+      setState(() {});
+    }
+    saveBoolValue('isTitle', isTitle);
+  }
+
+  askingPriceBoolUpdate() {
+    isAskingPrice = !isAskingPrice;
+    setState(() {});
+    if (isAskingPrice == true) {
+      stockKeyList.add('Asking Price');
+
+      setState(() {});
+    } else {
+      stockKeyList.remove('Asking Price');
+
+      setState(() {});
+    }
+    saveBoolValue('isAskingPrice', isAskingPrice);
+  }
 
   editionBoolUpdate() {
     isEdition = !isEdition;
@@ -189,193 +350,484 @@ class _StockListState extends State<StockList> {
 
       setState(() {});
     }
+    saveBoolValue('isEdition', isEdition);
   }
 
-void toggleStockKey(bool booly, String key, Function(bool) updateFunction) {
-  print(booly);
-  setState(() {
-    if (booly) {
-      stockKeyList.add(key);
+  manufactureBoolUpdate() {
+    isManufacture = !isManufacture;
+    setState(() {});
+    if (isManufacture == true) {
+      stockKeyList.add('Manufacture');
+
+      setState(() {});
     } else {
-      stockKeyList.remove(key);
+      stockKeyList.remove('Manufacture');
+
+      setState(() {});
     }
-    updateFunction(!booly); // Update the boolean value
-  });
-}
+    saveBoolValue('isManufacture', isManufacture);
+  }
 
-TextButton pdfTextButton(bool booly, String name, String addedName, Function(bool) updateFunction) {
-  return TextButton(
-    onPressed: () {
-      toggleStockKey(booly, name, updateFunction);
-    },
-    child: booly
-        ? Text(
-            name,
-            style: TextStyle(color: Colors.white),
-          )
-        : Text(
-            addedName,
-            style: TextStyle(color: Colors.green),
-          ),
-          
-          
-  );
+  conditionBoolUpdate() {
+    isCondition = !isCondition;
+    setState(() {});
+    if (isCondition == true) {
+      stockKeyList.add('Condition');
 
-  
-}
+      setState(() {});
+    } else {
+      stockKeyList.remove('Condition');
 
+      setState(() {});
+    }
+    saveBoolValue('isCondition', isCondition);
+  }
 
+  detailsBoolUpdate() {
+    isDetails = !isDetails;
+    setState(() {});
+    if (isDetails == true) {
+      stockKeyList.add('Details');
 
+      setState(() {});
+    } else {
+      stockKeyList.remove('Details');
+
+      setState(() {});
+    }
+    saveBoolValue('isDetails', isDetails);
+  }
+
+  ButtonStyle getButtonStyle(bool isTrue) {
+    return OutlinedButton.styleFrom(
+      fixedSize: Size.fromWidth(150.0), // Set the width as per your requirement
+      side: BorderSide(
+        color: isTrue ? Colors.green : Colors.white,
+      ),
+    );
+  }
+
+  void toggleStockKey(bool booly, String key, Function(bool) updateFunction) {
+    print(booly);
+    setState(() {
+      if (booly) {
+        stockKeyList.add(key);
+      } else {
+        stockKeyList.remove(key);
+      }
+      updateFunction(!booly); // Update the boolean value
+    });
+  }
+
+  TextButton pdfTextButton(
+      Function updateFunction, bool booly, String name, String addedName) {
+    return TextButton(
+      onPressed: () {
+        updateFunction();
+      },
+      child: booly
+          ? Text(
+              addedName,
+              style: TextStyle(color: Colors.white),
+            )
+          : Text(
+              name,
+              style: TextStyle(color: Colors.green),
+            ),
+    );
+  }
 
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFF313131),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          // crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 300,
-            ),
-            Wrap(
+    Size size = MediaQuery.sizeOf(context);
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Color(0xFF313131),
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              // crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-               pdfTextButton(isEdition, 'Edition', 'Edition Added', (value) {
-                setState(() {
-                  isEdition = value;
-                });
-              }),
-
-
-                TextButton(
-                    onPressed: () {
-                      idBoolUpdate();
-                    },
-                    child: isIdAdded
-                        ? Text(
-                            "Id Added",
-                            style: TextStyle(color: Colors.green),
-                          )
-                        : Text(
-                            "Add Id",
-                            style: TextStyle(color: Colors.white),
+                SizedBox(height: 20),
+                
+                Wrap(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        OutlinedButton(
+                            onPressed: () {
+                              vechicleNameBoolUpdate();
+                            },
+                            style: OutlinedButton.styleFrom(
+                              fixedSize: Size.fromWidth(
+                                  150.0), // Set the width as per your requirement
+                              side: BorderSide(
+                                color: isVehicleName ? Colors.green : Colors.white,
+                              ),
+                            ),
+                            child: Text(
+                              "Name",
+                              style: TextStyle(
+                                  color:
+                                      isVehicleName ? Colors.green : Colors.white),
+                            )),
+                        OutlinedButton(
+                          onPressed: () {
+                            brandNameBoolUpdate();
+                          },
+                          style: OutlinedButton.styleFrom(
+                            fixedSize: Size.fromWidth(
+                                150.0), // Set the width as per your requirement
+                            side: BorderSide(
+                              color: isBrandName ? Colors.green : Colors.white,
+                            ),
+                          ),
+                          child: Text(
+                            "Brand ",
+                            style: TextStyle(
+                                color: isBrandName ? Colors.green : Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        OutlinedButton(
+                            onPressed: () {
+                              modelBoolUpdate();
+                            },
+                            style: getButtonStyle(isModel),
+                            child: Text(
+                              "Model",
+                              style: TextStyle(
+                                  color: isModel ? Colors.green : Colors.white),
+                            )),
+                        OutlinedButton(
+                            onPressed: () {
+                              editionBoolUpdate();
+                            },
+                            style: OutlinedButton.styleFrom(
+                              fixedSize: Size.fromWidth(
+                                  150.0), // Set the width as per your requirement
+                              side: BorderSide(
+                                color: isEdition ? Colors.green : Colors.white,
+                              ),
+                            ),
+                            child: Text(
+                              "Edition",
+                              style: TextStyle(
+                                  color: isEdition ? Colors.green : Colors.white),
+                            )),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        OutlinedButton(
+                            onPressed: () {
+                              manufactureBoolUpdate();
+                            },
+                            style: OutlinedButton.styleFrom(
+                              fixedSize: Size.fromWidth(
+                                  150.0), // Set the width as per your requirement
+                              side: BorderSide(
+                                color: isManufacture ? Colors.green : Colors.white,
+                              ),
+                            ),
+                            child: Text(
+                              "Manufacture",
+                              style: TextStyle(
+                                  color:
+                                      isManufacture ? Colors.green : Colors.white),
+                            )),
+                        OutlinedButton(
+                            onPressed: () {
+                              registrationBoolUpdate();
+                            },
+                            style: OutlinedButton.styleFrom(
+                              fixedSize: Size.fromWidth(
+                                  150.0), // Set the width as per your requirement
+                              side: BorderSide(
+                                color: isRegistration ? Colors.green : Colors.white,
+                              ),
+                            ),
+                            child: Text(
+                              "Registration",
+                              style: TextStyle(
+                                  color:
+                                      isRegistration ? Colors.green : Colors.white),
+                            )),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        OutlinedButton(
+                            onPressed: () {
+                              conditionBoolUpdate();
+                            },
+                            style: OutlinedButton.styleFrom(
+                              fixedSize: Size.fromWidth(
+                                  150.0), // Set the width as per your requirement
+                              side: BorderSide(
+                                color: isCondition ? Colors.green : Colors.white,
+                              ),
+                            ),
+                            child: Text(
+                              "Condition",
+                              style: TextStyle(
+                                  color: isCondition ? Colors.green : Colors.white),
+                            )),
+                        OutlinedButton(
+                            onPressed: () {
+                              detailsBoolUpdate();
+                            },
+                            style: OutlinedButton.styleFrom(
+                              fixedSize: Size.fromWidth(
+                                  150.0), // Set the width as per your requirement
+                              side: BorderSide(
+                                color: isDetails ? Colors.green : Colors.white,
+                              ),
+                            ),
+                            child: Text(
+                              "Details",
+                              style: TextStyle(
+                                  color: isDetails ? Colors.green : Colors.white),
+                            )),
+                      ],
+                    ),
+                    // from here use bottom style methode
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        OutlinedButton(
+                            onPressed: () {
+                              fuelBoolUpdate();
+                            },
+                            style: getButtonStyle(isFuel),
+                            child: Text(
+                              "Fuel",
+                              style: TextStyle(
+                                  color: isFuel ? Colors.green : Colors.white),
+                            )),
+                        OutlinedButton(
+                            onPressed: () {
+                              mileageBoolUpdate();
+                            },
+                            style: getButtonStyle(isMileage),
+                            child: Text(
+                              "Mileage",
+                              style: TextStyle(
+                                  color: isMileage ? Colors.green : Colors.white),
+                            )),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        OutlinedButton(
+                            onPressed: () {
+                              gredeBoolUpdate();
+                            },
+                            style: getButtonStyle(isGrade),
+                            child: Text(
+                              "Grade",
+                              style: TextStyle(
+                                  color: isGrade ? Colors.green : Colors.white),
+                            )),
+                        OutlinedButton(
+                            onPressed: () {
+                              powerBoolUpdate();
+                            },
+                            style: getButtonStyle(isPower),
+                            child: Text(
+                              "Power",
+                              style: TextStyle(
+                                  color: isPower ? Colors.green : Colors.white),
+                            )),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        OutlinedButton(
+                            onPressed: () {
+                              engineNumberBoolUpdate();
+                            },
+                            style: getButtonStyle(isEngineNumber),
+                            child: Text(
+                              "Engine Number",
+                              style: TextStyle(
+                                  color:
+                                      isEngineNumber ? Colors.green : Colors.white),
+                            )),
+                        OutlinedButton(
+                            onPressed: () {
+                              chasesNumberBoolUpdate();
+                            },
+                            style: getButtonStyle(isChassisNumber),
+                            child: Text(
+                              "Chassis Number",
+                              style: TextStyle(
+                                  color:
+                                      isChassisNumber ? Colors.green : Colors.white,
+                                  fontSize: 13),
+                            )),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        OutlinedButton(
+                            onPressed: () {
+                              availavleBoolUpdate();
+                            },
+                            style: getButtonStyle(isAvailable),
+                            child: Text(
+                              "Availabel",
+                              style: TextStyle(
+                                  color: isAvailable ? Colors.green : Colors.white),
+                            )),
+                        OutlinedButton(
+                            onPressed: () {
+                              skeletonBoolUpdate();
+                            },
+                            style: getButtonStyle(isSkeleton),
+                            child: Text(
+                              "Skeleton",
+                              style: TextStyle(
+                                  color: isSkeleton ? Colors.green : Colors.white),
+                            )),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: OutlinedButton(
+                          onPressed: () {
+                            titleBoolUpdate();
+                          },
+                          style: getButtonStyle(isTitle),
+                          child: Text(
+                            "Title",
+                            style: TextStyle(
+                                color: isTitle ? Colors.green : Colors.white),
                           )),
-                TextButton(
-                    onPressed: () {
-                      engineNumberBoolUpdate();
-                    },
-                    child: isEngineNumber
-                        ? Text(
-                            "Engine Number Added",
-                            style: TextStyle(color: Colors.green),
-                          )
-                        : Text("Engine Number",
-                            style: TextStyle(color: Colors.white))),
-                TextButton(
-                    onPressed: () {
-                      chasesNumberBoolUpdate();
-                    },
-                    child: isChassisNumber
-                        ? Text(
-                            "Chassis Number Added",
-                            style: TextStyle(color: Colors.green),
-                          )
-                        : Text("Chassis Number",
-                            style: TextStyle(color: Colors.white))),
-                TextButton(
-                    onPressed: () {
-                      vechicleNameBoolUpdate();
-                    },
-                    child: isVehicleName
-                        ? Text(
-                            "Vehicle Name Added",
-                            style: TextStyle(color: Colors.green),
-                          )
-                        : Text("Vehicle Name",
-                            style: TextStyle(color: Colors.white))),
-                TextButton(
-                    onPressed: () {
-                      brandNameBoolUpdate();
-                    },
-                    child: isBrandName
-                        ? Text(
-                            "Brand  Added",
-                            style: TextStyle(color: Colors.green),
-                          )
-                        : Text("Brand ",
-                            style: TextStyle(color: Colors.white))),
-                TextButton(
-                    onPressed: () {
-                      modelBoolUpdate();
-                    },
-                    child: isModel
-                        ? Text(
-                            "Model Added",
-                            style: TextStyle(color: Colors.green),
-                          )
-                        : Text("Model ",
-                            style: TextStyle(color: Colors.white))),
-
-                // TextButton(
-                //     onPressed: () {
-                //       fixedPriceBoolUpdate();
-                //     },
-                //     child: isFixedPrice
-                //         ? Text(
-                //             " Fixed Price Added",
-                //             style: TextStyle(color: Colors.green),
-                //           )
-                //         : Text("Fixed Price",
-                //             style: TextStyle(color: Colors.white))),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 40),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                                   
+                          OutlinedButton(
+                              onPressed: () {
+                                fixedPriceBoolUpdate();
+                              },
+                              style: getButtonStyle(isFixedPrice),
+                              child: Text(
+                                "Fixed Price",
+                                style: TextStyle(
+                                    color: isFixedPrice ? Colors.green : Colors.white),
+                              )),
+                               OutlinedButton(
+                                  onPressed: () {
+                                    askingPriceBoolUpdate();
+                                  },
+                                  style: getButtonStyle(isAskingPrice),
+                                  child: Text(
+                                    "Aslking Price",
+                                    style: TextStyle(
+                                        color:
+                                            isAskingPrice ? Colors.green : Colors.white),
+                                  )),
+                        ],
+                      ),
+                    ),
+                 
+                 
+                 
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  height: 60,
+                  child: ElevatedButton(
+                      onPressed: () async {
+                        final pdfFile = await StockListItem.generateCenteredText(
+                          addId: isIdAdded,
+                          engineNumberbool: isEngineNumber,
+                          chasisNumberbool: isChassisNumber,
+                          vehicleNamebool: isVehicleName,
+                          brandNamebool: isBrandName,
+                          modelNamebool: isModel,
+                          registratinbool: isRegistration,
+                          editionbool: isEdition,
+                          manufacture: isManufacture,
+                          conditionbool: isCondition,
+                          detailsbool: isDetails,
+                          fuelbool: isFuel,
+                          mileagebool: isMileage,
+                          gradebool: isGrade,
+                          powerBool: isPower,
+                          availavleBool: isAvailable,
+                          skeletonBool: isSkeleton,
+                          titleBool: isTitle,
+                          askingPriceBool: isAskingPrice,
+                          fixedPriceBool: isFixedPrice,
+                        );
+                        StockListItem.openFile(pdfFile);
+                      },
+                      // style: ElevatedButton.styleFrom(
+                      //   backgroundColor: Colors.white
+                      // ),
+                      child: Text(
+                        "Generate PDF Stock List",
+                        style: TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 17),
+                      )),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'If you want to remove stock list item  you can click the green items',
+                  style: TextStyle(fontSize: 12),
+                ),
+                // Expanded(
+                //   child: Container(
+                //     alignment: Alignment.bottomLeft,
+                //     child: Wrap(
+                //       spacing: 5.0, // Adjust spacing as needed
+                //       runSpacing: 0, // Adjust run spacing as needed
+                //       children: List.generate(
+                //         stockKeyList.length,
+                //         (index) {
+                //           return Padding(
+                //             padding: const EdgeInsets.all(8.0),
+                //             child: Text(
+                //               stockKeyList[index],
+                //             ),
+                //           );
+                //         },
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                SizedBox(
+                  height: 20,
+                )
               ],
             ),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-                onPressed: () async {
-                  final pdfFile = await StockListItem.generateCenteredText(
-                    addId: isIdAdded,
-                    engineNumberbool: isEngineNumber,
-                    chasisNumberbool: isChassisNumber,
-                    vehicleNamebool: isVehicleName,
-                    brandNamebool: isBrandName,
-                    modelNamebool: isModel,
-                    registratinbool: isRegistration,
-                  );
-                  StockListItem.openFile(pdfFile);
-                },
-                child: Text(
-                  "Generate PDF your Stock List",
-                  style: TextStyle(
-                    color: Colors.black87,
-                  ),
-                )),
-            Expanded(
-              child: Container(
-                alignment: Alignment.bottomLeft,
-                child: Wrap(
-                  spacing: 5.0, // Adjust spacing as needed
-                  runSpacing: 0, // Adjust run spacing as needed
-                  children: List.generate(
-                    stockKeyList.length,
-                    (index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          stockKeyList[index],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            )
-          ],
+          ),
         ),
       ),
     );

@@ -443,10 +443,10 @@ class _ItemState extends State<Item> {
                                       .copyWith(fontSize: 8)),
                               Row(
                                 children: [
-                                  Text(
-                                    widget.myAskingPrice.toString(),
-                                    style: TextStyle(color: Colors.white),
-                                  ),
+                                  // Text(
+                                  //   widget.myAskingPrice.toString(),
+                                  //   style: TextStyle(color: Colors.white),
+                                  // ),
                                   Text(
                                     "R : ",
                                     style: Theme.of(context)

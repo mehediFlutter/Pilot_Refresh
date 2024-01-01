@@ -52,7 +52,7 @@ class _AskingFixedAndStockListState extends State<AskingFixedAndStockList> {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         IconButton(
             onPressed: () {
