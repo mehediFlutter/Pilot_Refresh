@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pilot_refresh/admin/admin_double_vehicle_screen.dart';
+import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
 
 class MarchentDashBoard extends StatefulWidget {
   const MarchentDashBoard({super.key});
@@ -8,6 +10,8 @@ class MarchentDashBoard extends StatefulWidget {
 }
 
 class _MarchentDashBoardState extends State<MarchentDashBoard> {
+  bool doubleScreen = false;
+  bool singleScreen = false;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -24,8 +28,8 @@ class _MarchentDashBoardState extends State<MarchentDashBoard> {
                     child: Card(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20)),
-                      elevation: 30,
                       shadowColor: Colors.black,
+                      elevation: 15,
                       color: Color(0xFF313131),
                       child: Container(
                         height: 100,
@@ -34,10 +38,17 @@ class _MarchentDashBoardState extends State<MarchentDashBoard> {
                             borderRadius: BorderRadius.circular(20)),
                         child: TextButton(
                             onPressed: () {
-                              print("Single pressed");
+                              print("Double pressed");
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => BottomNavBaseScreen(
+                                            isDoubleScreenSelected: true,
+                                            isSingleScreenSelected: false,
+                                          )));
                             },
                             child: Text(
-                              "Single",
+                              "Double",
                               style: TextStyle(color: Colors.white),
                             )),
                       ),
@@ -50,8 +61,8 @@ class _MarchentDashBoardState extends State<MarchentDashBoard> {
                     child: Card(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20)),
-                          shadowColor: Colors.black,
-                      elevation: 15,
+                      elevation: 30,
+                      shadowColor: Colors.black,
                       color: Color(0xFF313131),
                       child: Container(
                         height: 100,
@@ -60,10 +71,17 @@ class _MarchentDashBoardState extends State<MarchentDashBoard> {
                             borderRadius: BorderRadius.circular(20)),
                         child: TextButton(
                             onPressed: () {
-                              print("Double pressed");
+                              print("Single pressed");
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => BottomNavBaseScreen(
+                                            isSingleScreenSelected: true,
+                                            isDoubleScreenSelected: false,
+                                          )));
                             },
                             child: Text(
-                              "Double",
+                              "Single",
                               style: TextStyle(color: Colors.white),
                             )),
                       ),
@@ -75,9 +93,8 @@ class _MarchentDashBoardState extends State<MarchentDashBoard> {
               Card(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
-                    shadowColor: Colors.black,
+                shadowColor: Colors.black,
                 elevation: 30,
-                
                 color: Color(0xFF313131),
                 child: Container(
                   height: 100,

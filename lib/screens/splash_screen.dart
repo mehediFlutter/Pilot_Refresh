@@ -2,32 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:pilot_refresh/screens/auth/auth_utility.dart';
 import 'package:pilot_refresh/screens/auth/new_login_screen.dart';
 import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  late bool isDoubleScreenSelected;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    loadSelectedScreenType();
+  }
+
+  // Function to load the saved value from shared preferences
+  Future<void> loadSelectedScreenType() async {
+    // Load the selected screen type during the app startup
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      // Use ?? to provide a default value in case the preference is not set
+      isDoubleScreenSelected =
+          prefs.getBool('isDoubleScreenSelected') ?? true;
+    });
     navigateToLogin();
   }
 
   Future<void> navigateToLogin() async {
-    //final bool isLoggedIn = await AuthUtility.checkIfUserLoggedIn();
-    final bool   isLoggedIn = await AuthUtility.checkIfUserLoggedIn();
+    final bool isLoggedIn = await AuthUtility.checkIfUserLoggedIn();
 
-    Future.delayed(const Duration(seconds: 2)).then((_) =>
+    Future.delayed(const Duration(seconds: 1)).then((_) =>
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-                builder: (context) => isLoggedIn? BottomNavBaseScreen():const
-                    NewLoginScreen() /*isLoggedIn? const BottomNavBaseScreen(): const LoginScreen()*/),
+                builder: (context) => isLoggedIn
+                    ? BottomNavBaseScreen(
+                        isDoubleScreenSelected: isDoubleScreenSelected,
+                        isSingleScreenSelected: !isDoubleScreenSelected,
+                      )
+                    : const NewLoginScreen()),
             (route) => false));
   }
 
@@ -40,7 +57,12 @@ class _SplashScreenState extends State<SplashScreen> {
           Center(
             child: Image.asset('assets/images/pilot_icon.png'),
           ),
-          Center(child: Text("PilotBazar.com",style: TextStyle(color: Colors.black87, fontSize: 20),),),
+          Center(
+            child: Text(
+              "PilotBazar.com",
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
           Center(
             child: Text(
               " Do Business with us",

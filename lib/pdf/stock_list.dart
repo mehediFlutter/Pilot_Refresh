@@ -799,7 +799,7 @@ class _StockListState extends State<StockList> {
                   height: 10,
                 ),
                 Text(
-                  'If you want to remove stock list item  you can click the green items',
+                  'N.B Green Features will be Send with Your Stock List',
                   style: TextStyle(fontSize: 12),
                 ),
                 // Expanded(
@@ -822,9 +822,7 @@ class _StockListState extends State<StockList> {
                 //     ),
                 //   ),
                 // ),
-                SizedBox(
-                  height: 20,
-                )
+               
               ],
             ),
           ),

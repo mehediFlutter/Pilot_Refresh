@@ -17,14 +17,14 @@ import 'package:share_plus/share_plus.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
-class HomeVehicle extends StatefulWidget {
-  const HomeVehicle({super.key});
+class HomeVehicleStoreBackup extends StatefulWidget {
+  const HomeVehicleStoreBackup({super.key});
 
   @override
-  State<HomeVehicle> createState() => _HomeVehicleState();
+  State<HomeVehicleStoreBackup> createState() => _HomeVehicleStoreBackupState();
 }
 
-class _HomeVehicleState extends State<HomeVehicle> {
+class _HomeVehicleStoreBackupState extends State<HomeVehicleStoreBackup> {
   // yVjInK9erYHC0iHW9ehY8c6J4y79fbNzCEIWtZvQ.jpg
   //https://pilotbazar.com/storage/vehicles/
   //static String imagePath = "https://pilotbazar.com/storage/vehicles/";
@@ -41,12 +41,11 @@ class _HomeVehicleState extends State<HomeVehicle> {
     i = 0;
     getProduct(page);
     _scrollController.addListener(_listenToScroolMoments);
-    
-    searchController.addListener(() {  
-      
+
+    searchController.addListener(() {
       if (searchController.text.isEmpty) {
         page = 1;
-      i = 0;
+        i = 0;
         searchProducts.clear();
         products.clear();
         getProduct(page);
@@ -545,16 +544,30 @@ class _HomeVehicleState extends State<HomeVehicle> {
     }
   }
 
+  List availableResponseList = [];
+  Future getAvailability() async {
+    Response availableResponse = await get(Uri.parse(
+        'https://pilotbazar.com/api/merchants/vehicles/products/availables'));
+    Map<String, dynamic> decodedAvilableResponse =
+        jsonDecode(availableResponse.body);
+    final result = decodedAvilableResponse['payload'] as List;
+    setState(() {
+      availableResponseList = result;
+    });
+  }
+
   final ScrollController _scrollController = ScrollController();
-    bool myBoolValue = true;
-      bool fixedPriceChange=false;
-  bool askingPriceChange=false;
-  bool askingPriceInProgress=false;
-    void updateAskingPriceFunction() {
+
+  bool myBoolValue = true;
+  bool fixedPriceChange = false;
+  bool askingPriceChange = false;
+  bool askingPriceInProgress = false;
+  void updateAskingPriceFunction() {
     setState(() {
       myBoolValue = true; // Toggle the value
     });
   }
+
   void updateFixedPriceFunction() {
     setState(() {
       myBoolValue = false; // Toggle the value
@@ -593,13 +606,13 @@ class _HomeVehicleState extends State<HomeVehicle> {
               Icons.search,
               color: Colors.white,
             ),
-            // suffixIcon: IconButton(
-            //   onPressed: () async {
-            //     print("Hello");
-            //     await search(searchController.text.toString());
-            //   },
-            //   icon: Icon(Icons.send, color: Colors.white),
-            // ),
+            suffixIcon: IconButton(
+              onPressed: () async {
+                print("Hello");
+                await search(searchController.text.toString());
+              },
+              icon: Icon(Icons.send, color: Colors.white),
+            ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(40),
               borderSide: BorderSide(color: Colors.white),
@@ -614,41 +627,45 @@ class _HomeVehicleState extends State<HomeVehicle> {
             )
           : Stack(
               children: [
-                  AskingFixedAndStockList(
-                        askingPriceFunction: () {
-                          print("Asking Price function is called");
-                          updateAskingPriceFunction();
-                          askingPriceInProgress=false;
-                          setState(() {
-                            
-                          });
-                          print(askingPriceInProgress);
-                             },
-                       fixedPriceFunction: () {
-                          print("Fixed Price Function is called");
-                          askingPriceInProgress=true;
-                          updateFixedPriceFunction();
-                          setState(() {});
-                          print(askingPriceInProgress);
+                Column(
+                  children: [
+                    AskingFixedAndStockList(
+                      askingPriceFunction: () {
+                        print("Asking Price function is called");
+                        updateAskingPriceFunction();
+                        askingPriceInProgress = false;
+                        setState(() {});
+                        print(askingPriceInProgress);
+                      },
+                      fixedPriceFunction: () {
+                        print("Fixed Price Function is called");
+                        askingPriceInProgress = true;
+                        updateFixedPriceFunction();
+                        setState(() {});
+                        print(askingPriceInProgress);
+                      },
+                      stockListFunction: () {
+                        print("StockList Price Function is called");
+                      },
+                    ),
+                    Expanded(
+                      child: ListView.separated(
+                        primary: false,
+                        shrinkWrap: true,
+                        controller: _scrollController,
+                        itemCount: products.length,
+                        itemBuilder: (BuildContext context, index) {
+                          return productList(index + j);
                         },
-                        stockListFunction: () {
-                          print("StockList Price Function is called");
+                        separatorBuilder: (BuildContext context, int index) {
+                          return Divider(
+                            height: 4,
+                            color: Color(0xFF313131),
+                          );
                         },
                       ),
-                ListView.separated(
-                  primary: false,
-                  shrinkWrap: true,
-                  controller: _scrollController,
-                  itemCount: products.length,
-                  itemBuilder: (BuildContext context, index) {
-                    return productList(index + j);
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return Divider(
-                      height: 4,
-                      color: Color(0xFF313131),
-                    );
-                  },
+                    ),
+                  ],
                 ),
                 Visibility(
                   visible: _getNewProductinProgress,
@@ -656,7 +673,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
                     alignment: Alignment.bottomCenter,
                     child: CircularProgressIndicator(),
                   ),
-                )
+                ),
               ],
             ),
     );
@@ -664,16 +681,16 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
   productList(int x) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Card(
-        elevation: 50,
-        color:  Color.fromARGB(255, 36, 35, 35),
+        elevation: 20,
+        color: Color(0xFF313131),
         child: Column(
           children: [
-          
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ClipRRect(
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              tileColor: Color(0xFF313131),
+              title: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: () async {
@@ -714,25 +731,59 @@ class _HomeVehicleState extends State<HomeVehicle> {
                       ),
                 ),
               ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10),
+              subtitle: Expanded(
+                child: Flexible(
+                  child: Row(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          print("pressed");
+                          print(products[x].id);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AlartDialogClass(
+                                id: products[x].id,
+                                vehicleName: products[x].vehicleName,
+                                brandName: products[x].brandName,
+                                engine: products[x].engine,
+                                detailsCondition: products[x].condition,
+                                detailsMillege: products[x].mileage,
+                                detailsTransmission: products[x].transmission,
+                                detailsFuel: products[x].fuel,
+                                skeleton: products[x].skeleton,
+                                registration: products[x].registration,
+                                detailsVehicleManuConditioin:
+                                    products[x].manufacture.toString(),
+                                detailsVehicleManufacture:
+                                    products[x].manufacture.toString(),
+                              ),
+                            ),
+                          );
+                        },
+
+                        // here vehicle name
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            SizedBox(height: 7),
+                            // Text(
+                            //   products[x].id.toString(),
+                            //   style: TextStyle(fontSize: 20),
+                            // ),
                             Text(
                               products[x].vehicleName.toString(),
                               style: Theme.of(context).textTheme.bodyMedium,
-                              // Increased from 2
+                              overflow: TextOverflow
+                                  .ellipsis, // You can adjust this property as needed
+                              maxLines: 3, // Increased from 2
                             ),
-                            SizedBox(height: 5),
+
+                            SizedBox(
+                              height: 3,
+                            ),
+
+                            // R 2017 Used
                             Row(
                               children: [
                                 CircleAvatar(
@@ -746,199 +797,273 @@ class _HomeVehicleState extends State<HomeVehicle> {
                                         fontWeight: FontWeight.w700),
                                   ),
                                 ),
-                        
+                                SizedBox(width: 3.5),
                                 Text(
                                   products[x].registration,
-                                  style: Theme.of(context).textTheme.titleMedium,
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
                                 ),
                                 Text(
                                   " | ",
-                                  style: Theme.of(context).textTheme.titleMedium,
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
                                 ),
-                        
+
                                 //Text(products[x].id.toString()),
                                 Text(
                                   products[x].condition.toString(),
-                                  style: Theme.of(context).textTheme.titleMedium,
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
                                 ),
                                 Text(
                                   " | ",
-                                  style: Theme.of(context).textTheme.titleMedium,
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
                                 ),
                                 Text(
                                   products[x].mileage.toString(),
-                                  style: Theme.of(context).textTheme.titleMedium,
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
                                 ),
                               ],
                             ),
+                            SizedBox(height: 0),
                           ],
                         ),
                       ),
-                    ),
-                    InkWell(
-                      onTap: () {},
-                      child: CircleAvatar(
-                      backgroundColor: const Color.fromARGB(221, 73, 73, 73),
-                        radius: 25,
-                        child: Expanded(
-                          child: PopupMenuButton(
-                            child: Icon(
-                              Icons.share,
-                              color: Colors.white,
-                              size: 29,
-                            ),
-                            onSelected: (value) async {
-                              if (value == 'image') {
-                                sendWhatsImage(products[x + j].id);
-                              } else if (value == 'details') {
-                                await getLink(products[x + j].id.toString());
-                                shareDetailsWithOneImage(
-                                    products[x + j].imageName,
-                                    products[x + j].vehicleName,
-                                    products[x + j].manufacture,
-                                    products[x + j].condition,
-                                    products[x + j].registration,
-                                    products[x + j].mileage,
-                                    products[x + j].price,
-                                    detailsLink);
-                              } else if (value == 'email') {
-                                await getLink(products[x + j].id.toString());
-                                shareViaEmail(
-                                    products[x + j].id,
-                                    products[x + j].imageName,
-                                    products[x + j].vehicleName,
-                                    products[x + j].manufacture,
-                                    products[x + j].condition,
-                                    products[x + j].registration,
-                                    products[x + j].mileage,
-                                    products[x + j].price,
-                                    detailsLink);
-                              }
-                            },
-                            itemBuilder: (context) {
-                              return [
-                                PopupMenuItem(
-                                  child: Text("Share One Image"),
-                                  value: 'details',
-                                ),
-                                PopupMenuItem(
-                                  child: Text("Share All Image"),
-                                  value: 'image',
-                                ),
-                                PopupMenuItem(
-                                  child: Text("Send Email"),
-                                  value: 'email',
-                                ),
-                              ];
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 11),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            products[x].available,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                "Tk .",
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                              SizedBox(width: 5),
-                              Text(
-                                products[x].price.toString(),
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                      
-                              //  SizedBox(width: 100,),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    CircleAvatar(
-                      backgroundColor: const Color.fromARGB(221, 73, 73, 73),
-                      radius: 25,
-                      child: PopupMenuButton(
-                        child: Icon(
-                          Icons.more_vert,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                        onSelected: (value) {
+                      Spacer(),
+                      //Popup menu bottom
 
-                          // if (value == 'Edit') {
-                          //   // Open Edit Popup
-                          //   navigateToEditPage(x);
-                          // }
-                          
-                            if (value == 'Delete') {
-                            // Open Delete Popup
-                            //deleteById(id);
-                          } else if (value == 'Edit Price') {
-                            navigateToPriceEditPage(x);
-                          } else if (value == 'Booked') {
-                            updateBooked(x);
-                          } else if (value == 'Sold') {
-                            updateSold(x);
-                          }
-                          // else if (value == 'email') {
-                          //   shareViaEmail(products[x].imageName,products[x].vehicleName,products[x].manufacture,products[x].condition,products[x].registration,products[x].mileage,products[x].price,);
-                          // }
-                        },
-                        itemBuilder: (context) {
-                          return [
-                            PopupMenuItem(
-                              child: Text("Edit Price"),
-                              value: 'Edit Price',
+                      InkWell(
+                        onTap: () {},
+                        child: CircleAvatar(
+                          backgroundColor: Color.fromARGB(221, 65, 64, 64),
+                          radius: 25,
+                          child: Expanded(
+                            child: PopupMenuButton(
+                              child: Icon(
+                                Icons.share,
+                                color: Colors.white,
+                                size: 25,
+                              ),
+                              onSelected: (value) async {
+                                if (value == 'image') {
+                                  sendWhatsImage(products[x + j].id);
+                                } else if (value == 'details') {
+                                  await getLink(products[x + j].id.toString());
+                                  shareDetailsWithOneImage(
+                                      products[x + j].imageName,
+                                      products[x + j].vehicleName,
+                                      products[x + j].manufacture,
+                                      products[x + j].condition,
+                                      products[x + j].registration,
+                                      products[x + j].mileage,
+                                      products[x + j].price,
+                                      detailsLink);
+                                } else if (value == 'email') {
+                                  await getLink(products[x + j].id.toString());
+                                  shareViaEmail(
+                                      products[x + j].id,
+                                      products[x + j].imageName,
+                                      products[x + j].vehicleName,
+                                      products[x + j].manufacture,
+                                      products[x + j].condition,
+                                      products[x + j].registration,
+                                      products[x + j].mileage,
+                                      products[x + j].price,
+                                      detailsLink);
+                                }
+                              },
+                              itemBuilder: (context) {
+                                return [
+                                  PopupMenuItem(
+                                    child: Text("Share One Image"),
+                                    value: 'details',
+                                  ),
+                                  PopupMenuItem(
+                                    child: Text("Share All Image"),
+                                    value: 'image',
+                                  ),
+                                  PopupMenuItem(
+                                    child: Text("Send Email"),
+                                    value: 'email',
+                                  ),
+                                ];
+                              },
                             ),
-                            PopupMenuItem(
-                              child: Text("Booked"),
-                              value: 'Booked',
-                            ),
-                            PopupMenuItem(
-                              child: Text("Sold"),
-                              value: 'Sold',
-                            ),
-                            PopupMenuItem(
-                              child: Text("Send Email"),
-                              value: 'email',
-                            ),
-                            // PopupMenuItem(
-                            //   child: Text("Edit"),
-                            //   value: 'Edit',
-                            // ),
-                            PopupMenuItem(
-                              child: Text("Availability"),
-                              value: 'Availability',
-                            ),
-                            PopupMenuItem(
-                              child: Text("Advance"),
-                              value: 'Advance',
-                            ),
-                            PopupMenuItem(
-                              child: Text("Delete"),
-                              value: 'Delete',
-                            ),
-                          ];
-                        },
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ],
+              ),
+              //trailing: Icon(Icons.add),
+              // subtitle: IconButton(onPressed: (){}, icon: Icon(Icons.home)),
+            ),
+            ListTile(
+              onTap: () {
+                print("pressed");
+                print(products[x].id);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AlartDialogClass(
+                      id: products[x].id,
+                      vehicleName: products[x].vehicleName,
+                      brandName: products[x].brandName,
+                      engine: products[x].engine,
+                      detailsCondition: products[x].condition,
+                      detailsMillege: products[x].mileage,
+                      detailsTransmission: products[x].transmission,
+                      detailsFuel: products[x].fuel,
+                      skeleton: products[x].skeleton,
+                      registration: products[x].registration,
+                      detailsVehicleManuConditioin:
+                          products[x].manufacture.toString(),
+                      detailsVehicleManufacture:
+                          products[x].manufacture.toString(),
+                    ),
+                  ),
+                );
+              },
+              contentPadding: EdgeInsets.zero,
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    products[x].available,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  SizedBox(
+                    height: 3,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        "Tk .",
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      SizedBox(width: 5),
+                      Text(
+                        products[x].price.toString(),
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+
+                      //  SizedBox(width: 100,),
+                    ],
+                  ),
+                ],
+              ),
+              trailing: CircleAvatar(
+                backgroundColor: const Color.fromARGB(221, 73, 73, 73),
+                radius: 25,
+                child: PopupMenuButton(
+                  child: Icon(
+                    Icons.more_vert,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                  onSelected: (value) async {
+                    if (value == 'Edit') {
+                      // Open Edit Popup
+                      navigateToEditPage(x);
+                    } else if (value == 'Delete') {
+                      // Open Delete Popup
+                      //deleteById(id);
+                    } else if (value == 'Edit Price') {
+                      navigateToPriceEditPage(x);
+                    } else if (value == 'Booked') {
+                      updateBooked(x);
+                    } else if (value == 'Sold') {
+                      await updateSold(x);
+                    } else if (value == 'Availability') {
+                      await getAvailability();
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Center(child: Text("Availability")),
+                              content: Container(
+                                height: double.infinity,
+                                width: 350,
+                                child: ListView.builder(
+                                  primary: false,
+                                  shrinkWrap: true,
+                                  itemCount: availableResponseList.length,
+                                  itemBuilder: (context, index) {
+                                    final item =
+                                        availableResponseList[index] as Map;
+                                    return Expanded(
+                                      child: Expanded(
+                                        child: Expanded(
+                                            child: ElevatedButton(
+                                                onPressed: () async {
+                                                  print("this is car id");
+                                                  print(products[index].id);
+                                               updateAvailable(item['id'],x);
+                                                  Navigator.pop(context);
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: const Color.fromARGB(255, 206, 197, 193)
+                                                ),
+                                                child: Text(
+                                                    item['translate'][0]
+                                                            ['title']
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        color: Colors.black)))),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            );
+                          });
+                    }
+                    // else if (value == 'email') {
+                    //   shareViaEmail(products[x].imageName,products[x].vehicleName,products[x].manufacture,products[x].condition,products[x].registration,products[x].mileage,products[x].price,);
+                    // }
+                  },
+                  itemBuilder: (context) {
+                    return [
+                      PopupMenuItem(
+                        child: Text("Edit Price"),
+                        value: 'Edit Price',
+                      ),
+                      PopupMenuItem(
+                        child: Text("Booked"),
+                        value: 'Booked',
+                      ),
+                      PopupMenuItem(
+                        child: Text("Sold"),
+                        value: 'Sold',
+                      ),
+                      PopupMenuItem(
+                        child: Text("Send Email"),
+                        value: 'email',
+                      ),
+                      PopupMenuItem(
+                        child: Text("Edit"),
+                        value: 'Edit',
+                      ),
+                      PopupMenuItem(
+                        child: Text("Availability"),
+                        value: 'Availability',
+                      ),
+                      PopupMenuItem(
+                        child: Text("Advance"),
+                        value: 'Advance',
+                      ),
+                      PopupMenuItem(
+                        child: Text("Delete"),
+                        value: 'Delete',
+                      ),
+                    ];
+                  },
+                ),
+              ),
+              tileColor: Color(0xFF313131),
             ),
           ],
         ),
@@ -969,18 +1094,39 @@ class _HomeVehicleState extends State<HomeVehicle> {
     }
   }
 
+  // update Available
+  void updateAvailable(int availableID,int index) async {
+    final body = {
+      "available_id": availableID,
+    };
+    final url =
+        "https://pilotbazar.com/api/merchants/vehicles/products/${products[index].id}/available";
+    final uri = Uri.parse(url);
+    final response = await http.put(uri, body: jsonEncode(body), headers: {
+      'Content-Type': 'application/vnd.api+json',
+      'Accept': 'application/vnd.api+json'
+    });
+    print(response.statusCode);
+    print(products[index].id);
+    print(response.statusCode);
+
+    if (response.statusCode == 200) {
+      print("Succesfully Update");
+    }
+  }
+
   // Update Sold
-  void updateSold(int index) async {
+  updateSold(int index) async {
     final body = {
       "available_id": 22,
     };
     final url =
         "https://pilotbazar.com/api/merchants/vehicles/products/${products[index].id}/update/sold";
     final uri = Uri.parse(url);
-    final response = await http.put(uri, body: jsonEncode(body), headers: {
-      'Content-Type': 'application/vnd.api+json',
-      'Accept': 'application/vnd.api+json'
-    });
+    final response = await http.put(
+      uri,
+      body: jsonEncode(body),
+    );
     print(response.statusCode);
     print(products[index].id);
 

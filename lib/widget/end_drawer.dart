@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pilot_refresh/screens/double_vehicle_screen.dart';
 import 'package:pilot_refresh/screens/marcent_dash_board.dart';
 import 'package:pilot_refresh/widget/drawer_item_list.dart';
+import 'package:pilot_refresh/widget/single_double_select.dart';
 
 class EndDrawer extends StatelessWidget {
   const EndDrawer({
@@ -16,12 +17,9 @@ class EndDrawer extends StatelessWidget {
     return Align(
       alignment: Alignment.topRight,
       child: SizedBox(
-        
         height: 230,
         width: 200,
-        
         child: Drawer(
-          
           backgroundColor: Color(0xFF333333),
           child: ListView(
             children: [
@@ -30,44 +28,51 @@ class EndDrawer extends StatelessWidget {
                 child: Column(
                   children: [
                     DrawerItemList(
-                      text: 'DashBoard',
+                      text: 'Preview',
                       icon: Icon(Icons.dashboard),
                       onTapFunction: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MarchentDashBoard()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MarchentDashBoard()));
                       },
                     ),
-                    DrawerItemList(
-                      text: 'Item with whats app',
-                      icon: Icon(Icons.view_module),
-                      onTapFunction: () {
-                        // if (mounted) {
-                        //   Navigator.push(
-                        //       context,
-                        //       MaterialPageRoute(
-                        //           builder: (context) =>
-                        //               HomeWithWhatsAppIcon()));
-                        // }
-                      },
-                    ),
-                    DrawerItemList(
-                      text: 'View',
-                      icon: Icon(Icons.view_agenda_outlined),
-                      onTapFunction: () {
-                        if (mounted)
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => DoublVehicle()));
-                      },
-                    ),
+                    // DrawerItemList(
+                    //   text: 'Item with whats app',
+                    //   icon: Icon(Icons.view_module),
+                    //   onTapFunction: () {
+                    //     // if (mounted) {
+                    //     //   Navigator.push(
+                    //     //       context,
+                    //     //       MaterialPageRoute(
+                    //     //           builder: (context) =>
+                    //     //               HomeWithWhatsAppIcon()));
+                    //     // }
+                    //   },
+                    // ),
+
+                    // DrawerItemList(
+                    //   text: 'View',
+                    //   icon: Icon(Icons.view_agenda_outlined),
+                    //   onTapFunction: () {
+                    //     if (mounted)
+                    //       Navigator.push(
+                    //           context,
+                    //           MaterialPageRoute(
+                    //               builder: (context) => DoublVehicle()));
+                    //   },
+                    // ),
                     DrawerItemList(
                       text: 'Logout',
                       icon: Icon(Icons.logout),
                       onTapFunction: () {},
                     ),
+                    DrawerItemList(
+                        text: "Double or Single",
+                        icon: Icon(Icons.single_bed),
+                        onTapFunction:(){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>SingleOrDouble()));
+                        })
                   ],
                 ),
               ),

@@ -377,13 +377,13 @@ products.addAll(searchProducts);
         Icons.search,
         color: Colors.white,
       ),
-      suffixIcon: IconButton(
-        onPressed: () async {
-          print("Hello");
-          await search(searchController.text.toString());
-        },
-        icon: Icon(Icons.send, color: Colors.white),
-      ),
+      // suffixIcon: IconButton(
+      //   onPressed: () async {
+      //     print("Hello");
+      //     await search(searchController.text.toString());
+      //   },
+      //   icon: Icon(Icons.send, color: Colors.white),
+      // ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(40),
         borderSide: BorderSide(color: Colors.white),
@@ -481,7 +481,8 @@ products.addAll(searchProducts);
                           alignment: Alignment.bottomCenter,
                           child: CircularProgressIndicator())),
                 ],
-              ));
+              ),
+              );
   }
 
   static int j = x;

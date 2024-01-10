@@ -372,11 +372,11 @@ print(addId);
               if (detailsbool)
                 p.UrlLink(
                   // Use p.UrlLink for clickable links in PDF
-                  child: p.Text("Details",
+                  child: p.Text("Click for Details",
                       style: p.TextStyle(
                         fontSize: 5,
                         color: PdfColor.fromInt(
-                            Color.fromARGB(255, 39, 87, 129).value),
+                            Colors.red.value),
                       )),
                   destination: "https://pilotbazar.com", // Adjust URL as needed
                 ),

@@ -576,11 +576,13 @@ class _ItemState extends State<Item> {
                                           padding: EdgeInsets.zero,
                                           iconSize: 15,
                                           onSelected: (value) {
-                                            if (value == 'Edit') {
-                                              // Open Edit Popup
-                                              navigateToEditPage(
-                                                  widget.id ?? 0);
-                                            } else if (value == 'Delete') {
+                                            
+                                            // if (value == 'Edit') {
+                                            //   // Open Edit Popup
+                                            //   navigateToEditPage(
+                                            //       widget.id ?? 0);
+                                            // } 
+                                             if (value == 'Delete') {
                                               // Open Delete Popup
                                               //deleteById(id);
                                             } else if (value == 'Edit price') {
@@ -590,6 +592,9 @@ class _ItemState extends State<Item> {
                                               updateBooked(widget.id ?? 0);
                                             } else if (value == 'Sold') {
                                               updateSold(widget.id ?? 0);
+                                            }
+                                            else if(value=='Availability'){
+                                              
                                             }
                                           },
                                           itemBuilder: (context) {
@@ -606,10 +611,10 @@ class _ItemState extends State<Item> {
                                                 child: Text("Sold"),
                                                 value: 'Sold',
                                               ),
-                                              PopupMenuItem(
-                                                child: Text("Edit"),
-                                                value: 'Edit',
-                                              ),
+                                              // PopupMenuItem(
+                                              //   child: Text("Edit"),
+                                              //   value: 'Edit',
+                                              // ),
                                               PopupMenuItem(
                                                 child: Text("Availability"),
                                                 value: 'Availability',
