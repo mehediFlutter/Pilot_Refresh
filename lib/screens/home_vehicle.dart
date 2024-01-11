@@ -6,7 +6,8 @@ import 'package:pilot_refresh/admin/asking_fixed_stockList.dart';
 import 'package:pilot_refresh/product.dart';
 import 'package:pilot_refresh/screens/auth/searchBar.dart';
 import 'package:pilot_refresh/screens/edit_price.dart';
-import 'package:pilot_refresh/screens/edit_screen.dart';
+import 'package:pilot_refresh/screens/advance_edit_screen.dart';
+import 'package:pilot_refresh/screens/text_fild_select_box.dart';
 import 'package:pilot_refresh/screens/vehicle-details.dart';
 import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
 import 'package:pilot_refresh/widget/alart_dialog_class.dart';
@@ -894,6 +895,10 @@ class _HomeVehicleState extends State<HomeVehicle> {
                           } else if (value == 'Sold') {
                             updateSold(x);
                           }
+                          else if(value == 'Advance'){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>TextFildSelectBox(id:products[x].id)));
+
+                          }
                           // else if (value == 'email') {
                           //   shareViaEmail(products[x].imageName,products[x].vehicleName,products[x].manufacture,products[x].condition,products[x].registration,products[x].mileage,products[x].price,);
                           // }
@@ -991,7 +996,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
   navigateToEditPage(int index) {
     final route = MaterialPageRoute(
-        builder: (context) => EditScreen(
+        builder: (context) => AdvanceScreen(
               id: products[index].id,
               name: products[index].vehicleName.toString(),
               price: products[index].price.toString(),

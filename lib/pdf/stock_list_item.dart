@@ -58,7 +58,6 @@ class StockListItem extends StatefulWidget {
   _StockListItemState createState() => _StockListItemState();
 
   static Future<File> generateCenteredText({
-
     bool addId = false,
     bool engineNumberbool = false,
     bool chasisNumberbool = false,
@@ -116,10 +115,8 @@ class _StockListItemState extends State<StockListItem> {
   bool getAllProductsInProgress = false;
 
   getProduct() async {
-
-
     //  for (int b = 1; b < 11; b++) {
-   Response response = await get(Uri.parse(
+    Response response = await get(Uri.parse(
         "https://pilotbazar.com/api/merchants/vehicles/products/stocklist"));
 
     print(response.statusCode);
@@ -150,19 +147,16 @@ class _StockListItemState extends State<StockListItem> {
             grade: e['grade']?['translate'][0]?['title'] ?? '--',
             available: e['available']?['translate'][0]?['title'] ?? '--',
             asking_price: e['price'] ?? '--',
+            pdfDetailsLink: e['link'] ?? '--',
           ));
         },
       );
-       if (decodedResponse == null) {
+      if (decodedResponse == null) {
         return;
       }
-   
-
     }
-   
   }
 
-  
   Future<File> _generateCenteredText({
     bool addId = false,
     bool engineNumberbool = false,
@@ -186,13 +180,11 @@ class _StockListItemState extends State<StockListItem> {
     bool fixedPriceBool = false,
   }) async {
     await getProduct();
-        final totalPages = (products.length / 15).ceil();
-
+    final totalPages = (products.length / 18).ceil();
 
     final pdf = p.Document();
 
     for (int currentPage = 1; currentPage <= totalPages; currentPage++) {
-     
       pdf.addPage(
         p.Page(
           build: (context) {
@@ -206,9 +198,7 @@ class _StockListItemState extends State<StockListItem> {
 
                 _buildProductListView(
                   currentPage,
-                    
                   addId,
-                
                   engineNumberbool,
                   chasisNumberbool,
                   vehicleNamebool,
@@ -234,11 +224,9 @@ class _StockListItemState extends State<StockListItem> {
           },
         ),
       );
-   
     }
     return _saveDocument(name: 'Pilot_Bazar_Stock_List.pdf', pdf: pdf);
   }
-
 
   titleStock(String title) {
     return p.Padding(
@@ -270,8 +258,7 @@ class _StockListItemState extends State<StockListItem> {
     bool askingPriceBool,
     bool fixedPriceBool,
   ) {
-
-print(addId);
+    print(addId);
     return p.Table(
       border: p.TableBorder.all(
         style: p.BorderStyle.solid,
@@ -286,7 +273,7 @@ print(addId);
               p.BoxDecoration(color: PdfColor.fromInt(Colors.grey.value)),
           children: [
             titleStock('SL'),
-           
+
             //  if(widget.isIdIsAddedStockList??false)
             if (brandNamebool) titleStock('Brand Name'),
             if (modelNamebool) titleStock('Model'),
@@ -298,7 +285,13 @@ print(addId);
             if (fuelbool) titleStock('Fuel'),
 
             if (mileagebool) titleStock('Mileage'),
-            if (gradebool) titleStock('Grade'),
+
+            if (gradebool)
+             p.Padding(
+      padding: p.EdgeInsets.only(left: 1, right: 13),
+      child: p.Text('Grade', style: p.TextStyle(fontSize: 7),softWrap: false),
+    ),
+            //  if (gradebool) titleStock('Grade'),
             if (powerBool) titleStock('Power'),
             if (engineNumberbool) titleStock('Engine Number'),
             if (chasisNumberbool) titleStock('Chassis Number'),
@@ -315,10 +308,9 @@ print(addId);
             // p.Text("Code", style: p.TextStyle(fontSize: 10)),
           ],
         ),
-       for (int i = (currentPage - 1) * 15;
-            i < currentPage * 15 && i < products.length;
+        for (int i = (currentPage - 1) * 18;
+            i < currentPage * 18 && i < products.length;
             i++)
-            
           p.TableRow(
             verticalAlignment: p.TableCellVerticalAlignment.middle,
             children: [
@@ -327,7 +319,7 @@ print(addId);
                 child: p.Text((products.indexOf(products[i]) + 1).toString(),
                     softWrap: false,
                     style: p.TextStyle(
-                      fontSize: 8,
+                      fontSize: 7,
                       color: PdfColor.fromInt(Colors.black87.value),
                     )),
               ),
@@ -336,7 +328,7 @@ print(addId);
                 p.Padding(
                   padding: p.EdgeInsets.all(2),
                   child: p.Text(products[i].brandName.toString(),
-                      style: p.TextStyle(fontSize: 8), softWrap: false),
+                      style: p.TextStyle(fontSize: 7), softWrap: false),
                 ),
               if (modelNamebool)
                 p.Padding(
@@ -346,28 +338,28 @@ print(addId);
                 ),
               if (editionbool)
                 p.Padding(
-                  padding: p.EdgeInsets.all(2),
+                  padding: p.EdgeInsets.only(left: 2),
                   child: p.Text(products[i].edition.toString(),
-                      style: p.TextStyle(fontSize: 8)),
+                      style: p.TextStyle(fontSize: 7)),
                 ),
               if (manufacturebool)
                 p.Padding(
                   padding: p.EdgeInsets.all(2),
                   child: p.Text(products[i].manufacture.toString(),
-                      style: p.TextStyle(fontSize: 8)),
+                      style: p.TextStyle(fontSize: 7)),
                 ),
 
               if (registratinbool)
                 p.Padding(
                   padding: p.EdgeInsets.all(2),
                   child: p.Text(products[i].registration.toString(),
-                      style: p.TextStyle(fontSize: 8)),
+                      style: p.TextStyle(fontSize: 7)),
                 ),
               if (conditionbool)
                 p.Padding(
                   padding: p.EdgeInsets.all(2),
                   child: p.Text(products[i].condition.toString(),
-                      style: p.TextStyle(fontSize: 8)),
+                      style: p.TextStyle(fontSize: 7)),
                 ),
               if (detailsbool)
                 p.UrlLink(
@@ -375,60 +367,61 @@ print(addId);
                   child: p.Text("Click for Details",
                       style: p.TextStyle(
                         fontSize: 5,
-                        color: PdfColor.fromInt(
-                            Colors.red.value),
+                        color: PdfColor.fromInt(Colors.red.value),
                       )),
-                  destination: "https://pilotbazar.com", // Adjust URL as needed
+                  destination: products[i]
+                      .pdfDetailsLink
+                      .toString(), // Adjust URL as needed
                 ),
               if (fuelbool)
                 p.Padding(
                   padding: p.EdgeInsets.all(2),
                   child: p.Text(products[i].fuel.toString(),
-                      style: p.TextStyle(fontSize: 8)),
+                      style: p.TextStyle(fontSize: 7)),
                 ),
 
               if (mileagebool)
                 p.Padding(
                   padding: p.EdgeInsets.all(2),
                   child: p.Text(products[i].mileage.toString(),
-                      style: p.TextStyle(fontSize: 8)),
+                      style: p.TextStyle(fontSize: 7)),
                 ),
               if (gradebool)
                 p.Padding(
                   padding: p.EdgeInsets.all(2),
                   child: p.Text(products[i].grade.toString(),
-                      style: p.TextStyle(fontSize: 8)),
+                      style: p.TextStyle(fontSize: 7), softWrap: false),
                 ),
 
               if (powerBool)
                 p.Padding(
                   padding: p.EdgeInsets.all(2),
                   child: p.Text(products[i].engine.toString(),
-                      style: p.TextStyle(fontSize: 8)),
+                      style: p.TextStyle(fontSize: 7)),
                 ),
               if (engineNumberbool)
                 p.Padding(
                   padding: p.EdgeInsets.all(2),
                   child: p.Text(products[i].engineNumber.toString(),
-                      style: p.TextStyle(fontSize: 8)),
+                      style: p.TextStyle(fontSize: 7)),
                 ),
               if (chasisNumberbool)
                 p.Padding(
                   padding: p.EdgeInsets.all(2),
                   child: p.Text(products[i].chassisNumber.toString(),
-                      style: p.TextStyle(fontSize: 8)),
+                      style: p.TextStyle(fontSize: 7)),
                 ),
               if (availavleBool)
                 p.Padding(
                   padding: p.EdgeInsets.all(2),
                   child: p.Text(products[i].available.toString(),
-                      style: p.TextStyle(fontSize: 8)),
+                      style: p.TextStyle(fontSize: 7)),
                 ),
               if (skeletonBool)
                 p.Padding(
                   padding: p.EdgeInsets.all(2),
                   child: p.Text(products[i].skeleton.toString(),
-                      style: p.TextStyle(fontSize: 8)),
+                      style: p.TextStyle(fontSize: 7)),
                 ),
 
               if (vehicleNamebool)
@@ -436,7 +429,7 @@ print(addId);
                   padding: p.EdgeInsets.all(4),
                   child: p.Text(products[i].vehicleName.toString(),
                       style: p.TextStyle(
-                        fontSize: 8,
+                        fontSize: 7,
                         color: PdfColor.fromInt(Colors.black87.value),
                       )),
                 ),

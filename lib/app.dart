@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pilot_refresh/screens/splash_screen.dart';
+import 'package:pilot_refresh/screens/text_fild_select_box.dart';
+
 
 class App extends StatefulWidget {
   App({super.key});
@@ -14,30 +16,29 @@ class _AppState extends State<App> {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          
-          
 
+          inputDecorationTheme: InputDecorationTheme(
+            border: OutlineInputBorder(
+        borderSide: BorderSide(
+            color: Colors.white), // Set default border color to white
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+            color: Colors.white), // Set focused border color to white
+      ),
+      disabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.white),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.white),
+      ),
+      contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+        ),
        
-         
-
-//  inputDecorationTheme: InputDecorationTheme(
-//          //  contentPadding: EdgeInsets.only(left: 50),
-          
-//           border: OutlineInputBorder(
-            
-            
-//             borderSide: BorderSide(
-//               color: Colors.grey
-//             )
-//           ),
-//           focusedBorder: OutlineInputBorder(
-//             borderSide: BorderSide(
-//               color: Colors.white
-//             )
-//           ),
-          
-//         ),
-
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: Colors.white,
+        ),
+      
           textTheme: TextTheme(
             titleLarge: TextStyle(
                 fontSize: 17.2,

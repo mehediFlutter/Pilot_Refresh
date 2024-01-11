@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:pilot_refresh/screens/home_vehicle.dart';
 
-class EditScreen extends StatefulWidget {
+class AdvanceScreen extends StatefulWidget {
   final String? name;
   final String? price;
   final String? purchase_price;
@@ -16,7 +16,7 @@ class EditScreen extends StatefulWidget {
   final String? mileage;
   final int? id;
 
-  const EditScreen({
+  const AdvanceScreen({
     super.key,
     this.name,
     this.price,
@@ -30,10 +30,10 @@ class EditScreen extends StatefulWidget {
   });
 
   @override
-  State<EditScreen> createState() => _EditScreenState();
+  State<AdvanceScreen> createState() => _AdvanceScreenState();
 }
 
-class _EditScreenState extends State<EditScreen> {
+class _AdvanceScreenState extends State<AdvanceScreen> {
   TextEditingController _nameEditingController = TextEditingController();
   TextEditingController _priceEditingController = TextEditingController();
   TextEditingController _registrationEditingController =
@@ -41,6 +41,8 @@ class _EditScreenState extends State<EditScreen> {
   TextEditingController _manufactureEditingController = TextEditingController();
   TextEditingController _conditionEditingController = TextEditingController();
   TextEditingController _millegeEditingController = TextEditingController();
+  TextEditingController _controller = TextEditingController();
+  String? _selectedItem;
   @override
   void initState() {
     // TODO: implement initState
@@ -66,7 +68,7 @@ class _EditScreenState extends State<EditScreen> {
 
     final body = {"purchase_price": _priceEditingController.text};
     final url =
-        "https://pilotbazar.com/api/merchants/vehicles/products/$id/update";
+        "https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/update";
     final uri = Uri.parse(url);
     final response = await http.put(uri, body: jsonEncode(body), headers: {
       'Content-Type': 'application/vnd.api+json',
@@ -89,6 +91,8 @@ class _EditScreenState extends State<EditScreen> {
           .showSnackBar(SnackBar(content: Text("Task Update faild!!")));
     }
   }
+
+  List<String> _items = ['Option 1', 'Option 2', 'Option 3'];
 
   @override
   Widget build(BuildContext context) {
@@ -141,6 +145,58 @@ class _EditScreenState extends State<EditScreen> {
                 style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(border: OutlineInputBorder()),
               ),
+
+              TextField(
+            controller: _controller,
+            decoration: InputDecoration(
+              labelText: 'Drop Down Practice',
+              suffixIcon: PopupMenuButton<String>(
+                onSelected: (String value) {
+                  setState(() {
+                    _selectedItem = value;
+                    _controller.text = value; // Update the text field
+                  });
+                },
+                itemBuilder: (BuildContext context) {
+                  return ['Option 1', 'Option 2', 'Option 3']
+                      .map((String choice) {
+                    return PopupMenuItem<String>(
+                      value: choice,
+                      child: Text(choice),
+                    );
+                  }).toList();
+                },
+              ),
+            ),
+          ),
+
+          InputDecorator(
+            decoration: InputDecoration(
+              labelText: 'Select an option',
+              border: OutlineInputBorder(),
+              suffixIcon: Icon(Icons.arrow_drop_down),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: _selectedItem,
+                items: _items.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? value) {
+                  setState(() {
+                    _selectedItem = value;
+                  });
+                },
+              ),
+            ),
+          ),
+          SizedBox(height: 20),
+          Text('Selected item: $_selectedItem'),
+          SizedBox(height: 20),
+          Text('Selected item: $_selectedItem'),
               SizedBox(height: 30),
               Visibility(
                 visible: updateDataInProgress == false,

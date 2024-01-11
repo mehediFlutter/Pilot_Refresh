@@ -26,6 +26,7 @@ class Product {
   final String? skeleton;
   final String? detailsLink;
   final String? grade;
+  final String? pdfDetailsLink;
 
   // productCode,
   // image,
@@ -62,6 +63,7 @@ class Product {
       this.skeleton,
       this.detailsLink,
       this.grade,
+      this.pdfDetailsLink,
       // required this.productCode,
       // required this.image,
       // required this.unitPrice,

@@ -5,8 +5,9 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:pilot_refresh/product.dart';
 import 'package:pilot_refresh/screens/edit_price.dart';
-import 'package:pilot_refresh/screens/edit_screen.dart';
+import 'package:pilot_refresh/screens/advance_edit_screen.dart';
 import 'package:pilot_refresh/screens/home_vehicle.dart';
+import 'package:pilot_refresh/screens/text_fild_select_box.dart';
 import 'package:pilot_refresh/screens/vehicle-details.dart';
 import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
 import 'package:pilot_refresh/widget/alart_dialog_class.dart';
@@ -345,6 +346,26 @@ class _ItemState extends State<Item> {
     setState(() {});
   }
 
+  //       void updateAvailable(int availableID, int index) async {
+  //   final body = {
+  //     "available_id": availableID,
+  //   };
+  //   final url =
+  //       "https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/available";
+  //   final uri = Uri.parse(url);
+  //   final response = await http.put(uri, body: jsonEncode(body), headers: {
+  //     'Content-Type': 'application/vnd.api+json',
+  //     'Accept': 'application/vnd.api+json'
+  //   });
+  //   print(response.statusCode);
+
+  //   print(response.statusCode);
+
+  //   if (response.statusCode == 200) {
+  //     print("Succesfully Update");
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -535,13 +556,88 @@ class _ItemState extends State<Item> {
                                             color: Colors.white,
                                             size: 17,
                                           ),
-                                          onSelected: (value) {
+                                          onSelected: (value) async {
                                             if (value == 'image') {
                                               sendWhatsImage();
                                             } else if (value == 'details') {
                                               shareDetailsWithOneImage();
                                             } else if (value == 'email') {
                                               shareViaEmail();
+                                            } else if (value ==
+                                                'Availability') {
+                                              await getAvailability();
+                                              showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      backgroundColor:
+                                                          const Color.fromARGB(
+                                                              255, 61, 59, 59),
+                                                      title: Center(
+                                                          child: Text(
+                                                        "Availability",
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .titleSmall,
+                                                      )),
+                                                      content: Container(
+                                                        height: double.infinity,
+                                                        width: 350,
+                                                        child: ListView.builder(
+                                                          primary: false,
+                                                          shrinkWrap: true,
+                                                          itemCount:
+                                                              availableResponseList
+                                                                  .length,
+                                                          itemBuilder:
+                                                              (context, index) {
+                                                            final item =
+                                                                availableResponseList[
+                                                                        index]
+                                                                    as Map;
+                                                            return Expanded(
+                                                              child: Expanded(
+                                                                child: Expanded(
+                                                                    child: ElevatedButton(
+                                                                        onPressed: () async {
+                                                                          print(
+                                                                              "this is car id");
+                                                                          print(
+                                                                              widget.id);
+                                                                          updateAvailable(
+                                                                              item['id'],
+                                                                              index);
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                        },
+                                                                        style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(255, 97, 93, 90)),
+                                                                        child: Text(item['translate'][0]['title'].toString(), style: Theme.of(context).textTheme.bodySmall))),
+                                                              ),
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
+                                                      actions: <Widget>[
+                                                        IconButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          icon:
+                                                              Icon(Icons.close),
+                                                          color: Colors
+                                                              .white, // Set icon color
+                                                        ),
+                                                      ],
+                                                      contentPadding:
+                                                          EdgeInsets.only(
+                                                              top: 8,
+                                                              right: 8,
+                                                              bottom: 0,
+                                                              left: 8),
+                                                    );
+                                                  });
                                             }
                                           },
                                           itemBuilder: (context) {
@@ -557,6 +653,10 @@ class _ItemState extends State<Item> {
                                               PopupMenuItem(
                                                 child: Text("Send Email"),
                                                 value: 'email',
+                                              ),
+                                              PopupMenuItem(
+                                                child: Text("Availability"),
+                                                value: 'Availability',
                                               ),
                                             ];
                                           },
@@ -575,26 +675,158 @@ class _ItemState extends State<Item> {
                                           ),
                                           padding: EdgeInsets.zero,
                                           iconSize: 15,
-                                          onSelected: (value) {
-                                            
-                                            // if (value == 'Edit') {
-                                            //   // Open Edit Popup
-                                            //   navigateToEditPage(
-                                            //       widget.id ?? 0);
-                                            // } 
-                                             if (value == 'Delete') {
-                                              // Open Delete Popup
-                                              //deleteById(id);
-                                            } else if (value == 'Edit price') {
-                                              navigateToPriceEditPage(
+                                          onSelected: (value) async {
+                                            if (value == 'Edit') {
+                                              // Open Edit Popup
+                                              navigateToAdvanceEditPage(
+                                                  widget.id ?? 0);
+                                            }
+                                            // if (value == 'Delete') {
+                                            // Open Delete Popup
+                                            //deleteById(id);
+                                            // }
+                                            if (value == 'Edit price') {
+                                              navigateToAdvancePage(
                                                   widget.id ?? 0);
                                             } else if (value == 'Booked') {
                                               updateBooked(widget.id ?? 0);
                                             } else if (value == 'Sold') {
                                               updateSold(widget.id ?? 0);
+                                            } else if (value ==
+                                                'Availability') {
+                                              await getAvailability();
+                                              showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      backgroundColor:
+                                                          const Color.fromARGB(
+                                                              255, 61, 59, 59),
+                                                      title: Center(
+                                                          child: Text(
+                                                        "Availability",
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .titleSmall,
+                                                      )),
+                                                      content: Container(
+                                                        height: double.infinity,
+                                                        width: 350,
+                                                        child: ListView.builder(
+                                                          primary: false,
+                                                          shrinkWrap: true,
+                                                          itemCount:
+                                                              availableResponseList
+                                                                  .length,
+                                                          itemBuilder:
+                                                              (context, index) {
+                                                            final item =
+                                                                availableResponseList[
+                                                                        index]
+                                                                    as Map;
+                                                            return Expanded(
+                                                              child: Expanded(
+                                                                child: Expanded(
+                                                                    child: ElevatedButton(
+                                                                        onPressed: () async {
+                                                                          print(
+                                                                              "this is car id");
+                                                                          print(
+                                                                              widget.id);
+                                                                          updateAvailable(
+                                                                              item['id'],
+                                                                              widget.id ?? 0);
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                        },
+                                                                        style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(255, 97, 93, 90)),
+                                                                        child: Text(item['translate'][0]['title'].toString(), style: Theme.of(context).textTheme.bodySmall))),
+                                                              ),
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
+                                                      actions: <Widget>[
+                                                        IconButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          icon:
+                                                              Icon(Icons.close),
+                                                          color: Colors
+                                                              .white, // Set icon color
+                                                        ),
+                                                      ],
+                                                      contentPadding:
+                                                          EdgeInsets.only(
+                                                              top: 8,
+                                                              right: 8,
+                                                              bottom: 0,
+                                                              left: 8),
+                                                    );
+                                                  });
                                             }
-                                            else if(value=='Availability'){
-                                              
+                                            else if(value=='Advance'){
+                                              Navigator.push(context, MaterialPageRoute(builder: (context)=>TextFildSelectBox(id: widget.id,)));
+                                              // navigateToAdvanceEditPage(
+                                              //     widget.id ?? 0);
+
+                                            }
+                                            
+                                             else if (value == 'Delete') {
+                                              showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius: BorderRadius.circular(5)
+                                                            , // Remove rounded corners
+                                                      ),
+                                                      backgroundColor:
+                                                          const Color.fromARGB(
+                                                              255, 61, 59, 59),
+                                                      contentPadding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 50,
+                                                              vertical: 20),
+                                                      title: Center(
+                                                          child: Text(
+                                                        "Do you want to delete?",
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .titleLarge,
+                                                      )),
+                                                      // titlePadding: EdgeInsets.only(top: 20),
+                                                      content: Row(
+                                                        children: [
+                                                          SizedBox(height: 10),
+                                                          Spacer(),
+                                                          TextButton(
+                                                            onPressed: () {},
+                                                            child: Text(
+                                                              'Yes',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                          ),
+                                                          TextButton(
+                                                            onPressed: () {},
+                                                            child: Text(
+                                                              'No',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  });
                                             }
                                           },
                                           itemBuilder: (context) {
@@ -689,9 +921,9 @@ class _ItemState extends State<Item> {
     }
   }
 
-  navigateToEditPage(int index) {
+  navigateToAdvanceEditPage(int index) {
     final route = MaterialPageRoute(
-        builder: (context) => EditScreen(
+        builder: (context) => AdvanceScreen(
               name: widget.vehiclaName.toString(),
               price: widget.price.toString(),
               registration: widget.registration,
@@ -701,7 +933,12 @@ class _ItemState extends State<Item> {
     Navigator.push(context, route);
   }
 
-  navigateToPriceEditPage(int index) {
+  navigateToTextSelectBox(){
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>TextFildSelectBox(id: widget.id?.toInt(),)));
+  }
+
+  navigateToAdvancePage(int index) {
+    
     final route = MaterialPageRoute(
         builder: (context) => PriceEditScreen(
               id: widget.id,
@@ -711,5 +948,46 @@ class _ItemState extends State<Item> {
               fixed_price: widget.fixed_price,
             ));
     Navigator.push(context, route);
+  }
+
+  void updateAvailable(int availableID, int index) async {
+    final body = {
+      "available_id": availableID,
+    };
+    final url =
+        "https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/available";
+    final uri = Uri.parse(url);
+    final response = await http.put(uri, body: jsonEncode(body), headers: {
+      'Content-Type': 'application/vnd.api+json',
+      'Accept': 'application/vnd.api+json'
+    });
+    print(response.statusCode);
+    print(widget.id);
+    print(response.statusCode);
+
+    if (response.statusCode == 200) {
+      print("Succesfully Update");
+    }
+  }
+
+  bool _availabilityInProgress = false;
+  List availableResponseList = [];
+  Future getAvailability() async {
+    _availabilityInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    Response availableResponse = await get(Uri.parse(
+        'https://pilotbazar.com/api/merchants/vehicles/products/availables'));
+    Map<String, dynamic> decodedAvilableResponse =
+        jsonDecode(availableResponse.body);
+    final result = decodedAvilableResponse['payload'] as List;
+    setState(() {
+      availableResponseList = result;
+    });
+    _availabilityInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
   }
 }

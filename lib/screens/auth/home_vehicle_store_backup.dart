@@ -4,12 +4,14 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:pilot_refresh/admin/asking_fixed_stockList.dart';
 import 'package:pilot_refresh/product.dart';
+import 'package:pilot_refresh/screens/advance_edit_screen.dart';
 import 'package:pilot_refresh/screens/auth/searchBar.dart';
 import 'package:pilot_refresh/screens/edit_price.dart';
-import 'package:pilot_refresh/screens/edit_screen.dart';
+import 'package:pilot_refresh/screens/text_fild_select_box.dart';
 import 'package:pilot_refresh/screens/vehicle-details.dart';
 import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
 import 'package:pilot_refresh/widget/alart_dialog_class.dart';
+import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
 import 'package:pilot_refresh/widget/end_drawer.dart';
 import 'package:pilot_refresh/widget/image_class.dart';
 import 'package:pilot_refresh/widget/search_bar.dart';
@@ -36,7 +38,7 @@ class _HomeVehicleStoreBackupState extends State<HomeVehicleStoreBackup> {
   bool searchInProgress = false;
 
   @override
-  void initState() {
+  initState() {
     page = 1;
     i = 0;
     getProduct(page);
@@ -191,7 +193,7 @@ class _HomeVehicleStoreBackupState extends State<HomeVehicleStoreBackup> {
 
   bool isLoading = false;
   @override
-  void getProduct(int page) async {
+  getProduct(int page) async {
     products.clear();
     _getProductinProgress = true;
     if (mounted) {
@@ -544,8 +546,13 @@ class _HomeVehicleStoreBackupState extends State<HomeVehicleStoreBackup> {
     }
   }
 
+  bool _availabilityInProgress = false;
   List availableResponseList = [];
   Future getAvailability() async {
+    _availabilityInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
     Response availableResponse = await get(Uri.parse(
         'https://pilotbazar.com/api/merchants/vehicles/products/availables'));
     Map<String, dynamic> decodedAvilableResponse =
@@ -554,6 +561,10 @@ class _HomeVehicleStoreBackupState extends State<HomeVehicleStoreBackup> {
     setState(() {
       availableResponseList = result;
     });
+    _availabilityInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   final ScrollController _scrollController = ScrollController();
@@ -581,102 +592,108 @@ class _HomeVehicleStoreBackupState extends State<HomeVehicleStoreBackup> {
     });
 
     return Scaffold(
-      backgroundColor: Color(0xFF313131),
-      appBar: AppBar(
-        backgroundColor: Color(0xFF666666),
-        leading: Image.asset(
-          'assets/images/pilot_logo2.png',
-        ),
-        title: TextField(
-          style: TextStyle(color: Colors.white, fontSize: 15),
-          controller: searchController,
-          onSubmitted: (value) async {
-            print("onSubmitted: $value");
-            await search(value);
-          },
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(horizontal: 25),
-            hintText: "Search",
-            hintStyle: TextStyle(color: Colors.white),
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white, width: 2),
-              borderRadius: BorderRadius.circular(40),
-            ),
-            prefixIcon: Icon(
-              Icons.search,
-              color: Colors.white,
-            ),
-            suffixIcon: IconButton(
-              onPressed: () async {
-                print("Hello");
-                await search(searchController.text.toString());
-              },
-              icon: Icon(Icons.send, color: Colors.white),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(40),
-              borderSide: BorderSide(color: Colors.white),
+        backgroundColor: Color(0xFF313131),
+        appBar: AppBar(
+          backgroundColor: Color(0xFF666666),
+          leading: Image.asset(
+            'assets/images/pilot_logo2.png',
+          ),
+          title: TextField(
+            style: TextStyle(color: Colors.white, fontSize: 15),
+            controller: searchController,
+            onSubmitted: (value) async {
+              print("onSubmitted: $value");
+              await search(value);
+            },
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.symmetric(horizontal: 25),
+              hintText: "Search",
+              hintStyle: TextStyle(color: Colors.white),
+              border: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.white, width: 2),
+                borderRadius: BorderRadius.circular(40),
+              ),
+              prefixIcon: Icon(
+                Icons.search,
+                color: Colors.white,
+              ),
+              // suffixIcon: IconButton(
+              //   onPressed: () async {
+              //     print("Hello");
+              //     await search(searchController.text.toString());
+              //   },
+              //   icon: Icon(Icons.send, color: Colors.white),
+              // ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(40),
+                borderSide: BorderSide(color: Colors.white),
+              ),
             ),
           ),
         ),
-      ),
-      endDrawer: EndDrawer(mounted: mounted),
-      body: (_getProductinProgress || _searchInProgress)
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : Stack(
-              children: [
-                Column(
-                  children: [
-                    AskingFixedAndStockList(
-                      askingPriceFunction: () {
-                        print("Asking Price function is called");
-                        updateAskingPriceFunction();
-                        askingPriceInProgress = false;
-                        setState(() {});
-                        print(askingPriceInProgress);
-                      },
-                      fixedPriceFunction: () {
-                        print("Fixed Price Function is called");
-                        askingPriceInProgress = true;
-                        updateFixedPriceFunction();
-                        setState(() {});
-                        print(askingPriceInProgress);
-                      },
-                      stockListFunction: () {
-                        print("StockList Price Function is called");
-                      },
-                    ),
-                    Expanded(
-                      child: ListView.separated(
-                        primary: false,
-                        shrinkWrap: true,
-                        controller: _scrollController,
-                        itemCount: products.length,
-                        itemBuilder: (BuildContext context, index) {
-                          return productList(index + j);
+        endDrawer: EndDrawer(mounted: mounted),
+        body: (_getProductinProgress || _searchInProgress)
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Stack(
+                children: [
+                  Column(
+                    children: [
+                      AskingFixedAndStockList(
+                        askingPriceFunction: () {
+                          print("Asking Price function is called");
+                          updateAskingPriceFunction();
+                          askingPriceInProgress = false;
+                          setState(() {});
+                          print(askingPriceInProgress);
                         },
-                        separatorBuilder: (BuildContext context, int index) {
-                          return Divider(
-                            height: 4,
-                            color: Color(0xFF313131),
-                          );
+                        fixedPriceFunction: () {
+                          print("Fixed Price Function is called");
+                          askingPriceInProgress = true;
+                          updateFixedPriceFunction();
+                          setState(() {});
+                          print(askingPriceInProgress);
+                        },
+                        stockListFunction: () {
+                          print("StockList Price Function is called");
                         },
                       ),
-                    ),
-                  ],
-                ),
-                Visibility(
-                  visible: _getNewProductinProgress,
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: CircularProgressIndicator(),
+                      Expanded(
+                        child: RefreshIndicator(
+                          onRefresh: () async {
+                            initState();
+                            setState(() {});
+                          },
+                          child: ListView.separated(
+                            primary: false,
+                            shrinkWrap: true,
+                            controller: _scrollController,
+                            itemCount: products.length,
+                            itemBuilder: (BuildContext context, index) {
+                              return productList(index + j);
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              return Divider(
+                                height: 4,
+                                color: Color(0xFF313131),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-    );
+                  Visibility(
+                    visible: _getNewProductinProgress,
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                ],
+              ));
   }
 
   productList(int x) {
@@ -965,13 +982,11 @@ class _HomeVehicleStoreBackupState extends State<HomeVehicleStoreBackup> {
                     size: 30,
                   ),
                   onSelected: (value) async {
-                    if (value == 'Edit') {
-                      // Open Edit Popup
-                      navigateToEditPage(x);
-                    } else if (value == 'Delete') {
-                      // Open Delete Popup
-                      //deleteById(id);
-                    } else if (value == 'Edit Price') {
+                    // if (value == 'Delete') {
+                    // Open Delete Popup
+                    // deleteById(id);
+                    // }
+                    if (value == 'Edit Price') {
                       navigateToPriceEditPage(x);
                     } else if (value == 'Booked') {
                       updateBooked(x);
@@ -983,7 +998,13 @@ class _HomeVehicleStoreBackupState extends State<HomeVehicleStoreBackup> {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: Center(child: Text("Availability")),
+                              backgroundColor:
+                                  const Color.fromARGB(255, 61, 59, 59),
+                              title: Center(
+                                  child: Text(
+                                "Availability",
+                                style: Theme.of(context).textTheme.titleSmall,
+                              )),
                               content: Container(
                                 height: double.infinity,
                                 width: 350,
@@ -1001,32 +1022,53 @@ class _HomeVehicleStoreBackupState extends State<HomeVehicleStoreBackup> {
                                                 onPressed: () async {
                                                   print("this is car id");
                                                   print(products[index].id);
-                                               updateAvailable(item['id'],x);
+                                                  updateAvailable(
+                                                      item['id'], x);
                                                   Navigator.pop(context);
                                                 },
                                                 style: ElevatedButton.styleFrom(
-                                                  backgroundColor: const Color.fromARGB(255, 206, 197, 193)
-                                                ),
+                                                    backgroundColor:
+                                                        Color.fromARGB(
+                                                            255, 97, 93, 90)),
                                                 child: Text(
                                                     item['translate'][0]
                                                             ['title']
                                                         .toString(),
-                                                    style: TextStyle(
-                                                        color: Colors.black)))),
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall))),
                                       ),
                                     );
                                   },
                                 ),
                               ),
+                              actions: <Widget>[
+                                IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: Icon(Icons.close),
+                                  color: Colors.white, // Set icon color
+                                ),
+                              ],
+                              contentPadding: EdgeInsets.only(
+                                  top: 8, right: 8, bottom: 0, left: 8),
                             );
                           });
+                    } else if (value == 'Advance') {
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>TextFildSelectBox(id: products[x].id,)));
                     }
+
                     // else if (value == 'email') {
                     //   shareViaEmail(products[x].imageName,products[x].vehicleName,products[x].manufacture,products[x].condition,products[x].registration,products[x].mileage,products[x].price,);
                     // }
                   },
                   itemBuilder: (context) {
                     return [
+                      //  PopupMenuItem(
+                      //   child: Text("Delete"),
+                      //   value: 'Delete',
+                      // ),
                       PopupMenuItem(
                         child: Text("Edit Price"),
                         value: 'Edit Price',
@@ -1039,14 +1081,7 @@ class _HomeVehicleStoreBackupState extends State<HomeVehicleStoreBackup> {
                         child: Text("Sold"),
                         value: 'Sold',
                       ),
-                      PopupMenuItem(
-                        child: Text("Send Email"),
-                        value: 'email',
-                      ),
-                      PopupMenuItem(
-                        child: Text("Edit"),
-                        value: 'Edit',
-                      ),
+
                       PopupMenuItem(
                         child: Text("Availability"),
                         value: 'Availability',
@@ -1095,7 +1130,7 @@ class _HomeVehicleStoreBackupState extends State<HomeVehicleStoreBackup> {
   }
 
   // update Available
-  void updateAvailable(int availableID,int index) async {
+  void updateAvailable(int availableID, int index) async {
     final body = {
       "available_id": availableID,
     };
@@ -1137,7 +1172,7 @@ class _HomeVehicleStoreBackupState extends State<HomeVehicleStoreBackup> {
 
   navigateToEditPage(int index) {
     final route = MaterialPageRoute(
-        builder: (context) => EditScreen(
+        builder: (context) => AdvanceScreen(
               id: products[index].id,
               name: products[index].vehicleName.toString(),
               price: products[index].price.toString(),
