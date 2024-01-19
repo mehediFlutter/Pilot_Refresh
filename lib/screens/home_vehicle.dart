@@ -561,6 +561,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
       myBoolValue = false; // Toggle the value
     });
   }
+    TextStyle popubItem=TextStyle(color: Colors.black87,fontFamily: 'Roboto');
 
   @override
   Widget build(BuildContext context) {
@@ -668,7 +669,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
       padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 2),
       child: Card(
         elevation: 50,
-        color:  Color.fromARGB(255, 36, 35, 35),
+        color: Color(0xFF313131),
         child: Column(
           children: [
           
@@ -779,62 +780,62 @@ class _HomeVehicleState extends State<HomeVehicle> {
                     InkWell(
                       onTap: () {},
                       child: CircleAvatar(
-                      backgroundColor: const Color.fromARGB(221, 73, 73, 73),
-                        radius: 25,
-                        child: Expanded(
-                          child: PopupMenuButton(
-                            child: Icon(
-                              Icons.share,
-                              color: Colors.white,
-                              size: 29,
+                          backgroundColor: Color.fromARGB(221, 65, 64, 64),
+                          radius: 25,
+                          child: Expanded(
+                            child: PopupMenuButton(
+                              child: Icon(
+                                Icons.share,
+                                color: Colors.white,
+                                size: 25,
+                              ),
+                              onSelected: (value) async {
+                                if (value == 'image') {
+                                  sendWhatsImage(products[x + j].id);
+                                } else if (value == 'details') {
+                                  await getLink(products[x + j].id.toString());
+                                  shareDetailsWithOneImage(
+                                      products[x + j].imageName,
+                                      products[x + j].vehicleName,
+                                      products[x + j].manufacture,
+                                      products[x + j].condition,
+                                      products[x + j].registration,
+                                      products[x + j].mileage,
+                                      products[x + j].price,
+                                      detailsLink);
+                                } else if (value == 'email') {
+                                  await getLink(products[x + j].id.toString());
+                                  shareViaEmail(
+                                      products[x + j].id,
+                                      products[x + j].imageName,
+                                      products[x + j].vehicleName,
+                                      products[x + j].manufacture,
+                                      products[x + j].condition,
+                                      products[x + j].registration,
+                                      products[x + j].mileage,
+                                      products[x + j].price,
+                                      detailsLink);
+                                }
+                              },
+                              itemBuilder: (context) {
+                                return [
+                                  PopupMenuItem(
+                                    child: Text("Share One Image"),
+                                    value: 'details',
+                                  ),
+                                  PopupMenuItem(
+                                    child: Text("Share All Image"),
+                                    value: 'image',
+                                  ),
+                                  PopupMenuItem(
+                                    child: Text("Send Email"),
+                                    value: 'email',
+                                  ),
+                                ];
+                              },
                             ),
-                            onSelected: (value) async {
-                              if (value == 'image') {
-                                sendWhatsImage(products[x + j].id);
-                              } else if (value == 'details') {
-                                await getLink(products[x + j].id.toString());
-                                shareDetailsWithOneImage(
-                                    products[x + j].imageName,
-                                    products[x + j].vehicleName,
-                                    products[x + j].manufacture,
-                                    products[x + j].condition,
-                                    products[x + j].registration,
-                                    products[x + j].mileage,
-                                    products[x + j].price,
-                                    detailsLink);
-                              } else if (value == 'email') {
-                                await getLink(products[x + j].id.toString());
-                                shareViaEmail(
-                                    products[x + j].id,
-                                    products[x + j].imageName,
-                                    products[x + j].vehicleName,
-                                    products[x + j].manufacture,
-                                    products[x + j].condition,
-                                    products[x + j].registration,
-                                    products[x + j].mileage,
-                                    products[x + j].price,
-                                    detailsLink);
-                              }
-                            },
-                            itemBuilder: (context) {
-                              return [
-                                PopupMenuItem(
-                                  child: Text("Share One Image"),
-                                  value: 'details',
-                                ),
-                                PopupMenuItem(
-                                  child: Text("Share All Image"),
-                                  value: 'image',
-                                ),
-                                PopupMenuItem(
-                                  child: Text("Send Email"),
-                                  value: 'email',
-                                ),
-                              ];
-                            },
                           ),
                         ),
-                      ),
                     ),
                   ],
                 ),

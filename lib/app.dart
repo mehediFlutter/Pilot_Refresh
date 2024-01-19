@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pilot_refresh/screens/splash_screen.dart';
 import 'package:pilot_refresh/screens/text_fild_select_box.dart';
 
-
 class App extends StatefulWidget {
   App({super.key});
 
@@ -14,31 +13,26 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-
+          useMaterial3: false,
           inputDecorationTheme: InputDecorationTheme(
+            labelStyle: TextStyle(color: Colors.white, fontSize: 25),
             border: OutlineInputBorder(
-        borderSide: BorderSide(
-            color: Colors.white), // Set default border color to white
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(
-            color: Colors.white), // Set focused border color to white
-      ),
-      disabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.white),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.white),
-      ),
-      contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-        ),
-       
-        textSelectionTheme: TextSelectionThemeData(
-          cursorColor: Colors.white,
-        ),
-      
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            contentPadding: EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+          ),
           textTheme: TextTheme(
             titleLarge: TextStyle(
                 fontSize: 17.2,
@@ -46,18 +40,16 @@ class _AppState extends State<App> {
                 color: Color.fromARGB(255, 226, 221, 221),
                 fontWeight: FontWeight.w500),
             titleMedium: TextStyle(
-              fontSize: 10.5,
-              fontFamily: "Roboto",
-              //fontWeight: FontWeight.w400,
-              color: Colors.white,
-              height: 0
-            ),
+                fontSize: 10.5,
+                fontFamily: "Roboto",
+                //fontWeight: FontWeight.w400,
+                color: Colors.white,
+                height: 0),
             titleSmall: TextStyle(
-              fontSize: 17,
-              fontFamily: "Roboto",
-              color: Colors.white,
-               height: 0
-            ),
+                fontSize: 17,
+                fontFamily: "Roboto",
+                color: Colors.white,
+                height: 0),
             bodyMedium: TextStyle(
                 fontSize: 13.5,
                 fontFamily: "Roboto",
@@ -81,9 +73,8 @@ class _AppState extends State<App> {
                 // color: Colors.grey,
                 ),
           ),
-
-        
         ),
         home: SplashScreen());
+      
   }
 }

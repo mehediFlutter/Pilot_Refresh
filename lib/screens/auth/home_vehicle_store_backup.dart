@@ -584,6 +584,8 @@ class _HomeVehicleStoreBackupState extends State<HomeVehicleStoreBackup> {
       myBoolValue = false; // Toggle the value
     });
   }
+    TextStyle popubItem=TextStyle(color: Colors.black87,fontFamily: 'Roboto');
+
 
   @override
   Widget build(BuildContext context) {
@@ -896,14 +898,17 @@ class _HomeVehicleStoreBackupState extends State<HomeVehicleStoreBackup> {
                                   PopupMenuItem(
                                     child: Text("Share One Image"),
                                     value: 'details',
+                                    textStyle:popubItem,
                                   ),
                                   PopupMenuItem(
                                     child: Text("Share All Image"),
                                     value: 'image',
+                                    textStyle:popubItem,
                                   ),
                                   PopupMenuItem(
                                     child: Text("Send Email"),
                                     value: 'email',
+                                    textStyle:popubItem,
                                   ),
                                 ];
                               },
@@ -1072,27 +1077,33 @@ class _HomeVehicleStoreBackupState extends State<HomeVehicleStoreBackup> {
                       PopupMenuItem(
                         child: Text("Edit Price"),
                         value: 'Edit Price',
+                        textStyle:popubItem,
                       ),
                       PopupMenuItem(
                         child: Text("Booked"),
                         value: 'Booked',
+                        textStyle:popubItem,
                       ),
                       PopupMenuItem(
                         child: Text("Sold"),
                         value: 'Sold',
+                        textStyle:popubItem,
                       ),
 
                       PopupMenuItem(
                         child: Text("Availability"),
                         value: 'Availability',
+                        textStyle:popubItem,
                       ),
                       PopupMenuItem(
                         child: Text("Advance"),
                         value: 'Advance',
+                        textStyle:popubItem,
                       ),
                       PopupMenuItem(
                         child: Text("Delete"),
                         value: 'Delete',
+                        textStyle:popubItem,
                       ),
                     ];
                   },

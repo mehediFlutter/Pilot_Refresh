@@ -51,49 +51,53 @@ class _AskingFixedAndStockListState extends State<AskingFixedAndStockList> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return Column(
       children: [
-        IconButton(
-            onPressed: () {
-              stockListColor = Colors.white;
-              fixedPriceColor = Colors.white;
-              askingPriceColor = Colors.green;
-              // changeColor();
-              widget.askingPriceFunction?.call();
-              setState(() {});
-            },
-            icon: Text(
-              "Asking Price",
-              style: TextStyle(color: askingPriceColor),
-            )),
-        IconButton(
-            onPressed: () {
-              askingPriceColor = Colors.white;
-
-              stockListColor = Colors.white;
-              fixedPriceColor = Colors.green;
-
-              widget.fixedPriceFunction?.call();
-              setState(() {});
-            },
-            icon: Text(
-              "Fixed Price",
-              style: TextStyle(color: fixedPriceColor),
-            )),
-        IconButton(
-            onPressed: () async {
-              stockListColor = Colors.green;
-              fixedPriceColor = Colors.white;
-              askingPriceColor = Colors.white;
-              widget.stockListFunction?.call();
-              setState(() {});
-             Navigator.push(context, MaterialPageRoute(builder: (context)=>StockList()));
-            },
-            icon: Text(
-              "Stock List",
-              style: TextStyle(color: stockListColor),
-            )),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            TextButton(
+                onPressed: () {
+                  stockListColor = Colors.white;
+                  fixedPriceColor = Colors.white;
+                  askingPriceColor = Colors.green;
+                  // changeColor();
+                  widget.askingPriceFunction?.call();
+                  setState(() {});
+                },
+                 child: Text(
+                  "Asking Price",
+                  style: TextStyle(color: askingPriceColor),
+                )),
+            TextButton(
+                onPressed: () {
+                  askingPriceColor = Colors.white;
+        
+                  stockListColor = Colors.white;
+                  fixedPriceColor = Colors.green;
+        
+                  widget.fixedPriceFunction?.call();
+                  setState(() {});
+                },
+                child: Text(
+                  "Fixed Price",
+                  style: TextStyle(color: fixedPriceColor),softWrap: false,
+                )),
+            TextButton(
+                onPressed: () async {
+                  stockListColor = Colors.green;
+                  fixedPriceColor = Colors.white;
+                  askingPriceColor = Colors.white;
+                  widget.stockListFunction?.call();
+                  setState(() {});
+                 Navigator.push(context, MaterialPageRoute(builder: (context)=>StockList()));
+                },
+                child: Text(
+                  "Stock List",
+                  style: TextStyle(color: stockListColor),softWrap: false,
+                )),
+          ],
+        ),
       ],
     );
   }
