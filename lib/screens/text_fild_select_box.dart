@@ -49,6 +49,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
   String? availableValue; // Initialize as nullable
   TextEditingController titleController = TextEditingController();
   TextEditingController CategoryController = TextEditingController();
+  int? previousSelectedId;
 
   @override
   void initState() {
@@ -76,6 +77,9 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
           availableList = parsedData;
           // Set initial value to 'On Shipment'
           availableValue = widget.availableDD ?? availableList[0].toString();
+          availableSectedDropdownItem = availableList.firstWhere(
+            (item) => item['translate'][0]['title'] == availableValue,
+          );
         });
       } else {
         // Handle error if API request fails
@@ -129,7 +133,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
       ],
     );
   }
-int? previousSelectedId;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -158,7 +162,6 @@ int? previousSelectedId;
                       : DropdownButtonFormField<String>(
                           dropdownColor: Colors.black,
                           decoration: InputDecoration(
-                           
                             border: OutlineInputBorder(),
                           ),
                           value: availableValue,
@@ -178,7 +181,8 @@ int? previousSelectedId;
                             setState(() {
                               availableValue = newValue;
                               //if i change any value then set set an id of availableSectedDropdownItem if i do not change the value then set previous vlaibleValue's id
-                              availableSectedDropdownItem = availableList.firstWhere(
+                              availableSectedDropdownItem =
+                                  availableList.firstWhere(
                                 (item) =>
                                     item['translate'][0]['title'] ==
                                     availableValue,
@@ -194,7 +198,8 @@ int? previousSelectedId;
                       print("this is car id");
                       print(widget.id);
                       // Now you can use selectedDropdownItem
-                      final int? availableSelectedId = availableSectedDropdownItem?['id'];
+                      final int? availableSelectedId =
+                          availableSectedDropdownItem?['id'];
 
                       if (availableSelectedId != null) {
                         // Now you can use selectedId
