@@ -780,7 +780,7 @@ class _ItemState extends State<Item> {
                                                   });
                                             }
                                             else if(value=='Advance') {
-                                            await  Navigator.push(context, MaterialPageRoute(builder: (context)=> TextFildSelectBox(id: widget.id,availableDD: widget.available,)));
+                                            await  Navigator.push(context, MaterialPageRoute(builder: (context)=> TextFildSelectBox(id: widget.id,availableDD: widget.available,vehiclaName: widget.vehiclaName,)));
                                               // navigateToAdvanceEditPage(
                                               //     widget.id ?? 0);
 

@@ -4,15 +4,19 @@ TextEditingController mycontroller = TextEditingController();
 
 Widget customTextField({
   required TextEditingController controller,
- // required TextInputType keyboardType,
+  
+ final TextInputType? keyboardType,
 //  required String labelText,
 }) {
   return TextField(
     controller: controller,
-  //  keyboardType: keyboardType,
+    keyboardType: keyboardType,
     decoration: InputDecoration(
+      contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
+      
       border: const OutlineInputBorder(
         borderSide: BorderSide(color: Colors.white),
+      
       ),
       focusedBorder: const OutlineInputBorder(
         borderSide: BorderSide(color: Colors.white),
@@ -23,7 +27,7 @@ Widget customTextField({
       errorBorder: const OutlineInputBorder(
         borderSide: BorderSide(color: Colors.white),
       ),
-      contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+     
     ),
     style: const TextStyle(color: Colors.white, fontSize: 15),
     cursorColor: Colors.white,

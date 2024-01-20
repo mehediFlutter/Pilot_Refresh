@@ -14,7 +14,8 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return MaterialApp(
       
-        debugShowCheckedModeBanner: false,
+      
+        debugShowCheckedModeBanner: false,             
         theme: ThemeData(
           useMaterial3: false,
           inputDecorationTheme: InputDecorationTheme(

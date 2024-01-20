@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pilot_refresh/admin/admin_double_vehicle_screen.dart';
-import 'package:pilot_refresh/screens/auth/home_vehicle_store_backup.dart';
+import 'package:pilot_refresh/screens/home_vehicle_store_backup.dart';
 import 'package:pilot_refresh/screens/home_vehicle.dart';
 
 class BottomNavBaseScreen extends StatefulWidget {
@@ -73,7 +73,7 @@ void initState() {
   List<Widget> get _screens {
     return [
       AdminDoublVehicle(),
-      HomeVehicleStoreBackup(),
+      HomeVehicle(),
     ];
   }
 }

@@ -4,13 +4,14 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:pilot_refresh/admin/asking_fixed_stockList.dart';
 import 'package:pilot_refresh/product.dart';
+import 'package:pilot_refresh/screens/advance_edit_screen.dart';
 import 'package:pilot_refresh/screens/auth/searchBar.dart';
 import 'package:pilot_refresh/screens/edit_price.dart';
-import 'package:pilot_refresh/screens/advance_edit_screen.dart';
 import 'package:pilot_refresh/screens/text_fild_select_box.dart';
 import 'package:pilot_refresh/screens/vehicle-details.dart';
 import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
 import 'package:pilot_refresh/widget/alart_dialog_class.dart';
+import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
 import 'package:pilot_refresh/widget/end_drawer.dart';
 import 'package:pilot_refresh/widget/image_class.dart';
 import 'package:pilot_refresh/widget/search_bar.dart';
@@ -37,17 +38,16 @@ class _HomeVehicleState extends State<HomeVehicle> {
   bool searchInProgress = false;
 
   @override
-  void initState() {
+  initState() {
     page = 1;
     i = 0;
     getProduct(page);
     _scrollController.addListener(_listenToScroolMoments);
-    
-    searchController.addListener(() {  
-      
+
+    searchController.addListener(() {
       if (searchController.text.isEmpty) {
         page = 1;
-      i = 0;
+        i = 0;
         searchProducts.clear();
         products.clear();
         getProduct(page);
@@ -193,7 +193,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
   bool isLoading = false;
   @override
-  void getProduct(int page) async {
+  getProduct(int page) async {
     products.clear();
     _getProductinProgress = true;
     if (mounted) {
@@ -546,22 +546,46 @@ class _HomeVehicleState extends State<HomeVehicle> {
     }
   }
 
+  bool _availabilityInProgress = false;
+  List availableResponseList = [];
+  Future getAvailability() async {
+    _availabilityInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    Response availableResponse = await get(Uri.parse(
+        'https://pilotbazar.com/api/merchants/vehicles/products/availables'));
+    Map<String, dynamic> decodedAvilableResponse =
+        jsonDecode(availableResponse.body);
+    final result = decodedAvilableResponse['payload'] as List;
+    setState(() {
+      availableResponseList = result;
+    });
+    _availabilityInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   final ScrollController _scrollController = ScrollController();
-    bool myBoolValue = true;
-      bool fixedPriceChange=false;
-  bool askingPriceChange=false;
-  bool askingPriceInProgress=false;
-    void updateAskingPriceFunction() {
+
+  bool myBoolValue = true;
+  bool fixedPriceChange = false;
+  bool askingPriceChange = false;
+  bool askingPriceInProgress = false;
+  void updateAskingPriceFunction() {
     setState(() {
       myBoolValue = true; // Toggle the value
     });
   }
+
   void updateFixedPriceFunction() {
     setState(() {
       myBoolValue = false; // Toggle the value
     });
   }
     TextStyle popubItem=TextStyle(color: Colors.black87,fontFamily: 'Roboto');
+
 
   @override
   Widget build(BuildContext context) {
@@ -777,66 +801,66 @@ class _HomeVehicleState extends State<HomeVehicle> {
                         ),
                       ),
                     ),
-                    InkWell(
-                      onTap: () {},
-                      child: CircleAvatar(
-                          backgroundColor: Color.fromARGB(221, 65, 64, 64),
-                          radius: 25,
-                          child: Expanded(
-                            child: PopupMenuButton(
-                              child: Icon(
-                                Icons.share,
-                                color: Colors.white,
-                                size: 25,
-                              ),
-                              onSelected: (value) async {
-                                if (value == 'image') {
-                                  sendWhatsImage(products[x + j].id);
-                                } else if (value == 'details') {
-                                  await getLink(products[x + j].id.toString());
-                                  shareDetailsWithOneImage(
-                                      products[x + j].imageName,
-                                      products[x + j].vehicleName,
-                                      products[x + j].manufacture,
-                                      products[x + j].condition,
-                                      products[x + j].registration,
-                                      products[x + j].mileage,
-                                      products[x + j].price,
-                                      detailsLink);
-                                } else if (value == 'email') {
-                                  await getLink(products[x + j].id.toString());
-                                  shareViaEmail(
-                                      products[x + j].id,
-                                      products[x + j].imageName,
-                                      products[x + j].vehicleName,
-                                      products[x + j].manufacture,
-                                      products[x + j].condition,
-                                      products[x + j].registration,
-                                      products[x + j].mileage,
-                                      products[x + j].price,
-                                      detailsLink);
-                                }
-                              },
-                              itemBuilder: (context) {
-                                return [
-                                  PopupMenuItem(
-                                    child: Text("Share One Image"),
-                                    value: 'details',
-                                  ),
-                                  PopupMenuItem(
-                                    child: Text("Share All Image"),
-                                    value: 'image',
-                                  ),
-                                  PopupMenuItem(
-                                    child: Text("Send Email"),
-                                    value: 'email',
-                                  ),
-                                ];
-                              },
+                    CircleAvatar(
+                        backgroundColor: Color.fromARGB(221, 65, 64, 64),
+                        radius: 25,
+                        child: Expanded(
+                          child: PopupMenuButton(
+                            child: Icon(
+                              Icons.share,
+                              color: Colors.white,
+                              size: 25,
                             ),
+                         onSelected: (value) async {
+                              if (value == 'image') {
+                                sendWhatsImage(products[x + j].id);
+                              } else if (value == 'details') {
+                                await getLink(products[x + j].id.toString());
+                                shareDetailsWithOneImage(
+                                    products[x + j].imageName,
+                                    products[x + j].vehicleName,
+                                    products[x + j].manufacture,
+                                    products[x + j].condition,
+                                    products[x + j].registration,
+                                    products[x + j].mileage,
+                                    products[x + j].price,
+                                    detailsLink);
+                              } else if (value == 'email') {
+                                await getLink(products[x + j].id.toString());
+                                shareViaEmail(
+                                    products[x + j].id,
+                                    products[x + j].imageName,
+                                    products[x + j].vehicleName,
+                                    products[x + j].manufacture,
+                                    products[x + j].condition,
+                                    products[x + j].registration,
+                                    products[x + j].mileage,
+                                    products[x + j].price,
+                                    detailsLink);
+                              }
+                            },
+                           itemBuilder: (context) {
+                              return [
+                                PopupMenuItem(
+                                  child: Text("Share One Image"),
+                                  value: 'details',
+                                  textStyle:popubItem,
+                                ),
+                                PopupMenuItem(
+                                  child: Text("Share All Image"),
+                                  value: 'image',
+                                  textStyle:popubItem,
+                                ),
+                                PopupMenuItem(
+                                  child: Text("Send Email"),
+                                  value: 'email',
+                                  textStyle:popubItem,
+                                ),
+                              ];
+                            },
                           ),
                         ),
-                    ),
+                      ),
                   ],
                 ),
                 SizedBox(height: 11),
@@ -874,73 +898,137 @@ class _HomeVehicleState extends State<HomeVehicle> {
                       backgroundColor: const Color.fromARGB(221, 73, 73, 73),
                       radius: 25,
                       child: PopupMenuButton(
-                        child: Icon(
-                          Icons.more_vert,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                        onSelected: (value) {
+                  child: Icon(
+                    Icons.more_vert,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                  onSelected: (value) async {
+                    // if (value == 'Delete') {
+                    // Open Delete Popup
+                    // deleteById(id);
+                    // }
+                    if (value == 'Edit Price') {
+                      navigateToPriceEditPage(x);
+                    } else if (value == 'Booked') {
+                      updateBooked(x);
+                    } else if (value == 'Sold') {
+                      await updateSold(x);
+                    } else if (value == 'Availability') {
+                      await getAvailability();
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              backgroundColor:
+                                  const Color.fromARGB(255, 61, 59, 59),
+                              title: Center(
+                                  child: Text(
+                                "Availability",
+                                style: Theme.of(context).textTheme.titleSmall,
+                              )),
+                              content: Container(
+                                height: double.infinity,
+                                width: 350,
+                                child: ListView.builder(
+                                  primary: false,
+                                  shrinkWrap: true,
+                                  itemCount: availableResponseList.length,
+                                  itemBuilder: (context, index) {
+                                    final item =
+                                        availableResponseList[index] as Map;
+                                    return Expanded(
+                                      child: Expanded(
+                                        child: Expanded(
+                                            child: ElevatedButton(
+                                                onPressed: () async {
+                                                  print("this is car id");
+                                                  print(products[index].id);
+                                                  updateAvailable(
+                                                      item['id'], x);
+                                                  Navigator.pop(context);
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        Color.fromARGB(
+                                                            255, 97, 93, 90)),
+                                                child: Text(
+                                                    item['translate'][0]
+                                                            ['title']
+                                                        .toString(),
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall))),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                              actions: <Widget>[
+                                IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: Icon(Icons.close),
+                                  color: Colors.white, // Set icon color
+                                ),
+                              ],
+                              contentPadding: EdgeInsets.only(
+                                  top: 8, right: 8, bottom: 0, left: 8),
+                            );
+                          });
+                    } 
+                     else if(value=='Advance') {
+                                            await  Navigator.push(context, MaterialPageRoute(builder: (context)=> TextFildSelectBox(id: products[x].id,availableDD: products[x].available,vehiclaName: products[x].vehicleName,)));
+                                              // navigateToAdvanceEditPage(
+                                              //     widget.id ?? 0);
 
-                          // if (value == 'Edit') {
-                          //   // Open Edit Popup
-                          //   navigateToEditPage(x);
-                          // }
-                          
-                            if (value == 'Delete') {
-                            // Open Delete Popup
-                            //deleteById(id);
-                          } else if (value == 'Edit Price') {
-                            navigateToPriceEditPage(x);
-                          } else if (value == 'Booked') {
-                            updateBooked(x);
-                          } else if (value == 'Sold') {
-                            updateSold(x);
-                          }
-                          else if(value == 'Advance'){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>TextFildSelectBox(id:products[x].id)));
+                                            }
 
-                          }
-                          // else if (value == 'email') {
-                          //   shareViaEmail(products[x].imageName,products[x].vehicleName,products[x].manufacture,products[x].condition,products[x].registration,products[x].mileage,products[x].price,);
-                          // }
-                        },
-                        itemBuilder: (context) {
-                          return [
-                            PopupMenuItem(
-                              child: Text("Edit Price"),
-                              value: 'Edit Price',
-                            ),
-                            PopupMenuItem(
-                              child: Text("Booked"),
-                              value: 'Booked',
-                            ),
-                            PopupMenuItem(
-                              child: Text("Sold"),
-                              value: 'Sold',
-                            ),
-                            PopupMenuItem(
-                              child: Text("Send Email"),
-                              value: 'email',
-                            ),
-                            // PopupMenuItem(
-                            //   child: Text("Edit"),
-                            //   value: 'Edit',
-                            // ),
-                            PopupMenuItem(
-                              child: Text("Availability"),
-                              value: 'Availability',
-                            ),
-                            PopupMenuItem(
-                              child: Text("Advance"),
-                              value: 'Advance',
-                            ),
-                            PopupMenuItem(
-                              child: Text("Delete"),
-                              value: 'Delete',
-                            ),
-                          ];
-                        },
+                    // else if (value == 'email') {
+                    //   shareViaEmail(products[x].imageName,products[x].vehicleName,products[x].manufacture,products[x].condition,products[x].registration,products[x].mileage,products[x].price,);
+                    // }
+                  },
+                  itemBuilder: (context) {
+                    return [
+                      //  PopupMenuItem(
+                      //   child: Text("Delete"),
+                      //   value: 'Delete',
+                      // ),
+                      PopupMenuItem(
+                        child: Text("Edit Price"),
+                        value: 'Edit Price',
+                        textStyle:popubItem,
                       ),
+                      PopupMenuItem(
+                        child: Text("Booked"),
+                        value: 'Booked',
+                        textStyle:popubItem,
+                      ),
+                      PopupMenuItem(
+                        child: Text("Sold"),
+                        value: 'Sold',
+                        textStyle:popubItem,
+                      ),
+
+                      PopupMenuItem(
+                        child: Text("Availability"),
+                        value: 'Availability',
+                        textStyle:popubItem,
+                      ),
+                      PopupMenuItem(
+                        child: Text("Advance"),
+                        value: 'Advance',
+                        textStyle:popubItem,
+                      ),
+                      PopupMenuItem(
+                        child: Text("Delete"),
+                        value: 'Delete',
+                        textStyle:popubItem,
+                      ),
+                    ];
+                  },
+                ),
                     ),
                   ],
                 ),
@@ -976,7 +1064,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
   }
 
   // Update Sold
-  void updateSold(int index) async {
+   updateSold(int index) async {
     final body = {
       "available_id": 22,
     };
@@ -992,6 +1080,26 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
     if (response.statusCode == 200) {
       print("Succesfully Sold");
+    }
+  }
+
+    void updateAvailable(int availableID, int index) async {
+    final body = {
+      "available_id": availableID,
+    };
+    final url =
+        "https://pilotbazar.com/api/merchants/vehicles/products/${products[index].id}/available";
+    final uri = Uri.parse(url);
+    final response = await http.put(uri, body: jsonEncode(body), headers: {
+      'Content-Type': 'application/vnd.api+json',
+      'Accept': 'application/vnd.api+json'
+    });
+    print(response.statusCode);
+    print(products[index].id);
+    print(response.statusCode);
+
+    if (response.statusCode == 200) {
+      print("Succesfully Update");
     }
   }
 
