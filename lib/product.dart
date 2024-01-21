@@ -5,8 +5,10 @@ class Product {
   final String?edition;
   final String? code;
   final String? model;
+  final String? carColor;
   final String? slug;
   final String? vehicleName;
+  final String? vehicleNameBangla;
   final String? manufacture;
   final String? condition;
   final String? mileage;
@@ -35,16 +37,19 @@ class Product {
   // createAt,
   // quantity;
 
-  Product(
+  Product( 
       {this.imageName,
+
       this.id,
            this.engineNumber,
       this.chassisNumber,
       this.edition,
       this.code,
       this.model,
+      this.carColor,
       this.slug,
       this.vehicleName,
+      this.vehicleNameBangla,
       this.manufacture,
       this.condition,
       this.mileage,

@@ -28,6 +28,8 @@ class _DoublVehicleState extends State<DoublVehicle> {
   //https://pilotbazar.com/storage/vehicles/
   @override
   void initState() {
+    //  print("Bangla name is");
+    // print(products[0].vehiclaNameBangla);
     page = 1;
     i = 0;
      getProduct(page);
@@ -51,6 +53,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
     });
 
     setState(() {});
+    
   }
 
   List products = [];
@@ -102,6 +105,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
         //  List<Product> products = [];
         products.add(Product(
           vehicleName: e['translate'][0]?['title'] ?? "",
+           vehicleNameBangla:e['translate'][0]['title'],
           id: e['id'] ?? "",
           slug: e['slug'] ?? '',
           manufacture: e['manufacture'] ?? '',
@@ -209,11 +213,14 @@ class _DoublVehicleState extends State<DoublVehicle> {
     if (mounted) {
       setState(() {});
     }
+     
 
     for (i; i < decodedResponse['data'].length; i++) {
+    
       products.add(Product(
           vehicleName:
               decodedResponse['data'][i]['translate'][0]?['title'] ?? "",
+               vehicleNameBangla: decodedResponse['data'][i]['translate'][0]['title'],
           manufacture: decodedResponse['data'][i]?['manufacture'] ?? '',
           slug: decodedResponse['data'][i]?['slug'] ?? '',
           id: decodedResponse['data'][i]?['id'] ?? '',
@@ -244,6 +251,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
           code: decodedResponse['data'][i]?['code'] ?? '',
           available: decodedResponse['data'][i]?['available']?['translate'][0]?['title'] ?? '',
           detailsLink: decodedResponse['message']));
+         
     }
     if (decodedResponse['data'] == null) {
       return;
@@ -252,6 +260,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
     if (mounted) {
       setState(() {});
     }
+    
 
     // if (decodedResponse['data'] == null) {
     //   return;
@@ -301,6 +310,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
       searchProducts.add(Product(
           vehicleName:
               decodedResponse['payload'][i]?['translate'][0]?['title'] ?? '-',
+              vehicleNameBangla:  decodedResponse['payload'][i]?['translate'][1]?['title'] ?? '-',
           manufacture: decodedResponse['payload'][i]?['manufacture'] ?? '',
           slug: decodedResponse['payload'][i]?['slug'] ?? '',
           id: decodedResponse['payload'][i]?['id'] ?? '',
@@ -414,6 +424,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
                           featureSeatDetails:
                               featureDetails[index + j].toString(),
                           vehiclaName: products[index + j].vehicleName,
+                          vehiclaNameBangla: products[index + j].vehicleNameBangla,
                           manufacture: products[index + j].manufacture,
                           condition: products[index + j].condition,
                           nMillage: products[index + j].mileage,

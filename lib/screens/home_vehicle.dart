@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:pilot_refresh/admin/asking_fixed_stockList.dart';
+import 'package:pilot_refresh/problem/model_problem.dart';
 import 'package:pilot_refresh/product.dart';
 import 'package:pilot_refresh/screens/advance_edit_screen.dart';
 import 'package:pilot_refresh/screens/auth/searchBar.dart';
@@ -83,6 +84,8 @@ class _HomeVehicleState extends State<HomeVehicle> {
         allProductsForSearch.add(Product(
           vehicleName:
               decodedResponse['data'][i]?['translate'][0]['title'] ?? '',
+          vehicleNameBangla:
+              decodedResponse['data'][i]['translate'][1]?['title'] ?? "",
           manufacture: decodedResponse['data'][i]?['manufacture'] ?? '',
           slug: decodedResponse['data'][i]?['slug'] ?? '',
           id: decodedResponse['data'][i]['id'] ?? '',
@@ -161,16 +164,17 @@ class _HomeVehicleState extends State<HomeVehicle> {
       decodedResponse['data'].forEach((e) {
         products.add(Product(
           vehicleName: e['translate'][0]['title'],
+          vehicleNameBangla: e['translate'][1]['title'],
           id: e['id'],
           slug: e['slug'] ?? '',
           manufacture: e['manufacture'] ?? '',
           condition: e['condition']['translate'][0]?['title'] ?? '',
-          mileage: e['mileage']?['translate'][0]?['title'] ?? 'No mileage data',
+          mileage: e['mileage']?['translate'][0]?['title'] ?? '--',
           price: e['price'] ?? '',
           purchase_price: e['purchase_price'] ?? '',
           fixed_price: e['fixed_price'] ?? '',
           imageName: e['image']?['name'] ?? '',
-          registration: e['registration'] ?? '',
+          registration: e['registration'] ?? 'None',
           engine: e['engine']?['translate'][0]?['title'] ?? '',
           brandName: e['brand']?['translate'][0]?['title'] ?? '',
           transmission: e['transmission']?['translate'][0]?['title'] ?? '',
@@ -178,6 +182,10 @@ class _HomeVehicleState extends State<HomeVehicle> {
           skeleton: e['skeleton']?['translate'][0]?['title'] ?? '',
           available: e['available']?['translate'][0]?['title'] ?? '',
           code: e['code'] ?? '',
+          carColor: e['color']['translate'][0]['title'] ?? 'None',
+          edition: e['edition']['translate'][0]['title'] ?? 'None',
+          model: e['carmodel']?['translate'][0]?['title'] ?? '',
+          grade: e['grade']?['translate'][0]?['title'] ?? '',
         ));
       });
 
@@ -212,34 +220,48 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
     for (i; i < decodedResponse['data'].length; i++) {
       products.add(Product(
-          vehicleName: decodedResponse['data'][i]['translate'][0]['title'],
-          manufacture: decodedResponse['data'][i]['manufacture'],
-          slug: decodedResponse['data'][i]['slug'],
-          id: decodedResponse['data'][i]['id'],
-          condition: decodedResponse['data'][i]['condition']['translate'][0]
-              ['title'],
-          mileage: decodedResponse['data'][i]['mileage']?['translate'][0]
-                  ?['title'] ??
-              '-',
-          //price here
-          price: decodedResponse['data'][i]['price'] ?? '',
-          purchase_price: decodedResponse['data'][i]?['purchase_price'] ?? '',
-          fixed_price: decodedResponse['data'][i]?['fixed_price'] ?? '',
-          //price end
-          imageName: decodedResponse['data'][i]['image']['name'],
-          registration: decodedResponse['data'][i]['registration'] ?? '-',
-          engine: decodedResponse['data'][i]['engine']['translate'][0]['title'],
-          brandName: decodedResponse['data'][i]['brand']['translate'][0]
-              ['title'],
-          transmission: decodedResponse['data'][i]['transmission']['translate']
-              [0]['title'],
-          fuel: decodedResponse['data'][i]['fuel']['translate'][0]['title'],
-          skeleton: decodedResponse['data'][i]['skeleton']['translate'][0]
-              ['title'],
-          available: decodedResponse['data'][i]?['available']?['translate'][0]
-                  ?['title'] ??
-              '',
-          code: decodedResponse['data'][i]?['code'] ?? ''));
+        vehicleName: decodedResponse['data'][i]['translate'][0]['title'],
+        vehicleNameBangla: decodedResponse['data'][i]['translate'][1]['title'],
+        manufacture: decodedResponse['data'][i]['manufacture'],
+        slug: decodedResponse['data'][i]['slug'],
+        id: decodedResponse['data'][i]['id'],
+        condition: decodedResponse['data'][i]['condition']['translate'][0]
+            ['title'],
+        mileage: decodedResponse['data'][i]['mileage']?['translate'][0]
+                ?['title'] ??
+            '--',
+        //price here
+        price: decodedResponse['data'][i]['price'] ?? '',
+        purchase_price: decodedResponse['data'][i]?['purchase_price'] ?? '',
+        fixed_price: decodedResponse['data'][i]?['fixed_price'] ?? '',
+        //price end
+        imageName: decodedResponse['data'][i]['image']['name'],
+        registration: decodedResponse['data'][i]['registration'] ?? 'None',
+        engine: decodedResponse['data'][i]['engine']['translate'][0]['title'],
+        brandName: decodedResponse['data'][i]['brand']['translate'][0]['title'],
+        transmission: decodedResponse['data'][i]['transmission']['translate'][0]
+            ['title'],
+        fuel: decodedResponse['data'][i]['fuel']['translate'][0]['title'],
+        skeleton: decodedResponse['data'][i]['skeleton']['translate'][0]
+            ['title'],
+        available: decodedResponse['data'][i]?['available']?['translate'][0]
+                ?['title'] ??
+            '',
+        code: decodedResponse['data'][i]?['code'] ?? '',
+        //model: decodedResponse['data'],
+        carColor: decodedResponse['data'][i]['color']['translate'][0]
+                ['title'] ??
+            'None',
+        edition: decodedResponse['data'][i]['edition']['translate'][0]
+                ['title'] ??
+            'None',
+        model: decodedResponse['data'][i]?['carmodel']?['translate'][0]
+                ?['title'] ??
+            '',
+        grade: decodedResponse['data'][i]?['grade']?['translate'][0]
+                ?['title'] ??
+            '',
+      ));
     }
     if (decodedResponse['data'] == null) {
       return;
@@ -584,8 +606,8 @@ class _HomeVehicleState extends State<HomeVehicle> {
       myBoolValue = false; // Toggle the value
     });
   }
-    TextStyle popubItem=TextStyle(color: Colors.black87,fontFamily: 'Roboto');
 
+  TextStyle popubItem = TextStyle(color: Colors.black87, fontFamily: 'Roboto');
 
   @override
   Widget build(BuildContext context) {
@@ -640,27 +662,25 @@ class _HomeVehicleState extends State<HomeVehicle> {
             )
           : Stack(
               children: [
-                  AskingFixedAndStockList(
-                        askingPriceFunction: () {
-                          print("Asking Price function is called");
-                          updateAskingPriceFunction();
-                          askingPriceInProgress=false;
-                          setState(() {
-                            
-                          });
-                          print(askingPriceInProgress);
-                             },
-                       fixedPriceFunction: () {
-                          print("Fixed Price Function is called");
-                          askingPriceInProgress=true;
-                          updateFixedPriceFunction();
-                          setState(() {});
-                          print(askingPriceInProgress);
-                        },
-                        stockListFunction: () {
-                          print("StockList Price Function is called");
-                        },
-                      ),
+                AskingFixedAndStockList(
+                  askingPriceFunction: () {
+                    print("Asking Price function is called");
+                    updateAskingPriceFunction();
+                    askingPriceInProgress = false;
+                    setState(() {});
+                    print(askingPriceInProgress);
+                  },
+                  fixedPriceFunction: () {
+                    print("Fixed Price Function is called");
+                    askingPriceInProgress = true;
+                    updateFixedPriceFunction();
+                    setState(() {});
+                    print(askingPriceInProgress);
+                  },
+                  stockListFunction: () {
+                    print("StockList Price Function is called");
+                  },
+                ),
                 ListView.separated(
                   primary: false,
                   shrinkWrap: true,
@@ -690,13 +710,12 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
   productList(int x) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       child: Card(
         elevation: 50,
         color: Color(0xFF313131),
         child: Column(
           children: [
-          
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ClipRRect(
@@ -754,6 +773,10 @@ class _HomeVehicleState extends State<HomeVehicle> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
+                              products[x].edition,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            Text(
                               products[x].vehicleName.toString(),
                               style: Theme.of(context).textTheme.bodyMedium,
                               // Increased from 2
@@ -772,28 +795,33 @@ class _HomeVehicleState extends State<HomeVehicle> {
                                         fontWeight: FontWeight.w700),
                                   ),
                                 ),
-                        
+
                                 Text(
                                   products[x].registration,
-                                  style: Theme.of(context).textTheme.titleMedium,
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
                                 ),
                                 Text(
                                   " | ",
-                                  style: Theme.of(context).textTheme.titleMedium,
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
                                 ),
-                        
+
                                 //Text(products[x].id.toString()),
                                 Text(
                                   products[x].condition.toString(),
-                                  style: Theme.of(context).textTheme.titleMedium,
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
                                 ),
                                 Text(
                                   " | ",
-                                  style: Theme.of(context).textTheme.titleMedium,
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
                                 ),
                                 Text(
                                   products[x].mileage.toString(),
-                                  style: Theme.of(context).textTheme.titleMedium,
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
                                 ),
                               ],
                             ),
@@ -802,65 +830,65 @@ class _HomeVehicleState extends State<HomeVehicle> {
                       ),
                     ),
                     CircleAvatar(
-                        backgroundColor: Color.fromARGB(221, 65, 64, 64),
-                        radius: 25,
-                        child: Expanded(
-                          child: PopupMenuButton(
-                            child: Icon(
-                              Icons.share,
-                              color: Colors.white,
-                              size: 25,
-                            ),
-                         onSelected: (value) async {
-                              if (value == 'image') {
-                                sendWhatsImage(products[x + j].id);
-                              } else if (value == 'details') {
-                                await getLink(products[x + j].id.toString());
-                                shareDetailsWithOneImage(
-                                    products[x + j].imageName,
-                                    products[x + j].vehicleName,
-                                    products[x + j].manufacture,
-                                    products[x + j].condition,
-                                    products[x + j].registration,
-                                    products[x + j].mileage,
-                                    products[x + j].price,
-                                    detailsLink);
-                              } else if (value == 'email') {
-                                await getLink(products[x + j].id.toString());
-                                shareViaEmail(
-                                    products[x + j].id,
-                                    products[x + j].imageName,
-                                    products[x + j].vehicleName,
-                                    products[x + j].manufacture,
-                                    products[x + j].condition,
-                                    products[x + j].registration,
-                                    products[x + j].mileage,
-                                    products[x + j].price,
-                                    detailsLink);
-                              }
-                            },
-                           itemBuilder: (context) {
-                              return [
-                                PopupMenuItem(
-                                  child: Text("Share One Image"),
-                                  value: 'details',
-                                  textStyle:popubItem,
-                                ),
-                                PopupMenuItem(
-                                  child: Text("Share All Image"),
-                                  value: 'image',
-                                  textStyle:popubItem,
-                                ),
-                                PopupMenuItem(
-                                  child: Text("Send Email"),
-                                  value: 'email',
-                                  textStyle:popubItem,
-                                ),
-                              ];
-                            },
+                      backgroundColor: Color.fromARGB(221, 65, 64, 64),
+                      radius: 25,
+                      child: Expanded(
+                        child: PopupMenuButton(
+                          child: Icon(
+                            Icons.share,
+                            color: Colors.white,
+                            size: 25,
                           ),
+                          onSelected: (value) async {
+                            if (value == 'image') {
+                              sendWhatsImage(products[x + j].id);
+                            } else if (value == 'details') {
+                              await getLink(products[x + j].id.toString());
+                              shareDetailsWithOneImage(
+                                  products[x + j].imageName,
+                                  products[x + j].vehicleName,
+                                  products[x + j].manufacture,
+                                  products[x + j].condition,
+                                  products[x + j].registration,
+                                  products[x + j].mileage,
+                                  products[x + j].price,
+                                  detailsLink);
+                            } else if (value == 'email') {
+                              await getLink(products[x + j].id.toString());
+                              shareViaEmail(
+                                  products[x + j].id,
+                                  products[x + j].imageName,
+                                  products[x + j].vehicleName,
+                                  products[x + j].manufacture,
+                                  products[x + j].condition,
+                                  products[x + j].registration,
+                                  products[x + j].mileage,
+                                  products[x + j].price,
+                                  detailsLink);
+                            }
+                          },
+                          itemBuilder: (context) {
+                            return [
+                              PopupMenuItem(
+                                child: Text("Share One Image"),
+                                value: 'details',
+                                textStyle: popubItem,
+                              ),
+                              PopupMenuItem(
+                                child: Text("Share All Image"),
+                                value: 'image',
+                                textStyle: popubItem,
+                              ),
+                              PopupMenuItem(
+                                child: Text("Send Email"),
+                                value: 'email',
+                                textStyle: popubItem,
+                              ),
+                            ];
+                          },
                         ),
                       ),
+                    ),
                   ],
                 ),
                 SizedBox(height: 11),
@@ -868,7 +896,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
-                        padding: const EdgeInsets.only(left: 10),
+                      padding: const EdgeInsets.only(left: 10),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -887,7 +915,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
                                 products[x].price.toString(),
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
-                      
+
                               //  SizedBox(width: 100,),
                             ],
                           ),
@@ -898,137 +926,172 @@ class _HomeVehicleState extends State<HomeVehicle> {
                       backgroundColor: const Color.fromARGB(221, 73, 73, 73),
                       radius: 25,
                       child: PopupMenuButton(
-                  child: Icon(
-                    Icons.more_vert,
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                  onSelected: (value) async {
-                    // if (value == 'Delete') {
-                    // Open Delete Popup
-                    // deleteById(id);
-                    // }
-                    if (value == 'Edit Price') {
-                      navigateToPriceEditPage(x);
-                    } else if (value == 'Booked') {
-                      updateBooked(x);
-                    } else if (value == 'Sold') {
-                      await updateSold(x);
-                    } else if (value == 'Availability') {
-                      await getAvailability();
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 61, 59, 59),
-                              title: Center(
-                                  child: Text(
-                                "Availability",
-                                style: Theme.of(context).textTheme.titleSmall,
-                              )),
-                              content: Container(
-                                height: double.infinity,
-                                width: 350,
-                                child: ListView.builder(
-                                  primary: false,
-                                  shrinkWrap: true,
-                                  itemCount: availableResponseList.length,
-                                  itemBuilder: (context, index) {
-                                    final item =
-                                        availableResponseList[index] as Map;
-                                    return Expanded(
-                                      child: Expanded(
-                                        child: Expanded(
-                                            child: ElevatedButton(
-                                                onPressed: () async {
-                                                  print("this is car id");
-                                                  print(products[index].id);
-                                                  updateAvailable(
-                                                      item['id'], x);
-                                                  Navigator.pop(context);
-                                                },
-                                                style: ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        Color.fromARGB(
-                                                            255, 97, 93, 90)),
-                                                child: Text(
-                                                    item['translate'][0]
-                                                            ['title']
-                                                        .toString(),
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodySmall))),
+                        child: Icon(
+                          Icons.more_vert,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                        onSelected: (value) async {
+                          // if (value == 'Delete') {
+                          // Open Delete Popup
+                          // deleteById(id);
+                          // }
+                          if (value == 'Edit Price') {
+                            navigateToPriceEditPage(x);
+                          } else if (value == 'Booked') {
+                            updateBooked(x);
+                          } else if (value == 'Sold') {
+                            await updateSold(x);
+                          } else if (value == 'Availability') {
+                            await getAvailability();
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    backgroundColor:
+                                        const Color.fromARGB(255, 61, 59, 59),
+                                    title: Center(
+                                        child: Text(
+                                      "Availability",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall,
+                                    )),
+                                    content: Container(
+                                      height: double.infinity,
+                                      width: 350,
+                                      child: ListView.builder(
+                                        primary: false,
+                                        shrinkWrap: true,
+                                        itemCount: availableResponseList.length,
+                                        itemBuilder: (context, index) {
+                                          final item =
+                                              availableResponseList[index]
+                                                  as Map;
+                                          return Expanded(
+                                            child: Expanded(
+                                              child: Expanded(
+                                                  child: ElevatedButton(
+                                                      onPressed: () async {
+                                                        print("this is car id");
+                                                        print(
+                                                            products[index].id);
+                                                        updateAvailable(
+                                                            item['id'], x);
+                                                        Navigator.pop(context);
+                                                      },
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                              backgroundColor:
+                                                                  Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          97,
+                                                                          93,
+                                                                          90)),
+                                                      child: Text(
+                                                          item['translate'][0]
+                                                                  ['title']
+                                                              .toString(),
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodySmall))),
+                                            ),
+                                          );
+                                        },
                                       ),
-                                    );
-                                  },
-                                ),
-                              ),
-                              actions: <Widget>[
-                                IconButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  icon: Icon(Icons.close),
-                                  color: Colors.white, // Set icon color
-                                ),
-                              ],
-                              contentPadding: EdgeInsets.only(
-                                  top: 8, right: 8, bottom: 0, left: 8),
-                            );
-                          });
-                    } 
-                     else if(value=='Advance') {
-                                            await  Navigator.push(context, MaterialPageRoute(builder: (context)=> TextFildSelectBox(id: products[x].id,availableDD: products[x].available,vehiclaName: products[x].vehicleName,)));
-                                              // navigateToAdvanceEditPage(
-                                              //     widget.id ?? 0);
+                                    ),
+                                    actions: <Widget>[
+                                      IconButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        icon: Icon(Icons.close),
+                                        color: Colors.white, // Set icon color
+                                      ),
+                                    ],
+                                    contentPadding: EdgeInsets.only(
+                                        top: 8, right: 8, bottom: 0, left: 8),
+                                  );
+                                });
+                          } else if (value == 'Advance') {
+                            await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ModelProblem(
+                                         
+                                         
+                                        )));
+                            // await Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => TextFildSelectBox(
+                            //       id: products[x].id,
+                            //       availableDD: products[x].available,
+                            //       vehiclaName: products[x].vehicleName,
+                            //       vehiclaNameBangla:
+                            //           products[x].vehicleNameBangla,
+                            //       conditionValue: products[x].condition,
+                            //       brandName: products[x].brandName,
+                            //       fuel: products[x].fuel,
+                            //       skeleton: products[x].skeleton,
+                            //       transmission: products[x].transmission,
+                            //       registration: products[x].registration,
+                            //       carColor: products[x].carColor,
+                            //       edition: products[x].edition,
+                            //       model: products[x].model,
+                            //       grade: products[x].grade,
+                            //       mileage: products[x].mileage.toString(),
+                            //       engine: products[x].engine.toString(),
+                            //       purchase_price: products[x].purchase_price,
+                            //       price: products[x].price,
+                            //       fixed_price: products[x].fixed_price,
+                            //     ),
+                            //   ),
+                            // );
+                          }
+                        },
+                        itemBuilder: (context) {
+                          return [
+                            //  PopupMenuItem(
+                            //   child: Text("Delete"),
+                            //   value: 'Delete',
+                            // ),
+                            PopupMenuItem(
+                              child: Text("Edit Price"),
+                              value: 'Edit Price',
+                              textStyle: popubItem,
+                            ),
+                            PopupMenuItem(
+                              child: Text("Booked"),
+                              value: 'Booked',
+                              textStyle: popubItem,
+                            ),
+                            PopupMenuItem(
+                              child: Text("Sold"),
+                              value: 'Sold',
+                              textStyle: popubItem,
+                            ),
 
-                                            }
-
-                    // else if (value == 'email') {
-                    //   shareViaEmail(products[x].imageName,products[x].vehicleName,products[x].manufacture,products[x].condition,products[x].registration,products[x].mileage,products[x].price,);
-                    // }
-                  },
-                  itemBuilder: (context) {
-                    return [
-                      //  PopupMenuItem(
-                      //   child: Text("Delete"),
-                      //   value: 'Delete',
-                      // ),
-                      PopupMenuItem(
-                        child: Text("Edit Price"),
-                        value: 'Edit Price',
-                        textStyle:popubItem,
+                            PopupMenuItem(
+                              child: Text("Availability"),
+                              value: 'Availability',
+                              textStyle: popubItem,
+                            ),
+                            PopupMenuItem(
+                              child: Text("Advance"),
+                              value: 'Advance',
+                              textStyle: popubItem,
+                            ),
+                            PopupMenuItem(
+                              child: Text("Delete"),
+                              value: 'Delete',
+                              textStyle: popubItem,
+                            ),
+                          ];
+                        },
                       ),
-                      PopupMenuItem(
-                        child: Text("Booked"),
-                        value: 'Booked',
-                        textStyle:popubItem,
-                      ),
-                      PopupMenuItem(
-                        child: Text("Sold"),
-                        value: 'Sold',
-                        textStyle:popubItem,
-                      ),
-
-                      PopupMenuItem(
-                        child: Text("Availability"),
-                        value: 'Availability',
-                        textStyle:popubItem,
-                      ),
-                      PopupMenuItem(
-                        child: Text("Advance"),
-                        value: 'Advance',
-                        textStyle:popubItem,
-                      ),
-                      PopupMenuItem(
-                        child: Text("Delete"),
-                        value: 'Delete',
-                        textStyle:popubItem,
-                      ),
-                    ];
-                  },
-                ),
                     ),
                   ],
                 ),
@@ -1064,7 +1127,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
   }
 
   // Update Sold
-   updateSold(int index) async {
+  updateSold(int index) async {
     final body = {
       "available_id": 22,
     };
@@ -1083,7 +1146,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
     }
   }
 
-    void updateAvailable(int availableID, int index) async {
+  void updateAvailable(int availableID, int index) async {
     final body = {
       "available_id": availableID,
     };

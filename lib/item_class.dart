@@ -38,6 +38,7 @@ class Item extends StatefulWidget {
   final String? featureSeatDetails;
   final int? jj;
   final String? vehiclaName;
+  final String? vehiclaNameBangla;
   final String? brandName;
   final String? registration;
   final String? manufacture;
@@ -71,6 +72,7 @@ class Item extends StatefulWidget {
     this.featureSeatDetails,
     this.jj,
     this.vehiclaName,
+    this.vehiclaNameBangla,
     this.brandName,
     this.registration,
     this.manufacture,
@@ -106,6 +108,8 @@ class _ItemState extends State<Item> {
     print("This is value");
     print(widget.myAskingPrice);
     priceBool = widget.myAskingPrice ?? false;
+    print("vehicle name bangla");
+    
   }
 
   Future getLink() async {
@@ -235,7 +239,8 @@ class _ItemState extends State<Item> {
       print("Error: $error");
     }
   }
-  TextStyle popubItem=TextStyle(color: Colors.black87,fontFamily: 'Roboto');
+
+  TextStyle popubItem = TextStyle(color: Colors.black87, fontFamily: 'Roboto');
 
 // Share with Email
   Future<void> shareViaEmail() async {
@@ -463,6 +468,10 @@ class _ItemState extends State<Item> {
                                       .textTheme
                                       .bodyLarge!
                                       .copyWith(fontSize: 8)),
+                                      Text(widget.vehiclaNameBangla.toString(),  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .copyWith(fontSize: 8)),
                               Row(
                                 children: [
                                   // Text(
@@ -583,7 +592,6 @@ class _ItemState extends State<Item> {
                                                             .titleSmall,
                                                       )),
                                                       content: Container(
-                                                      
                                                         height: double.infinity,
                                                         width: 350,
                                                         child: ListView.builder(
@@ -647,23 +655,26 @@ class _ItemState extends State<Item> {
                                               PopupMenuItem(
                                                 child: Text("Send Details"),
                                                 value: 'details',
-                                                textStyle:popubItem,
-                                                
+                                                textStyle: popubItem,
                                               ),
                                               PopupMenuItem(
                                                 child: Text("Send All Image"),
                                                 value: 'image',
-                                                textStyle:popubItem,
+                                                textStyle: popubItem,
                                               ),
                                               PopupMenuItem(
                                                 child: Text("Send Email"),
                                                 value: 'email',
-                                                textStyle:popubItem,
+                                                textStyle: popubItem,
                                               ),
                                               PopupMenuItem(
-                                                child: Text("Availability",style: TextStyle(color: Colors.black),),
+                                                child: Text(
+                                                  "Availability",
+                                                  style: TextStyle(
+                                                      color: Colors.black),
+                                                ),
                                                 value: 'Availability',
-                                                textStyle:popubItem,
+                                                textStyle: popubItem,
                                               ),
                                             ];
                                           },
@@ -677,7 +688,6 @@ class _ItemState extends State<Item> {
                                         radius: 15,
                                         child: PopupMenuButton(
                                           color: Colors.white,
-                                        
                                           child: Icon(
                                             Icons.more_vert,
                                             color: Colors.white,
@@ -685,9 +695,7 @@ class _ItemState extends State<Item> {
                                           padding: EdgeInsets.zero,
                                           iconSize: 15,
                                           onSelected: (value) async {
-                                            
                                             if (value == 'Edit') {
-                                              
                                               // Open Edit Popup
                                               navigateToAdvanceEditPage(
                                                   widget.id ?? 0);
@@ -778,15 +786,24 @@ class _ItemState extends State<Item> {
                                                               left: 8),
                                                     );
                                                   });
-                                            }
-                                            else if(value=='Advance') {
-                                            await  Navigator.push(context, MaterialPageRoute(builder: (context)=> TextFildSelectBox(id: widget.id,availableDD: widget.available,vehiclaName: widget.vehiclaName,)));
+                                            } else if (value == 'Advance') {
+                                              await Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          TextFildSelectBox(
+                                                            id: widget.id,
+                                                            availableDD: widget
+                                                                .available,
+                                                            vehiclaName: widget
+                                                                .vehiclaName,
+                                                            vehiclaNameBangla:
+                                                                widget
+                                                                    .vehiclaNameBangla,
+                                                          )));
                                               // navigateToAdvanceEditPage(
                                               //     widget.id ?? 0);
-
-                                            }
-                                            
-                                             else if (value == 'Delete') {
+                                            } else if (value == 'Delete') {
                                               showDialog(
                                                   context: context,
                                                   builder:
@@ -794,8 +811,9 @@ class _ItemState extends State<Item> {
                                                     return AlertDialog(
                                                       shape:
                                                           RoundedRectangleBorder(
-                                                        borderRadius: BorderRadius.circular(5)
-                                                            , // Remove rounded corners
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                5), // Remove rounded corners
                                                       ),
                                                       backgroundColor:
                                                           const Color.fromARGB(
@@ -841,25 +859,21 @@ class _ItemState extends State<Item> {
                                             }
                                           },
                                           itemBuilder: (context) {
-                                            
-                                            
                                             return [
-                                            
                                               PopupMenuItem(
                                                 child: Text("Edit price"),
                                                 value: 'Edit price',
-                                                textStyle:popubItem,
-                                                
+                                                textStyle: popubItem,
                                               ),
                                               PopupMenuItem(
                                                 child: Text("Booked"),
                                                 value: 'Booked',
-                                                textStyle:popubItem,
+                                                textStyle: popubItem,
                                               ),
                                               PopupMenuItem(
                                                 child: Text("Sold"),
                                                 value: 'Sold',
-                                                textStyle:popubItem,
+                                                textStyle: popubItem,
                                               ),
                                               // PopupMenuItem(
                                               //   child: Text("Edit"),
@@ -868,17 +882,17 @@ class _ItemState extends State<Item> {
                                               PopupMenuItem(
                                                 child: Text("Availability"),
                                                 value: 'Availability',
-                                                textStyle:popubItem,
+                                                textStyle: popubItem,
                                               ),
                                               PopupMenuItem(
                                                 child: Text("Advance"),
                                                 value: 'Advance',
-                                                textStyle:popubItem,
+                                                textStyle: popubItem,
                                               ),
                                               PopupMenuItem(
                                                 child: Text("Delete"),
                                                 value: 'Delete',
-                                                textStyle:popubItem,
+                                                textStyle: popubItem,
                                               ),
                                             ];
                                           },
@@ -954,12 +968,16 @@ class _ItemState extends State<Item> {
     Navigator.push(context, route);
   }
 
-  navigateToTextSelectBox(){
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>TextFildSelectBox(id: widget.id?.toInt(),)));
+  navigateToTextSelectBox() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => TextFildSelectBox(
+                  id: widget.id?.toInt(),
+                )));
   }
 
   navigateToAdvancePage(int index) {
-    
     final route = MaterialPageRoute(
         builder: (context) => PriceEditScreen(
               id: widget.id,
