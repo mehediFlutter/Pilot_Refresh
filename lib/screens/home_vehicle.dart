@@ -4,11 +4,12 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:pilot_refresh/admin/asking_fixed_stockList.dart';
 import 'package:pilot_refresh/problem/model_problem.dart';
+import 'package:pilot_refresh/problem/model_text.dart';
 import 'package:pilot_refresh/product.dart';
 import 'package:pilot_refresh/screens/advance_edit_screen.dart';
 import 'package:pilot_refresh/screens/auth/searchBar.dart';
 import 'package:pilot_refresh/screens/edit_price.dart';
-import 'package:pilot_refresh/screens/text_fild_select_box.dart';
+import 'package:pilot_refresh/advance/text_fild_select_box.dart';
 import 'package:pilot_refresh/screens/vehicle-details.dart';
 import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
 import 'package:pilot_refresh/widget/alart_dialog_class.dart';
@@ -186,6 +187,13 @@ class _HomeVehicleState extends State<HomeVehicle> {
           edition: e['edition']['translate'][0]['title'] ?? 'None',
           model: e['carmodel']?['translate'][0]?['title'] ?? '',
           grade: e['grade']?['translate'][0]?['title'] ?? '',
+           engineNumber: e['engine_number']??'--',
+            chassisNumber: e['chassis_number']??'--',
+            video: e['video']??'No Video',
+            engine_id: e['engine_id']??'--',
+            onlyMileage: e['mileages']??'--',
+            engines: e['engines']??'-',
+           
         ));
       });
 
@@ -249,7 +257,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
             '',
         code: decodedResponse['data'][i]?['code'] ?? '',
         //model: decodedResponse['data'],
-        carColor: decodedResponse['data'][i]['color']['translate'][0]
+        carColor: decodedResponse['data'][i]['color']?['translate'][0]
                 ['title'] ??
             'None',
         edition: decodedResponse['data'][i]['edition']['translate'][0]
@@ -261,6 +269,13 @@ class _HomeVehicleState extends State<HomeVehicle> {
         grade: decodedResponse['data'][i]?['grade']?['translate'][0]
                 ?['title'] ??
             '',
+            engineNumber: decodedResponse['data'][i]['engine_number']??'--',
+            chassisNumber: decodedResponse['data'][i]['chassis_number']??'--',
+            video: decodedResponse['data'][i]?['video']??'No Video',
+            engine_id: decodedResponse['data'][i]?['engine_id']??'12',
+            onlyMileage: decodedResponse['data'][i]['mileages']??'--',
+            engines: decodedResponse['data'][i]?['engines']??'-',
+            
       ));
     }
     if (decodedResponse['data'] == null) {
@@ -270,22 +285,6 @@ class _HomeVehicleState extends State<HomeVehicle> {
     if (mounted) {
       setState(() {});
     }
-
-    // if (decodedResponse['data'] == null) {
-    //   return;
-    // }
-
-    // show title and details
-//      List unitTitles = [];
-//  List features = [];
-//     decodedResponse['data'].forEach((e) {
-//       e['vehicle_feature'].forEach((a) {
-//         unitTitles.add(a['feature']['title']);
-
-//         print(a['feature']['title']);
-//         print(a['detail']['title']);
-//       });
-//     });
   }
 
   bool _getDataInProgress = false;
@@ -1016,40 +1015,54 @@ class _HomeVehicleState extends State<HomeVehicle> {
                                   );
                                 });
                           } else if (value == 'Advance') {
-                            await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ModelProblem(
-                                         
-                                         
-                                        )));
+
+                            // this is for solving problem
                             // await Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => TextFildSelectBox(
-                            //       id: products[x].id,
-                            //       availableDD: products[x].available,
-                            //       vehiclaName: products[x].vehicleName,
-                            //       vehiclaNameBangla:
-                            //           products[x].vehicleNameBangla,
-                            //       conditionValue: products[x].condition,
-                            //       brandName: products[x].brandName,
-                            //       fuel: products[x].fuel,
-                            //       skeleton: products[x].skeleton,
-                            //       transmission: products[x].transmission,
-                            //       registration: products[x].registration,
-                            //       carColor: products[x].carColor,
-                            //       edition: products[x].edition,
-                            //       model: products[x].model,
-                            //       grade: products[x].grade,
-                            //       mileage: products[x].mileage.toString(),
-                            //       engine: products[x].engine.toString(),
-                            //       purchase_price: products[x].purchase_price,
-                            //       price: products[x].price,
-                            //       fixed_price: products[x].fixed_price,
-                            //     ),
-                            //   ),
-                            // );
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) => ModelShowingData(
+                                         
+                                         
+                            //             )));
+
+                           // this is for text fild selected box
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TextFildSelectBox(
+                                  id: products[x].id,
+                                  availableDD: products[x].available,
+                                  vehiclaName: products[x].vehicleName,
+                                  vehiclaNameBangla:
+                                      products[x].vehicleNameBangla,
+                                  conditionValue: products[x].condition,
+                                  brandName: products[x].brandName,
+                                  fuel: products[x].fuel,
+                                  skeleton: products[x].skeleton,
+                                  transmission: products[x].transmission,
+                                  registration: products[x].registration,
+                                  carColor: products[x].carColor,
+                                  edition: products[x].edition,
+                                  model: products[x].model,
+                                  grade: products[x].grade,
+                                  mileage: products[x].mileage.toString(),
+                                  engine: products[x].engine.toString(),
+                                  purchase_price: products[x].purchase_price,
+                                  price: products[x].price,
+                                  fixed_price: products[x].fixed_price,
+                                  engine_number: products[x].engineNumber,
+                                  chassis_number: products[x].chassisNumber,
+                                  code: products[x].code,
+                                  video: products[x].video.toString(),
+                                 manufacture: products[x].manufacture,
+                                 engineId: products[x].engine_id,
+                                 onlyMileage: products[x].onlyMileage,
+                                 engines: products[x].engines,
+                                 
+                                 
+                                ),
+                              ),
+                            );
                           }
                         },
                         itemBuilder: (context) {

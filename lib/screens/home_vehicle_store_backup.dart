@@ -7,7 +7,7 @@ import 'package:pilot_refresh/product.dart';
 import 'package:pilot_refresh/screens/advance_edit_screen.dart';
 import 'package:pilot_refresh/screens/auth/searchBar.dart';
 import 'package:pilot_refresh/screens/edit_price.dart';
-import 'package:pilot_refresh/screens/text_fild_select_box.dart';
+import 'package:pilot_refresh/advance/text_fild_select_box.dart';
 import 'package:pilot_refresh/screens/vehicle-details.dart';
 import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
 import 'package:pilot_refresh/widget/alart_dialog_class.dart';

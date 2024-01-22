@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:pilot_refresh/problem/model_products.dart';
+import 'package:pilot_refresh/product.dart';
 import 'package:pilot_refresh/widget/custom_text_fild.dart';
 
 class ModelProblem extends StatefulWidget {
@@ -39,10 +41,10 @@ class _ModelProblemState extends State<ModelProblem> {
     );
   }
 
-  String title = 'On Shipment';
+  String title = 'Prado';
   bool _availabilityInProgress = false;
   List<dynamic> availableList = []; // Store a list of dynamic objects
-  List<dynamic> modelList = [];
+
   String? availableValue; // Initialize as nullable
   String? modelValue;
 
@@ -54,40 +56,43 @@ class _ModelProblemState extends State<ModelProblem> {
     super.initState();
     getModel();
   }
+List modelList = [];
 
-  Future getModel() async {
-    try {
-      final response = await http.get(
-          Uri.parse('https://pilotbazar.com/api/merchants/vehicles/availables'));
+Future<void> getModel() async {
+  try {
+    final response = await http.get(Uri.parse('https://pilotbazar.com/api/merchants/vehicles/colors'));
 
-      if (response.statusCode == 200) {
-        final decodedResponse = jsonDecode(response.body);
-        //final parsedModelData = decodedResponse['payload'] as List<dynamic>;
+    if (response.statusCode == 200) {
+      Map<String, dynamic> decodedResponse = jsonDecode(response.body);
 
-        setState(() {
-          modelList = decodedResponse['payload'] as List<dynamic>;
-          setState(() {});
-          modelValue = title;
-          modelSectedDropdownItem = modelList.firstWhere(
-            (item) => item['translate'][0]['title'] == modelValue,
-          );
-        });
-        print('length of model List');
-        print(modelList.length);
-        print(modelList);
-        setState(() {});
-      } else {
-        // Handle error if API request fails
-        print('API request failed with status: ${response.statusCode}');
+      for (int i = 0; i < decodedResponse['payload'].length; i++) {
+        List<Map<String, dynamic>> translateList = (decodedResponse['payload'][i]['translate'] as List<dynamic>)
+            .cast<Map<String, dynamic>>();
+
+        if (translateList.isNotEmpty) {
+          modelList.add(ModelStore(
+            colorr: 'abc',
+            model: translateList[0]['title'] ?? 'None', colorId: 'df',
+          ));
+        }
       }
-    } catch (error) {
-      print('Error fetching data: $error');
-    } finally {
-      _availabilityInProgress = false;
-      setState(() {});
-    }
-  }
 
+      setState(() {}); // If this is inside a StatefulWidget
+
+      print('length of model List');
+      print(modelList.length);
+      print(modelList);
+    } else {
+      // Handle error if API request fails
+      print('API request failed with status: ${response.statusCode}');
+    }
+  } catch (error) {
+    print('Error fetching data: $error');
+  } finally {
+    _availabilityInProgress = false;
+    setState(() {}); // If this is inside a StatefulWidget
+  }
+}
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -106,16 +111,16 @@ class _ModelProblemState extends State<ModelProblem> {
                 customDropDownFormField(
                   value: modelValue,
                   list: modelList,
-                  onChanged: (newValue) {
-                        setState(() {
-                          title = newValue!;
-                          modelSectedDropdownItem = modelList.firstWhere(
-                            (item) =>
-                                item['translate'][0]['title'] == title,
-                          );
-                        });
-                      },
+                  // onChanged: (newValue) {
+                  //   setState(() {
+                  //     title = newValue!;
+                  //     modelSectedDropdownItem = modelList.firstWhere(
+                  //       (item) => item['translate'][0]['title'] == title,
+                  //     );
+                  //   });
+                  // },
                 ),
+                //  ElevatedButton(onPressed: (){}, child: )
               ],
             ),
           ),

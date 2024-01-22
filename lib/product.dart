@@ -29,13 +29,10 @@ class Product {
   final String? detailsLink;
   final String? grade;
   final String? pdfDetailsLink;
-
-  // productCode,
-  // image,
-  // unitPrice,
-  // totalPrice,
-  // createAt,
-  // quantity;
+  final String? video;
+  final String? engine_id;
+  final String? onlyMileage;
+  final String? engines;
 
   Product( 
       {this.imageName,
@@ -69,11 +66,11 @@ class Product {
       this.detailsLink,
       this.grade,
       this.pdfDetailsLink,
-      // required this.productCode,
-      // required this.image,
-      // required this.unitPrice,
-      // required this.totalPrice,
-      // required this.createAt,
-      // required this.quantity
+      this.video,
+      this.engine_id,
+      this.onlyMileage,
+      this.engines
+     
+
       });
 }
