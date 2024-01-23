@@ -33,11 +33,13 @@ class Product {
   final String? engine_id;
   final String? onlyMileage;
   final String? engines;
+  final String? vehiclaNameModel;
 
   Product( 
       {this.imageName,
 
       this.id,
+
            this.engineNumber,
       this.chassisNumber,
       this.edition,
@@ -69,7 +71,8 @@ class Product {
       this.video,
       this.engine_id,
       this.onlyMileage,
-      this.engines
+      this.engines,
+      this.vehiclaNameModel,
      
 
       });

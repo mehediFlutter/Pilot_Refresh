@@ -13,8 +13,9 @@ import 'package:pilot_refresh/widget/end_drawer.dart';
 import 'package:http/http.dart' as http;
 
 class AdminDoublVehicle extends StatefulWidget {
-
-  AdminDoublVehicle({super.key,});
+  AdminDoublVehicle({
+    super.key,
+  });
 
   @override
   State<AdminDoublVehicle> createState() => _DoublVehicleState();
@@ -25,10 +26,9 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
   static String imagePath = "https://pilotbazar.com/storage/vehicles/";
   static late int page;
   static late int i;
-  bool fixedPriceChange=false;
-  bool askingPriceChange=false;
-  bool askingPriceInProgress=false;
-  
+  bool fixedPriceChange = false;
+  bool askingPriceChange = false;
+  bool askingPriceInProgress = false;
 
   // yVjInK9erYHC0iHW9ehY8c6J4y79fbNzCEIWtZvQ.jpg
   //https://pilotbazar.com/storage/vehicles/
@@ -38,14 +38,12 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
     i = 0;
     getProduct(page);
     _scrollController.addListener(_listenToScroolMoments);
-    
-    searchController.addListener(() {  
-      
 
+    searchController.addListener(() {
       // Clear the searchProducts list when the text field is empty
       if (searchController.text.isEmpty) {
         page = 1;
-      i = 0;
+        i = 0;
         searchProducts.clear();
         products.clear();
         getProduct(page);
@@ -83,14 +81,14 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
   }
 
   void getNewProduct(int page) async {
-    
     _getNewProductinProgress = true;
     if (mounted) {
       setState(() {});
     }
 
-    Response response =
-        await get(Uri.parse("https://pilotbazar.com/api/vehicle?page=$page"),headers: {'Retry-After':'3600','Content-Type': 'text/html'});
+    Response response = await get(
+        Uri.parse("https://pilotbazar.com/api/vehicle?page=$page"),
+        headers: {'Retry-After': '3600', 'Content-Type': 'text/html'});
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
     print(response.statusCode);
@@ -111,25 +109,35 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
       decodedResponse['data'].forEach((e) {
         //  List<Product> products = [];
         products.add(Product(
-          vehicleName: e['translate'][0]?['title'] ?? "",
-          id: e['id'] ?? "",
+          vehicleName: e['translate'][0]['title'],
+          vehicleNameBangla: e['translate'][1]['title'],
+          id: e['id'],
           slug: e['slug'] ?? '',
           manufacture: e['manufacture'] ?? '',
           condition: e['condition']['translate'][0]?['title'] ?? '',
-          mileage: e['mileage']?['translate'][0]?['title'] ?? 'No mileage data',
+          mileage: e['mileage']?['translate'][0]?['title'] ?? '--',
           price: e['price'] ?? '',
           purchase_price: e['purchase_price'] ?? '',
           fixed_price: e['fixed_price'] ?? '',
           imageName: e['image']?['name'] ?? '',
-          //registration: e['registration'] ?? '',
-          registration: e['registration'] ?? '',
+          registration: e['registration'] ?? 'None',
           engine: e['engine']?['translate'][0]?['title'] ?? '',
           brandName: e['brand']?['translate'][0]?['title'] ?? '',
           transmission: e['transmission']?['translate'][0]?['title'] ?? '',
           fuel: e['fuel']?['translate'][0]?['title'] ?? '',
           skeleton: e['skeleton']?['translate'][0]?['title'] ?? '',
+          available: e['available']?['translate'][0]?['title'] ?? '',
           code: e['code'] ?? '',
-          available: e['available']?['translate'][0]?['title'] ?? '-',
+          carColor: e['color']['translate'][0]['title'] ?? 'None',
+          edition: e['edition']['translate'][0]['title'] ?? 'None',
+          model: e['carmodel']?['translate'][0]?['title'] ?? '',
+          grade: e['grade']?['translate'][0]?['title'] ?? '',
+           engineNumber: e['engine_number']??'--',
+            chassisNumber: e['chassis_number']??'--',
+            video: e['video']??'No Video',
+            engine_id: e['engine_id']??'--',
+            onlyMileage: e['mileages']??'--',
+            engines: e['engines']??'-',
         ));
       });
 
@@ -222,39 +230,57 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
     }
 
     for (i; i < decodedResponse['data'].length; i++) {
-      products.add(Product(
-          vehicleName:
-              decodedResponse['data'][i]['translate'][0]?['title'] ?? "",
-          manufacture: decodedResponse['data'][i]?['manufacture'] ?? '',
-          slug: decodedResponse['data'][i]?['slug'] ?? '',
-          id: decodedResponse['data'][i]?['id'] ?? '',
-          condition: decodedResponse['data'][i]?['condition']?['translate'][0]
-                  ?['title'] ??
-              '',
-          mileage: decodedResponse['data'][i]['mileage']?['translate'][0]
-                  ?['title'] ??
-              'No mileage data',
-          price: decodedResponse['data'][i]?['price'] ?? '',
-          purchase_price: decodedResponse['data'][i]?['purchase_price'] ?? '--',
-          fixed_price: decodedResponse['data'][i]?['fixed_price'] ?? '',
-          imageName: decodedResponse['data'][i]?['image']?['name'] ?? '',
-          // registratin
-          registration: decodedResponse['data'][i]?['registration'] ?? '-',
-          engine: decodedResponse['data'][i]?['engine']?['translate'][0]?['title'] ??
-              '',
-          brandName: decodedResponse['data'][i]?['brand']?['translate'][0]
-                  ?['title'] ??
-              '',
-          transmission: decodedResponse['data'][i]?['transmission']
-                  ?['translate'][0]?['title'] ??
-              '',
-          fuel: decodedResponse['data'][i]?['fuel']?['translate'][0]?['title'] ??
-              '',
-          skeleton:
-              decodedResponse['data'][i]?['skeleton']?['translate'][0]?['title'] ?? '',
-          code: decodedResponse['data'][i]?['code'] ?? '',
-          available: decodedResponse['data'][i]?['available']?['translate'][0]?['title'] ?? '',
-          detailsLink: decodedResponse['message']));
+      products.add(
+        Product(
+vehicleName: decodedResponse['data'][i]['translate'][0]['title'],
+        vehicleNameBangla: decodedResponse['data'][i]['translate'][1]['title'],
+        manufacture: decodedResponse['data'][i]['manufacture'],
+        slug: decodedResponse['data'][i]['slug'],
+        id: decodedResponse['data'][i]['id'],
+        condition: decodedResponse['data'][i]['condition']['translate'][0]
+            ['title'],
+        mileage: decodedResponse['data'][i]['mileage']?['translate'][0]
+                ?['title'] ??
+            '--',
+        //price here
+        price: decodedResponse['data'][i]['price'] ?? '',
+        purchase_price: decodedResponse['data'][i]?['purchase_price'] ?? '',
+        fixed_price: decodedResponse['data'][i]?['fixed_price'] ?? '',
+        //price end
+        imageName: decodedResponse['data'][i]['image']['name'],
+        registration: decodedResponse['data'][i]['registration'] ?? 'None',
+        engine: decodedResponse['data'][i]['engine']['translate'][0]['title'],
+        brandName: decodedResponse['data'][i]['brand']['translate'][0]['title'],
+        transmission: decodedResponse['data'][i]['transmission']['translate'][0]
+            ['title'],
+        fuel: decodedResponse['data'][i]['fuel']['translate'][0]['title'],
+        skeleton: decodedResponse['data'][i]['skeleton']['translate'][0]
+            ['title'],
+        available: decodedResponse['data'][i]?['available']?['translate'][0]
+                ?['title'] ??
+            '',
+        code: decodedResponse['data'][i]?['code'] ?? '',
+        //model: decodedResponse['data'],
+        carColor: decodedResponse['data'][i]['color']?['translate'][0]
+                ['title'] ??
+            'None',
+        edition: decodedResponse['data'][i]['edition']['translate'][0]
+                ['title'] ??
+            'None',
+        model: decodedResponse['data'][i]?['carmodel']?['translate'][0]
+                ?['title'] ??
+            '',
+        grade: decodedResponse['data'][i]?['grade']?['translate'][0]
+                ?['title'] ??
+            '',
+            engineNumber: decodedResponse['data'][i]['engine_number']??'--',
+            chassisNumber: decodedResponse['data'][i]['chassis_number']??'--',
+            video: decodedResponse['data'][i]?['video']??'No Video',
+            engine_id: decodedResponse['data'][i]?['engine_id']??'12',
+            onlyMileage: decodedResponse['data'][i]['mileages']??'--',
+            engines: decodedResponse['data'][i]?['engines']??'-',
+        ),
+      );
     }
     if (decodedResponse['data'] == null) {
       return;
@@ -267,8 +293,6 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
     if (decodedResponse['data'] == null) {
       return;
     }
-
-
   }
 
   final ScrollController _scrollController = ScrollController();
@@ -276,7 +300,7 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
   List searchProducts = [];
   bool _searchInProgress = false;
   TextEditingController searchController = TextEditingController();
- Item myItem = Item();
+  Item myItem = Item();
   Future<void> search(String value) async {
     searchProducts.clear();
     products.clear();
@@ -319,11 +343,9 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
           skeleton: "API?",
           available: decodedResponse['payload'][i]?['available']['slug'] ?? '-',
           code: decodedResponse['payload'][i]?['code'] ?? '-'));
-
-      
     }
-products.addAll(searchProducts);
-      searchProducts.clear();
+    products.addAll(searchProducts);
+    searchProducts.clear();
     _searchInProgress = false;
     if (mounted) {
       setState(() {});
@@ -332,19 +354,21 @@ products.addAll(searchProducts);
       return;
     }
   }
-  
-   // update bool value
-   bool myBoolValue = true;
+
+  // update bool value
+  bool myBoolValue = true;
   void updateAskingPriceFunction() {
     setState(() {
       myBoolValue = true; // Toggle the value
     });
   }
+
   void updateFixedPriceFunction() {
     setState(() {
       myBoolValue = false; // Toggle the value
     });
   }
+
   Widget build(BuildContext context) {
     _searchInProgress
         ? null
@@ -352,148 +376,154 @@ products.addAll(searchProducts);
             print(_scrollController.offset);
           });
     return Scaffold(
-        backgroundColor: Color(0xFF313131),
-        appBar: AppBar(
-  backgroundColor: Color(0xFF666666),
-  leading: Image.asset(
-    'assets/images/pilot_logo2.png',
-  ),
-  title: TextField(
-    style: TextStyle(color: Colors.white, fontSize: 15),
-    controller: searchController,
-    onSubmitted: (value) async {
-      print("onSubmitted: $value");
-      await search(value);
-    },
-    decoration: InputDecoration(
-      contentPadding: EdgeInsets.symmetric(horizontal: 25),
-      hintText: "Search",
-      hintStyle: TextStyle(color: Colors.white),
-      border: OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.white, width: 2),
-        borderRadius: BorderRadius.circular(40),
+      backgroundColor: Color(0xFF313131),
+      appBar: AppBar(
+        backgroundColor: Color(0xFF666666),
+        leading: Image.asset(
+          'assets/images/pilot_logo2.png',
+        ),
+        title: TextField(
+          style: TextStyle(color: Colors.white, fontSize: 15),
+          controller: searchController,
+          onSubmitted: (value) async {
+            print("onSubmitted: $value");
+            await search(value);
+          },
+          decoration: InputDecoration(
+            contentPadding: EdgeInsets.symmetric(horizontal: 25),
+            hintText: "Search",
+            hintStyle: TextStyle(color: Colors.white),
+            border: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white, width: 2),
+              borderRadius: BorderRadius.circular(40),
+            ),
+            prefixIcon: Icon(
+              Icons.search,
+              color: Colors.white,
+            ),
+            // suffixIcon: IconButton(
+            //   onPressed: () async {
+            //     print("Hello");
+            //     await search(searchController.text.toString());
+            //   },
+            //   icon: Icon(Icons.send, color: Colors.white),
+            // ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(40),
+              borderSide: BorderSide(color: Colors.white),
+            ),
+          ),
+        ),
       ),
-      prefixIcon: Icon(
-        Icons.search,
-        color: Colors.white,
-      ),
-      // suffixIcon: IconButton(
-      //   onPressed: () async {
-      //     print("Hello");
-      //     await search(searchController.text.toString());
-      //   },
-      //   icon: Icon(Icons.send, color: Colors.white),
-      // ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(40),
-        borderSide: BorderSide(color: Colors.white),
-      ),
-    ),
-  ),
-),
-        endDrawer: EndDrawer(mounted: mounted),
- 
-        body: (_getProductinProgress || _searchInProgress)
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
-            : Stack(
-                children: [
-                  Column(
-                    children: [
-                      AskingFixedAndStockList(
-                        askingPriceFunction: () {
-                          print("Asking Price function is called");
-                          updateAskingPriceFunction();
-                          askingPriceInProgress=false;
-                          setState(() {
-                            
-                          });
-                          print(askingPriceInProgress);
-                             },
-                        fixedPriceFunction: () {
-                          print("Fixed Price Function is called");
-                          askingPriceInProgress=true;
-                          updateFixedPriceFunction();
+      endDrawer: EndDrawer(mounted: mounted),
+      body: (_getProductinProgress || _searchInProgress)
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Stack(
+              children: [
+                Column(
+                  children: [
+                    AskingFixedAndStockList(
+                      askingPriceFunction: () {
+                        print("Asking Price function is called");
+                        updateAskingPriceFunction();
+                        askingPriceInProgress = false;
+                        setState(() {});
+                        print(askingPriceInProgress);
+                      },
+                      fixedPriceFunction: () {
+                        print("Fixed Price Function is called");
+                        askingPriceInProgress = true;
+                        updateFixedPriceFunction();
+                        setState(() {});
+                        print(askingPriceInProgress);
+                      },
+                      stockListFunction: () {
+                        print("StockList Price Function is called");
+                      },
+                    ),
+                    Expanded(
+                      child: RefreshIndicator(
+                        onRefresh: () async {
+                          initState();
                           setState(() {});
-                          print(askingPriceInProgress);
                         },
-                        stockListFunction: () {
-                          print("StockList Price Function is called");
-                        },
-                      ),
-                      Expanded(
-                        child: RefreshIndicator(
-                             onRefresh: () async {
-                       initState();
-                      setState(() {});
-                    },
-                          child: GridView.builder(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              //childAspectRatio: 1.0,
-                              mainAxisSpacing: 2.0,
-                              crossAxisSpacing: 0.0,
-                            ),
-                            controller: _scrollController,
-                            itemCount: products.length,
-                            itemBuilder: (BuildContext context, index) {
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 0),
-                                child: Item(
-                                  myAskingPrice: myBoolValue,
-                                  id: products[index + j].id!,
-                                  imageName:
-                                      products[index + j].imageName.toString(),
-                                  price: products[index + j].price.toString(),
-                                  purchase_price: products[index + j]
-                                      .purchase_price
-                                      .toString(),
-                                  fixed_price:
-                                      products[index + j].fixed_price.toString(),
-                                  featureSeat:
-                                      featureUnicTitle[index + j].toString(),
-                                  featureSeatDetails:
-                                      featureDetails[index + j].toString(),
-                                  vehiclaName: products[index + j].vehicleName,
-                                  manufacture: products[index + j].manufacture,
-                                  condition: products[index + j].condition,
-                                  nMillage: products[index + j].mileage,
-                                  brandName: products[index + j].brandName,
-                                  engine: products[index + j].engine,
-                                  transmission: products[index + j].transmission,
-                                  model: "",
-                                  fuel: products[index + j].fuel,
-                                  skeleton: products[index + j].skeleton,
-                                  code: products[index + j].code,
-                                  registration: products[index + j].registration,
-                                  available: products[index + j].available,
-                                  detailsLink: products[index + j].detailsLink,
-                          
-                                  //dropdownFontLight: products[index+j],
-                                ),
-                              );
-                            },
+                        child: GridView.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            //childAspectRatio: 1.0,
+                            mainAxisSpacing: 2.0,
+                            crossAxisSpacing: 0.0,
                           ),
+                          controller: _scrollController,
+                          itemCount: products.length,
+                          itemBuilder: (BuildContext context, index) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 0),
+                              child: Item(
+                                myAskingPrice: myBoolValue,
+                                id: products[index + j].id!,
+                                imageName:
+                                    products[index + j].imageName.toString(),
+                                price: products[index + j].price.toString(),
+                                purchase_price: products[index + j]
+                                    .purchase_price
+                                    .toString(),
+                                fixed_price:
+                                    products[index + j].fixed_price.toString(),
+
+                                vehiclaName: products[index + j].vehicleName,
+                                manufacture: products[index + j].manufacture,
+                                condition: products[index + j].condition,
+                                nMillage: products[index + j].mileage,
+                                brandName: products[index + j].brandName,
+                                engine: products[index + j].engine,
+                                transmission: products[index + j].transmission,
+                                model: products[index + j].model,
+                                fuel: products[index + j].fuel,
+                                skeleton: products[index + j].skeleton,
+                                code: products[index + j].code,
+                                registration: products[index + j].registration,
+                                available: products[index + j].available,
+                                detailsLink: products[index + j].detailsLink,
+                                carColor: products[index + j].carColor,
+                                edition: products[index + j].edition,
+                                grade: products[index + j].grade,
+                                onlyMileage: products[index + j].onlyMileage,
+                                engines: products[index + j].engines,
+                                engineNumber: products[index + j].engineNumber,
+                                chassisNumber: products[index + j].chassisNumber,
+                                video: products[index + j].video,
+                               // carModel: products[index + j].carModel,
+                                
+
+                                //dropdownFontLight: products[index+j],
+                              ),
+                            );
+                          },
                         ),
                       ),
-                    ],
-                  ),
-                  Visibility(
-                      visible: _getNewProductinProgress,
-                      child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: CircularProgressIndicator())),
-                ],
-              ),
-              );
+                    ),
+                  ],
+                ),
+                Visibility(
+                    visible: _getNewProductinProgress,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                     
+                        Align(
+                            alignment: Alignment.bottomCenter,
+                            child: CircularProgressIndicator()),
+                      ],
+                    )),
+              ],
+            ),
+    );
   }
 
   static int j = x;
-
-
-
-  
 }

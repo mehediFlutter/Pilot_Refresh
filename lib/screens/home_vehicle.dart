@@ -187,13 +187,12 @@ class _HomeVehicleState extends State<HomeVehicle> {
           edition: e['edition']['translate'][0]['title'] ?? 'None',
           model: e['carmodel']?['translate'][0]?['title'] ?? '',
           grade: e['grade']?['translate'][0]?['title'] ?? '',
-           engineNumber: e['engine_number']??'--',
-            chassisNumber: e['chassis_number']??'--',
-            video: e['video']??'No Video',
-            engine_id: e['engine_id']??'--',
-            onlyMileage: e['mileages']??'--',
-            engines: e['engines']??'-',
-           
+          engineNumber: e['engine_number'] ?? '--',
+          chassisNumber: e['chassis_number'] ?? '--',
+          video: e['video'] ?? 'No Video',
+          engine_id: e['engine_id'] ?? '--',
+          onlyMileage: e['mileages'] ?? '--',
+          engines: e['engines'] ?? '-',
         ));
       });
 
@@ -269,13 +268,12 @@ class _HomeVehicleState extends State<HomeVehicle> {
         grade: decodedResponse['data'][i]?['grade']?['translate'][0]
                 ?['title'] ??
             '',
-            engineNumber: decodedResponse['data'][i]['engine_number']??'--',
-            chassisNumber: decodedResponse['data'][i]['chassis_number']??'--',
-            video: decodedResponse['data'][i]?['video']??'No Video',
-            engine_id: decodedResponse['data'][i]?['engine_id']??'12',
-            onlyMileage: decodedResponse['data'][i]['mileages']??'--',
-            engines: decodedResponse['data'][i]?['engines']??'-',
-            
+        engineNumber: decodedResponse['data'][i]['engine_number'] ?? '--',
+        chassisNumber: decodedResponse['data'][i]['chassis_number'] ?? '--',
+        video: decodedResponse['data'][i]?['video'] ?? 'No Video',
+        engine_id: decodedResponse['data'][i]?['engine_id'] ?? '12',
+        onlyMileage: decodedResponse['data'][i]['mileages'] ?? '--',
+        engines: decodedResponse['data'][i]?['engines'] ?? '-',
       ));
     }
     if (decodedResponse['data'] == null) {
@@ -427,7 +425,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
         details.clear();
         ImageLinkList.clear();
         showImageList.clear();
-        _detailsInProgress = false;
+        _shareAllImageInProgress = false;
 
         setState(() {});
       } else {
@@ -661,47 +659,59 @@ class _HomeVehicleState extends State<HomeVehicle> {
             )
           : Stack(
               children: [
-                AskingFixedAndStockList(
-                  askingPriceFunction: () {
-                    print("Asking Price function is called");
-                    updateAskingPriceFunction();
-                    askingPriceInProgress = false;
-                    setState(() {});
-                    print(askingPriceInProgress);
-                  },
-                  fixedPriceFunction: () {
-                    print("Fixed Price Function is called");
-                    askingPriceInProgress = true;
-                    updateFixedPriceFunction();
-                    setState(() {});
-                    print(askingPriceInProgress);
-                  },
-                  stockListFunction: () {
-                    print("StockList Price Function is called");
-                  },
+                Column(
+                  children: [
+                    AskingFixedAndStockList(
+                      askingPriceFunction: () {
+                        print("Asking Price function is called");
+                        updateAskingPriceFunction();
+                        askingPriceInProgress = false;
+                        setState(() {});
+                        print(askingPriceInProgress);
+                      },
+                      fixedPriceFunction: () {
+                        print("Fixed Price Function is called");
+                        askingPriceInProgress = true;
+                        updateFixedPriceFunction();
+                        setState(() {});
+                        print(askingPriceInProgress);
+                      },
+                      stockListFunction: () {
+                        print("StockList Price Function is called");
+                      },
+                    ),
+                    Expanded(
+                      child: RefreshIndicator(
+                        onRefresh: () async {
+                          initState();
+                          setState(() {});
+                        },
+                        child: ListView.separated(
+                          primary: false,
+                          shrinkWrap: true,
+                          controller: _scrollController,
+                          itemCount: products.length,
+                          itemBuilder: (BuildContext context, index) {
+                            return productList(index + j);
+                          },
+                          separatorBuilder: (BuildContext context, int index) {
+                            return Divider(
+                              height: 4,
+                              color: Color(0xFF313131),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    Visibility(
+                      visible: _getNewProductinProgress,
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  ],
                 ),
-                ListView.separated(
-                  primary: false,
-                  shrinkWrap: true,
-                  controller: _scrollController,
-                  itemCount: products.length,
-                  itemBuilder: (BuildContext context, index) {
-                    return productList(index + j);
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return Divider(
-                      height: 4,
-                      color: Color(0xFF313131),
-                    );
-                  },
-                ),
-                Visibility(
-                  visible: _getNewProductinProgress,
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: CircularProgressIndicator(),
-                  ),
-                )
               ],
             ),
     );
@@ -772,10 +782,6 @@ class _HomeVehicleState extends State<HomeVehicle> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              products[x].edition,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            Text(
                               products[x].vehicleName.toString(),
                               style: Theme.of(context).textTheme.bodyMedium,
                               // Increased from 2
@@ -818,7 +824,12 @@ class _HomeVehicleState extends State<HomeVehicle> {
                                       Theme.of(context).textTheme.titleMedium,
                                 ),
                                 Text(
-                                  products[x].mileage.toString(),
+                                  products[x].onlyMileage.toString(),
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                ),
+                                Text(
+                                  ' km',
                                   style:
                                       Theme.of(context).textTheme.titleMedium,
                                 ),
@@ -840,7 +851,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
                           ),
                           onSelected: (value) async {
                             if (value == 'image') {
-                              sendWhatsImage(products[x + j].id);
+                               sendWhatsImage(products[x + j].id);
                             } else if (value == 'details') {
                               await getLink(products[x + j].id.toString());
                               shareDetailsWithOneImage(
@@ -1015,17 +1026,15 @@ class _HomeVehicleState extends State<HomeVehicle> {
                                   );
                                 });
                           } else if (value == 'Advance') {
-
                             // this is for solving problem
                             // await Navigator.push(
                             //     context,
                             //     MaterialPageRoute(
                             //         builder: (context) => ModelShowingData(
-                                         
-                                         
+
                             //             )));
 
-                           // this is for text fild selected box
+                            // this is for text fild selected box
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -1054,12 +1063,10 @@ class _HomeVehicleState extends State<HomeVehicle> {
                                   chassis_number: products[x].chassisNumber,
                                   code: products[x].code,
                                   video: products[x].video.toString(),
-                                 manufacture: products[x].manufacture,
-                                 engineId: products[x].engine_id,
-                                 onlyMileage: products[x].onlyMileage,
-                                 engines: products[x].engines,
-                                 
-                                 
+                                  manufacture: products[x].manufacture,
+                                  engineId: products[x].engine_id,
+                                  onlyMileage: products[x].onlyMileage,
+                                  engines: products[x].engines,
                                 ),
                               ),
                             );

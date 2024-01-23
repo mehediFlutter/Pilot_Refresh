@@ -25,54 +25,45 @@ class Item extends StatefulWidget {
   final String? price;
   final String? purchase_price;
   final String? fixed_price;
-  final String? dropdownFontLight;
-  final String? dropdownFontLightAnswer;
-  final String? dropdownSeat;
-  final String? dropdownSeatAnswer;
-  final String? dropdownRoof;
-  final String? dropdownRoofAnswer;
-  final String? dropdownStarOption;
-  final String? dropdownStarOptionAnswer;
-  final String? featureSeat;
   final String? available;
-  final String? featureSeatDetails;
-  final int? jj;
+
   final String? vehiclaName;
-  final String? vehiclaNameBangla;
   final String? brandName;
   final String? registration;
   final String? manufacture;
   final String? condition;
   final String? nMillage;
   final String? engine;
+  final String? transmission;
   final String? model;
+  final String? carModel;
   final String? fuel;
   final String? skeleton;
-  final String? transmission;
+  
   final String? termAndCondition;
   final String? detailsLink;
+  final String? carColor;
+  final String? edition;
+  final String? grade;
+  final String? engineNumber;
+  final String? chassisNumber;
+  final String? video;
+  final String? engine_id;
+  final String? onlyMileage;
+  final String? engines;
+  final String? vehiclaNameModel;
   Item({
-    super.key,
+  
     this.id,
     this.imageName,
     this.code,
     this.price,
     this.purchase_price,
     this.fixed_price,
-    this.dropdownFontLight,
-    this.dropdownFontLightAnswer,
-    this.dropdownSeat,
-    this.dropdownSeatAnswer,
-    this.dropdownRoof,
-    this.dropdownRoofAnswer,
-    this.dropdownStarOption,
-    this.dropdownStarOptionAnswer,
-    this.featureSeat,
+
     this.available,
-    this.featureSeatDetails,
-    this.jj,
+
     this.vehiclaName,
-    this.vehiclaNameBangla,
     this.brandName,
     this.registration,
     this.manufacture,
@@ -81,11 +72,22 @@ class Item extends StatefulWidget {
     this.engine,
     this.transmission,
     this.model,
+    this.carModel,
     this.fuel,
     this.skeleton,
     this.termAndCondition,
     this.detailsLink,
     this.myAskingPrice,
+    this.carColor,
+    this.edition,
+    this.grade,
+    this.engineNumber,
+    this.chassisNumber,
+    this.video,
+    this.engine_id,
+    this.onlyMileage,
+    this.engines,
+    this.vehiclaNameModel, 
   });
 
   @override
@@ -96,23 +98,23 @@ class _ItemState extends State<Item> {
   // yVjInK9erYHC0iHW9ehY8c6J4y79fbNzCEIWtZvQ.jpg
   //https://pilotbazar.com/storage/vehicles/
   late int id;
+
   late String detailsLink;
   // bool myAskingPrice=false;
   bool? priceBool;
+
+
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    id = widget.id ?? 0;
-    getLink();
-    print("This is value");
-    print(widget.myAskingPrice);
-    priceBool = widget.myAskingPrice ?? false;
-    print("vehicle name bangla");
-    
+print("Model");
+print(widget.model);
+
   }
 
-  Future getLink() async {
+  Future getLink(String id) async {
     Response response1 = await get(Uri.parse(
         "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
     final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
@@ -170,7 +172,9 @@ class _ItemState extends State<Item> {
 
   static List showImageList = [];
 
-  Future<void> sendWhatsImage() async {
+
+  Future<void> sendWhatsImage(int id) async {
+    ImageLinkList.clear();
     try {
       Response response1 = await get(Uri.parse(
           "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
@@ -243,7 +247,8 @@ class _ItemState extends State<Item> {
   TextStyle popubItem = TextStyle(color: Colors.black87, fontFamily: 'Roboto');
 
 // Share with Email
-  Future<void> shareViaEmail() async {
+  Future<void> shareViaEmail(String id) async {
+    showImageList.clear();
     try {
       Response response1 = await get(Uri.parse(
           "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
@@ -260,7 +265,7 @@ class _ItemState extends State<Item> {
         print(ImageLinkList[c]);
       }
 
-      List<XFile> showImageList = [];
+      //List<XFile> showImageList = [];
       for (int y = 0; y < ImageLinkList.length; y++) {
         final uri = Uri.parse(
             "https://pilotbazar.com/storage/galleries/${ImageLinkList[y]}");
@@ -313,6 +318,8 @@ class _ItemState extends State<Item> {
     }
   }
 
+
+
   Future<void> shareDetailsWithOneImage() async {
     if (mounted) {
       setState(() {});
@@ -352,25 +359,7 @@ class _ItemState extends State<Item> {
     setState(() {});
   }
 
-  //       void updateAvailable(int availableID, int index) async {
-  //   final body = {
-  //     "available_id": availableID,
-  //   };
-  //   final url =
-  //       "https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/available";
-  //   final uri = Uri.parse(url);
-  //   final response = await http.put(uri, body: jsonEncode(body), headers: {
-  //     'Content-Type': 'application/vnd.api+json',
-  //     'Accept': 'application/vnd.api+json'
-  //   });
-  //   print(response.statusCode);
 
-  //   print(response.statusCode);
-
-  //   if (response.statusCode == 200) {
-  //     print("Succesfully Update");
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -468,10 +457,7 @@ class _ItemState extends State<Item> {
                                       .textTheme
                                       .bodyLarge!
                                       .copyWith(fontSize: 8)),
-                                      Text(widget.vehiclaNameBangla.toString(),  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(fontSize: 8)),
+                           
                               Row(
                                 children: [
                                   // Text(
@@ -518,7 +504,12 @@ class _ItemState extends State<Item> {
                                           .bodyLarge!
                                           .copyWith(fontSize: 8)),
 
-                                  Text(widget.nMillage.toString(),
+                                  Text(widget.onlyMileage.toString(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(fontSize: 8)),
+                                  Text(' km',
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyLarge!
@@ -567,12 +558,18 @@ class _ItemState extends State<Item> {
                                             size: 17,
                                           ),
                                           onSelected: (value) async {
-                                            if (value == 'image') {
-                                              sendWhatsImage();
+
+                                            if(value == 'details'){
+                                                await getLink(widget.id.toString());
+                                                shareDetailsWithOneImage();
+                                            }
+                                           else if (value == 'image') {
+                                              sendWhatsImage(widget.id??0);
                                             } else if (value == 'details') {
                                               shareDetailsWithOneImage();
                                             } else if (value == 'email') {
-                                              shareViaEmail();
+                                              getLink(widget.id.toString());
+                                              shareViaEmail(widget.id.toString());
                                             } else if (value ==
                                                 'Availability') {
                                               await getAvailability();
@@ -652,11 +649,12 @@ class _ItemState extends State<Item> {
                                           },
                                           itemBuilder: (context) {
                                             return [
-                                              PopupMenuItem(
-                                                child: Text("Send Details"),
+                                               PopupMenuItem(
+                                                child: Text("Send One Image"),
                                                 value: 'details',
                                                 textStyle: popubItem,
                                               ),
+                                          
                                               PopupMenuItem(
                                                 child: Text("Send All Image"),
                                                 value: 'image',
@@ -667,15 +665,7 @@ class _ItemState extends State<Item> {
                                                 value: 'email',
                                                 textStyle: popubItem,
                                               ),
-                                              PopupMenuItem(
-                                                child: Text(
-                                                  "Availability",
-                                                  style: TextStyle(
-                                                      color: Colors.black),
-                                                ),
-                                                value: 'Availability',
-                                                textStyle: popubItem,
-                                              ),
+                                           
                                             ];
                                           },
                                         ),
@@ -799,7 +789,52 @@ class _ItemState extends State<Item> {
                                                                 .vehiclaName,
                                                             vehiclaNameBangla:
                                                                 widget
-                                                                    .vehiclaNameBangla,
+                                                                    .vehiclaName,
+                                                            conditionValue:
+                                                                widget
+                                                                    .condition,
+                                                            brandName: widget
+                                                                .brandName,
+                                                            fuel: widget.fuel,
+                                                            skeleton:
+                                                                widget.skeleton,
+                                                            transmission: widget
+                                                                .transmission,
+                                                            registration: widget
+                                                                .registration,
+                                                            carColor:
+                                                                widget.carColor,
+                                                            edition:
+                                                                widget.edition,
+                                                            model: widget.model,
+                                                            grade: widget.grade,
+
+                                                            mileage: widget
+                                                                .nMillage
+                                                                .toString(),
+                                                            engine: widget
+                                                                .engine
+                                                                .toString(),
+                                                            purchase_price: widget
+                                                                .purchase_price,
+                                                            price: widget.price,
+                                                            fixed_price: widget
+                                                                .fixed_price,
+                                                            engine_number: widget
+                                                                .engineNumber,
+                                                            chassis_number: widget
+                                                                .chassisNumber,
+                                                            code: widget.code,
+                                                            video: widget.video
+                                                                .toString(),
+                                                            manufacture: widget
+                                                                .manufacture,
+                                                            engineId: widget
+                                                                .engine_id,
+                                                            onlyMileage: widget
+                                                                .onlyMileage,
+                                                            engines:
+                                                                widget.engines,
                                                           )));
                                               // navigateToAdvanceEditPage(
                                               //     widget.id ?? 0);

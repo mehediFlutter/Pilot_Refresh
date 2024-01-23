@@ -223,9 +223,7 @@ class _AllVehicleState extends State<AllVehicle> {
                               price: products[index+j].price.toString(),
                               purchase_price: products[index+j].purchase_price,
                               fixed_price: products[index+j].fixed_price,
-                              featureSeat: featureUnicTitle[index+j].toString(),
-                              featureSeatDetails:
-                                  featureDetails[index+j].toString(),
+                             
                               vehiclaName: products[index+j].vehicleName,
                               manufacture: products[index+j].manufacture,
                               condition: products[index+j].condition,

@@ -32,13 +32,12 @@ class _DoublVehicleState extends State<DoublVehicle> {
     // print(products[0].vehiclaNameBangla);
     page = 1;
     i = 0;
-     getProduct(page);
+    getProduct(page);
 
     super.initState();
-     _scrollController.addListener(_listenToScroolMoments);
+    _scrollController.addListener(_listenToScroolMoments);
 
-
-   searchController.addListener(() {  
+    searchController.addListener(() {
       page = 1;
       i = 0;
 
@@ -53,7 +52,6 @@ class _DoublVehicleState extends State<DoublVehicle> {
     });
 
     setState(() {});
-    
   }
 
   List products = [];
@@ -104,27 +102,37 @@ class _DoublVehicleState extends State<DoublVehicle> {
       decodedResponse['data'].forEach((e) {
         //  List<Product> products = [];
         products.add(Product(
-          vehicleName: e['translate'][0]?['title'] ?? "",
-           vehicleNameBangla:e['translate'][0]['title'],
-          id: e['id'] ?? "",
+          vehicleName: e['translate'][0]['title'],
+          vehicleNameBangla: e['translate'][1]['title'],
+          id: e['id'],
           slug: e['slug'] ?? '',
           manufacture: e['manufacture'] ?? '',
           condition: e['condition']['translate'][0]?['title'] ?? '',
-          mileage: e['mileage']?['translate'][0]?['title'] ?? 'No mileage data',
+          mileage: e['mileage']?['translate'][0]?['title'] ?? '--',
           price: e['price'] ?? '',
           purchase_price: e['purchase_price'] ?? '',
           fixed_price: e['fixed_price'] ?? '',
           imageName: e['image']?['name'] ?? '',
-          //registration: e['registration'] ?? '',
-          registration: e['registration'] ?? '',
+          registration: e['registration'] ?? 'None',
           engine: e['engine']?['translate'][0]?['title'] ?? '',
           brandName: e['brand']?['translate'][0]?['title'] ?? '',
           transmission: e['transmission']?['translate'][0]?['title'] ?? '',
           fuel: e['fuel']?['translate'][0]?['title'] ?? '',
           skeleton: e['skeleton']?['translate'][0]?['title'] ?? '',
+          available: e['available']?['translate'][0]?['title'] ?? '',
           code: e['code'] ?? '',
-          available: e['available']?['translate'][0]?['title'] ?? '-',
+          carColor: e['color']['translate'][0]['title'] ?? 'None',
+          edition: e['edition']['translate'][0]['title'] ?? 'None',
+          model: e['carmodel']?['translate'][0]?['title'] ?? '',
+          grade: e['grade']?['translate'][0]?['title'] ?? '',
+          engineNumber: e['engine_number'] ?? '--',
+          chassisNumber: e['chassis_number'] ?? '--',
+          video: e['video'] ?? 'No Video',
+          engine_id: e['engine_id'] ?? '--',
+          onlyMileage: e['mileages'] ?? '--',
+          engines: e['engines'] ?? '-',
         ));
+        //  print("Model is ${products[0].available}");
       });
 
       x = j + 1;
@@ -189,6 +197,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
   bool isLoading = false;
   @override
   void getProduct(int page) async {
+    products.clear();
     _getProductinProgress = true;
     if (mounted) {
       setState(() {});
@@ -213,45 +222,60 @@ class _DoublVehicleState extends State<DoublVehicle> {
     if (mounted) {
       setState(() {});
     }
-     
 
     for (i; i < decodedResponse['data'].length; i++) {
-    
       products.add(Product(
-          vehicleName:
-              decodedResponse['data'][i]['translate'][0]?['title'] ?? "",
-               vehicleNameBangla: decodedResponse['data'][i]['translate'][0]['title'],
-          manufacture: decodedResponse['data'][i]?['manufacture'] ?? '',
-          slug: decodedResponse['data'][i]?['slug'] ?? '',
-          id: decodedResponse['data'][i]?['id'] ?? '',
-          condition: decodedResponse['data'][i]?['condition']?['translate'][0]
-                  ?['title'] ??
-              '',
-          mileage: decodedResponse['data'][i]['mileage']?['translate'][0]
-                  ?['title'] ??
-              'No mileage data',
-          price: decodedResponse['data'][i]?['price'] ?? '',
-          purchase_price: decodedResponse['data'][i]?['purchase_price'] ?? '',
-          fixed_price: decodedResponse['data'][i]?['fixed_price'] ?? '',
-          imageName: decodedResponse['data'][i]?['image']?['name'] ?? '',
-          // registratin
-          registration: decodedResponse['data'][i]?['registration'] ?? '-',
-          engine: decodedResponse['data'][i]?['engine']?['translate'][0]?['title'] ??
-              '',
-          brandName: decodedResponse['data'][i]?['brand']?['translate'][0]
-                  ?['title'] ??
-              '',
-          transmission: decodedResponse['data'][i]?['transmission']
-                  ?['translate'][0]?['title'] ??
-              '',
-          fuel: decodedResponse['data'][i]?['fuel']?['translate'][0]?['title'] ??
-              '',
-          skeleton:
-              decodedResponse['data'][i]?['skeleton']?['translate'][0]?['title'] ?? '',
-          code: decodedResponse['data'][i]?['code'] ?? '',
-          available: decodedResponse['data'][i]?['available']?['translate'][0]?['title'] ?? '',
-          detailsLink: decodedResponse['message']));
-         
+        vehicleName: decodedResponse['data'][i]['translate'][0]['title'],
+        vehicleNameBangla:
+            decodedResponse['data'][i]?['translate']?[1]?['title'] ?? '--',
+        manufacture: decodedResponse['data'][i]['manufacture'],
+        slug: decodedResponse['data'][i]['slug'],
+        id: decodedResponse['data'][i]['id'],
+        condition: decodedResponse['data'][i]['condition']['translate'][0]
+            ['title'],
+        mileage: decodedResponse['data'][i]['mileage']?['translate'][0]
+                ?['title'] ??
+            '--',
+       
+        price: decodedResponse['data'][i]['price'] ?? '',
+        purchase_price: decodedResponse['data'][i]?['purchase_price'] ?? '',
+        fixed_price: decodedResponse['data'][i]?['fixed_price'] ?? '',
+        //price end
+        imageName: decodedResponse['data'][i]['image']['name'],
+        registration: decodedResponse['data'][i]['registration'] ?? 'None',
+        engine: decodedResponse['data'][i]['engine']['translate'][0]['title'],
+        brandName: decodedResponse['data'][i]['brand']['translate'][0]['title'],
+        transmission: decodedResponse['data'][i]['transmission']['translate'][0]
+            ['title'],
+        fuel: decodedResponse['data'][i]['fuel']['translate'][0]['title'],
+        skeleton: decodedResponse['data'][i]['skeleton']['translate'][0]
+            ['title'],
+        available: decodedResponse['data'][i]?['available']?['translate'][0]
+                ?['title'] ??
+            '',
+        code: decodedResponse['data'][i]?['code'] ?? '',
+        //model: decodedResponse['data'],
+        carColor: decodedResponse['data'][i]['color']?['translate'][0]
+                ['title'] ??
+            'None',
+
+        edition: decodedResponse['data'][i]['edition']['translate'][0]
+                ['title'] ??
+            'None',
+        model: decodedResponse['data'][i]?['carmodel']?['translate']?[0]
+                ?['title'] ??
+            '',
+        grade: decodedResponse['data'][i]?['grade']?['translate'][0]
+                ?['title'] ??
+            '',
+        engineNumber: decodedResponse['data'][i]['engine_number'] ?? '--',
+        chassisNumber: decodedResponse['data'][i]['chassis_number'] ?? '--',
+        video: decodedResponse['data'][i]?['video'] ?? 'No Video',
+        engine_id: decodedResponse['data'][i]?['engine_id'] ?? '12',
+        onlyMileage: decodedResponse['data'][i]['mileages'] ?? '--',
+        engines: decodedResponse['data'][i]?['engines'] ?? '-',
+        vehiclaNameModel: decodedResponse['data'][i]['translate'][0]['title'],
+      ));
     }
     if (decodedResponse['data'] == null) {
       return;
@@ -260,7 +284,6 @@ class _DoublVehicleState extends State<DoublVehicle> {
     if (mounted) {
       setState(() {});
     }
-    
 
     // if (decodedResponse['data'] == null) {
     //   return;
@@ -303,14 +326,15 @@ class _DoublVehicleState extends State<DoublVehicle> {
         'Content-Type': 'application/vnd.api+json'
       },
     );
-    Map<String,dynamic> decodedResponse = jsonDecode(response.body);
+    Map<String, dynamic> decodedResponse = jsonDecode(response.body);
     int i = 0;
 
     for (i; i < decodedResponse['payload'].length; i++) {
       searchProducts.add(Product(
           vehicleName:
               decodedResponse['payload'][i]?['translate'][0]?['title'] ?? '-',
-              vehicleNameBangla:  decodedResponse['payload'][i]?['translate'][1]?['title'] ?? '-',
+          vehicleNameBangla:
+              decodedResponse['payload'][i]?['translate'][1]?['title'] ?? '-',
           manufacture: decodedResponse['payload'][i]?['manufacture'] ?? '',
           slug: decodedResponse['payload'][i]?['slug'] ?? '',
           id: decodedResponse['payload'][i]?['id'] ?? '',
@@ -343,19 +367,18 @@ class _DoublVehicleState extends State<DoublVehicle> {
   }
 
   Widget build(BuildContext context) {
-
-    _searchInProgress?null: _scrollController.addListener(() {
-      print(_scrollController.offset);
-    });
+    _searchInProgress
+        ? null
+        : _scrollController.addListener(() {
+            print(_scrollController.offset);
+          });
     return Scaffold(
         backgroundColor: Color(0xFF313131),
         appBar: AppBar(
           backgroundColor: Color(0xFF666666),
-
           leading: Image.asset(
             'assets/images/pilot_logo2.png',
           ),
-
           title: TextField(
             style: TextStyle(color: Colors.white, fontSize: 15),
             controller: searchController,
@@ -411,6 +434,7 @@ class _DoublVehicleState extends State<DoublVehicle> {
                     itemCount: products.length,
                     itemBuilder: (BuildContext context, index) {
                       return Padding(
+                        
                         padding: const EdgeInsets.symmetric(horizontal: 0),
                         child: Item(
                           id: products[index + j].id!,
@@ -420,24 +444,31 @@ class _DoublVehicleState extends State<DoublVehicle> {
                               products[index + j].purchase_price.toString(),
                           fixed_price:
                               products[index + j].fixed_price.toString(),
-                          featureSeat: featureUnicTitle[index + j].toString(),
-                          featureSeatDetails:
-                              featureDetails[index + j].toString(),
+                       
                           vehiclaName: products[index + j].vehicleName,
-                          vehiclaNameBangla: products[index + j].vehicleNameBangla,
+                        
                           manufacture: products[index + j].manufacture,
                           condition: products[index + j].condition,
                           nMillage: products[index + j].mileage,
                           brandName: products[index + j].brandName,
                           engine: products[index + j].engine,
                           transmission: products[index + j].transmission,
-                          model: "",
+
                           fuel: products[index + j].fuel,
                           skeleton: products[index + j].skeleton,
                           code: products[index + j].code,
                           registration: products[index + j].registration,
                           available: products[index + j].available,
                           detailsLink: products[index + j].detailsLink,
+                          carColor: products[index + j].carColor,
+                          edition: products[index + j].edition,
+                          grade: products[index + j].grade,
+                          engineNumber: products[index + j].engineNumber,
+                          chassisNumber: products[index + j].chassisNumber,
+                          video: products[index + j].video,
+                          engine_id: products[index + j].engine_id,
+                          onlyMileage: products[index + j].onlyMileage,
+                          engines: products[index + j].engines,
 
                           //dropdownFontLight: products[index+j],
                         ),

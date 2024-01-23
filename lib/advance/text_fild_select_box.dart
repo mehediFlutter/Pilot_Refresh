@@ -21,7 +21,7 @@ class TextFildSelectBox extends StatefulWidget {
   final String? carColor;
   final String? edition;
   final String? grade;
-  final String? carModel;
+
   final String? mileage;
   final String? engine;
   final String? purchase_price;
@@ -36,37 +36,36 @@ class TextFildSelectBox extends StatefulWidget {
   final String? engines;
   final String? onlyMileage;
 
-  const TextFildSelectBox(
-      {Key? key,
-      this.id,
-      this.availableDD,
-      this.vehiclaName,
-      this.vehiclaNameBangla,
-      this.conditionValue,
-      this.brandName,
-      this.fuel,
-      this.skeleton,
-      this.transmission,
-      this.registration,
-      this.model,
-      this.carColor,
-      this.edition,
-      this.grade,
-      this.carModel,
-      this.mileage,
-      this.engine,
-      this.purchase_price,
-      this.price,
-      this.fixed_price,
-      this.engine_number,
-      this.chassis_number,
-      this.code,
-      this.video,
-      this.manufacture,
-      this.engineId,
-      this.engines,
-      this.onlyMileage})
-      : super(key: key);
+  const TextFildSelectBox({
+    Key? key,
+    this.id,
+    this.availableDD,
+    this.vehiclaName,
+    this.vehiclaNameBangla,
+    this.conditionValue,
+    this.brandName,
+    this.fuel,
+    this.skeleton,
+    this.transmission,
+    this.registration,
+    this.model,
+    this.carColor,
+    this.edition,
+    this.grade,
+    this.mileage,
+    this.engine,
+    this.purchase_price,
+    this.price,
+    this.fixed_price,
+    this.engine_number,
+    this.chassis_number,
+    this.code,
+    this.video,
+    this.manufacture,
+    this.engineId,
+    this.engines,
+    this.onlyMileage,
+  }) : super(key: key);
 
   @override
   State<TextFildSelectBox> createState() => _TextFildSelectBoxState();
@@ -166,28 +165,46 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
 
   @override
   void initState() {
-    print('Engine Id is ');
-    print(widget.engineId);
-    print('chassis number is');
-    print(widget.chassis_number);
-
     super.initState();
-    getAvailability();
-    getConditions();
-    getBrand(
+    setState(() {
+      getAvailability();
+    });
+   setState(() {
+      getConditions();
+   });
+   setState(() {
+      getBrand(
       false,
       'https://pilotbazar.com/api/merchants/vehicles/brands',
     );
-    getFuel(false, 'https://pilotbazar.com/api/merchants/vehicles/fuels');
-    getSkeletitions();
-    getRegistration();
-    getColor();
-    getGrade();
-    getTransmission();
+   });
+   setState(() {
+      getFuel(false, 'https://pilotbazar.com/api/merchants/vehicles/fuels');
+   });
+    setState(() {
+      getSkeletitions();
+    });
+    setState(() {
+      getRegistration();
+    });
+  setState(() {
+      getColor();
+  });
+   setState(() {
+      getGrade();
+   });
+   setState(() {
+      getTransmission();
+   });
     // Model
-    getModel();
+    setState(() {
+      getModel();
+    });
+
     //Edition
-    getEdition();
+   setState(() {
+      getEdition();
+   });
 
     print('color length');
     print(colorList.length);
@@ -207,7 +224,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
     videoController.text = widget.video ?? '--';
     manufactureController.text = widget.manufacture ?? '--';
     registrationController.text = widget.registration ?? '--';
-    if (widget.vehiclaNameBangla!.isNotEmpty)
+    if (widget.vehiclaName!.isNotEmpty)
       titleControllerBangla.text = widget.vehiclaNameBangla ?? '--';
 
     dateAndTimeController = TextEditingController(text: _getFormattedDate());
@@ -753,11 +770,16 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: SafeArea(
+        
         child: Scaffold(
+          // appBar: AppBar(
+          //    backgroundColor: Color(0xFF666666),
+          //   title: Text("Advance",),),
+
           backgroundColor: Colors.black,
           body: Center(
             child: Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, top: 40),
+              padding: const EdgeInsets.only(left: 2, right: 2, top: 40),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -775,37 +797,59 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
                     //End Title Bangla TextFild
 
                     //Start Brand Dropdown  *
-                    textFildUpTextRow('Brand', star: ' *'),
-                    customDropDownFormField(
-                      value: brandValue,
-                      list: brandList,
-                      onChanged: (newValue) {
-                        setState(() {
-                          brandValue = newValue;
-                          brandSectedDropdownItem = brandList.firstWhere(
-                            (item) =>
-                                item['translate'][0]['title'] == brandValue,
-                          );
-                        });
-                      },
-                    ),
-                    SzBx(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        //  Text('child 1',style: TextStyle(color: Colors.white),),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              textFildUpTextRow('Brand', star: ' *'),
+                              customDropDownFormField(
+                                value: brandValue,
+                                list: brandList,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    brandValue = newValue;
+                                    brandSectedDropdownItem =
+                                        brandList.firstWhere(
+                                      (item) =>
+                                          item['translate'][0]['title'] ==
+                                          brandValue,
+                                    );
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 10),
 
-                    textFildUpTextRow('Condition', star: ' *'),
-                    customDropDownFormField(
-                      value: conditionValue,
-                      list: conditionList,
-                      onChanged: (newValue) {
-                        setState(() {
-                          conditionValue = newValue;
-                          conditionSectedDropdownItem =
-                              conditionList.firstWhere(
-                            (item) =>
-                                item['translate'][0]['title'] == conditionValue,
-                          );
-                        });
-                      },
+                        Expanded(
+                          child: Column(
+                            children: [
+                              textFildUpTextRow('Condition', star: ' *'),
+                              customDropDownFormField(
+                                value: conditionValue,
+                                list: conditionList,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    conditionValue = newValue;
+                                    conditionSectedDropdownItem =
+                                        conditionList.firstWhere(
+                                      (item) =>
+                                          item['translate'][0]['title'] ==
+                                          conditionValue,
+                                    );
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
+
                     SzBx(),
 
                     //End marchat dropdown
@@ -836,39 +880,83 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
                             },
                           ),
                     SzBx(),
-                    textFildUpTextRow('Mileage', star: ' *'),
-                    customTextField(controller: mileagesController),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        //  Text('child 1',style: TextStyle(color: Colors.white),),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              textFildUpTextRow('Mileage', star: ' *'),
+                              customTextField(controller: mileagesController),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 10),
+
+                        Expanded(
+                          child: Column(
+                            children: [
+                              textFildUpTextRow('Engines ', star: ' *'),
+                              customTextField(controller: engineController),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
                     SzBx(),
-                    textFildUpTextRow('Engines ', star: ' *'),
-                    customTextField(controller: engineController),
-                    SzBx(),
-                    textFildUpTextRow('Fuel', star: ' *'),
-                    customDropDownFormField(
-                      value: fuelValue,
-                      list: fuelList,
-                      onChanged: (newValue) {
-                        fuelValue = newValue;
-                        fuelSectedDropdownItem = fuelList.firstWhere(
-                          (item) => item['translate'][0]['title'] == fuelValue,
-                        );
-                      },
+
+                    // Fuel and Skeleton or body
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        //  Text('child 1',style: TextStyle(color: Colors.white),),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              textFildUpTextRow('Fuel', star: ' *'),
+                              customDropDownFormField(
+                                value: fuelValue,
+                                list: fuelList,
+                                onChanged: (newValue) {
+                                  fuelValue = newValue;
+                                  fuelSectedDropdownItem = fuelList.firstWhere(
+                                    (item) =>
+                                        item['translate'][0]['title'] ==
+                                        fuelValue,
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 10),
+
+                        Expanded(
+                          child: Column(
+                            children: [
+                              textFildUpTextRow('Skeleton or Body', star: ' *'),
+                              customDropDownFormField(
+                                value: skeletonValue,
+                                list: skeletionList,
+                                onChanged: (newValue) {
+                                  skeletonValue = newValue;
+                                  skeletonSectedDropdownItem =
+                                      skeletionList.firstWhere(
+                                    (item) =>
+                                        item['translate'][0]['title'] ==
+                                        skeletonValue,
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                     SzBx(),
-                    //Start Skeleton Dropdown
-                    textFildUpTextRow('Skeleton or Body', star: ' *'),
-                    customDropDownFormField(
-                      value: skeletonValue,
-                      list: skeletionList,
-                      onChanged: (newValue) {
-                        skeletonValue = newValue;
-                        skeletonSectedDropdownItem = skeletionList.firstWhere(
-                          (item) =>
-                              item['translate'][0]['title'] == skeletonValue,
-                        );
-                      },
-                    ),
-                    SzBx(),
-                    //Start Transmission
                     textFildUpTextRow('Transmission', star: ' *'),
                     customDropDownFormField(
                       value: transmissionValue,
@@ -887,9 +975,6 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
                     ),
                     SzBx(),
 
-                    // End Skeleton Dropdown
-
-                    // Start Marchant Dropdown start
                     textFildUpTextRow('Model', star: ' *'),
                     custom_Model_Edition_DropDownFormField(
                       value: modelValue,
@@ -906,28 +991,55 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
                       },
                     ),
 
+                    // End Skeleton Dropdown
+
+                    // Start Marchant Dropdown start
+
                     SzBx(),
                     //End Brand dropdown
 
-                    // Start Color
-                    textFildUpTextRow('Color', star: ' *'),
-                    customDropDownFormField(
-                      value: colorValue,
-                      list: colorList,
-                      onChanged: (newValue) {
-                        setState(() {
-                          colorValue = newValue;
-                          colorSectedDropdownItem = colorList.firstWhere(
-                            (item) =>
-                                item['translate'][0]['title'] == colorValue,
-                          );
-                        });
-                      },
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        //  Text('child 1',style: TextStyle(color: Colors.white),),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              textFildUpTextRow('Color', star: ' *'),
+                              customDropDownFormField(
+                                value: colorValue,
+                                list: colorList,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    colorValue = newValue;
+                                    colorSectedDropdownItem =
+                                        colorList.firstWhere(
+                                      (item) =>
+                                          item['translate'][0]['title'] ==
+                                          colorValue,
+                                    );
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 10),
+
+                        Expanded(
+                          child: Column(
+                            children: [
+                              textFildUpTextRow('Code', star: ' *'),
+                              customTextField(controller: codeController),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
+
                     SzBx(),
-                    textFildUpTextRow('Code', star: ' *'),
-                    customTextField(controller: codeController),
-                    SzBx(),
+
+                
 
                     //Start Condition Dropdown *
 
@@ -970,69 +1082,210 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
                             },
                           ),
                     SzBx(),
-                    textFildUpTextRow('Registration'),
-                    customDropDownFormField(
-                      value: registrationValue,
-                      list: registrationList,
-                      onChanged: (newValue) {
-                        registrationValue = newValue;
-                        registrationSectedDropdownItem =
-                            registrationList.firstWhere(
-                          (item) =>
-                              item['translate'][0]['title'] ==
-                              registrationValue,
-                        );
-                      },
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        //  Text('child 1',style: TextStyle(color: Colors.white),),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              textFildUpTextRow('Registration'),
+                              customDropDownFormField(
+                                value: registrationValue,
+                                list: registrationList,
+                                onChanged: (newValue) {
+                                  registrationValue = newValue;
+                                  registrationSectedDropdownItem =
+                                      registrationList.firstWhere(
+                                    (item) =>
+                                        item['translate'][0]['title'] ==
+                                        registrationValue,
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 10),
+
+                        Expanded(
+                          child: Column(
+                            children: [
+                              textFildUpTextRow('Manufacture', star: ' *'),
+                              customTextField(
+                                  controller: manufactureController),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    textFildUpTextRow('Transmission'),
-                    customDropDownFormField(
-                      value: transmissionValue,
-                      list: transmissionList,
-                      onChanged: (newValue) {
-                        transmissionValue = newValue;
-                        transmissionSelectedDropdownItem =
-                            registrationList.firstWhere(
-                          (item) =>
-                              item['translate'][0]['title'] ==
-                              transmissionValue,
-                        );
-                      },
-                    ),
-                    SzBx(),
-                    textFildUpTextRow('Manufacture', star: ' *'),
-                    customTextField(controller: manufactureController),
 
                     SzBx(),
-                    textFildUpTextRow('Purchase Price '),
-                    customTextField(controller: purchasePriceController),
-                    SzBx(),
-                    textFildUpTextRow('Asking Price '),
-                    customTextField(controller: askingPriceController),
 
-                    SzBx(),
-                    textFildUpTextRow('Fixed Price '),
-                    customTextField(controller: fixedPriceController),
-                    SzBx(),
-                    textFildUpTextRow('Negotiable'),
-                    customYesNoDropDownFormField(
-                      value: negatiateId,
-                      onChanged: (newValue) {
-                        setState(() {
-                          negatiateId = newValue!;
-                        });
-                        print('Selected ID: $newValue');
-                      },
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        //  Text('child 1',style: TextStyle(color: Colors.white),),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              textFildUpTextRow('Purchase Price '),
+                              customTextField(
+                                  controller: purchasePriceController),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 10),
+
+                        Expanded(
+                          child: Column(
+                            children: [
+                              textFildUpTextRow('Asking Price '),
+                              customTextField(
+                                  controller: askingPriceController),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    SzBx(),
-                    textFildUpTextRow('Engine Number'),
-                    customTextField(controller: engineNumberController),
-                    SzBx(),
-                    textFildUpTextRow('Chassis Number'),
-                    customTextField(controller: chassisNumberController),
+
+                    // fixed price and negotiable
+
                     SzBx(),
 
-                    textFildUpTextRow('Registration'),
-                    customTextField(controller: registrationController),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        //  Text('child 1',style: TextStyle(color: Colors.white),),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              textFildUpTextRow('Fixed Price '),
+                              customTextField(controller: fixedPriceController),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 10),
+
+                        Expanded(
+                          child: Column(
+                            children: [
+                              textFildUpTextRow('Negotiable'),
+                              customYesNoDropDownFormField(
+                                value: negatiateId,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    negatiateId = newValue!;
+                                  });
+                                  print('Selected ID: $newValue');
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SzBx(),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        //  Text('child 1',style: TextStyle(color: Colors.white),),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              textFildUpTextRow('Engine Number'),
+                              customTextField(
+                                  controller: engineNumberController),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 10),
+
+                        Expanded(
+                          child: Column(
+                            children: [
+                              textFildUpTextRow('Chassis Number'),
+                              customTextField(
+                                  controller: chassisNumberController),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SzBx(),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        //  Text('child 1',style: TextStyle(color: Colors.white),),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              textFildUpTextRow('Registration'),
+                              customTextField(
+                                  controller: registrationController),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 10),
+
+                        Expanded(
+                          child: Column(
+                            children: [
+                              textFildUpTextRow('Published Date', star: ' *'),
+                              TextField(
+                                controller: dateAndTimeController,
+                                readOnly: true,
+                                decoration: InputDecoration(
+                                  // labelText: 'Publish Date',
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 16, horizontal: 10),
+                                  border: const OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                  ),
+                                  disabledBorder: const OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                  ),
+                                  errorBorder: const OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                  ),
+                                ),
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 15),
+                                cursorColor: Colors.white,
+                                onTap: () async {
+                                  // Open date picker when the text field is tapped
+                                  DateTime? selectedDate = await showDatePicker(
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime(2000),
+                                    lastDate: DateTime(2101),
+                                  );
+
+                                  if (selectedDate != null) {
+                                    setState(() {
+                                      dateAndTimeController.text =
+                                          DateFormat('yyyy-MM-dd')
+                                              .format(selectedDate);
+                                    });
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SzBx(),
+
                     // textFildUpTextRow('Registration'),
                     // customYearDropdownFormField(
                     //   value: selectedRegistrationYear,
@@ -1054,73 +1307,52 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
                     //     print('Selected Year: $newValue');
                     //   },
                     // ),
-                    SzBx(),
+                 
                     textFildUpTextRow('Video'),
                     customTextField(controller: videoController),
                     SzBx(),
-                    textFildUpTextRow('Published Date', star: ' *'),
-                    TextField(
-                      controller: dateAndTimeController,
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        // labelText: 'Publish Date',
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 16, horizontal: 10),
-                        border: const OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        disabledBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        errorBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                      ),
-                      style: const TextStyle(color: Colors.white, fontSize: 15),
-                      cursorColor: Colors.white,
-                      onTap: () async {
-                        // Open date picker when the text field is tapped
-                        DateTime? selectedDate = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2101),
-                        );
 
-                        if (selectedDate != null) {
-                          setState(() {
-                            dateAndTimeController.text =
-                                DateFormat('yyyy-MM-dd').format(selectedDate);
-                          });
-                        }
-                      },
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        //  Text('child 1',style: TextStyle(color: Colors.white),),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              textFildUpTextRow('Appruval', star: ' *'),
+                              customAppruvalDropDownFormField(
+                                value: appruvalId,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    appruvalId = newValue!;
+                                  });
+                                  print('Selected ID: $newValue');
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 10),
+
+                        Expanded(
+                          child: Column(
+                            children: [
+                              textFildUpTextRow('Featured', star: ' *'),
+                              customYesNoDropDownFormField(
+                                value: featuredId,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    featuredId = newValue!;
+                                  });
+                                  print('Selected ID: $newValue');
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
 
-                    SzBx(),
-                    textFildUpTextRow('Appruval', star: ' *'),
-                    customAppruvalDropDownFormField(
-                      value: appruvalId,
-                      onChanged: (newValue) {
-                        setState(() {
-                          appruvalId = newValue!;
-                        });
-                        print('Selected ID: $newValue');
-                      },
-                    ),
-                    SzBx(),
-                    textFildUpTextRow('Featured', star: ' *'),
-                    customYesNoDropDownFormField(
-                      value: featuredId,
-                      onChanged: (newValue) {
-                        setState(() {
-                          featuredId = newValue!;
-                        });
-                        print('Selected ID: $newValue');
-                      },
-                    ),
                     SzBx(),
                     textFildUpTextRow('Status', star: ' *'),
                     customYesNoDropDownFormField(
@@ -1134,148 +1366,109 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
                     ),
                     SzBx(),
 
-                    ElevatedButton(
-                      onPressed: () async {
-                        await _printDateAndTime();
-                        
-                        print('this is on press function');
-                        print(dateTime);
-                        setState(() {});
+                    SizedBox(
+                      height: 70,
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          await _printDateAndTime();
 
-                        final int? availableSelectedId =
-                            availableSectedDropdownItem?['id'];
-                        final int? conditionSelectedId =
-                            conditionSectedDropdownItem?['id'];
-                        final int? brandSelectedId =
-                            brandSectedDropdownItem?['id'];
-                        final int? skeletonSelectedId =
-                            skeletonSectedDropdownItem?['id'];
+                          print('this is on press function');
+                          print(dateTime);
+                          setState(() {});
 
-                        final int? colorSelectedId =
-                            colorSectedDropdownItem?['id'];
-                        final int? modelSelectedId =
-                            modelSectedDropdownItem?['id'];
-                        final int? editionSelectedId =
-                            editionSectedDropdownItem?['id'];
-                        final int? transmissionSelectedId =
-                            transmissionSelectedDropdownItem?['id'];
-                        final int? fuelSelectedId =
-                            fuelSectedDropdownItem?['id'];
-                        final int? registrationSelectedId =
-                            registrationSectedDropdownItem?['id'];
-                        final int? gradeSelectedId =
-                            gradeSectedDropdownItem?['id'];
-                        // dateTime=;
-                        print("Available SElected id $availableSelectedId");
-                        print("condition Selected Id $conditionSelectedId");
-                        print("Brand Selected Id $brandSelectedId");
-                        print("Skeleton Selected Id $skeletonSelectedId");
-                        print("Negatiable value yes or no $negatiateId");
-                        print(
-                            "Selected Registration year is $selectedRegistrationYear");
-                        print(
-                            "Selected Manufacture year is $selecteManufactureYear");
-                        print("Appruval id $appruvalId");
-                        print("Featured Id is  $featuredId");
-                        print("status is  Id is  $statusId");
-                        print("ModelSelected Id  is  Id is  $modelSelectedId");
-                        print("EditionSelected Id is  $editionSelectedId");
-                        print("date Time is $dateTime");
-                        print(
-                            "transmission Selected Id is is $transmissionSelectedId");
-                        print(
-                            "Registration Selected Id is is $registrationSelectedId");
-                        // print(
-                        //     "Registration Selected Id $registrationSelectedId");
-                        print("Color Selected Id $colorSelectedId");
-                        print("Fuel Selected Id $fuelSelectedId");
-                        print("Grade Selected Id $gradeSelectedId");
+                          final int? availableSelectedId =
+                              availableSectedDropdownItem?['id'];
+                          final int? conditionSelectedId =
+                              conditionSectedDropdownItem?['id'];
+                          final int? brandSelectedId =
+                              brandSectedDropdownItem?['id'];
+                          final int? skeletonSelectedId =
+                              skeletonSectedDropdownItem?['id'];
 
-                        print(widget.id);
-                        print(availableSectedDropdownItem?['id']);
+                          final int? colorSelectedId =
+                              colorSectedDropdownItem?['id'];
+                          final int? modelSelectedId =
+                              modelSectedDropdownItem?['id'];
+                          final int? editionSelectedId =
+                              editionSectedDropdownItem?['id'];
+                          final int? transmissionSelectedId =
+                              transmissionSelectedDropdownItem?['id'];
+                          final int? fuelSelectedId =
+                              fuelSectedDropdownItem?['id'];
+                          final int? registrationSelectedId =
+                              registrationSectedDropdownItem?['id'];
+                          final int? gradeSelectedId =
+                              gradeSectedDropdownItem?['id'];
+                          // dateTime=;
+                          print("Available SElected id $availableSelectedId");
+                          print("condition Selected Id $conditionSelectedId");
+                          print("Brand Selected Id $brandSelectedId");
+                          print("Skeleton Selected Id $skeletonSelectedId");
+                          print("Negatiable value yes or no $negatiateId");
+                          print(
+                              "Selected Registration year is $selectedRegistrationYear");
+                          print(
+                              "Selected Manufacture year is $selecteManufactureYear");
+                          print("Appruval id $appruvalId");
+                          print("Featured Id is  $featuredId");
+                          print("status is  Id is  $statusId");
+                          print(
+                              "ModelSelected Id  is  Id is  $modelSelectedId");
+                          print("EditionSelected Id is  $editionSelectedId");
+                          print("date Time is $dateTime");
+                          print(
+                              "transmission Selected Id is is $transmissionSelectedId");
+                          print(
+                              "Registration Selected Id is is $registrationSelectedId");
+                          // print(
+                          //     "Registration Selected Id $registrationSelectedId");
+                          print("Color Selected Id $colorSelectedId");
+                          print("Fuel Selected Id $fuelSelectedId");
+                          print("Grade Selected Id $gradeSelectedId");
 
-                        // final body =  {
-                        //   "brand_id": brandSelectedId,
-                        //   "edition_id": editionSelectedId,
-                        //   "condition_id": conditionSelectedId,
-                        //   "transmission_id": transmissionSelectedId,
-                        //   "fuel_id": fuelSelectedId,
-                        //   "skeleton_id": skeletonSelectedId,
-                        //   "mileages": mileagesController.text,
-                        //   "price": askingPriceController.text,
-                        //   "fixed_price": fixedPriceController.text,
-                        //   "purchase_price": purchasePriceController.text,
-                        //   "available_id": availableSelectedId,
-                        //   "registration_id": registrationSelectedId,
-                        //   "carmodel_id": modelSelectedId,
-                        //   "color_id": colorSelectedId,
-                        //   "grade_id": gradeSelectedId,
-                        //   "video": videoController.text,
-                        //   "chassis_number": chassisNumberController.text,
-                        //   "engine_number": engineNumberController.text,
-                        //   "code": codeController.text,
-                        //   "engines": engineController.text,
-                        //   "registration": registrationController.text,
-                        //   "manufacture": manufactureController.text,
-                        //   "is_approved": appruvalId,
-                        //   "publish_at": "1-22-2024",
-                        //   "is_feat": featuredId,
-                        //   "status": statusId,
-                        // };
+                          print(widget.id);
+                          print(availableSectedDropdownItem?['id']);
 
-                        // final url =
-                        //     'https://pilotbazar.com/api/merchants/vehicles/products/12';
-                        // final uri = Uri.parse(url);
-
-                        // final response = await http.put(
-                        //   uri,
-                        //   body: jsonEncode(body),
-                        // );
-
-                        await updateAvailable(
-                          brandSelectedId!,
-                          editionSelectedId,
-                          conditionSelectedId,
-                          transmissionSelectedId,
-                          fuelSelectedId,
-                          skeletonSelectedId,
-                          mileagesController.text,
-                          askingPriceController.text,
-                          fixedPriceController.text,
-                          purchasePriceController.text,
-
-                          availableSelectedId,
-                          registrationSelectedId,
-                          modelSelectedId,
-                          colorSelectedId,
-                          gradeSelectedId,
-                          videoController.text,
-
-                          chassisNumberController.text,
-                          engineController.text,
-                          codeController.text,
-                          engineController.text,
-                          registrationController.text,
-                          manufactureController.text,
-                          appruvalId,
-                          //     manufacture,
-
-                          // int is_appruval,
-                          // String  publish_at,
-                          //  int is_feat,
-                          // status
-                          dateTime ?? '',
-
-                          featuredId,
-                          statusId,
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color.fromARGB(255, 97, 93, 90),
+                          await updateAvailable(
+                            brandSelectedId!,
+                            editionSelectedId,
+                            conditionSelectedId,
+                            transmissionSelectedId,
+                            fuelSelectedId,
+                            skeletonSelectedId,
+                            mileagesController.text,
+                            askingPriceController.text,
+                            fixedPriceController.text,
+                            purchasePriceController.text,
+                            availableSelectedId,
+                            registrationSelectedId,
+                            modelSelectedId,
+                            colorSelectedId,
+                            gradeSelectedId,
+                            videoController.text,
+                            chassisNumberController.text,
+                            engineController.text,
+                            codeController.text,
+                            engineController.text,
+                            registrationController.text,
+                            manufactureController.text,
+                            appruvalId,
+                            dateTime ?? '',
+                            featuredId,
+                            statusId,
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            elevation: 20),
+                        child: Text("Submit",
+                            style: Theme.of(context).textTheme.titleLarge),
                       ),
-                      child: Text("Submit",
-                          style: Theme.of(context).textTheme.bodySmall),
                     ),
+                    SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -1294,10 +1487,11 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
     return DropdownButtonFormField<String>(
       dropdownColor: Colors.black,
       decoration: InputDecoration(
+        contentPadding: EdgeInsets.fromLTRB(7, 15, 0, 15),
         border: OutlineInputBorder(),
       ),
       //value: availableValue,
-      value: value,
+      value: value, style: TextStyle(fontSize: 15),
       items: list?.map((item) {
         return DropdownMenuItem<String>(
           //item['translate'][0]['title'] as String,
@@ -1321,6 +1515,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
     return DropdownButtonFormField<int>(
       dropdownColor: Colors.black,
       decoration: InputDecoration(
+        contentPadding: EdgeInsets.fromLTRB(7, 15, 0, 15),
         border: OutlineInputBorder(),
       ),
       value: value ?? 1, // Default to 1 (Yes) if value is not provided
@@ -1355,6 +1550,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
     return DropdownButtonFormField<int>(
       dropdownColor: Colors.black,
       decoration: InputDecoration(
+        contentPadding: EdgeInsets.fromLTRB(7, 15, 0, 15),
         border: OutlineInputBorder(),
       ),
       value: value ?? 1, // Default to 1 (Yes) if value is not provided
@@ -1391,6 +1587,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
     return DropdownButtonFormField<int>(
       dropdownColor: Colors.black,
       decoration: InputDecoration(
+        contentPadding: EdgeInsets.fromLTRB(7, 15, 0, 15),
         border: OutlineInputBorder(),
       ),
       value: value,
@@ -1420,6 +1617,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
     return DropdownButtonFormField<String?>(
       dropdownColor: Colors.black,
       decoration: InputDecoration(
+        contentPadding: EdgeInsets.fromLTRB(7, 15, 0, 15),
         border: OutlineInputBorder(),
       ),
       value: value,

@@ -3,6 +3,7 @@ import 'package:pilot_refresh/screens/auth/auth_utility.dart';
 import 'package:pilot_refresh/screens/auth/new_login_screen.dart';
 import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -35,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> navigateToLogin() async {
     final bool isLoggedIn = await AuthUtility.checkIfUserLoggedIn();
 
-    Future.delayed(const Duration(seconds: 1)).then((_) =>
+    Future.delayed(const Duration(seconds: 2)).then((_) =>
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
@@ -69,6 +70,19 @@ class _SplashScreenState extends State<SplashScreen> {
               style: TextStyle(color: Colors.black87, fontSize: 20),
             ),
           ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              SizedBox(height: 200,),
+             // Spacer(),
+              SpinKitSpinningLines(
+                 color: Colors.black,
+                 size: 60.0,
+                 
+               ),
+            ],
+          ),
+          
         ],
       ),
     );
