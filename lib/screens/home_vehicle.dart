@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:pilot_refresh/admin/asking_fixed_stockList.dart';
@@ -22,7 +23,8 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
 class HomeVehicle extends StatefulWidget {
-  const HomeVehicle({super.key});
+ final String? token;
+  const HomeVehicle({super.key, this.token});
 
   @override
   State<HomeVehicle> createState() => _HomeVehicleState();
@@ -38,9 +40,14 @@ class _HomeVehicleState extends State<HomeVehicle> {
   static List newSearchProducts = [];
   String searchValue = '';
   bool searchInProgress = false;
+  abc(){
+    print("i am on this page");
+  }
 
   @override
   initState() {
+    abc();
+  
     page = 1;
     i = 0;
     getProduct(page);
@@ -534,25 +541,37 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
     for (i; i < decodedResponse['payload'].length; i++) {
       searchProducts.add(Product(
-          vehicleName:
-              decodedResponse['payload'][i]?['translate'][0]?['title'] ?? '-',
-          manufacture: decodedResponse['payload'][i]?['manufacture'] ?? '',
-          slug: decodedResponse['payload'][i]?['slug'] ?? '',
-          id: decodedResponse['payload'][i]?['id'] ?? '',
-          condition: "API?",
-          price: decodedResponse['payload'][i]?['price'] ?? '',
-          purchase_price:
-              decodedResponse['payload'][i]?['purchase_price'] ?? '',
-          fixed_price: decodedResponse['payload'][i]?['fixed_price'] ?? '',
-          imageName: decodedResponse['payload'][i]?['image']['name'] ?? '',
-          registration: "API?",
-          engine: decodedResponse['payload'][i]?['engines'] ?? '-',
-          brandName: decodedResponse['payload'][i]?['brand']['slug'],
-          transmission: "API?",
-          fuel: "API?",
-          skeleton: "API?",
-          available: decodedResponse['payload'][i]?['available']['slug'] ?? '-',
-          code: decodedResponse['payload'][i]?['code'] ?? '-'));
+        vehicleName:
+            decodedResponse['payload'][i]?['translate'][0]?['title'] ?? '-',
+        manufacture: decodedResponse['payload'][i]?['manufacture'] ?? '',
+        slug: decodedResponse['payload'][i]?['slug'] ?? '',
+        id: decodedResponse['payload'][i]?['id'] ?? '',
+        //  condition: decodedResponse['data'][i]['condition']['translate'][0]
+        //   ['title'],
+        condition: decodedResponse['payload'][i]?['condition']['translate'][0]
+                ?['title'] ??
+            'None',
+        price: decodedResponse['payload'][i]?['price'] ?? '',
+        purchase_price: decodedResponse['payload'][i]?['purchase_price'] ?? '',
+        fixed_price: decodedResponse['payload'][i]?['fixed_price'] ?? '',
+        imageName: decodedResponse['payload']?[i]?['image']['name'] ?? '',
+        registration: decodedResponse['payload']?[i]?['registration'] ?? '--',
+
+        engine: decodedResponse['payload'][i]?['engines'] ?? '-',
+        brandName: decodedResponse['payload'][i]?['brand']['slug'],
+        transmission: decodedResponse['payload']?[i]?['transmission']
+                ?['translate'][0]?['title'] ??
+            'None',
+        fuel: decodedResponse['payload']?[i]?['fuel']?['translate'][0]
+                ?['title'] ??
+            'None',
+        skeleton: decodedResponse['payload']?[i]?['skeleton']?['translate'][0]
+                ?['title'] ??
+            'None',
+        available: decodedResponse['payload'][i]?['available']['slug'] ?? '-',
+        code: decodedResponse['payload'][i]?['code'] ?? '-',
+        onlyMileage: decodedResponse['payload'][i]?['mileages'] ?? '--',
+      ));
     }
     products.addAll(searchProducts);
     searchProducts.clear();
@@ -619,44 +638,85 @@ class _HomeVehicleState extends State<HomeVehicle> {
         leading: Image.asset(
           'assets/images/pilot_logo2.png',
         ),
+        // title: TextField(
+        //   style: TextStyle(color: Colors.white, fontSize: 15),
+        //   controller: searchController,
+        //   onSubmitted: (value) async {
+        //     print("onSubmitted: $value");
+        //     await search(value);
+        //   },
+        //   decoration: InputDecoration(
+        //     contentPadding: EdgeInsets.symmetric(horizontal: 25),
+        //     hintText: "Search",
+        //     hintStyle: TextStyle(color: Colors.white),
+        //     border: OutlineInputBorder(
+        //       borderSide: BorderSide(color: Colors.white, width: 2),
+        //       borderRadius: BorderRadius.circular(40),
+        //     ),
+        //     prefixIcon: Icon(
+        //       Icons.search,
+        //       color: Colors.white,
+        //     ),
+        //     // suffixIcon: IconButton(
+        //     //   onPressed: () async {
+        //     //     print("Hello");
+        //     //     await search(searchController.text.toString());
+        //     //   },
+        //     //   icon: Icon(Icons.send, color: Colors.white),
+        //     // ),
+        //     focusedBorder: OutlineInputBorder(
+        //       borderRadius: BorderRadius.circular(40),
+        //       borderSide: BorderSide(color: Colors.white),
+        //     ),
+        //   ),
+        // ),
         title: TextField(
-          style: TextStyle(color: Colors.white, fontSize: 15),
-          controller: searchController,
+             controller: searchController,
           onSubmitted: (value) async {
             print("onSubmitted: $value");
             await search(value);
           },
+          keyboardType: TextInputType.text,
           decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(horizontal: 25),
+         
             hintText: "Search",
             hintStyle: TextStyle(color: Colors.white),
             border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white, width: 2),
-              borderRadius: BorderRadius.circular(40),
-            ),
-            prefixIcon: Icon(
+                borderSide: BorderSide(
+                  color: Colors.white,
+                ),
+                borderRadius: BorderRadius.circular(
+                    40) // Set default border color to white
+                ),
+                prefixIcon: Icon(
               Icons.search,
               color: Colors.white,
             ),
-            // suffixIcon: IconButton(
-            //   onPressed: () async {
-            //     print("Hello");
-            //     await search(searchController.text.toString());
-            //   },
-            //   icon: Icon(Icons.send, color: Colors.white),
-            // ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(40),
+                borderSide: BorderSide(color: Colors.white),
+                borderRadius: BorderRadius.circular(
+                    40) // Set focused border color to white
+                ),
+
+            disabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.white),
             ),
+            errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
+          style: Theme.of(context)
+              .textTheme
+              .bodyMedium!
+              .copyWith(color: Colors.white, fontSize: 15),
+                        cursorColor: Colors.white, 
+
         ),
       ),
       endDrawer: EndDrawer(mounted: mounted),
       body: (_getProductinProgress || _searchInProgress)
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
+          ? loading()
           : Stack(
               children: [
                 Column(
@@ -707,7 +767,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
                       visible: _getNewProductinProgress,
                       child: Align(
                         alignment: Alignment.bottomCenter,
-                        child: CircularProgressIndicator(),
+                        child: loading()
                       ),
                     )
                   ],
@@ -715,6 +775,16 @@ class _HomeVehicleState extends State<HomeVehicle> {
               ],
             ),
     );
+  }
+
+  Center loading() {
+    return Center(
+            child: SpinKitFadingCircle(
+               color:  Colors.white,
+               size: 50.0,
+               
+             ),
+          );
   }
 
   productList(int x) {
@@ -851,7 +921,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
                           ),
                           onSelected: (value) async {
                             if (value == 'image') {
-                               sendWhatsImage(products[x + j].id);
+                              sendWhatsImage(products[x + j].id);
                             } else if (value == 'details') {
                               await getLink(products[x + j].id.toString());
                               shareDetailsWithOneImage(

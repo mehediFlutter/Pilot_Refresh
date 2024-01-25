@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:pilot_refresh/screens/auth/auth_utility.dart';
 import 'package:pilot_refresh/screens/auth/login_model.dart';
 import 'package:pilot_refresh/screens/auth/new_registration_screen.dart';
@@ -19,9 +20,61 @@ class NewLoginScreen extends StatefulWidget {
 class _NewLoginScreenState extends State<NewLoginScreen> {
   TextEditingController _mobileController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-    final GlobalKey<FormState> _globalKey = GlobalKey();
+  final GlobalKey<FormState> _globalKey = GlobalKey();
   String phone = '01969944400';
   bool _loginInProgress = false;
+  var token;
+
+  Future myLogin() async {
+    Map<String, dynamic> body = {
+      "mobile": _mobileController.text,
+      "password": _passwordController.text
+    };
+    Response response = await post(
+        Uri.parse('https://pilotbazar.com/api/merchant/auth/login'),
+        headers: {
+          'Accept': 'application/vnd.api+json',
+          'Content-Type': 'application/vnd.api+json'
+        },
+        body: jsonEncode(body));
+    if (response.statusCode == 200) {
+      print("Login Success");
+    }
+    Map decodedBody = jsonDecode(response.body.toString());
+    print('Token is');
+   // print(decodedBody);
+   token = decodedBody['payload']?['token']??'';
+    print(decodedBody['payload']?['token']);
+    print(token);
+
+    
+   // token = decodedBody['payload']['token'];
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>BottomNavBaseScreen(token: token,)), (route) => false);
+  }
+  Future marcentProducts(String token) async {
+    // Map<String, dynamic> body = {
+    //   "mobile": _mobileController.text,
+    //   "password": _passwordController.text
+    // };
+    Response response = await get(
+        Uri.parse('https://pilotbazar.com/api/merchants/vehicles/products'),
+        headers: {
+          'Accept': 'application/vnd.api+json',
+          'Content-Type': 'application/vnd.api+json',
+          'token': token.toString()
+        },
+      );
+
+      print("Marcent Login");
+      print(response.statusCode);
+    if (response.statusCode == 200) {
+      print("Marcent Login Success");
+    }
+
+   // token = decodedBody['payload']['token'];
+    
+  }
+
   Future<void> login() async {
     _loginInProgress = true;
     if (mounted) {
@@ -37,15 +90,22 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
     if (mounted) {
       setState(() {});
     }
+    print("here 1 ?");
     if (response.statusCode == 200) {
-      _mobileController.clear();
-      _passwordController.clear();
-        LoginModel model = LoginModel.fromJson(response.body!);
+      print("Login Success!!!!");
+      // Map decodedBody =  jsonDecode(response.body.toString());
+      // String token = decodedBody['token'];
+      // print("Token is");
+      // print(token);
+      // _mobileController.clear();
+      // _passwordController.clear();
+      LoginModel model = LoginModel.fromJson(response.body!);
       await AuthUtility.saveUserInfo(model);
       if (mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("Login Success")));
       }
+
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => BottomNavBaseScreen()));
     } else {
@@ -57,9 +117,6 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
   }
 
   @override
-  bool loginInProgress = false;
-
-
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
     return Scaffold(
@@ -99,7 +156,7 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                   ),
                   child: TextFormField(
                     controller: _mobileController,
-                    style: TextStyle(color: Colors.black,fontSize: 15),
+                    style: TextStyle(color: Colors.black, fontSize: 15),
                     decoration: InputDecoration(
                       labelText: "Mobile No",
                       labelStyle: TextStyle(color: Colors.grey, fontSize: 13),
@@ -121,25 +178,22 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                       contentPadding:
                           EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.grey), // Default border color
-                      ),
+                          borderSide: BorderSide(color: Colors.grey)),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                            color: const Color.fromARGB(
-                                255, 243, 237, 237)), // Focused border color
+                            color: Colors.grey), // Focused border color
                       ),
                     ),
                   ),
                   child: TextFormField(
+                    cursorColor: Colors.black,
                     controller: _passwordController,
-                     style: TextStyle(color: Colors.black,fontSize: 15),
+                    style: TextStyle(color: Colors.black, fontSize: 15),
                     decoration: InputDecoration(
                       labelText: "Password",
                       labelStyle: TextStyle(color: Colors.grey, fontSize: 13),
-                      
                     ),
-                     validator: (String? value) {
+                    validator: (String? value) {
                       if (value?.isEmpty ?? true) {
                         return 'Enter password';
                       }
@@ -176,10 +230,11 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                               backgroundColor:
                                   const Color.fromARGB(255, 89, 170, 236)),
                           onPressed: () {
-                            if(!_globalKey.currentState!.validate()){
+                            if (!_globalKey.currentState!.validate()) {
                               return null;
                             }
-                            login();
+                            myLogin();
+                            marcentProducts(token);
                           },
                           child: Text(
                             "Login",

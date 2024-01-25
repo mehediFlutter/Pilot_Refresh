@@ -27,10 +27,23 @@ dependencies:
   open_file: ^3.3.2
   intl: ^0.19.0
   flutter_spinkit: ^5.2.0
+  modal_progress_hud_nsn: ^0.4.0
+  image_loading_animation: ^0.0.1
+
 
 dev_dependencies:
+
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.13.1
+  
+flutter_launcher_icons:  
+
+  android: true
+  ios: true
+  image_path: "icon/appi.png"
+  adaptive_icon_background: "icon/background.png"
+  adaptive_icon_foreground: "icon/ic_launcher_adaptive_fore.png"
 
 
   flutter_lints: ^2.0.0

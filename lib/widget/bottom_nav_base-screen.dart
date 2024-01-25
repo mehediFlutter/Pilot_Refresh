@@ -6,11 +6,13 @@ import 'package:pilot_refresh/screens/home_vehicle.dart';
 class BottomNavBaseScreen extends StatefulWidget {
   final bool? isDoubleScreenSelected;
   final bool? isSingleScreenSelected;
+  final String? token;
 
   const BottomNavBaseScreen({
     Key? key,
     this.isDoubleScreenSelected,
     this.isSingleScreenSelected,
+    this.token,
   }) : super(key: key);
 
   @override
@@ -19,21 +21,32 @@ class BottomNavBaseScreen extends StatefulWidget {
 
 class _BottomNavBaseScreenState extends State<BottomNavBaseScreen> {
   int _selectedScreenIndex = 0;
+  late String tokeno;
 
-@override
-void initState() {
-  super.initState();
-  
-  // Check if widget.isDoubleScreenSelected and widget.isSingleScreenSelected are not null
-  if (widget.isDoubleScreenSelected != null && widget.isSingleScreenSelected != null) {
-    // Set the default index based on the selected screen type
-    _selectedScreenIndex = widget.isDoubleScreenSelected! ? 0 : widget.isSingleScreenSelected! ? 1 : 0;
-  } else {
-    // Handle the case where either widget.isDoubleScreenSelected or widget.isSingleScreenSelected is null
-    // You may want to set a default value or handle this case differently based on your requirements.
-    _selectedScreenIndex = 0;
+  @override
+  void initState() {
+    super.initState();
+    print("i am bottom nav base screen token is ${widget.token}");
+   
+    setState(() {
+       tokeno = widget.token ?? '';
+    });
+
+    // Check if widget.isDoubleScreenSelected and widget.isSingleScreenSelected are not null
+    if (widget.isDoubleScreenSelected != null &&
+        widget.isSingleScreenSelected != null) {
+      // Set the default index based on the selected screen type
+      _selectedScreenIndex = widget.isDoubleScreenSelected!
+          ? 0
+          : widget.isSingleScreenSelected!
+              ? 1
+              : 0;
+    } else {
+      // Handle the case where either widget.isDoubleScreenSelected or widget.isSingleScreenSelected is null
+      // You may want to set a default value or handle this case differently based on your requirements.
+      _selectedScreenIndex = 0;
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -72,8 +85,8 @@ void initState() {
 
   List<Widget> get _screens {
     return [
-      AdminDoublVehicle(),
-      HomeVehicle(),
+      AdminDoublVehicle(token: tokeno),
+      HomeVehicle(token: 'hello i am token'),
     ];
   }
 }

@@ -331,27 +331,29 @@ class _DoublVehicleState extends State<DoublVehicle> {
 
     for (i; i < decodedResponse['payload'].length; i++) {
       searchProducts.add(Product(
-          vehicleName:
+ vehicleName:
               decodedResponse['payload'][i]?['translate'][0]?['title'] ?? '-',
-          vehicleNameBangla:
-              decodedResponse['payload'][i]?['translate'][1]?['title'] ?? '-',
           manufacture: decodedResponse['payload'][i]?['manufacture'] ?? '',
           slug: decodedResponse['payload'][i]?['slug'] ?? '',
           id: decodedResponse['payload'][i]?['id'] ?? '',
-          condition: "API?",
+          //  condition: decodedResponse['data'][i]['condition']['translate'][0]
+          //   ['title'],
+          condition:  decodedResponse['payload'][i]?['condition']['translate'][0]?['title']??'None',
           price: decodedResponse['payload'][i]?['price'] ?? '',
-          purchase_price:
-              decodedResponse['payload'][i]?['purchase_price'] ?? '',
+          purchase_price: decodedResponse['payload'][i]?['purchase_price'] ?? '',
           fixed_price: decodedResponse['payload'][i]?['fixed_price'] ?? '',
-          imageName: decodedResponse['payload'][i]?['image']['name'] ?? '',
-          registration: "API?",
+          imageName: decodedResponse['payload']?[i]?['image']['name'] ?? '',
+          registration: decodedResponse['payload']?[i]?['registration']??'--',
+         
           engine: decodedResponse['payload'][i]?['engines'] ?? '-',
           brandName: decodedResponse['payload'][i]?['brand']['slug'],
-          transmission: "API?",
-          fuel: "API?",
-          skeleton: "API?",
+          transmission: decodedResponse['payload']?[i]?['transmission']?['translate'][0]?['title']??'None',
+          fuel: decodedResponse['payload']?[i]?['fuel']?['translate'][0]?['title']??'None',
+          skeleton: decodedResponse['payload']?[i]?['skeleton']?['translate'][0]?['title']??'None',
           available: decodedResponse['payload'][i]?['available']['slug'] ?? '-',
-          code: decodedResponse['payload'][i]?['code'] ?? '-'));
+          code: decodedResponse['payload'][i]?['code'] ?? '-',
+           onlyMileage: decodedResponse['payload'][i]?['mileages'] ?? '--',
+          ));
 
       products.addAll(searchProducts);
       searchProducts.clear();

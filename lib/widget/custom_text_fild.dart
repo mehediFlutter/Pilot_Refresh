@@ -6,12 +6,14 @@ Widget customTextField({
   required TextEditingController controller,
   
  final TextInputType? keyboardType,
+ final String? hintText,
 //  required String labelText,
 }) {
   return TextField(
     controller: controller,
     keyboardType: keyboardType,
     decoration: InputDecoration(
+      hintText: hintText,hintStyle: TextStyle(color: Colors.grey),
       contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
       
       border: const OutlineInputBorder(

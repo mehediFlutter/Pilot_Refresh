@@ -1171,7 +1171,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
                         Expanded(
                           child: Column(
                             children: [
-                              textFildUpTextRow('Negotiable'),
+                              textFildUpTextRow('Negotiable',star: ' *'),
                               customYesNoDropDownFormField(
                                 value: negatiateId,
                                 onChanged: (newValue) {

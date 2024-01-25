@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
 import 'package:pilot_refresh/admin/asking_fixed_stockList.dart';
 import 'package:pilot_refresh/item_class.dart';
@@ -13,8 +14,10 @@ import 'package:pilot_refresh/widget/end_drawer.dart';
 import 'package:http/http.dart' as http;
 
 class AdminDoublVehicle extends StatefulWidget {
+  final String? token;
   AdminDoublVehicle({
     super.key,
+    this.token,
   });
 
   @override
@@ -34,6 +37,8 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
   //https://pilotbazar.com/storage/vehicles/
   @override
   void initState() {
+    print("I am on Double vehicle screen");
+    print(widget.token);
     page = 1;
     i = 0;
     getProduct(page);
@@ -87,7 +92,8 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
     }
 
     Response response = await get(
-        Uri.parse("https://pilotbazar.com/api/vehicle?page=$page"),
+        Uri.parse(
+            "https://pilotbazar.com/api/merchants/vehicles/products?page=$page"),
         headers: {'Retry-After': '3600', 'Content-Type': 'text/html'});
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
@@ -132,12 +138,12 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
           edition: e['edition']['translate'][0]['title'] ?? 'None',
           model: e['carmodel']?['translate'][0]?['title'] ?? '',
           grade: e['grade']?['translate'][0]?['title'] ?? '',
-           engineNumber: e['engine_number']??'--',
-            chassisNumber: e['chassis_number']??'--',
-            video: e['video']??'No Video',
-            engine_id: e['engine_id']??'--',
-            onlyMileage: e['mileages']??'--',
-            engines: e['engines']??'-',
+          engineNumber: e['engine_number'] ?? '--',
+          chassisNumber: e['chassis_number'] ?? '--',
+          video: e['video'] ?? 'No Video',
+          engine_id: e['engine_id'] ?? '--',
+          onlyMileage: e['mileages'] ?? '--',
+          engines: e['engines'] ?? '-',
         ));
       });
 
@@ -150,55 +156,6 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
   }
 
   // Alart dialog function/methode
-  void _showAlertDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          // title: Text(''),
-          content: Padding(
-            padding: const EdgeInsets.only(left: 25),
-            child: Text(
-              'Do you want to logout?',
-              style: TextStyle(color: Colors.black87, fontSize: 15),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Row(
-                children: [
-                  Spacer(),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text('No'),
-                  ),
-                  SizedBox(width: 5),
-                  TextButton(
-                    onPressed: () async {
-                      await AuthUtility.clearUserInfo();
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => NewLoginScreen()),
-                          (route) => false);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Successfully Logout")));
-                    },
-                    child: Text('Yes'),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   bool isLoading = false;
   @override
@@ -208,14 +165,22 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
     if (mounted) {
       setState(() {});
     }
-    Response response =
-        await get(Uri.parse("https://pilotbazar.com/api/vehicle?page=$page"));
+    Response response = await get(
+      Uri.parse(
+          "https://pilotbazar.com/api/merchants/vehicles/products?page=1"),
+      headers: {
+        'Accept': 'application/vnd.api+json',
+        'Content-Type': 'application/vnd.api+json',
+        'Authorization': 'Bearer ${widget.token}'
+      },
+    );
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
     print(response.statusCode);
+    print(response.body);
     final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
     List<dynamic> vehicleFeatures =
-        decodedResponse['data'][0]['vehicle_feature'];
+        decodedResponse['payload']['data'][0]['vehicle_feature'];
     List<FeatureDetailPair> featureDetailPairs =
         extractFeatureDetails(vehicleFeatures);
 
@@ -229,59 +194,63 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
       setState(() {});
     }
 
-    for (i; i < decodedResponse['data'].length; i++) {
-      products.add(
-        Product(
-vehicleName: decodedResponse['data'][i]['translate'][0]['title'],
-        vehicleNameBangla: decodedResponse['data'][i]['translate'][1]['title'],
-        manufacture: decodedResponse['data'][i]['manufacture'],
-        slug: decodedResponse['data'][i]['slug'],
-        id: decodedResponse['data'][i]['id'],
-        condition: decodedResponse['data'][i]['condition']['translate'][0]
-            ['title'],
-        mileage: decodedResponse['data'][i]['mileage']?['translate'][0]
-                ?['title'] ??
-            '--',
-        //price here
-        price: decodedResponse['data'][i]['price'] ?? '',
-        purchase_price: decodedResponse['data'][i]?['purchase_price'] ?? '',
-        fixed_price: decodedResponse['data'][i]?['fixed_price'] ?? '',
-        //price end
-        imageName: decodedResponse['data'][i]['image']['name'],
-        registration: decodedResponse['data'][i]['registration'] ?? 'None',
-        engine: decodedResponse['data'][i]['engine']['translate'][0]['title'],
-        brandName: decodedResponse['data'][i]['brand']['translate'][0]['title'],
-        transmission: decodedResponse['data'][i]['transmission']['translate'][0]
-            ['title'],
-        fuel: decodedResponse['data'][i]['fuel']['translate'][0]['title'],
-        skeleton: decodedResponse['data'][i]['skeleton']['translate'][0]
-            ['title'],
-        available: decodedResponse['data'][i]?['available']?['translate'][0]
-                ?['title'] ??
-            '',
-        code: decodedResponse['data'][i]?['code'] ?? '',
-        //model: decodedResponse['data'],
-        carColor: decodedResponse['data'][i]['color']?['translate'][0]
-                ['title'] ??
-            'None',
-        edition: decodedResponse['data'][i]['edition']['translate'][0]
-                ['title'] ??
-            'None',
-        model: decodedResponse['data'][i]?['carmodel']?['translate'][0]
-                ?['title'] ??
-            '',
-        grade: decodedResponse['data'][i]?['grade']?['translate'][0]
-                ?['title'] ??
-            '',
-            engineNumber: decodedResponse['data'][i]['engine_number']??'--',
-            chassisNumber: decodedResponse['data'][i]['chassis_number']??'--',
-            video: decodedResponse['data'][i]?['video']??'No Video',
-            engine_id: decodedResponse['data'][i]?['engine_id']??'12',
-            onlyMileage: decodedResponse['data'][i]['mileages']??'--',
-            engines: decodedResponse['data'][i]?['engines']??'-',
-        ),
-      );
-    }
+    // for (i; i < decodedResponse['payload']['data'].length; i++) {
+    //   print('length of this products');
+    //   print(decodedResponse['payload']['data'].length);
+    //   products.add(
+    //     Product(
+    //       vehicleName: decodedResponse['payload']['data'][i]['translate'][0]['title'],
+    //       vehicleNameBangla: decodedResponse['data'][i]['translate'][1]
+    //           ['title'],
+    //       manufacture: decodedResponse['data'][i]['manufacture'],
+    //       slug: decodedResponse['data'][i]['slug'],
+    //       id: decodedResponse['data'][i]['id'],
+    //       condition: decodedResponse['data'][i]['condition']['translate'][0]
+    //           ['title'],
+    //       mileage: decodedResponse['data'][i]['mileage']?['translate'][0]
+    //               ?['title'] ??
+    //           '--',
+    //       //price here
+    //       price: decodedResponse['data'][i]['price'] ?? '',
+    //       purchase_price: decodedResponse['data'][i]?['purchase_price'] ?? '',
+    //       fixed_price: decodedResponse['data'][i]?['fixed_price'] ?? '',
+    //       //price end
+    //       imageName: decodedResponse['data'][i]['image']['name'],
+    //       registration: decodedResponse['data'][i]['registration'] ?? 'None',
+    //       engine: decodedResponse['data'][i]['engine']['translate'][0]['title'],
+    //       brandName: decodedResponse['data'][i]['brand']['translate'][0]
+    //           ['title'],
+    //       transmission: decodedResponse['data'][i]['transmission']['translate']
+    //           [0]['title'],
+    //       fuel: decodedResponse['data'][i]['fuel']['translate'][0]['title'],
+    //       skeleton: decodedResponse['data'][i]['skeleton']['translate'][0]
+    //           ['title'],
+    //       available: decodedResponse['data'][i]?['available']?['translate'][0]
+    //               ?['title'] ??
+    //           '',
+    //       code: decodedResponse['data'][i]?['code'] ?? '',
+    //       //model: decodedResponse['data'],
+    //       carColor: decodedResponse['data'][i]['color']?['translate'][0]
+    //               ['title'] ??
+    //           'None',
+    //       edition: decodedResponse['data'][i]['edition']['translate'][0]
+    //               ['title'] ??
+    //           'None',
+    //       model: decodedResponse['data'][i]?['carmodel']?['translate'][0]
+    //               ?['title'] ??
+    //           '',
+    //       grade: decodedResponse['data'][i]?['grade']?['translate'][0]
+    //               ?['title'] ??
+    //           '',
+    //       engineNumber: decodedResponse['data'][i]['engine_number'] ?? '--',
+    //       chassisNumber: decodedResponse['data'][i]['chassis_number'] ?? '--',
+    //       video: decodedResponse['data'][i]?['video'] ?? 'No Video',
+    //       engine_id: decodedResponse['data'][i]?['engine_id'] ?? '12',
+    //       onlyMileage: decodedResponse['data'][i]['mileages'] ?? '--',
+    //       engines: decodedResponse['data'][i]?['engines'] ?? '-',
+    //     ),
+    //   );
+    // }
     if (decodedResponse['data'] == null) {
       return;
     }
@@ -324,25 +293,38 @@ vehicleName: decodedResponse['data'][i]['translate'][0]['title'],
 
     for (i; i < decodedResponse['payload'].length; i++) {
       searchProducts.add(Product(
-          vehicleName:
-              decodedResponse['payload'][i]?['translate'][0]?['title'] ?? '-',
-          manufacture: decodedResponse['payload'][i]?['manufacture'] ?? '',
-          slug: decodedResponse['payload'][i]?['slug'] ?? '',
-          id: decodedResponse['payload'][i]?['id'] ?? '',
-          condition: "API?",
-          price: decodedResponse['payload'][i]?['price'] ?? '',
-          purchase_price:
-              decodedResponse['payload'][i]?['purchase_price'] ?? '',
-          fixed_price: decodedResponse['payload'][i]?['fixed_price'] ?? '',
-          imageName: decodedResponse['payload'][i]?['image']['name'] ?? '',
-          registration: "API?",
-          engine: decodedResponse['payload'][i]?['engines'] ?? '-',
-          brandName: decodedResponse['payload'][i]?['brand']['slug'],
-          transmission: "API?",
-          fuel: "API?",
-          skeleton: "API?",
-          available: decodedResponse['payload'][i]?['available']['slug'] ?? '-',
-          code: decodedResponse['payload'][i]?['code'] ?? '-'));
+        vehicleName:
+            decodedResponse['payload'][i]?['translate'][0]?['title'] ?? '-',
+        manufacture: decodedResponse['payload'][i]?['manufacture'] ?? '',
+        slug: decodedResponse['payload'][i]?['slug'] ?? '',
+        id: decodedResponse['payload'][i]?['id'] ?? '',
+        //  condition: decodedResponse['data'][i]['condition']['translate'][0]
+        //   ['title'],
+        condition: decodedResponse['payload'][i]?['condition']['translate'][0]
+                ?['title'] ??
+            'None',
+        price: decodedResponse['payload'][i]?['price'] ?? '',
+        purchase_price: decodedResponse['payload'][i]?['purchase_price'] ?? '',
+        fixed_price: decodedResponse['payload'][i]?['fixed_price'] ?? '',
+        imageName: decodedResponse['payload']?[i]?['image']['name'] ?? '',
+        registration:
+            decodedResponse['payload']?[i]?['registration'] ?? ' None',
+
+        engine: decodedResponse['payload'][i]?['engines'] ?? '-',
+        brandName: decodedResponse['payload'][i]?['brand']['slug'],
+        transmission: decodedResponse['payload']?[i]?['transmission']
+                ?['translate'][0]?['title'] ??
+            'None',
+        fuel: decodedResponse['payload']?[i]?['fuel']?['translate'][0]
+                ?['title'] ??
+            'None',
+        skeleton: decodedResponse['payload']?[i]?['skeleton']?['translate'][0]
+                ?['title'] ??
+            'None',
+        available: decodedResponse['payload'][i]?['available']['slug'] ?? '-',
+        code: decodedResponse['payload'][i]?['code'] ?? '-',
+        onlyMileage: decodedResponse['payload'][i]?['mileages'] ?? '--',
+      ));
     }
     products.addAll(searchProducts);
     searchProducts.clear();
@@ -383,43 +365,49 @@ vehicleName: decodedResponse['data'][i]['translate'][0]['title'],
           'assets/images/pilot_logo2.png',
         ),
         title: TextField(
-          style: TextStyle(color: Colors.white, fontSize: 15),
           controller: searchController,
           onSubmitted: (value) async {
             print("onSubmitted: $value");
             await search(value);
           },
+          keyboardType: TextInputType.text,
           decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(horizontal: 25),
             hintText: "Search",
             hintStyle: TextStyle(color: Colors.white),
             border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white, width: 2),
-              borderRadius: BorderRadius.circular(40),
-            ),
+                borderSide: BorderSide(
+                  color: Colors.white,
+                ),
+                borderRadius: BorderRadius.circular(
+                    40) // Set default border color to white
+                ),
             prefixIcon: Icon(
               Icons.search,
               color: Colors.white,
             ),
-            // suffixIcon: IconButton(
-            //   onPressed: () async {
-            //     print("Hello");
-            //     await search(searchController.text.toString());
-            //   },
-            //   icon: Icon(Icons.send, color: Colors.white),
-            // ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(40),
+                borderSide: BorderSide(color: Colors.white),
+                borderRadius: BorderRadius.circular(
+                    40) // Set focused border color to white
+                ),
+            disabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.white),
             ),
+            errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           ),
+          style: Theme.of(context)
+              .textTheme
+              .bodyMedium!
+              .copyWith(color: Colors.white, fontSize: 15),
+          cursorColor: Colors.white,
         ),
       ),
       endDrawer: EndDrawer(mounted: mounted),
       body: (_getProductinProgress || _searchInProgress)
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
+          ? Center(child: loading())
           : Stack(
               children: [
                 Column(
@@ -474,7 +462,6 @@ vehicleName: decodedResponse['data'][i]['translate'][0]['title'],
                                     .toString(),
                                 fixed_price:
                                     products[index + j].fixed_price.toString(),
-
                                 vehiclaName: products[index + j].vehicleName,
                                 manufacture: products[index + j].manufacture,
                                 condition: products[index + j].condition,
@@ -495,12 +482,9 @@ vehicleName: decodedResponse['data'][i]['translate'][0]['title'],
                                 onlyMileage: products[index + j].onlyMileage,
                                 engines: products[index + j].engines,
                                 engineNumber: products[index + j].engineNumber,
-                                chassisNumber: products[index + j].chassisNumber,
+                                chassisNumber:
+                                    products[index + j].chassisNumber,
                                 video: products[index + j].video,
-                               // carModel: products[index + j].carModel,
-                                
-
-                                //dropdownFontLight: products[index+j],
                               ),
                             );
                           },
@@ -514,14 +498,21 @@ vehicleName: decodedResponse['data'][i]['translate'][0]['title'],
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                     
                         Align(
-                            alignment: Alignment.bottomCenter,
-                            child: CircularProgressIndicator()),
+                          alignment: Alignment.bottomCenter,
+                          child: loading(),
+                        ),
                       ],
                     )),
               ],
             ),
+    );
+  }
+
+  SpinKitFadingCircle loading() {
+    return SpinKitFadingCircle(
+      color: const Color.fromARGB(255, 214, 192, 192),
+      size: 50.0,
     );
   }
 

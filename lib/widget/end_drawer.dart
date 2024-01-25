@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pilot_refresh/add%20car/add-car.dart';
+import 'package:pilot_refresh/methodes/log_out_methode.dart';
 import 'package:pilot_refresh/screens/double_vehicle_screen.dart';
 import 'package:pilot_refresh/screens/marcent_dash_board.dart';
 import 'package:pilot_refresh/widget/drawer_item_list.dart';
@@ -37,6 +39,16 @@ class EndDrawer extends StatelessWidget {
                                 builder: (context) => MarchentDashBoard()));
                       },
                     ),
+                    DrawerItemList(
+                      text: 'Add New Car',
+                      icon: Icon(Icons.dashboard),
+                      onTapFunction: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AddNewCar()));
+                      },
+                    ),
                     // DrawerItemList(
                     //   text: 'Item with whats app',
                     //   icon: Icon(Icons.view_module),
@@ -65,7 +77,9 @@ class EndDrawer extends StatelessWidget {
                     DrawerItemList(
                       text: 'Logout',
                       icon: Icon(Icons.logout),
-                      onTapFunction: () {},
+                      onTapFunction: () {
+                        LogOutAlartDialog().showAlertDialog(context);
+                      },
                     ),
                     DrawerItemList(
                         text: "Double or Single",

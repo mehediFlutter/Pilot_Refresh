@@ -109,8 +109,8 @@ class _ItemState extends State<Item> {
   void initState() {
     // TODO: implement initState
     super.initState();
-print("Model");
-print(widget.model);
+print("manufacture");
+print(widget.manufacture);
 
   }
 
@@ -213,14 +213,14 @@ print(widget.model);
       String message =
           "Vehicle Name: ${widget.vehiclaName} \nManufacture:  ${widget.manufacture} \nCondition: ${widget.condition} \nRegistration: ${widget.registration} \nMileage: ${widget.nMillage}, \nPrice: ${widget.price} \nOur HotLine Number: 0196-99-444-00\n \n See Details \n";
 
-      if (unicTitle.length != 0) {
-        info = "\n${unicTitle[0]} : ${details[0]}";
-        _detailsInProgress = true;
-        setState(() {});
-        for (int b = 1; b < unicTitle.length; b++) {
-          info += "\n${unicTitle[b]} : ${details[b]}";
-        }
-      }
+      // if (unicTitle.length != 0) {
+      //   info = "\n${unicTitle[0]} : ${details[0]}";
+      //   _detailsInProgress = true;
+      //   setState(() {});
+      //   for (int b = 1; b < unicTitle.length; b++) {
+      //     info += "\n${unicTitle[b]} : ${details[b]}";
+      //   }
+      // }
 
       if (showImageList.isNotEmpty) {
         // Share all images with text
@@ -229,8 +229,8 @@ print(widget.model);
         );
 
         // Clear lists and reset state
-        unicTitle.clear();
-        details.clear();
+     
+     
         ImageLinkList.clear();
         showImageList.clear();
         _detailsInProgress = false;
@@ -339,7 +339,7 @@ print(widget.model);
     late String info;
 
     String message =
-        "Vehicle Name: ${widget.vehiclaName} \nManufacture:  ${widget..manufacture} \nConditiion: ${widget.condition} \nRegistration: ${widget.registration} \nMillage: ${widget.nMillage}, \nPrice: ${widget.price} \nOur HotLine Number: 0196-99-444-00\n \n Show More\n $detailsLink";
+        "Vehicle Name: ${widget.vehiclaName} \nManufacture:  ${widget.manufacture} \nConditiion: ${widget.condition} \nRegistration: ${widget.registration} \nMillage: ${widget.nMillage}, \nPrice: ${widget.price} \nOur HotLine Number: 0196-99-444-00\n \n Show More\n $detailsLink";
 
     if (unicTitle.length != 0) {
       info = "\n${unicTitle[0]} : ${details[0]}";
