@@ -24,6 +24,8 @@ class _AskingFixedAndStockListState extends State<AskingFixedAndStockList> {
 
   Color stockListColor = Colors.white;
   bool _createPdfInProgress = false;
+
+  
   Future<void> createPdf() async {
     _createPdfInProgress = true;
     if (mounted) {

@@ -14,6 +14,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   late bool isDoubleScreenSelected;
+  // late String mToken;
 
   @override
   void initState() {
@@ -25,10 +26,14 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> loadSelectedScreenType() async {
     // Load the selected screen type during the app startup
     final prefs = await SharedPreferences.getInstance();
+  
     setState(() {
       // Use ?? to provide a default value in case the preference is not set
       isDoubleScreenSelected =
           prefs.getBool('isDoubleScreenSelected') ?? true;
+          print("Token is");
+         
+         
     });
     navigateToLogin();
   }
@@ -36,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> navigateToLogin() async {
     final bool isLoggedIn = await AuthUtility.checkIfUserLoggedIn();
 
-    Future.delayed(const Duration(seconds: 2)).then((_) =>
+    Future.delayed(const Duration(seconds: 1)).then((_) =>
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(

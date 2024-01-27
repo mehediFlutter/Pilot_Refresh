@@ -2,7 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:photo_view/photo_view.dart';
 
 class VehicleDetails extends StatefulWidget {
   final Map? todo;
@@ -14,6 +17,7 @@ class VehicleDetails extends StatefulWidget {
   final String? detailsVehicleManuConditioin;
   final String? detailsVehicleImageName;
   final String? engine;
+  final String? engines;
   final String? detailsCondition;
   final String? detailsMillege;
   final String? detailsTransmission;
@@ -48,6 +52,7 @@ class VehicleDetails extends StatefulWidget {
       this.detailsVehicleManuConditioin,
       this.detailsVehicleImageName,
       this.engine,
+      this.engines,
       this.detailsCondition,
       this.detailsMillege,
       this.detailsTransmission,
@@ -79,16 +84,27 @@ class _VehicleDetailsState extends State<VehicleDetails> {
   List unicTitle = [];
   List details = [];
   //final todo = widget.todo;
+  SharedPreferences? Preffs;
 
-  void getDetails() async {
+  Future getDetails() async {
+    Preffs = await SharedPreferences.getInstance();
+
     _getDataInProgress = true;
     if (mounted) {
       setState(() {});
     }
-    Response response = await get(Uri.parse(
-        "https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/detail"));
+
+    Response response = await get(
+        Uri.parse(
+            "https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/detail"),
+        headers: {
+          'Accept': 'application/vnd.api+json',
+          'Content-Type': 'application/vnd.api+json',
+          'Authorization': 'Bearer ${Preffs!.getString('token')}'
+        });
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
+    print("Get Details methodes");
     print(response.statusCode);
     final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
     List<dynamic> vehicleFeatures =
@@ -112,6 +128,68 @@ class _VehicleDetailsState extends State<VehicleDetails> {
       print(
         details[y],
       );
+    }
+  }
+
+  Future getImageLink() async {
+    Preffs = await SharedPreferences.getInstance();
+    Response response = await get(
+        Uri.parse(
+            'https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/detail'),
+        headers: {
+          'Accept': 'application/vnd.api+json',
+          'Content-Type': 'application/vnd.api+json',
+          'Authorization': 'Bearer ${Preffs!.getString('token')}'
+        });
+    print("This is getImageLink function Status Code");
+    print(response.statusCode);
+    print(response.body);
+
+    final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
+    List<dynamic> imageGallry = decodedResponse['payload']['gallery'];
+    print("Length");
+    print(imageGallry.length);
+  }
+
+  Future<void> getImages() async {
+    Preffs = await SharedPreferences.getInstance();
+    _getImages = true;
+    if (mounted) {
+      setState(() {});
+    }
+    Response response1 = await get(
+        Uri.parse(
+            "https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/detail"),
+        headers: {
+          'Accept': 'application/vnd.api+json',
+          'Content-Type': 'application/vnd.api+json',
+          'Authorization': 'Bearer ${Preffs!.getString('token')}'
+        });
+    print(response1.statusCode);
+
+    final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
+    List<dynamic> imageGallary = decodedResponse1['payload']['gallery'];
+
+    imageGallary.forEach((e) {
+      ImageLinkList.add(e['name']);
+      //  ImageLink=e['name'];
+      //ImageLinkList.add(ImageLink);
+    });
+
+    // for (int b = 0; b < decodedResponse1['payload']['gallery'].length; b++) {
+    //   ImageLink = decodedResponse1['payload']["gallery"][b]?['name'] ?? '';
+    //   ImageLinkList.add(ImageLink);
+    // }
+
+    print("From List Image Links are");
+    for (int c = 0; c < ImageLinkList.length; c++) {
+      print(ImageLinkList[c]);
+    }
+    print("List of Images list is ");
+    print(ImageLinkList.length);
+    _getImages = false;
+    if (mounted) {
+      setState(() {});
     }
   }
 
@@ -145,9 +223,10 @@ class _VehicleDetailsState extends State<VehicleDetails> {
       widget.engine.toString(),
       widget.detailsCondition.toString(),
       widget.detailsMillege.toString(),
-      widget.term_and_edition.toString(),
+      // widget.term_and_edition.toString(),
       widget.detailsTransmission.toString(),
       widget.color.toString(),
+      widget.term_and_edition.toString(),
       widget.detailsFuel.toString(),
       widget.skeleton.toString(),
       widget.registration.toString(),
@@ -167,34 +246,42 @@ class _VehicleDetailsState extends State<VehicleDetails> {
   }
 
   List imageList = [];
-  late String ImageLink;
-  late List ImageLinkList = [];
+  String? ImageLink;
+  List ImageLinkList = [];
   bool _getImages = false;
-  Future<void> getImages() async {
-    _getImages = true;
-    if (mounted) {
-      setState(() {});
-    }
-    Response response1 = await get(Uri.parse(
-        "https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/detail"));
-    print(response1.statusCode);
-    final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
 
-    for (int b = 0; b < decodedResponse1['payload']['gallery'].length; b++) {
-      ImageLink = decodedResponse1['payload']["gallery"][b]?['name'] ?? '';
-      ImageLinkList.add(ImageLink);
-    }
+  initState() {
+    super.initState();
+    print("hello i am in details page");
+    print("ID ${widget.id}");
 
-    print("From List Image Links are");
-    for (int c = 0; c < ImageLinkList.length; c++) {
-      print(ImageLinkList[c]);
+    getDetails();
+    //  getImageLink();
+    getImages();
+
+    todo = widget.todo;
+    if (todo != null) {
+      String name = todo?['vehicleName'] ?? '';
+      print("Name is");
+      print(name);
     }
-    print("List of Images list is ");
-    print(ImageLinkList.length);
-    _getImages = false;
-    if (mounted) {
-      setState(() {});
-    }
+    getFeature();
+    _pageController = PageController(initialPage: 0);
+    startAutoPlay();
+    //getImages();
+  }
+
+  getimg() async {
+    Response response = await get(
+        Uri.parse(
+            'https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/detail'),
+        headers: {
+          'Accept': 'application/vnd.api+json',
+          'Content-Type': 'application/vnd.api+json',
+          'Authorization': 'Bearer ${Preffs!.getString('token')}'
+        });
+    print('statuc cdoe');
+    print(response.statusCode);
   }
 
   Timer? _timer;
@@ -212,30 +299,25 @@ class _VehicleDetailsState extends State<VehicleDetails> {
     });
   }
 
-  void onTapImage(){
-    if(_currentIndex<ImageLinkList.length-1){
-      
+  void onTapImage() {
+    if (_currentIndex < ImageLinkList.length - 1) {}
+  }
+
+  stopAutoPlay() {
+    if (_timer != null && _timer!.isActive) {
+      _timer?.cancel();
     }
   }
+
+  restartAutoPlay() {
+    if (_timer != null && !_timer!.isActive) {
+      startAutoPlay();
+    }
+  }
+
+  pressedImage() {}
 
   @override
-  initState() {
-    // TODO: implement initState
-    super.initState();
-    getDetails();
-    getImages();
-    todo = widget.todo;
-    if (todo != null) {
-      String name = todo?['vehicleName'] ?? '';
-      print("Name is");
-      print(name);
-    }
-    getFeature();
-    _pageController = PageController(initialPage: 0);
-    startAutoPlay();
-    //getImages();
-  }
-
   int _currentIndex = 0;
   PageController _pageController = PageController(initialPage: 0);
 
@@ -280,25 +362,126 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
-                            Container(
-                              height: 250,
-                              width: double.infinity,
-                              child: PageView.builder(
-                                controller: _pageController,
-                                onPageChanged: (index) {
-                                  setState(() {
-                                    _currentIndex = index;
-                                  });
-                                },
-                                itemCount: ImageLinkList.length ?? 0,
-                                itemBuilder: (context, index) {
-                                  return Image.network(
-                                    'https://pilotbazar.com/storage/galleries/${ImageLinkList[index] ?? 'https://pilotbazar.com/storage/vehicles/${widget.detailsVehicleImageName.toString()}'}',
-                                    width: double.infinity,
-                                    height: 250,
-                                    fit: BoxFit.cover,
-                                  );
-                                },
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Scaffold(
+                                      body: Column(
+                                        children: [
+                                          Expanded(
+                                            child: PhotoViewGallery.builder(
+                                              itemCount:
+                                                  ImageLinkList.length ?? 0,
+                                              builder: (context, index) {
+                                                return PhotoViewGalleryPageOptions(
+                                                  imageProvider: NetworkImage(
+                                                    'https://pilotbazar.com/storage/galleries/${ImageLinkList[index] ?? 'https://pilotbazar.com/storage/vehicles/${widget.detailsVehicleImageName.toString()}'}',
+                                                  ),
+                                                  minScale:
+                                                      PhotoViewComputedScale
+                                                          .contained,
+                                                  maxScale:
+                                                      PhotoViewComputedScale
+                                                              .covered *
+                                                          2,
+                                                );
+                                              },
+                                              backgroundDecoration:
+                                                  BoxDecoration(
+                                                color: Colors.black,
+                                              ),
+                                              pageController: PageController(
+                                                initialPage: _currentIndex,
+                                              ),
+                                              onPageChanged: (index) {
+                                                setState(() {
+                                                  _currentIndex = index;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                          // Container(
+                                          //   height: 100,
+                                          //   width: double.infinity,
+                                          //   child: ListView.separated(
+                                          //     scrollDirection: Axis.horizontal,
+                                          //     itemCount:
+                                          //         ImageLinkList.length ?? 0,
+                                          //     itemBuilder: (context, index) {
+                                          //       return InkWell(
+                                          //         onTap: () {
+                                          //           final newPageIndex = index;
+                                          //           if (newPageIndex <=
+                                          //               ImageLinkList.length) {
+                                          //             _pageController
+                                          //                 .animateToPage(
+                                          //                     newPageIndex,
+                                          //                     duration: Duration(
+                                          //                         microseconds:
+                                          //                             300),
+                                          //                     curve: Curves
+                                          //                         .easeInOut);
+                                          //           }
+                                          //           setState(() {});
+                                          //           print(index);
+                                          //         },
+                                          //         child: ClipRRect(
+                                          //           borderRadius:
+                                          //               BorderRadius.circular(
+                                          //                   10),
+                                          //           child: Image.network(
+                                          //             'https://pilotbazar.com/storage/galleries/${ImageLinkList[index] ?? 'https://pilotbazar.com/storage/vehicles/${widget.detailsVehicleImageName.toString()}'}',
+                                          //             width: 100,
+                                          //             height: 100,
+                                          //             fit: BoxFit.cover,
+                                          //           ),
+                                          //         ),
+                                          //       );
+                                          //     },
+                                          //     separatorBuilder:
+                                          //         (BuildContext context,
+                                          //             int index) {
+                                          //       return SizedBox(
+                                          //         width: 10,
+                                          //       );
+                                          //     },
+                                          //   ),
+                                          // ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              onLongPress: () {
+                                stopAutoPlay();
+                              },
+                              onLongPressEnd: (details) {
+                                restartAutoPlay(); // Restart auto-scrolling when long press ends
+                              },
+                              child: Container(
+                                height: 250,
+                                width: double.infinity,
+                                child: PageView.builder(
+                                  controller: _pageController,
+                                  onPageChanged: (index) {
+                                    setState(() {
+                                      _currentIndex = index;
+                                    });
+                                  },
+                                  itemCount: ImageLinkList.length ?? 0,
+                                  itemBuilder: (context, index) {
+                                    return PhotoView(
+                                      imageProvider: NetworkImage(
+                                          'https://pilotbazar.com/storage/galleries/${ImageLinkList[index] ?? 'https://pilotbazar.com/storage/vehicles/${widget.detailsVehicleImageName.toString()}'}'),
+                                      minScale:
+                                          PhotoViewComputedScale.contained *
+                                              1.1, // Adjust as needed
+                                    );
+                                  },
+                                ),
                               ),
                             ),
                             Positioned(
@@ -316,7 +499,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                               ),
                             ),
                             Positioned(
-                              right: 0,
+                              right: 20,
                               child: IconButton(
                                 onPressed: () {
                                   if (_currentIndex <
@@ -413,9 +596,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge!
-                                .copyWith(
-                                  color: Colors.black,fontSize: 15
-                                )),
+                                .copyWith(color: Colors.black, fontSize: 15)),
                         Text(
                             "${widget.code}"
                             // todo?['code']??''.toString()
@@ -423,9 +604,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium!
-                                .copyWith(
-                                  color: Colors.black,fontSize: 10
-                                )),
+                                .copyWith(color: Colors.black, fontSize: 10)),
                       ],
                     ),
 

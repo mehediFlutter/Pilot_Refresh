@@ -4,26 +4,20 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:pilot_refresh/admin/asking_fixed_stockList.dart';
-import 'package:pilot_refresh/problem/model_problem.dart';
-import 'package:pilot_refresh/problem/model_text.dart';
 import 'package:pilot_refresh/product.dart';
 import 'package:pilot_refresh/screens/advance_edit_screen.dart';
-import 'package:pilot_refresh/screens/auth/searchBar.dart';
 import 'package:pilot_refresh/screens/edit_price.dart';
 import 'package:pilot_refresh/advance/text_fild_select_box.dart';
 import 'package:pilot_refresh/screens/vehicle-details.dart';
 import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
-import 'package:pilot_refresh/widget/alart_dialog_class.dart';
-import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
 import 'package:pilot_refresh/widget/end_drawer.dart';
-import 'package:pilot_refresh/widget/image_class.dart';
-import 'package:pilot_refresh/widget/search_bar.dart';
 import 'package:share_plus/share_plus.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeVehicle extends StatefulWidget {
- final String? token;
+  final String? token;
   const HomeVehicle({super.key, this.token});
 
   @override
@@ -36,18 +30,15 @@ class _HomeVehicleState extends State<HomeVehicle> {
   //static String imagePath = "https://pilotbazar.com/storage/vehicles/";
   static late int page;
   static late int i;
+  late SharedPreferences prefss;
   //static List allSearchProducts = [];
   static List newSearchProducts = [];
   String searchValue = '';
   bool searchInProgress = false;
-  abc(){
-    print("i am on this page");
-  }
+  bool shareInProgress = false;
 
   @override
-  initState() {
-    abc();
-  
+  void initState() {
     page = 1;
     i = 0;
     getProduct(page);
@@ -157,16 +148,29 @@ class _HomeVehicleState extends State<HomeVehicle> {
   }
 
   void getNewProduct(int page) async {
+    prefss = await SharedPreferences.getInstance();
     _getNewProductinProgress = true;
     if (mounted) {
       setState(() {});
     }
-    Response response =
-        await get(Uri.parse("https://pilotbazar.com/api/vehicle?page=$page"));
+    Response response = await get(
+        Uri.parse(
+            "https://pilotbazar.com/api/merchants/vehicles/products?page=$page"),
+        headers: {
+          'Accept': 'application/vnd.api+json',
+          'Content-Type': 'application/vnd.api+json',
+          'Authorization': 'Bearer ${prefss.getString('token')}'
+        });
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
     print(response.statusCode);
     final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
+    if (decodedResponse['data'].isEmpty) {
+      _getNewProductinProgress = false;
+      if (mounted) {
+        setState(() {});
+      }
+    }
 
     if (response.statusCode == 200) {
       decodedResponse['data'].forEach((e) {
@@ -216,13 +220,21 @@ class _HomeVehicleState extends State<HomeVehicle> {
   bool isLoading = false;
   @override
   getProduct(int page) async {
+    prefss = await SharedPreferences.getInstance();
     products.clear();
     _getProductinProgress = true;
     if (mounted) {
       setState(() {});
     }
-    Response response =
-        await get(Uri.parse("https://pilotbazar.com/api/vehicle?page=$page"));
+    Response response = await get(
+      Uri.parse(
+          "https://pilotbazar.com/api/merchants/vehicles/products?page=$page"),
+      headers: {
+        'Accept': 'application/vnd.api+json',
+        'Content-Type': 'application/vnd.api+json',
+        'Authorization': 'Bearer ${prefss.getString('token')}'
+      },
+    );
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
     print(response.statusCode);
@@ -251,7 +263,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
         //price end
         imageName: decodedResponse['data'][i]['image']['name'],
         registration: decodedResponse['data'][i]['registration'] ?? 'None',
-        engine: decodedResponse['data'][i]['engine']['translate'][0]['title'],
+        engine: decodedResponse['data'][i]['engine']?['translate'][0]['title']??decodedResponse['data'][i]['engines'],
         brandName: decodedResponse['data'][i]['brand']['translate'][0]['title'],
         transmission: decodedResponse['data'][i]['transmission']['translate'][0]
             ['title'],
@@ -331,48 +343,16 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
   static String? detailsLink;
 
-  Future<void> shareDetailsWithOneImage(String ImageName, vehicleName,
-      manufacture, condition, registration, mileage, price, detailsLink) async {
-    if (mounted) {
-      setState(() {});
-    }
-    //setState() {});
-    final uri = Uri.parse("https://pilotbazar.com/storage/vehicles/$ImageName");
-    final response = await http.get(uri);
-    final imageBytes = response.bodyBytes;
-    final tempDirectory = await getTemporaryDirectory();
-    final tempFile =
-        await File('${tempDirectory.path}/sharedImage.jpg').create();
-    await tempFile.writeAsBytes(imageBytes);
-
-    //await getDetails(widget.id);
-    final image = XFile(tempFile.path);
-    late String info;
-
-    String message =
-        "Vehicle Name:$vehicleName  \nManufacture:$manufacture   \nConditiion:$condition  \nRegistration:$registration  \nMillage:$mileage  \nPrice:$price \nSee more\n$detailsLink ";
-
-    if (unicTitle.length != 0) {
-      info = "\n${unicTitle[0]} : ${details[0]}";
-      _detailsInProgress = true;
-      setState(() {});
-      for (int b = 1; b < unicTitle.length; b++) {
-        info += "\n${unicTitle[b]} : ${details[b]}";
-      }
-    }
-    await Share.shareXFiles([image],
-        text: _detailsInProgress ? message + info : message);
-    //"Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 017xxxxxxxx\n"
-    unicTitle.clear();
-    details.clear();
-    _detailsInProgress = false;
-
-    setState(() {});
-  }
-
   Future getLink(String id) async {
-    Response response1 = await get(Uri.parse(
-        "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
+    prefss = await SharedPreferences.getInstance();
+    Response response1 = await get(
+        Uri.parse(
+            "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"),
+        headers: {
+          'Accept': 'application/vnd.api+json',
+          'Content-Type': 'application/vnd.api+json',
+          'Authorization': 'Bearer ${prefss.getString('token')}'
+        });
     final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
     detailsLink = decodedResponse1['message'];
     setState(() {});
@@ -384,11 +364,22 @@ class _HomeVehicleState extends State<HomeVehicle> {
   late List ImageLinkList = [];
   bool _shareAllImageInProgress = false;
 
-  Future<void> sendWhatsImage(int id) async {
+  Future<void> sendAllImages(int id) async {
+    shareInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    prefss = await SharedPreferences.getInstance();
     _shareAllImageInProgress = true;
     try {
-      Response response1 = await get(Uri.parse(
-          "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
+      Response response1 = await get(
+          Uri.parse(
+              "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"),
+          headers: {
+            'Accept': 'application/vnd.api+json',
+            'Content-Type': 'application/vnd.api+json',
+            'Authorization': 'Bearer ${prefss.getString('token')}'
+          });
       print(response1.statusCode);
       final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
 
@@ -432,9 +423,11 @@ class _HomeVehicleState extends State<HomeVehicle> {
         details.clear();
         ImageLinkList.clear();
         showImageList.clear();
-        _shareAllImageInProgress = false;
+          shareInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
 
-        setState(() {});
       } else {
         print("No images to share.");
       }
@@ -443,11 +436,76 @@ class _HomeVehicleState extends State<HomeVehicle> {
     }
   }
 
+  Future<void> shareDetailsWithOneImage(String ImageName, vehicleName,
+      manufacture, condition, registration, mileage, price, detailsLink) async {
+          shareInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    prefss = await SharedPreferences.getInstance();
+    print(products[x].imageName);
+
+    if (mounted) {
+      setState(() {});
+    }
+    //setState() {});
+    final uri = Uri.parse(
+        "https://pilotbazar.com/storage/vehicles/${products[x].imageName}");
+    final response = await http.get(uri, headers: {
+      'Accept': 'application/vnd.api+json',
+      'Content-Type': 'application/vnd.api+json',
+      'Authorization': 'Bearer ${prefss.getString('token')}'
+    });
+    final imageBytes = response.bodyBytes;
+    final tempDirectory = await getTemporaryDirectory();
+    final tempFile =
+        await File('${tempDirectory.path}/sharedImage.jpg').create();
+    await tempFile.writeAsBytes(imageBytes);
+
+    //await getDetails(widget.id);
+    final image = XFile(tempFile.path);
+    late String info;
+
+    String message =
+        "Vehicle Name:$vehicleName  \nManufacture:$manufacture   \nConditiion:$condition  \nRegistration:$registration  \nMillage:$mileage  \nPrice:$price \nSee more\n$detailsLink ";
+
+    if (unicTitle.length != 0) {
+      info = "\n${unicTitle[0]} : ${details[0]}";
+      _detailsInProgress = true;
+      setState(() {});
+      for (int b = 1; b < unicTitle.length; b++) {
+        info += "\n${unicTitle[b]} : ${details[b]}";
+      }
+    }
+    await Share.shareXFiles([image],
+        text: _detailsInProgress ? message + info : message);
+    //"Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 017xxxxxxxx\n"
+    unicTitle.clear();
+    details.clear();
+      shareInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
+
+  
+  }
+
   Future<void> shareViaEmail(int id, String ImageName, vehicleName, manufacture,
       condition, registration, mileage, price, detailsLink) async {
+          shareInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    prefss = await SharedPreferences.getInstance();
     try {
-      Response response1 = await get(Uri.parse(
-          "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
+      Response response1 = await get(
+          Uri.parse(
+              "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"),
+          headers: {
+            'Accept': 'application/vnd.api+json',
+            'Content-Type': 'application/vnd.api+json',
+            'Authorization': 'Bearer ${prefss.getString('token')}'
+          });
       print(response1.statusCode);
       final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
 
@@ -503,9 +561,12 @@ class _HomeVehicleState extends State<HomeVehicle> {
         details.clear();
         ImageLinkList.clear();
         showImageList.clear();
-        _detailsInProgress = false;
+          shareInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
 
-        setState(() {});
+    
       } else {
         print("No images to share.");
       }
@@ -519,6 +580,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
   TextEditingController searchController = TextEditingController();
 
   Future<void> search(String value) async {
+    prefss = await SharedPreferences.getInstance();
     searchProducts.clear();
     products.clear();
     if (searchController.text.isEmpty) {
@@ -529,13 +591,13 @@ class _HomeVehicleState extends State<HomeVehicle> {
       setState(() {});
     }
     Response response = await get(
-      Uri.parse(
-          'https://pilotbazar.com/api/merchants/vehicles/products/search?search=$value'),
-      headers: {
-        'Accept': 'application/vnd.api+json',
-        'Content-Type': 'application/vnd.api+json'
-      },
-    );
+        Uri.parse(
+            'https://pilotbazar.com/api/merchants/vehicles/products/search?search=$value'),
+        headers: {
+          'Accept': 'application/vnd.api+json',
+          'Content-Type': 'application/vnd.api+json',
+          'Authorization': 'Bearer ${prefss.getString('token')}'
+        });
     Map<String, dynamic> decodedResponse = jsonDecode(response.body);
     int i = 0;
 
@@ -587,12 +649,17 @@ class _HomeVehicleState extends State<HomeVehicle> {
   bool _availabilityInProgress = false;
   List availableResponseList = [];
   Future getAvailability() async {
+     prefss = await SharedPreferences.getInstance();
     _availabilityInProgress = true;
     if (mounted) {
       setState(() {});
     }
     Response availableResponse = await get(Uri.parse(
-        'https://pilotbazar.com/api/merchants/vehicles/products/availables'));
+        'https://pilotbazar.com/api/merchants/vehicles/products/availables'),   headers: {
+          'Accept': 'application/vnd.api+json',
+          'Content-Type': 'application/vnd.api+json',
+          'Authorization': 'Bearer ${prefss.getString('token')}'
+        });
     Map<String, dynamic> decodedAvilableResponse =
         jsonDecode(availableResponse.body);
     final result = decodedAvilableResponse['payload'] as List;
@@ -638,47 +705,15 @@ class _HomeVehicleState extends State<HomeVehicle> {
         leading: Image.asset(
           'assets/images/pilot_logo2.png',
         ),
-        // title: TextField(
-        //   style: TextStyle(color: Colors.white, fontSize: 15),
-        //   controller: searchController,
-        //   onSubmitted: (value) async {
-        //     print("onSubmitted: $value");
-        //     await search(value);
-        //   },
-        //   decoration: InputDecoration(
-        //     contentPadding: EdgeInsets.symmetric(horizontal: 25),
-        //     hintText: "Search",
-        //     hintStyle: TextStyle(color: Colors.white),
-        //     border: OutlineInputBorder(
-        //       borderSide: BorderSide(color: Colors.white, width: 2),
-        //       borderRadius: BorderRadius.circular(40),
-        //     ),
-        //     prefixIcon: Icon(
-        //       Icons.search,
-        //       color: Colors.white,
-        //     ),
-        //     // suffixIcon: IconButton(
-        //     //   onPressed: () async {
-        //     //     print("Hello");
-        //     //     await search(searchController.text.toString());
-        //     //   },
-        //     //   icon: Icon(Icons.send, color: Colors.white),
-        //     // ),
-        //     focusedBorder: OutlineInputBorder(
-        //       borderRadius: BorderRadius.circular(40),
-        //       borderSide: BorderSide(color: Colors.white),
-        //     ),
-        //   ),
-        // ),
+        
         title: TextField(
-             controller: searchController,
+          controller: searchController,
           onSubmitted: (value) async {
             print("onSubmitted: $value");
             await search(value);
           },
           keyboardType: TextInputType.text,
           decoration: InputDecoration(
-         
             hintText: "Search",
             hintStyle: TextStyle(color: Colors.white),
             border: OutlineInputBorder(
@@ -688,7 +723,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
                 borderRadius: BorderRadius.circular(
                     40) // Set default border color to white
                 ),
-                prefixIcon: Icon(
+            prefixIcon: Icon(
               Icons.search,
               color: Colors.white,
             ),
@@ -697,7 +732,6 @@ class _HomeVehicleState extends State<HomeVehicle> {
                 borderRadius: BorderRadius.circular(
                     40) // Set focused border color to white
                 ),
-
             disabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.white),
             ),
@@ -710,8 +744,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
               .textTheme
               .bodyMedium!
               .copyWith(color: Colors.white, fontSize: 15),
-                        cursorColor: Colors.white, 
-
+          cursorColor: Colors.white,
         ),
       ),
       endDrawer: EndDrawer(mounted: mounted),
@@ -766,9 +799,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
                     Visibility(
                       visible: _getNewProductinProgress,
                       child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: loading()
-                      ),
+                          alignment: Alignment.bottomCenter, child: loading()),
                     )
                   ],
                 ),
@@ -779,12 +810,11 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
   Center loading() {
     return Center(
-            child: SpinKitFadingCircle(
-               color:  Colors.white,
-               size: 50.0,
-               
-             ),
-          );
+      child: SpinKitFadingCircle(
+        color: Colors.white,
+        size: 50.0,
+      ),
+    );
   }
 
   productList(int x) {
@@ -799,10 +829,12 @@ class _HomeVehicleState extends State<HomeVehicle> {
               padding: const EdgeInsets.all(8.0),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: InkWell(
+                child: GestureDetector(
                   onTap: () async {
-                    //  await sendWhatsImage(products[x].id);
                     print(x);
+                    print("This is my on tap functioin for details");
+                    print("Image name");
+                    print(products[x].imageName);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -913,7 +945,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
                       backgroundColor: Color.fromARGB(221, 65, 64, 64),
                       radius: 25,
                       child: Expanded(
-                        child: PopupMenuButton(
+                        child:shareInProgress?CircularProgressIndicator(): PopupMenuButton(
                           child: Icon(
                             Icons.share,
                             color: Colors.white,
@@ -921,7 +953,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
                           ),
                           onSelected: (value) async {
                             if (value == 'image') {
-                              sendWhatsImage(products[x + j].id);
+                              sendAllImages(products[x + j].id);
                             } else if (value == 'details') {
                               await getLink(products[x + j].id.toString());
                               shareDetailsWithOneImage(
@@ -1197,6 +1229,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
   // Update Booked
   void updateBooked(int index) async {
+    prefss = await SharedPreferences.getInstance();
     final body = {
       "available_id": 20,
     };
@@ -1205,8 +1238,9 @@ class _HomeVehicleState extends State<HomeVehicle> {
         "https://pilotbazar.com/api/merchants/vehicles/products/${products[index].id}/update/booked";
     final uri = Uri.parse(url);
     final response = await http.put(uri, body: jsonEncode(body), headers: {
+      'Accept': 'application/vnd.api+json',
       'Content-Type': 'application/vnd.api+json',
-      'Accept': 'application/vnd.api+json'
+      'Authorization': 'Bearer ${prefss.getString('token')}'
     });
     print(response.statusCode);
     print(products[index].id);
@@ -1218,6 +1252,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
   // Update Sold
   updateSold(int index) async {
+    prefss = await SharedPreferences.getInstance();
     final body = {
       "available_id": 22,
     };
@@ -1225,8 +1260,9 @@ class _HomeVehicleState extends State<HomeVehicle> {
         "https://pilotbazar.com/api/merchants/vehicles/products/${products[index].id}/update/sold";
     final uri = Uri.parse(url);
     final response = await http.put(uri, body: jsonEncode(body), headers: {
+      'Accept': 'application/vnd.api+json',
       'Content-Type': 'application/vnd.api+json',
-      'Accept': 'application/vnd.api+json'
+      'Authorization': 'Bearer ${prefss.getString('token')}'
     });
     print(response.statusCode);
     print(products[index].id);
@@ -1237,16 +1273,22 @@ class _HomeVehicleState extends State<HomeVehicle> {
   }
 
   void updateAvailable(int availableID, int index) async {
+    prefss = await SharedPreferences.getInstance();
     final body = {
       "available_id": availableID,
     };
     final url =
         "https://pilotbazar.com/api/merchants/vehicles/products/${products[index].id}/available";
     final uri = Uri.parse(url);
-    final response = await http.put(uri, body: jsonEncode(body), headers: {
-      'Content-Type': 'application/vnd.api+json',
-      'Accept': 'application/vnd.api+json'
-    });
+    final response = await http.put(
+      uri,
+      body: jsonEncode(body),
+      headers: {
+        'Accept': 'application/vnd.api+json',
+        'Content-Type': 'application/vnd.api+json',
+        'Authorization': 'Bearer ${prefss.getString('token')}'
+      },
+    );
     print(response.statusCode);
     print(products[index].id);
     print(response.statusCode);

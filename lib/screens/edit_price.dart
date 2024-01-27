@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'package:pilot_refresh/screens/double_vehicle_screen.dart';
 import 'package:pilot_refresh/screens/home_vehicle.dart';
 import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PriceEditScreen extends StatefulWidget {
   final String? name;
@@ -36,6 +37,7 @@ class _PriceEditScreenState extends State<PriceEditScreen> {
   TextEditingController _purchase_PriceEditingcontroller =
       TextEditingController();
   TextEditingController _fixed_PriceEditingController = TextEditingController();
+  late SharedPreferences preffs;
 
   @override
   void initState() {
@@ -52,6 +54,7 @@ class _PriceEditScreenState extends State<PriceEditScreen> {
   bool submitDataInProgress = false;
 
   void updateData() async {
+    preffs = await SharedPreferences.getInstance();
     updateDataInProgress = true;
     if (mounted) {
       setState(() {});
@@ -67,10 +70,11 @@ class _PriceEditScreenState extends State<PriceEditScreen> {
     final url =
         "https://pilotbazar.com/api/merchants/vehicles/products/$id/update";
     final uri = Uri.parse(url);
-    final response = await http.put(uri, body: jsonEncode(body), headers: {
-      'Content-Type': 'application/vnd.api+json',
-      'Accept': 'application/vnd.api+json'
-    });
+    final response = await http.put(uri, body: jsonEncode(body),    headers: {
+        'Accept': 'application/vnd.api+json',
+        'Content-Type': 'application/vnd.api+json',
+        'Authorization': 'Bearer ${preffs.getString('token')}'
+      },);
     print(response.statusCode);
     updateDataInProgress = false;
     if (mounted) {

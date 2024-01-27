@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pilot_refresh/screens/auth/auth_utility.dart';
 import 'package:pilot_refresh/screens/auth/new_login_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LogOutAlartDialog{
+  SharedPreferences? share;
      showAlertDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -37,7 +39,12 @@ class LogOutAlartDialog{
                   SizedBox(width: 40),
                   TextButton(
                     onPressed: () async {
+                      share = await SharedPreferences.getInstance();
+                       print("Log out er age clear info er pore");
+                      print(share?.getString('token').toString());
                       await AuthUtility.clearUserInfo();
+                      print("Log out er pore clear info er pore");
+                      print(share?.getString('token').toString());
                       Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(

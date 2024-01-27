@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:pilot_refresh/admin/token_provider.dart';
 import 'package:pilot_refresh/item_class.dart';
 import 'package:pilot_refresh/product.dart';
 import 'package:pilot_refresh/screens/auth/auth_utility.dart';
@@ -10,6 +11,7 @@ import 'package:pilot_refresh/screens/auth/searchBar.dart';
 import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
 import 'package:pilot_refresh/widget/end_drawer.dart';
 import 'package:pilot_refresh/widget/search_bar.dart';
+import 'package:provider/provider.dart';
 
 class DoublVehicle extends StatefulWidget {
   DoublVehicle({super.key});
@@ -23,11 +25,14 @@ class _DoublVehicleState extends State<DoublVehicle> {
   static String imagePath = "https://pilotbazar.com/storage/vehicles/";
   static late int page;
   static late int i;
+  String? token;
 
   // yVjInK9erYHC0iHW9ehY8c6J4y79fbNzCEIWtZvQ.jpg
   //https://pilotbazar.com/storage/vehicles/
   @override
   void initState() {
+    String? token = Provider.of<TokenProvider>(context).token;
+    print("token is$token");
     //  print("Bangla name is");
     // print(products[0].vehiclaNameBangla);
     page = 1;

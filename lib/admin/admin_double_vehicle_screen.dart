@@ -6,12 +6,8 @@ import 'package:http/http.dart';
 import 'package:pilot_refresh/admin/asking_fixed_stockList.dart';
 import 'package:pilot_refresh/item_class.dart';
 import 'package:pilot_refresh/product.dart';
-import 'package:pilot_refresh/screens/auth/auth_utility.dart';
-import 'package:pilot_refresh/screens/auth/new_login_screen.dart';
-import 'package:pilot_refresh/screens/auth/searchBar.dart';
-import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
 import 'package:pilot_refresh/widget/end_drawer.dart';
-import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminDoublVehicle extends StatefulWidget {
   final String? token;
@@ -32,13 +28,15 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
   bool fixedPriceChange = false;
   bool askingPriceChange = false;
   bool askingPriceInProgress = false;
+  late SharedPreferences prefss;
+  late String toki;
 
   // yVjInK9erYHC0iHW9ehY8c6J4y79fbNzCEIWtZvQ.jpg
   //https://pilotbazar.com/storage/vehicles/
   @override
   void initState() {
     print("I am on Double vehicle screen");
-    print(widget.token);
+    initSharedPref();
     page = 1;
     i = 0;
     getProduct(page);
@@ -58,11 +56,14 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
     });
 
     setState(() {});
+  }
 
-    // getProductForSearch();
-    //getDetails(products[0].id);
-
-    //getDetails(i);
+  Future initSharedPref() async {
+    prefss = await SharedPreferences.getInstance();
+    toki = prefss.getString('token').toString();
+    setState(() {});
+    print('token is$toki');
+    print(toki);
   }
 
   List products = [];
@@ -92,27 +93,47 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
     }
 
     Response response = await get(
-        Uri.parse(
-            "https://pilotbazar.com/api/merchants/vehicles/products?page=$page"),
-        headers: {'Retry-After': '3600', 'Content-Type': 'text/html'});
+      Uri.parse(
+          "https://pilotbazar.com/api/merchants/vehicles/products?page=$page"),
+      headers: {
+        'Accept': 'application/vnd.api+json',
+        'Content-Type': 'application/vnd.api+json',
+        'Authorization': 'Bearer ${prefss.getString('token')}'
+      },
+    );
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
     print(response.statusCode);
     final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
-    List<dynamic> vehicleFeatures =
-        decodedResponse['data'][0]?['vehicle_feature'] ?? '';
-    List<FeatureDetailPair> featureDetailPairs =
-        extractFeatureDetails(vehicleFeatures);
-
-    for (var pair in featureDetailPairs) {
-      // print('Feature: ${pair.featureTitle}');
-      // print('Details: ${pair.detailTitles.join(', ')}');
-      featureDetails.add({pair.detailTitles.join(', ')});
-      featureUnicTitle.add({pair.featureTitle});
+    if (decodedResponse['data'].isEmpty) {
+      _getNewProductinProgress = false;
+      if (mounted) {
+        setState(() {});
+      }
     }
+
+    // List<dynamic> vehicleFeatures =
+    //     decodedResponse['data'][0]?['vehicle_feature'] ?? '';
+    // List<FeatureDetailPair> featureDetailPairs =
+    //     extractFeatureDetails(vehicleFeatures);
+
+    // for (var pair in featureDetailPairs) {
+    //   // print('Feature: ${pair.featureTitle}');
+    //   // print('Details: ${pair.detailTitles.join(', ')}');
+    //   featureDetails.add({pair.detailTitles.join(', ')});
+    //   featureUnicTitle.add({pair.featureTitle});
+    // }
+    // int total_index = decodedResponse['data'].length;
 
     if (response.statusCode == 200) {
       decodedResponse['data'].forEach((e) {
+        if (decodedResponse['data'].isEmpty) {
+          _getNewProductinProgress = false;
+          if (mounted) {
+            setState(() {});
+          }
+        }
+
         //  List<Product> products = [];
         products.add(Product(
           vehicleName: e['translate'][0]['title'],
@@ -121,13 +142,13 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
           slug: e['slug'] ?? '',
           manufacture: e['manufacture'] ?? '',
           condition: e['condition']['translate'][0]?['title'] ?? '',
-          mileage: e['mileage']?['translate'][0]?['title'] ?? '--',
+          mileage: e['mileage']?['translate'][0]?['title'] ?? e['mileages'],
           price: e['price'] ?? '',
           purchase_price: e['purchase_price'] ?? '',
           fixed_price: e['fixed_price'] ?? '',
           imageName: e['image']?['name'] ?? '',
           registration: e['registration'] ?? 'None',
-          engine: e['engine']?['translate'][0]?['title'] ?? '',
+          engine: e['engine']?['translate'][0]?['title'] ?? e['engines'],
           brandName: e['brand']?['translate'][0]?['title'] ?? '',
           transmission: e['transmission']?['translate'][0]?['title'] ?? '',
           fuel: e['fuel']?['translate'][0]?['title'] ?? '',
@@ -153,13 +174,19 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
     if (mounted) {
       setState(() {});
     }
+    if (decodedResponse['data'].isEmpty) {
+      _getNewProductinProgress = false;
+      setState(() {});
+    }
   }
 
   // Alart dialog function/methode
 
   bool isLoading = false;
-  @override
-  void getProduct(int page) async {
+
+  Future getProduct(int page) async {
+    prefss = await SharedPreferences.getInstance();
+    print("Here double vehicle token from share preff");
     products.clear();
     _getProductinProgress = true;
     if (mounted) {
@@ -167,91 +194,96 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
     }
     Response response = await get(
       Uri.parse(
-          "https://pilotbazar.com/api/merchants/vehicles/products?page=1"),
+          "https://pilotbazar.com/api/merchants/vehicles/products?page=$page"),
       headers: {
         'Accept': 'application/vnd.api+json',
         'Content-Type': 'application/vnd.api+json',
-        'Authorization': 'Bearer ${widget.token}'
+        'Authorization': 'Bearer $toki'
       },
     );
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
     print(response.statusCode);
     print(response.body);
+    print(widget.token);
     final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
-    List<dynamic> vehicleFeatures =
-        decodedResponse['payload']['data'][0]['vehicle_feature'];
-    List<FeatureDetailPair> featureDetailPairs =
-        extractFeatureDetails(vehicleFeatures);
+    final getproductsList = decodedResponse['data'];
+    setState(() {});
+    print('Length is');
+    print(getproductsList.length);
+   
 
-    for (var pair in featureDetailPairs) {
-      // print('Feature: ${pair.featureTitle}');
-      // print('Details: ${pair.detailTitles.join(', ')}');
-      featureDetails.add({pair.detailTitles.join(', ')});
-      featureUnicTitle.add({pair.featureTitle});
-    }
-    if (mounted) {
-      setState(() {});
-    }
+    // List<dynamic> vehicleFeatures =
+    //     decodedResponse['data'][0]['vehicle_feature'];
+    // List<FeatureDetailPair> featureDetailPairs =
+    //     extractFeatureDetails(vehicleFeatures);
 
-    // for (i; i < decodedResponse['payload']['data'].length; i++) {
-    //   print('length of this products');
-    //   print(decodedResponse['payload']['data'].length);
-    //   products.add(
-    //     Product(
-    //       vehicleName: decodedResponse['payload']['data'][i]['translate'][0]['title'],
-    //       vehicleNameBangla: decodedResponse['data'][i]['translate'][1]
-    //           ['title'],
-    //       manufacture: decodedResponse['data'][i]['manufacture'],
-    //       slug: decodedResponse['data'][i]['slug'],
-    //       id: decodedResponse['data'][i]['id'],
-    //       condition: decodedResponse['data'][i]['condition']['translate'][0]
-    //           ['title'],
-    //       mileage: decodedResponse['data'][i]['mileage']?['translate'][0]
-    //               ?['title'] ??
-    //           '--',
-    //       //price here
-    //       price: decodedResponse['data'][i]['price'] ?? '',
-    //       purchase_price: decodedResponse['data'][i]?['purchase_price'] ?? '',
-    //       fixed_price: decodedResponse['data'][i]?['fixed_price'] ?? '',
-    //       //price end
-    //       imageName: decodedResponse['data'][i]['image']['name'],
-    //       registration: decodedResponse['data'][i]['registration'] ?? 'None',
-    //       engine: decodedResponse['data'][i]['engine']['translate'][0]['title'],
-    //       brandName: decodedResponse['data'][i]['brand']['translate'][0]
-    //           ['title'],
-    //       transmission: decodedResponse['data'][i]['transmission']['translate']
-    //           [0]['title'],
-    //       fuel: decodedResponse['data'][i]['fuel']['translate'][0]['title'],
-    //       skeleton: decodedResponse['data'][i]['skeleton']['translate'][0]
-    //           ['title'],
-    //       available: decodedResponse['data'][i]?['available']?['translate'][0]
-    //               ?['title'] ??
-    //           '',
-    //       code: decodedResponse['data'][i]?['code'] ?? '',
-    //       //model: decodedResponse['data'],
-    //       carColor: decodedResponse['data'][i]['color']?['translate'][0]
-    //               ['title'] ??
-    //           'None',
-    //       edition: decodedResponse['data'][i]['edition']['translate'][0]
-    //               ['title'] ??
-    //           'None',
-    //       model: decodedResponse['data'][i]?['carmodel']?['translate'][0]
-    //               ?['title'] ??
-    //           '',
-    //       grade: decodedResponse['data'][i]?['grade']?['translate'][0]
-    //               ?['title'] ??
-    //           '',
-    //       engineNumber: decodedResponse['data'][i]['engine_number'] ?? '--',
-    //       chassisNumber: decodedResponse['data'][i]['chassis_number'] ?? '--',
-    //       video: decodedResponse['data'][i]?['video'] ?? 'No Video',
-    //       engine_id: decodedResponse['data'][i]?['engine_id'] ?? '12',
-    //       onlyMileage: decodedResponse['data'][i]['mileages'] ?? '--',
-    //       engines: decodedResponse['data'][i]?['engines'] ?? '-',
-    //     ),
-    //   );
+    // for (var pair in featureDetailPairs) {
+    //   featureDetails.add({pair.detailTitles.join(', ')});
+    //   featureUnicTitle.add({pair.featureTitle});
     // }
-    if (decodedResponse['data'] == null) {
+    // if (mounted) {
+    //   setState(() {});
+    // }
+
+    for (i; i < getproductsList.length; i++) {
+      print('length of this products');
+     // print(decodedResponse['data'].length);
+      products.add(
+        Product(
+          vehicleName: getproductsList[i]['translate'][0]['title'],
+          vehicleNameBangla: getproductsList[i]['translate'][1]
+              ['title'],
+          manufacture: getproductsList[i]['manufacture'],
+          slug: getproductsList[i]['slug'],
+          id: getproductsList[i]['id'],
+          condition: getproductsList[i]['condition']['translate'][0]
+              ['title'],
+          mileage: getproductsList[i]['mileage']?['translate'][0]
+                  ?['title'] ??
+              '--',
+          //price here
+          price: getproductsList[i]['price'] ?? '',
+          purchase_price: getproductsList[i]?['purchase_price'] ?? '',
+          fixed_price: getproductsList[i]?['fixed_price'] ?? '',
+          //price end
+          imageName: getproductsList[i]['image']['name'],
+          registration: getproductsList[i]['registration'] ?? 'None',
+          engine: getproductsList[i]?['engines'] ?? '--',
+          brandName: getproductsList[i]['brand']['translate'][0]
+              ['title'],
+          transmission: getproductsList[i]['transmission']['translate']
+              [0]['title'],
+          fuel: getproductsList[i]['fuel']['translate'][0]['title'],
+          skeleton: getproductsList[i]['skeleton']['translate'][0]
+              ['title'],
+          available: getproductsList[i]?['available']?['translate'][0]
+                  ?['title'] ??
+              '',
+          code: getproductsList[i]?['code'] ?? '',
+          //model: getproductsList,
+          carColor: getproductsList[i]['color']?['translate'][0]
+                  ['title'] ??
+              'None',
+          edition: getproductsList[i]['edition']['translate'][0]
+                  ['title'] ??
+              'None',
+          model: getproductsList[i]?['carmodel']?['translate'][0]
+                  ?['title'] ??
+              '',
+          grade: getproductsList[i]?['grade']?['translate'][0]
+                  ?['title'] ??
+              '',
+          engineNumber: getproductsList[i]['engine_number'] ?? '--',
+          chassisNumber: getproductsList[i]['chassis_number'] ?? '--',
+          video: getproductsList[i]?['video'] ?? 'No Video',
+          engine_id: getproductsList[i]?['engine_id'] ?? '12',
+          onlyMileage: getproductsList[i]['mileages'] ?? '--',
+          engines: getproductsList[i]?['engines'] ?? '-',
+        ),
+      );
+    }
+    if (getproductsList == null) {
       return;
     }
     _getProductinProgress = false;
@@ -259,7 +291,7 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
       setState(() {});
     }
 
-    if (decodedResponse['data'] == null) {
+    if (getproductsList == null) {
       return;
     }
   }
@@ -285,7 +317,8 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
           'https://pilotbazar.com/api/merchants/vehicles/products/search?search=$value'),
       headers: {
         'Accept': 'application/vnd.api+json',
-        'Content-Type': 'application/vnd.api+json'
+        'Content-Type': 'application/vnd.api+json',
+        'Authorization': 'Bearer ${prefss.getString('token')}'
       },
     );
     Map<String, dynamic> decodedResponse = jsonDecode(response.body);

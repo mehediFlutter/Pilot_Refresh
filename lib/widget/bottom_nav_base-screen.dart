@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pilot_refresh/admin/admin_double_vehicle_screen.dart';
+import 'package:pilot_refresh/admin/another_token_class.dart';
 import 'package:pilot_refresh/screens/home_vehicle_store_backup.dart';
 import 'package:pilot_refresh/screens/home_vehicle.dart';
 
@@ -24,7 +25,8 @@ class _BottomNavBaseScreenState extends State<BottomNavBaseScreen> {
   late String tokeno;
 
   @override
-  void initState() {
+  initState() {
+    
     super.initState();
     print("i am bottom nav base screen token is ${widget.token}");
    
@@ -46,7 +48,15 @@ class _BottomNavBaseScreenState extends State<BottomNavBaseScreen> {
       // You may want to set a default value or handle this case differently based on your requirements.
       _selectedScreenIndex = 0;
     }
+    getToken() ;
+   
   }
+
+ Future getToken() async{
+    String? token =await  GlobalVariables.authToken;
+    print('token Global $token');
+
+ }
 
   @override
   Widget build(BuildContext context) {

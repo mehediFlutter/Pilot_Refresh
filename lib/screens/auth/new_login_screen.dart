@@ -1,14 +1,14 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:pilot_refresh/screens/auth/auth_utility.dart';
 import 'package:pilot_refresh/screens/auth/login_model.dart';
 import 'package:pilot_refresh/screens/auth/new_registration_screen.dart';
-import 'package:pilot_refresh/screens/home_vehicle.dart';
 import 'package:pilot_refresh/service/network_caller.dart';
 import 'package:pilot_refresh/service/network_response.dart';
 import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NewLoginScreen extends StatefulWidget {
   const NewLoginScreen({super.key});
@@ -18,17 +18,38 @@ class NewLoginScreen extends StatefulWidget {
 }
 
 class _NewLoginScreenState extends State<NewLoginScreen> {
-  TextEditingController _mobileController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  TextEditingController mobileController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> _globalKey = GlobalKey();
   String phone = '01969944400';
   bool _loginInProgress = false;
   var token;
+  late SharedPreferences prefss;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initSharedPref();
+  }
 
+  late String toki;
+  initSharedPref() async {
+    prefss = await SharedPreferences.getInstance();
+    // toki = prefss.getString('token').toString();
+    // print('token is');
+    // print(toki);
+  }
+
+  bool myLoginInInProgress = false;
   Future myLogin() async {
+    myLoginInInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    prefss = await SharedPreferences.getInstance();
     Map<String, dynamic> body = {
-      "mobile": _mobileController.text,
-      "password": _passwordController.text
+      "mobile": mobileController.text,
+      "password": passwordController.text
     };
     Response response = await post(
         Uri.parse('https://pilotbazar.com/api/merchant/auth/login'),
@@ -38,83 +59,81 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
         },
         body: jsonEncode(body));
     if (response.statusCode == 200) {
+      Map decodedBody = jsonDecode(response.body.toString());
+      token = decodedBody['payload']?['token']!;
+      LoginModel model =
+          LoginModel.fromJson(decodedBody.cast<String, dynamic>());
+      await AuthUtility.saveUserInfo(model);
+      print(decodedBody['payload']?['token']);
+      print(token);
+      await prefss.setString('token', token);
+      setState(() {});
+      print(model.payload!.token);
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => BottomNavBaseScreen(
+                  token: decodedBody['payload']?['token'].toString())));
+
       print("Login Success");
     }
-    Map decodedBody = jsonDecode(response.body.toString());
-    print('Token is');
-   // print(decodedBody);
-   token = decodedBody['payload']?['token']??'';
-    print(decodedBody['payload']?['token']);
-    print(token);
 
-    
-   // token = decodedBody['payload']['token'];
-    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>BottomNavBaseScreen(token: token,)), (route) => false);
-  }
-  Future marcentProducts(String token) async {
-    // Map<String, dynamic> body = {
-    //   "mobile": _mobileController.text,
-    //   "password": _passwordController.text
-    // };
-    Response response = await get(
-        Uri.parse('https://pilotbazar.com/api/merchants/vehicles/products'),
-        headers: {
-          'Accept': 'application/vnd.api+json',
-          'Content-Type': 'application/vnd.api+json',
-          'token': token.toString()
-        },
-      );
-
-      print("Marcent Login");
-      print(response.statusCode);
-    if (response.statusCode == 200) {
-      print("Marcent Login Success");
-    }
-
-   // token = decodedBody['payload']['token'];
-    
-  }
-
-  Future<void> login() async {
-    _loginInProgress = true;
+    // token = decodedBody['payload']['token'];
+  await  Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+            builder: (context) => BottomNavBaseScreen(
+                  token: token,
+                )),
+        (route) => false);
+    myLoginInInProgress = false;
     if (mounted) {
       setState(() {});
     }
-
-    NetworkResponse response = await NetworkCaller().postRequest(
-        'https://pilotbazar.com/api/merchant/auth/login', <String, dynamic>{
-      "mobile": _mobileController.text,
-      "password": _passwordController.text
-    });
-    _loginInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
-    print("here 1 ?");
-    if (response.statusCode == 200) {
-      print("Login Success!!!!");
-      // Map decodedBody =  jsonDecode(response.body.toString());
-      // String token = decodedBody['token'];
-      // print("Token is");
-      // print(token);
-      // _mobileController.clear();
-      // _passwordController.clear();
-      LoginModel model = LoginModel.fromJson(response.body!);
-      await AuthUtility.saveUserInfo(model);
-      if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Login Success")));
-      }
-
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => BottomNavBaseScreen()));
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Login Faild!!")));
-      }
-    }
   }
+
+  // Future<void> login() async {
+  //   _loginInProgress = true;
+  //   if (mounted) {
+  //     setState(() {});
+  //   }
+
+  //   NetworkResponse response = await NetworkCaller().postRequest(
+  //       'https://pilotbazar.com/api/merchant/auth/login', <String, dynamic>{
+  //     "mobile": _mobileController.text,
+  //     "password": _passwordController.text
+  //   });
+  //   _loginInProgress = false;
+  //   if (mounted) {
+  //     setState(() {});
+  //   }
+  //   print("here 1 ?");
+  //   if (response.statusCode == 200) {
+  //     print("Login Success!!!!");
+  //     Map decodedBody = jsonDecode(response.body.toString());
+  //     // String token = decodedBody['token'];
+  //     // print("Token is");
+  //     // print(token);
+  //     // _mobileController.clear();
+  //     // _passwordController.clear();
+  //     token = decodedBody['payload']?['token'] ?? '';
+  //     // LoginModel model = LoginModel.fromJson(response.body!);
+  //     // await AuthUtility.saveUserInfo(model);
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context)
+  //           .showSnackBar(SnackBar(content: Text("Login Success")));
+  //     }
+
+  //     Navigator.push(context,
+  //         MaterialPageRoute(builder: (context) => BottomNavBaseScreen()));
+  //   } else {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context)
+  //           .showSnackBar(SnackBar(content: Text("Login Faild!!")));
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +174,7 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                     ),
                   ),
                   child: TextFormField(
-                    controller: _mobileController,
+                    controller: mobileController,
                     style: TextStyle(color: Colors.black, fontSize: 15),
                     decoration: InputDecoration(
                       labelText: "Mobile No",
@@ -187,7 +206,7 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                   ),
                   child: TextFormField(
                     cursorColor: Colors.black,
-                    controller: _passwordController,
+                    controller: passwordController,
                     style: TextStyle(color: Colors.black, fontSize: 15),
                     decoration: InputDecoration(
                       labelText: "Password",
@@ -217,7 +236,7 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                 SizedBox(height: 15),
                 SizedBox(
                   width: double.infinity,
-                  child: _loginInProgress
+                  child: myLoginInInProgress
                       ? Center(
                           child: CircularProgressIndicator(),
                         )
@@ -234,7 +253,6 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                               return null;
                             }
                             myLogin();
-                            marcentProducts(token);
                           },
                           child: Text(
                             "Login",

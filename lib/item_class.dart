@@ -1,21 +1,20 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
-import 'package:pilot_refresh/product.dart';
 import 'package:pilot_refresh/screens/edit_price.dart';
 import 'package:pilot_refresh/screens/advance_edit_screen.dart';
-import 'package:pilot_refresh/screens/home_vehicle.dart';
 import 'package:pilot_refresh/advance/text_fild_select_box.dart';
 import 'package:pilot_refresh/screens/vehicle-details.dart';
 import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
-import 'package:pilot_refresh/widget/alart_dialog_class.dart';
 import 'package:pilot_refresh/widget/image_class.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Item extends StatefulWidget {
   final bool? myAskingPrice;
@@ -39,7 +38,7 @@ class Item extends StatefulWidget {
   final String? carModel;
   final String? fuel;
   final String? skeleton;
-  
+
   final String? termAndCondition;
   final String? detailsLink;
   final String? carColor;
@@ -53,16 +52,13 @@ class Item extends StatefulWidget {
   final String? engines;
   final String? vehiclaNameModel;
   Item({
-  
     this.id,
     this.imageName,
     this.code,
     this.price,
     this.purchase_price,
     this.fixed_price,
-
     this.available,
-
     this.vehiclaName,
     this.brandName,
     this.registration,
@@ -87,7 +83,7 @@ class Item extends StatefulWidget {
     this.engine_id,
     this.onlyMileage,
     this.engines,
-    this.vehiclaNameModel, 
+    this.vehiclaNameModel,
   });
 
   @override
@@ -103,20 +99,25 @@ class _ItemState extends State<Item> {
   // bool myAskingPrice=false;
   bool? priceBool;
 
-
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-print("manufacture");
-print(widget.manufacture);
-
+    print("Image name");
+    print(widget.imageName);
   }
 
   Future getLink(String id) async {
-    Response response1 = await get(Uri.parse(
-        "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
+    print("This is get Link methode");
+    prefss = await SharedPreferences.getInstance();
+    Response response1 = await get(
+        Uri.parse(
+            "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"),
+        headers: {
+          'Accept': 'application/vnd.api+json',
+          'Content-Type': 'application/vnd.api+json',
+          'Authorization': 'Bearer ${prefss.getString('token')}'
+        });
     final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
     detailsLink = decodedResponse1['message'];
     print(detailsLink);
@@ -131,6 +132,7 @@ print(widget.manufacture);
   late List ImageLinkList = [];
 
   bool _getDataInProgress = false;
+  bool imageInProgress = false;
 
   Future getDetails(int id) async {
     _getDataInProgress = true;
@@ -172,12 +174,23 @@ print(widget.manufacture);
 
   static List showImageList = [];
 
-
   Future<void> sendWhatsImage(int id) async {
+    imageInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    prefss = await SharedPreferences.getInstance();
+
     ImageLinkList.clear();
     try {
-      Response response1 = await get(Uri.parse(
-          "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
+      Response response1 = await get(
+          Uri.parse(
+              "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"),
+          headers: {
+            'Accept': 'application/vnd.api+json',
+            'Content-Type': 'application/vnd.api+json',
+            'Authorization': 'Bearer ${prefss.getString('token')}'
+          });
       print(response1.statusCode);
       final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
 
@@ -229,11 +242,14 @@ print(widget.manufacture);
         );
 
         // Clear lists and reset state
-     
-     
+
         ImageLinkList.clear();
         showImageList.clear();
         _detailsInProgress = false;
+        imageInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
 
         setState(() {});
       } else {
@@ -247,11 +263,23 @@ print(widget.manufacture);
   TextStyle popubItem = TextStyle(color: Colors.black87, fontFamily: 'Roboto');
 
 // Share with Email
+
   Future<void> shareViaEmail(String id) async {
+    imageInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    prefss = await SharedPreferences.getInstance();
     showImageList.clear();
     try {
-      Response response1 = await get(Uri.parse(
-          "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
+      Response response1 = await get(
+          Uri.parse(
+              "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"),
+          headers: {
+            'Accept': 'application/vnd.api+json',
+            'Content-Type': 'application/vnd.api+json',
+            'Authorization': 'Bearer ${prefss.getString('token')}'
+          });
       print(response1.statusCode);
       final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
 
@@ -316,18 +344,29 @@ print(widget.manufacture);
     } catch (error) {
       print("Error: $error");
     }
+    imageInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
-
-
   Future<void> shareDetailsWithOneImage() async {
+    imageInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    prefss = await SharedPreferences.getInstance();
     if (mounted) {
       setState(() {});
     }
     //setState() {});
     final uri = Uri.parse(
         "https://pilotbazar.com/storage/vehicles/${widget.imageName}");
-    final response = await http.get(uri);
+    final response = await http.get(uri, headers: {
+      'Accept': 'application/vnd.api+json',
+      'Content-Type': 'application/vnd.api+json',
+      'Authorization': 'Bearer ${prefss.getString('token')}'
+    });
     final imageBytes = response.bodyBytes;
     final tempDirectory = await getTemporaryDirectory();
     final tempFile =
@@ -355,11 +394,14 @@ print(widget.manufacture);
     unicTitle.clear();
     details.clear();
     _detailsInProgress = false;
-
+ imageInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
     setState(() {});
   }
 
-
+  late SharedPreferences preffs;
 
   @override
   Widget build(BuildContext context) {
@@ -382,6 +424,9 @@ print(widget.manufacture);
                           right: Radius.circular(30), left: Radius.circular(5)),
                       child: InkWell(
                         onTap: () {
+                          print('Id');
+
+                          print(widget.id);
                           Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -393,16 +438,21 @@ print(widget.manufacture);
                                         price: widget.price,
                                         brandName: widget.brandName,
                                         engine: widget.engine,
+                                        engines: widget.engines,
                                         detailsCondition: widget.condition,
                                         detailsMillege: widget.nMillage,
                                         detailsTransmission:
                                             widget.transmission,
+                                        color: widget.code,
+                                        term_and_edition: widget.edition,
                                         model: widget.model,
                                         detailsFuel: widget.fuel,
                                         skeleton: widget.skeleton,
                                         registration: widget.registration,
-                                        detailsGrade: "",
+                                        detailsGrade: widget.grade,
                                         code: widget.code,
+                                        detailsVehicleManufacture:
+                                            widget.manufacture,
                                       )));
                         },
                         child: Padding(
@@ -457,7 +507,7 @@ print(widget.manufacture);
                                       .textTheme
                                       .bodyLarge!
                                       .copyWith(fontSize: 8)),
-                           
+
                               Row(
                                 children: [
                                   // Text(
@@ -551,124 +601,144 @@ print(widget.manufacture);
                                         backgroundColor:
                                             Color.fromARGB(221, 65, 64, 64),
                                         radius: 15,
-                                        child: PopupMenuButton(
-                                          child: Icon(
-                                            Icons.share,
-                                            color: Colors.white,
-                                            size: 17,
-                                          ),
-                                          onSelected: (value) async {
+                                        child: imageInProgress ?
+                                          CircularProgressIndicator()
+                                            : PopupMenuButton(
+                                                child: Icon(
+                                                  Icons.share,
+                                                  color: Colors.white,
+                                                  size: 17,
+                                                ),
+                                                onSelected: (value) async {
+                                                  if (value == 'details') {
+                                                    await getLink(
+                                                        widget.id.toString());
+                                                    shareDetailsWithOneImage();
+                                                  } else if (value == 'image') {
+                                                    sendWhatsImage(
+                                                        widget.id ?? 0);
+                                                  }
 
-                                            if(value == 'details'){
-                                                await getLink(widget.id.toString());
-                                                shareDetailsWithOneImage();
-                                            }
-                                           else if (value == 'image') {
-                                              sendWhatsImage(widget.id??0);
-                                            } else if (value == 'details') {
-                                              shareDetailsWithOneImage();
-                                            } else if (value == 'email') {
-                                              getLink(widget.id.toString());
-                                              shareViaEmail(widget.id.toString());
-                                            } else if (value ==
-                                                'Availability') {
-                                              await getAvailability();
-                                              showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      backgroundColor:
-                                                          const Color.fromARGB(
-                                                              255, 61, 59, 59),
-                                                      title: Center(
-                                                          child: Text(
-                                                        "Availability",
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .titleSmall,
-                                                      )),
-                                                      content: Container(
-                                                        height: double.infinity,
-                                                        width: 350,
-                                                        child: ListView.builder(
-                                                          primary: false,
-                                                          shrinkWrap: true,
-                                                          itemCount:
-                                                              availableResponseList
-                                                                  .length,
-                                                          itemBuilder:
-                                                              (context, index) {
-                                                            final item =
-                                                                availableResponseList[
-                                                                        index]
-                                                                    as Map;
-                                                            return Expanded(
-                                                              child: Expanded(
-                                                                child: Expanded(
-                                                                    child: ElevatedButton(
-                                                                        onPressed: () async {
-                                                                          print(
-                                                                              "this is car id");
-                                                                          print(
-                                                                              widget.id);
-                                                                          updateAvailable(
-                                                                              item['id'],
-                                                                              index);
-                                                                          Navigator.pop(
-                                                                              context);
-                                                                        },
-                                                                        style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(255, 97, 93, 90)),
-                                                                        child: Text(item['translate'][0]['title'].toString(), style: Theme.of(context).textTheme.bodySmall))),
+                                                  // else if (value == 'details') {
+                                                  //   shareDetailsWithOneImage();
+                                                  // }
+
+                                                  else if (value == 'email') {
+                                                    imageInProgress
+                                                        ? Center(
+                                                            child:
+                                                                CircularProgressIndicator())
+                                                        : {
+                                                            getLink(widget.id
+                                                                .toString()),
+                                                            shareViaEmail(widget
+                                                                .id
+                                                                .toString())
+                                                          };
+                                                  } else if (value ==
+                                                      'Availability') {
+                                                    await getAvailability();
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return AlertDialog(
+                                                            backgroundColor:
+                                                                const Color
+                                                                    .fromARGB(
+                                                                    255,
+                                                                    61,
+                                                                    59,
+                                                                    59),
+                                                            title: Center(
+                                                                child: Text(
+                                                              "Availability",
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .titleSmall,
+                                                            )),
+                                                            content: Container(
+                                                              height: double
+                                                                  .infinity,
+                                                              width: 350,
+                                                              child: ListView
+                                                                  .builder(
+                                                                primary: false,
+                                                                shrinkWrap:
+                                                                    true,
+                                                                itemCount:
+                                                                    availableResponseList
+                                                                        .length,
+                                                                itemBuilder:
+                                                                    (context,
+                                                                        index) {
+                                                                  final item =
+                                                                      availableResponseList[
+                                                                              index]
+                                                                          as Map;
+                                                                  return Expanded(
+                                                                    child:
+                                                                        Expanded(
+                                                                      child: Expanded(
+                                                                          child: ElevatedButton(
+                                                                              onPressed: () async {
+                                                                                print("this is car id");
+                                                                                print(widget.id);
+                                                                                updateAvailable(item['id'], index);
+                                                                                Navigator.pop(context);
+                                                                              },
+                                                                              style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(255, 97, 93, 90)),
+                                                                              child: Text(item['translate'][0]['title'].toString(), style: Theme.of(context).textTheme.bodySmall))),
+                                                                    ),
+                                                                  );
+                                                                },
                                                               ),
-                                                            );
-                                                          },
-                                                        ),
-                                                      ),
-                                                      actions: <Widget>[
-                                                        IconButton(
-                                                          onPressed: () {
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          icon:
-                                                              Icon(Icons.close),
-                                                          color: Colors
-                                                              .white, // Set icon color
-                                                        ),
-                                                      ],
-                                                      contentPadding:
-                                                          EdgeInsets.only(
-                                                              top: 8,
-                                                              right: 8,
-                                                              bottom: 0,
-                                                              left: 8),
-                                                    );
-                                                  });
-                                            }
-                                          },
-                                          itemBuilder: (context) {
-                                            return [
-                                               PopupMenuItem(
-                                                child: Text("Send One Image"),
-                                                value: 'details',
-                                                textStyle: popubItem,
+                                                            ),
+                                                            actions: <Widget>[
+                                                              IconButton(
+                                                                onPressed: () {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                },
+                                                                icon: Icon(Icons
+                                                                    .close),
+                                                                color: Colors
+                                                                    .white, // Set icon color
+                                                              ),
+                                                            ],
+                                                            contentPadding:
+                                                                EdgeInsets.only(
+                                                                    top: 8,
+                                                                    right: 8,
+                                                                    bottom: 0,
+                                                                    left: 8),
+                                                          );
+                                                        });
+                                                  }
+                                                },
+                                                itemBuilder: (context) {
+                                                  return [
+                                                    PopupMenuItem(
+                                                      child: Text(
+                                                          "Send One Image"),
+                                                      value: 'details',
+                                                      textStyle: popubItem,
+                                                    ),
+                                                    PopupMenuItem(
+                                                      child: Text(
+                                                          "Send All Image"),
+                                                      value: 'image',
+                                                      textStyle: popubItem,
+                                                    ),
+                                                    PopupMenuItem(
+                                                      child: Text("Send Email"),
+                                                      value: 'email',
+                                                      textStyle: popubItem,
+                                                    ),
+                                                  ];
+                                                },
                                               ),
-                                          
-                                              PopupMenuItem(
-                                                child: Text("Send All Image"),
-                                                value: 'image',
-                                                textStyle: popubItem,
-                                              ),
-                                              PopupMenuItem(
-                                                child: Text("Send Email"),
-                                                value: 'email',
-                                                textStyle: popubItem,
-                                              ),
-                                           
-                                            ];
-                                          },
-                                        ),
                                       ),
                                       // popup menu
                                       Spacer(),
@@ -735,10 +805,10 @@ print(widget.manufacture);
                                                                         index]
                                                                     as Map;
                                                             return Expanded(
-                                                              child: Expanded(
-                                                                child: Expanded(
-                                                                    child: ElevatedButton(
-                                                                        onPressed: () async {
+                                                                child:
+                                                                    ElevatedButton(
+                                                                        onPressed:
+                                                                            () async {
                                                                           print(
                                                                               "this is car id");
                                                                           print(
@@ -749,10 +819,17 @@ print(widget.manufacture);
                                                                           Navigator.pop(
                                                                               context);
                                                                         },
-                                                                        style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(255, 97, 93, 90)),
-                                                                        child: Text(item['translate'][0]['title'].toString(), style: Theme.of(context).textTheme.bodySmall))),
-                                                              ),
-                                                            );
+                                                                        style: ElevatedButton.styleFrom(
+                                                                            backgroundColor: Color.fromARGB(
+                                                                                255,
+                                                                                97,
+                                                                                93,
+                                                                                90)),
+                                                                        child: Text(
+                                                                            item['translate'][0]['title']
+                                                                                .toString(),
+                                                                            style:
+                                                                                Theme.of(context).textTheme.bodySmall)));
                                                           },
                                                         ),
                                                       ),
@@ -808,7 +885,6 @@ print(widget.manufacture);
                                                                 widget.edition,
                                                             model: widget.model,
                                                             grade: widget.grade,
-
                                                             mileage: widget
                                                                 .nMillage
                                                                 .toString(),
@@ -973,6 +1049,7 @@ print(widget.manufacture);
 
   // Update Sold
   void updateSold(int index) async {
+    prefss = await SharedPreferences.getInstance();
     final body = {
       "available_id": 22,
     };
@@ -980,8 +1057,9 @@ print(widget.manufacture);
         "https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/update/sold";
     final uri = Uri.parse(url);
     final response = await http.put(uri, body: jsonEncode(body), headers: {
+      'Accept': 'application/vnd.api+json',
       'Content-Type': 'application/vnd.api+json',
-      'Accept': 'application/vnd.api+json'
+      'Authorization': 'Bearer ${prefss.getString('token')}'
     });
     print(response.statusCode);
     print(widget.id);
@@ -1025,6 +1103,7 @@ print(widget.manufacture);
   }
 
   void updateAvailable(int availableID, int index) async {
+    preffs = await SharedPreferences.getInstance();
     final body = {
       "available_id": availableID,
     };
@@ -1032,8 +1111,9 @@ print(widget.manufacture);
         "https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/available";
     final uri = Uri.parse(url);
     final response = await http.put(uri, body: jsonEncode(body), headers: {
+      'Accept': 'application/vnd.api+json',
       'Content-Type': 'application/vnd.api+json',
-      'Accept': 'application/vnd.api+json'
+      'Authorization': 'Bearer ${preffs.getString('token')}'
     });
     print(response.statusCode);
     print(widget.id);
@@ -1044,15 +1124,23 @@ print(widget.manufacture);
     }
   }
 
+  late SharedPreferences prefss;
   bool _availabilityInProgress = false;
   List availableResponseList = [];
   Future getAvailability() async {
+    prefss = await SharedPreferences.getInstance();
     _availabilityInProgress = true;
     if (mounted) {
       setState(() {});
     }
-    Response availableResponse = await get(Uri.parse(
-        'https://pilotbazar.com/api/merchants/vehicles/products/availables'));
+    Response availableResponse = await get(
+        Uri.parse(
+            'https://pilotbazar.com/api/merchants/vehicles/products/availables'),
+        headers: {
+          'Accept': 'application/vnd.api+json',
+          'Content-Type': 'application/vnd.api+json',
+          'Authorization': 'Bearer ${prefss.getString('token')}'
+        });
     Map<String, dynamic> decodedAvilableResponse =
         jsonDecode(availableResponse.body);
     final result = decodedAvilableResponse['payload'] as List;

@@ -6,7 +6,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart' as p;
 import 'package:open_file/open_file.dart';
 import 'package:pdf/pdf.dart';
-import 'package:pilot_refresh/product.dart'; // Import PdfColor
+import 'package:pilot_refresh/product.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Import PdfColor
 
 class StockListItem extends StatefulWidget {
   final bool addId;
@@ -56,6 +57,7 @@ class StockListItem extends StatefulWidget {
 
   @override
   _StockListItemState createState() => _StockListItemState();
+ 
 
   static Future<File> generateCenteredText({
     bool addId = false,
@@ -113,11 +115,19 @@ class _StockListItemState extends State<StockListItem> {
   @override
   static List products = [];
   bool getAllProductsInProgress = false;
+   late SharedPreferences prefss;
 
   getProduct() async {
+     prefss = await SharedPreferences.getInstance();
     //  for (int b = 1; b < 11; b++) {
     Response response = await get(Uri.parse(
-        "https://pilotbazar.com/api/merchants/vehicles/products/stocklist"));
+        "https://pilotbazar.com/api/merchants/vehicles/products/stocklist"),
+         headers: {
+        'Accept': 'application/vnd.api+json',
+        'Content-Type': 'application/vnd.api+json',
+        'Authorization': 'Bearer ${prefss.getString('token')}'
+      },
+        );
 
     print(response.statusCode);
     final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
