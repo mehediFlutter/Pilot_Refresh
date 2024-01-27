@@ -1,10 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:pilot_refresh/screens/auth/auth_utility.dart';
 import 'package:pilot_refresh/screens/auth/login_model.dart';
-import 'package:pilot_refresh/screens/auth/new_login_screen.dart';
 import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
