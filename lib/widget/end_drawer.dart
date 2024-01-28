@@ -5,6 +5,7 @@ import 'package:pilot_refresh/marcent/marcents.dart';
 import 'package:pilot_refresh/screens/double_vehicle_screen.dart';
 import 'package:pilot_refresh/screens/marcent_dash_board.dart';
 import 'package:pilot_refresh/widget/drawer_item_list.dart';
+import 'package:pilot_refresh/widget/save_user_data.dart';
 import 'package:pilot_refresh/widget/single_double_select.dart';
 
 class EndDrawer extends StatelessWidget {
@@ -93,6 +94,12 @@ class EndDrawer extends StatelessWidget {
                         icon: Icon(Icons.single_bed),
                         onTapFunction:(){
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>MarcentsAccount()));
+                        }),
+                    DrawerItemList(
+                        text: "User Details",
+                        icon: Icon(Icons.person),
+                        onTapFunction:(){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>UserInfo()));
                         }),
                   ],
                 ),

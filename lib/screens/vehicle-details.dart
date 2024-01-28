@@ -485,22 +485,30 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                               ),
                             ),
                             Positioned(
-                              left: 0,
-                              child: IconButton(
-                                onPressed: () {
-                                  if (_currentIndex > 0) {
-                                    _pageController.previousPage(
-                                      duration: Duration(milliseconds: 300),
-                                      curve: Curves.easeInOut,
-                                    );
-                                  }
-                                },
-                                icon: Icon(Icons.arrow_back, size: 60),
+                              left: -10,
+                              child: Container(
+                                padding: EdgeInsets.all(
+                                    8.0), // Adjust the padding as needed
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent),
+                                  onPressed: () {
+                                    if (_currentIndex > 0) {
+                                      _pageController.previousPage(
+                                        duration: Duration(milliseconds: 300),
+                                        curve: Curves.easeInOut,
+                                      );
+                                    }
+                                  },
+                                  child: Icon(Icons.arrow_back, size: 60,color: Colors.white,),
+                                 
+                                ),
                               ),
                             ),
                             Positioned(
-                              right: 20,
-                              child: IconButton(
+                              // top: 20,
+                              right: -10,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent),
                                 onPressed: () {
                                   if (_currentIndex <
                                       ImageLinkList.length - 1) {
@@ -510,7 +518,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                                     );
                                   }
                                 },
-                                icon: Icon(
+                                child: Icon(
                                   Icons.arrow_forward,
                                   size: 60,
                                 ),
