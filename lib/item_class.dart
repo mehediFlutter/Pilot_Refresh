@@ -1027,7 +1027,8 @@ class _ItemState extends State<Item> {
   }
 
   // Update Booked
-  void updateBooked(int index) async {
+   updateBooked(int index) async {
+    prefss = await SharedPreferences.getInstance();
     final body = {
       "available_id": 20,
     };
@@ -1036,8 +1037,9 @@ class _ItemState extends State<Item> {
         "https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/update/booked";
     final uri = Uri.parse(url);
     final response = await http.put(uri, body: jsonEncode(body), headers: {
+      'Accept': 'application/vnd.api+json',
       'Content-Type': 'application/vnd.api+json',
-      'Accept': 'application/vnd.api+json'
+      'Authorization': 'Bearer ${prefss.getString('token')}'
     });
     print(response.statusCode);
     print(widget.id);
@@ -1046,6 +1048,7 @@ class _ItemState extends State<Item> {
       print("Succesfully Booked");
     }
   }
+
 
   // Update Sold
   void updateSold(int index) async {
@@ -1060,7 +1063,8 @@ class _ItemState extends State<Item> {
       'Accept': 'application/vnd.api+json',
       'Content-Type': 'application/vnd.api+json',
       'Authorization': 'Bearer ${prefss.getString('token')}'
-    });
+    }
+    );
     print(response.statusCode);
     print(widget.id);
 

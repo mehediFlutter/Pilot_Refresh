@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'package:pilot_refresh/add%20car/description_page.dart';
 import 'package:pilot_refresh/add%20car/diseable_border_color.dart';
 import 'package:pilot_refresh/advance/model_product.dart';
 import 'package:pilot_refresh/screens/auth/auth_utility.dart';
@@ -60,7 +61,6 @@ class _AddNewCarState extends State<AddNewCar> {
   List<dynamic> skeletionList = [];
   List<dynamic> codeList = [];
   List<dynamic> brandList = [];
- 
 
   List modelList = [];
   List parseModelData = [];
@@ -203,6 +203,7 @@ class _AddNewCarState extends State<AddNewCar> {
     print('date time in a variable');
     print(dateTime);
   }
+
   Future getSkeletitions() async {
     prefss = await SharedPreferences.getInstance();
     try {
@@ -221,7 +222,7 @@ class _AddNewCarState extends State<AddNewCar> {
         setState(() {
           skeletionList = parsedDataSkeleton;
           // Set initial value to 'On Shipment'
-        
+
           print('map of Skeleton');
           print(skeletonSectedDropdownItem);
           // print(conditionSectedDropdownItem?['id']);
@@ -485,47 +486,6 @@ class _AddNewCarState extends State<AddNewCar> {
   }
 
   bool _conditionInProgress = false;
-  // Future getSkeletitions() async {
-  //   prefss = await SharedPreferences.getInstance();
-  //   try {
-  //     Response response = await get(
-  //       Uri.parse('https://pilotbazar.com/api/merchants/vehicles/skeletons'),
-  //       headers: {
-  //         'Accept': 'application/vnd.api+json',
-  //         'Content-Type': 'application/vnd.api+json',
-  //         'Authorization': 'Bearer ${prefss.getString('token')}'
-  //       },
-  //     );
-  //     print(response.statusCode);
-  //     Map<String, dynamic> decodedResponse = jsonDecode(response.body);
-
-  //     for (int i = 0; i < decodedResponse['payload'].length; i++) {
-  //       List<Map<String, dynamic>> translateList =
-  //           (decodedResponse['payload'][i]?['translate'] as List<dynamic>?)
-  //                   ?.cast<Map<String, dynamic>>() ??
-  //               [];
-
-  //       if (translateList.isNotEmpty) {
-  //         modelList.add(ModelProduct(name: translateList[0]['title']));
-  //       } else {
-  //         modelList.add(ModelProduct(name: 'Default Title'));
-  //       }
-  //     }
-  //     setState(() {
-  //       parseModelData = decodedResponse['payload'] as List<dynamic>;
-  //       skeletonSectedDropdownItem = parseModelData.firstWhere(
-  //         (item) => item['translate'][0]['title'] == modelValue,
-  //       );
-  //       setState(() {});
-  //     });
-  //     for (var product in modelList) {
-  //       print('Name: ${product.name}');
-  //     }
-  //   } catch (error) {
-  //     print('Error fetching data: $error');
-  //   }
-  // }
-
   Future getFuel() async {
     prefss = await SharedPreferences.getInstance();
     try {
@@ -613,7 +573,8 @@ class _AddNewCarState extends State<AddNewCar> {
             'Accept': 'application/vnd.api+json',
             'Content-Type': 'application/vnd.api+json',
             'Authorization': 'Bearer ${prefss.getString('token')}'
-          });
+          },
+          );
       print("Edition status code");
       print(response.statusCode);
       Map<String, dynamic> decodedResponse = jsonDecode(response.body);
@@ -772,7 +733,7 @@ class _AddNewCarState extends State<AddNewCar> {
       "chassis_number": "dk3499"
     };
 
-    final url = "https://pilotbazar.com/api/merchants/vehicles/products/store/";
+    final url = "https://pilotbazar.com/api/merchants/vehicles/products";
     final uri = Uri.parse(url);
     final request = await http.post(uri, body: jsonEncode(body), headers: {
       'Content-Type': 'application/vnd.api+json',
@@ -789,6 +750,8 @@ class _AddNewCarState extends State<AddNewCar> {
       selectedImages = pickedImages;
     });
   }
+
+  int? newLyAddedCarId;
 
   Future<void> onUploadImages(
       String titleEnglish,
@@ -816,36 +779,34 @@ class _AddNewCarState extends State<AddNewCar> {
       price,
       chassis_number,
       brand_id,
-      color_id
-      ) async {
-
-        print("Here is the data which i want to pass dynamically");
-        print(titleBangla);
-        print(titleEnglish);
-        print(userId);
-        print(categoryId);
-        print("Marcent id pass");
-        print(merchantId);
-        print("marchen id end");
-        print(conditionId);
-        print(transmissionId);
-        print(engines);
-        print(fuelId);
-        print(skeletonId);
-        print(mileage);
-        print(manufacture);
-        print(is_feat);
-        print(statusId);
-        print(is_approved);
-        print(publish_at);
-        print(code);
-        print(available_id);
-        print(carmodel_id);
-        print(fixed_price);
-        print(price);
-        print(chassis_number);
-        print(brand_id);
-        print(color_id);
+      color_id) async {
+    print("Here is the data which i want to pass dynamically");
+    print(titleBangla);
+    print(titleEnglish);
+    print(userId);
+    print(categoryId);
+    print("Marcent id pass");
+    print(merchantId);
+    print("marchen id end");
+    print(conditionId);
+    print(transmissionId);
+    print(engines);
+    print(fuelId);
+    print(skeletonId);
+    print(mileage);
+    print(manufacture);
+    print(is_feat);
+    print(statusId);
+    print(is_approved);
+    print(publish_at);
+    print(code);
+    print(available_id);
+    print(carmodel_id);
+    print(fixed_price);
+    print(price);
+    print(chassis_number);
+    print(brand_id);
+    print(color_id);
     prefss = await SharedPreferences.getInstance();
     Map<String, String> formData = {
       'title[en]': titleEnglish,
@@ -861,38 +822,37 @@ class _AddNewCarState extends State<AddNewCar> {
       'skeleton_id': skeletonId.toString(),
       'mileages': mileage.toString(),
       'manufacture': manufacture.toString(),
-      'is_feat': isFeat.toString(), 
+      'is_feat': isFeat.toString(),
       'status': statusId.toString(),
-      'is_approved': is_approved.toString(), 
-      'publish_at': publish_at.toString(), 
+      'is_approved': is_approved.toString(),
+      'publish_at': publish_at.toString(),
       // code
 
       'code': code.toString(),
       'available_id': available_id.toString(),
-      'registration_id': registration_id.toString(), 
+      'registration_id': registration_id.toString(),
       'carmodel_id': carmodel_id.toString(),
-      'fixed_price': fixed_price.toString(), 
+      'fixed_price': fixed_price.toString(),
       'price': price.toString(),
       'chassis_number': chassis_number.toString(),
       'brand_id': brand_id.toString(),
-      'color_id': color_id.toString(),     
+      'color_id': color_id.toString(),
     };
     Map<String, String> headers = {
       'Accept': 'application/vnd.api+json',
       'Content-Type': 'application/vnd.api+json',
       'Authorization': 'Bearer ${prefss.getString('token')}'
     };
-   if (selectedImages.isNotEmpty) {
+    if (selectedImages.isNotEmpty) {
       try {
         var request = http.MultipartRequest(
           'POST',
           Uri.parse(
-            "https://pilotbazar.com/api/merchants/vehicles/products/store",
+            "https://pilotbazar.com/api/merchants/vehicles/products",
           ),
-           // Replace with your actual API URL
+          // Replace with your actual API URL
         );
         request.headers.addAll(headers);
-      
 
         // Loop through each selected image
         for (XFile? imageFile in selectedImages) {
@@ -912,7 +872,22 @@ class _AddNewCarState extends State<AddNewCar> {
         request.fields.addAll(formData);
         var response = await request.send();
         final responseData = await response.stream.bytesToString();
-        print(responseData);
+
+        Map decodedResponse = jsonDecode(responseData.toString());
+        print("Return id is");
+        print(decodedResponse['payload']);
+        print(decodedResponse['payload']['id']);
+        newLyAddedCarId = decodedResponse['payload']['id'];
+        print("this is  response data");
+        if (decodedResponse['status'] == "Request was successful") {
+          await Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => DescriptionPage(
+                        newLyAddedCarId: newLyAddedCarId,
+                      )));
+        }
+        //  print(responseData);
       } catch (error) {
         print(error);
       }
@@ -938,6 +913,7 @@ class _AddNewCarState extends State<AddNewCar> {
                       SzBx(),
                       textFildUpTextRow('Title in English', star: ' *'),
                       customTextField(
+                        
                         controller: titleControllerEnglish,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -1036,6 +1012,7 @@ class _AddNewCarState extends State<AddNewCar> {
                       SzBx(),
                       textFildUpDiseableTextRow('Edition', star: ' *'),
                       custom_Model_Edition_DropDownFormField(
+                        hintText: 'Please Select...',
                         // value: editionValue,
                         list: editionlList,
                         onChanged: (newValue) {
@@ -1157,16 +1134,18 @@ class _AddNewCarState extends State<AddNewCar> {
                           }),
                       SzBx(),
                       textFildUpTextRow('Skeleton or Body', star: ' *'),
-                         customDropDownFormField(
+                      customDropDownFormField(
                           labelText: 'Please Select Skeleton...',
                           //  value: fuelValue,
                           list: skeletionList,
                           onChanged: (newValue) {
                             setState(() {
                               skeletonValue = newValue;
-                              skeletonSectedDropdownItem = skeletionList.firstWhere(
+                              skeletonSectedDropdownItem =
+                                  skeletionList.firstWhere(
                                 (item) =>
-                                    item['translate'][0]['title'] == skeletonValue,
+                                    item['translate'][0]['title'] ==
+                                    skeletonValue,
                               );
                             });
                             print("Skeleton Is");
@@ -1323,7 +1302,7 @@ class _AddNewCarState extends State<AddNewCar> {
                           controller: fixedPriceController,
                           hintText: 'Enter Fixed Price',
                           keyboardType: TextInputType.number),
-          
+
                       SzBx(),
                       textFildUpTextRow('Negotiable', star: ' *'),
                       customNegatiableDownFormField(
@@ -1409,20 +1388,6 @@ class _AddNewCarState extends State<AddNewCar> {
                           }
                         },
                       ),
-                      // SzBx(),
-                      // textFildUpTextRow('Featured'),
-                      // customYesNo_Parameter_DropDownFormField(
-
-                      //     // text1: 'Active',
-                      //     // text2: 'Inactive',
-                      //     // value: featuredId,
-                      //     // onChanged: (newValue) {
-                      //     //   setState(() {
-                      //     //     featuredId = newValue!;
-                      //     //   });
-                      //     //   print('Selected ID: $newValue');
-                      //     // },
-                      //     ),
                       SzBx(),
                       textFildUpDiseableTextRow('Appruval', star: ' *'),
                       borderChangedColor(),
@@ -1440,91 +1405,90 @@ class _AddNewCarState extends State<AddNewCar> {
                           onPressed: () async {
                             prefss = await SharedPreferences.getInstance();
                             await _printDateAndTime();
+                            LoginModel userInfo =
+                                await AuthUtility.getUserInfo();
+                            print(
+                                'dynamically merchent id ${userInfo.payload?.merchant?.id}');
                             //  LoginModel userInfo = await AuthUtility.getUserInfo();
                             // if (_formKey.currentState!.validate()) {
-                              await _printDateAndTime();
-                              final colorSelectedId =
-                                  colorSectedDropdownItem?['id'];
-                              final conditionSelectedId =
-                                  conditionSectedDropdownItem?['id'];
-                              final fuelSelectedId =
-                                  fuelSectedDropdownItem?['id'];
-                              final skeletionSelectedId =
-                                  skeletonSectedDropdownItem?['id'];
-                              final transmissionSelectedId =
-                                  transmissionSelectedDropdownItem?['id'];
-                              final modelSelectedId =
-                                  modelSectedDropdownItem?['id'];
-                              final gradeSelectedId =
-                                  gradeSectedDropdownItem?['id'];
+                            await _printDateAndTime();
+                            final colorSelectedId =
+                                colorSectedDropdownItem?['id'];
+                            final conditionSelectedId =
+                                conditionSectedDropdownItem?['id'];
+                            final fuelSelectedId =
+                                fuelSectedDropdownItem?['id'];
+                            final skeletionSelectedId =
+                                skeletonSectedDropdownItem?['id'];
+                            final transmissionSelectedId =
+                                transmissionSelectedDropdownItem?['id'];
+                            final modelSelectedId =
+                                modelSectedDropdownItem?['id'];
+                            final gradeSelectedId =
+                                gradeSectedDropdownItem?['id'];
 
-                              final availableSelectedId =
-                                  availableSectedDropdownItem?['id'];
+                            final availableSelectedId =
+                                availableSectedDropdownItem?['id'];
 
-                              final editionSelectedId =
-                                  editionSectedDropdownItem?['id'];
-                              setState(() {});
+                            final editionSelectedId =
+                                editionSectedDropdownItem?['id'];
+                            setState(() {});
 
-                              print('Color Selected Id is ${colorSelectedId}');
-                              print(
-                                  'Condition Selected Id is ${conditionSelectedId}');
-                              print('Fuel Selected Id is ${fuelSelectedId}');
-                              print(
-                                  'Skeletion Selected Id is ${skeletionSelectedId}');
-                              print(
-                                  'Transmission Selected Id is ${transmissionSelectedId}');
-                              print('Model Selected Id is ${modelSelectedId}');
-                              print('Grade Selected Id is ${gradeSelectedId}');
-                              print(
-                                  'availableSelectedId Selected Id is ${availableSelectedId}');
-                              print("Appruval is $appruvalId");
-                              print("date Time is $dateTime");
-                              print("Fetured id is $featuredId");
-                              print('code Selected id is$codeValue');
-                              print('status is id is$statusId');
-                              print(codeValue);
-                              print(
-                                  "Edition selected id is $editionSelectedId");
-                              print("Here is my user info from Login model");
-                              //    print(userInfo.payload!.merchant?.id);
+                            print('Color Selected Id is ${colorSelectedId}');
+                            print(
+                                'Condition Selected Id is ${conditionSelectedId}');
+                            print('Fuel Selected Id is ${fuelSelectedId}');
+                            print(
+                                'Skeletion Selected Id is ${skeletionSelectedId}');
+                            print(
+                                'Transmission Selected Id is ${transmissionSelectedId}');
+                            print('Model Selected Id is ${modelSelectedId}');
+                            print('Grade Selected Id is ${gradeSelectedId}');
+                            print(
+                                'availableSelectedId Selected Id is ${availableSelectedId}');
+                            print("Appruval is $appruvalId");
+                            print("date Time is $dateTime");
+                            print("Fetured id is $featuredId");
+                            print('code Selected id is$codeValue');
+                            print('status is id is$statusId');
+                            print(codeValue);
+                            print("Edition selected id is $editionSelectedId");
+                            print("Here is my user info from Login model");
+                            //    print(userInfo.payload!.merchant?.id);
 
-                              LoginModel userInfo =
-                                  await AuthUtility.getUserInfo();
-                              print('User marcent id is ${userInfo.payload?.merchant?.id}');
-                              print(userInfo.payload?.merchant?.id);
-                              print(userInfo.payload?.token);
+                            print(userInfo.payload?.merchant?.id);
+                            print(userInfo.payload?.token);
 
-                              onUploadImages(
-                                  titleControllerEnglish.text,
-                                  titleControllerBangla.text,
-                                  2.toString(),
-                                  1.toString(),
-                                  userInfo.payload?.merchant?.id.toString(),
-                                  conditionSelectedId.toString(),
-                                  transmissionSelectedId.toString(),
-                                  engineController.text.toString(),
-                                  editionSelectedId.toString(),
-                                  fuelSelectedId.toString(),
-                                  skeletonSectedDropdownItem?['id'].toString(),
-                                  mileagesController.text.toString(),
-                                  manufactureController.text.toString(),
-                                  isFeat.toString(),
-                                  statusId.toString(),
-                                  appruvalId.toString(),
-                                  dateTime.toString(),
-                                  codeValue.toString(),
-                                  availableSelectedId.toString(),
-                                  registrationSectedDropdownItem?['id'].toString(),
-                                  modelSelectedId.toString(),
-                                  fixedPriceController.text.toString(),
-                                  askingPriceController.text.toString(),
-                                  chassisNumberController.text.toString(),
-                                  brandSectedDropdownItem?['id'].toString(),
-                                  colorSelectedId.toString()
-                                  
-                                  );
-                            },
-                        //  },
+                            onUploadImages(
+                                titleControllerEnglish.text,
+                                titleControllerBangla.text,
+                                2.toString(),
+                                1.toString(),
+                                userInfo.payload?.merchant?.id.toString(),
+                                conditionSelectedId.toString(),
+                                transmissionSelectedId.toString(),
+                                engineController.text.toString(),
+                                editionSelectedId.toString(),
+                                fuelSelectedId.toString(),
+                                skeletonSectedDropdownItem?['id'].toString(),
+                                mileagesController.text.toString(),
+                                manufactureController.text.toString(),
+                                isFeat.toString(),
+                                statusId.toString(),
+                                appruvalId.toString(),
+                                dateTime.toString(),
+                                codeValue.toString(),
+                                availableSelectedId.toString(),
+                                registrationSectedDropdownItem?['id']
+                                    .toString(),
+                                modelSelectedId.toString(),
+                                fixedPriceController.text.toString(),
+                                askingPriceController.text.toString(),
+                                chassisNumberController.text.toString(),
+                                brandSectedDropdownItem?['id'].toString(),
+                                colorSelectedId.toString());
+                          },
+                          //  },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blue,
                               shape: RoundedRectangleBorder(

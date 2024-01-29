@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pilot_refresh/add%20car/add-car.dart';
+import 'package:pilot_refresh/add%20car/description_page.dart';
+import 'package:pilot_refresh/add%20car/upload_multiple_image.dart';
 import 'package:pilot_refresh/methodes/log_out_methode.dart';
 import 'package:pilot_refresh/marcent/marcents.dart';
 import 'package:pilot_refresh/screens/double_vehicle_screen.dart';
@@ -100,6 +102,18 @@ class EndDrawer extends StatelessWidget {
                         icon: Icon(Icons.person),
                         onTapFunction:(){
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>UserInfo()));
+                        }),
+                    DrawerItemList(
+                        text: "Description",
+                        icon: Icon(Icons.person),
+                        onTapFunction:(){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>DescriptionPage()));
+                        }),
+                    DrawerItemList(
+                        text: "Multiple images",
+                        icon: Icon(Icons.person),
+                        onTapFunction:(){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>UploadMultiPleImage()));
                         }),
                   ],
                 ),
