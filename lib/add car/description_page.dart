@@ -98,12 +98,10 @@ class _DescriptionPageState extends State<DescriptionPage> {
 
                         print(descriptionControllerEnglish.text);
                         print(descriptionControllerBangla.text);
-                        await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => UploadMultiPleImage(
+                        await Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>UploadMultiPleImage(
                                       newLyAddedCarId: widget.newLyAddedCarId,
-                                    )));
+                                    
+                                    ),), (route) => false);
                       },
                       child: Text("Submit")))
             ],

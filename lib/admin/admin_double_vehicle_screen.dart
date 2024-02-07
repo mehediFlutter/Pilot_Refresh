@@ -11,9 +11,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminDoublVehicle extends StatefulWidget {
   final String? token;
+  final bool ? isLogedIn;
   AdminDoublVehicle({
     super.key,
-    this.token,
+    this.token, this.isLogedIn,
   });
 
   @override
@@ -29,14 +30,13 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
   bool askingPriceChange = false;
   bool askingPriceInProgress = false;
   late SharedPreferences prefss;
-  late String toki;
+  String? toki;
 
   // yVjInK9erYHC0iHW9ehY8c6J4y79fbNzCEIWtZvQ.jpg
   //https://pilotbazar.com/storage/vehicles/
   @override
   void initState() {
     print("I am on Double vehicle screen");
-    initSharedPref();
     page = 1;
     i = 0;
     getProduct(page);
@@ -79,6 +79,7 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
       page++;
       setState(() {});
       getNewProduct(page);
+      print(page);
 
       if (mounted) {
         setState(() {});
@@ -86,25 +87,42 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
     }
   }
 
-  void getNewProduct(int page) async {
+
+   getNewProduct(int page) async {
+    print("I am new products methode");
+    print("Page");
+    print(page);
     _getNewProductinProgress = true;
     if (mounted) {
       setState(() {});
     }
+    Response? response;
+    if (prefss.getString('token') == null) {
+      response = await get(
+        Uri.parse(
+            'https://pilotbazar.com/api/clients/vehicles/products?page=$page'),
+      );
+    }
 
-    Response response = await get(
-      Uri.parse(
-          "https://pilotbazar.com/api/merchants/vehicles/products?page=$page"),
-      headers: {
-        'Accept': 'application/vnd.api+json',
-        'Content-Type': 'application/vnd.api+json',
-        'Authorization': 'Bearer ${prefss.getString('token')}'
-      },
-    );
+  
+    else{
+       response = await get(
+        Uri.parse(
+            'https://pilotbazar.com/api/merchants/vehicles/products?page=$page'),
+        headers: {
+          'Accept': 'application/vnd.api+json',
+          'Content-Type': 'application/vnd.api+json',
+          'Authorization': 'Bearer ${prefss.getString('token')
+          }'
+        },
+      );
+    }
+
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
-    print(response.statusCode);
-    final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
+    print(response!.statusCode);
+    final Map<String, dynamic> decodedResponse1 = jsonDecode(response.body);
+    final Map<String, dynamic> decodedResponse = decodedResponse1['payload'];
     if (decodedResponse['data'].isEmpty) {
       _getNewProductinProgress = false;
       if (mounted) {
@@ -191,27 +209,45 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
     _getProductinProgress = true;
     if (mounted) {
       setState(() {});
+      
     }
-    Response response = await get(
+
+     Response? response;
+
+   if(prefss.getString('token') == null)
+   {  
+    response = await get(
       Uri.parse(
-          "https://pilotbazar.com/api/merchants/vehicles/products?page=$page"),
+           "https://pilotbazar.com/api/clients/vehicles/products?page=$page"),
+      // headers: {
+      //   'Accept': 'application/vnd.api+json',
+      //   'Content-Type': 'application/vnd.api+json',
+        
+      // },
+    );
+    }
+else   {  
+    response = await get(
+      Uri.parse(
+           "https://pilotbazar.com/api/merchants/vehicles/products?page=$page"),
       headers: {
         'Accept': 'application/vnd.api+json',
         'Content-Type': 'application/vnd.api+json',
-        'Authorization': 'Bearer $toki'
+         'Authorization': 'Bearer ${prefss.getString('token')}',
       },
     );
+    }
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
-    print(response.statusCode);
-    print(response.body);
+    print(response?.statusCode);
+    print(response?.body);
     print(widget.token);
-    final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
+    final Map<String, dynamic> decodedResponse1 = jsonDecode(response!.body);
+    final Map<String, dynamic> decodedResponse = decodedResponse1['payload'];
     final getproductsList = decodedResponse['data'];
     setState(() {});
     print('Length is');
     print(getproductsList.length);
-   
 
     // List<dynamic> vehicleFeatures =
     //     decodedResponse['data'][0]['vehicle_feature'];
@@ -228,20 +264,17 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
 
     for (i; i < getproductsList.length; i++) {
       print('length of this products');
-     // print(decodedResponse['data'].length);
+      // print(decodedResponse['data'].length);
       products.add(
         Product(
           vehicleName: getproductsList[i]['translate'][0]['title'],
-          vehicleNameBangla: getproductsList[i]['translate'][1]
-              ['title'],
+          vehicleNameBangla: getproductsList[i]['translate'][1]['title'],
           manufacture: getproductsList[i]['manufacture'],
           slug: getproductsList[i]['slug'],
           id: getproductsList[i]['id'],
-          condition: getproductsList[i]['condition']['translate'][0]
-              ['title'],
-          mileage: getproductsList[i]['mileage']?['translate'][0]
-                  ?['title'] ??
-              '--',
+          condition: getproductsList[i]['condition']['translate'][0]['title'],
+          mileage:
+              getproductsList[i]['mileage']?['translate'][0]?['title'] ?? '--',
           //price here
           price: getproductsList[i]['price'] ?? '',
           purchase_price: getproductsList[i]?['purchase_price'] ?? '',
@@ -250,30 +283,22 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
           imageName: getproductsList[i]['image']['name'],
           registration: getproductsList[i]['registration'] ?? 'None',
           engine: getproductsList[i]?['engines'] ?? '--',
-          brandName: getproductsList[i]['brand']['translate'][0]
+          brandName: getproductsList[i]['brand']['translate'][0]['title'],
+          transmission: getproductsList[i]['transmission']['translate'][0]
               ['title'],
-          transmission: getproductsList[i]['transmission']['translate']
-              [0]['title'],
           fuel: getproductsList[i]['fuel']['translate'][0]['title'],
-          skeleton: getproductsList[i]['skeleton']['translate'][0]
-              ['title'],
-          available: getproductsList[i]?['available']?['translate'][0]
-                  ?['title'] ??
-              '',
+          skeleton: getproductsList[i]['skeleton']['translate'][0]['title'],
+          available:
+              getproductsList[i]?['available']?['translate'][0]?['title'] ?? '',
           code: getproductsList[i]?['code'] ?? '',
           //model: getproductsList,
-          carColor: getproductsList[i]['color']?['translate'][0]
-                  ['title'] ??
-              'None',
-          edition: getproductsList[i]['edition']['translate'][0]
-                  ['title'] ??
-              'None',
-          model: getproductsList[i]?['carmodel']?['translate'][0]
-                  ?['title'] ??
-              '',
-          grade: getproductsList[i]?['grade']?['translate'][0]
-                  ?['title'] ??
-              '',
+          carColor:
+              getproductsList[i]['color']?['translate'][0]['title'] ?? 'None',
+          edition:
+              getproductsList[i]['edition']['translate'][0]['title'] ?? 'None',
+          model:
+              getproductsList[i]?['carmodel']?['translate'][0]?['title'] ?? '',
+          grade: getproductsList[i]?['grade']?['translate'][0]?['title'] ?? '',
           engineNumber: getproductsList[i]['engine_number'] ?? '--',
           chassisNumber: getproductsList[i]['chassis_number'] ?? '--',
           video: getproductsList[i]?['video'] ?? 'No Video',
@@ -302,6 +327,7 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
   bool _searchInProgress = false;
   TextEditingController searchController = TextEditingController();
   Item myItem = Item();
+
   Future<void> search(String value) async {
     searchProducts.clear();
     products.clear();
@@ -321,7 +347,8 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
         'Authorization': 'Bearer ${prefss.getString('token')}'
       },
     );
-    Map<String, dynamic> decodedResponse = jsonDecode(response.body);
+    final Map<String, dynamic> decodedResponse1 = jsonDecode(response.body);
+    final Map<String, dynamic> decodedResponse = decodedResponse1['payload'];
     int i = 0;
 
     for (i; i < decodedResponse['payload'].length; i++) {
@@ -485,6 +512,7 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 0),
                               child: Item(
+                              isLoggedIn: widget.isLogedIn,
                                 myAskingPrice: myBoolValue,
                                 id: products[index + j].id!,
                                 imageName:

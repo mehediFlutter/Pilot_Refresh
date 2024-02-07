@@ -4,6 +4,7 @@ import 'package:pilot_refresh/add%20car/description_page.dart';
 import 'package:pilot_refresh/add%20car/upload_multiple_image.dart';
 import 'package:pilot_refresh/methodes/log_out_methode.dart';
 import 'package:pilot_refresh/marcent/marcents.dart';
+import 'package:pilot_refresh/screens/auth/new_login_screen.dart';
 import 'package:pilot_refresh/screens/double_vehicle_screen.dart';
 import 'package:pilot_refresh/screens/marcent_dash_board.dart';
 import 'package:pilot_refresh/widget/drawer_item_list.dart';
@@ -78,6 +79,13 @@ class EndDrawer extends StatelessWidget {
                     //               builder: (context) => DoublVehicle()));
                     //   },
                     // ),
+                    DrawerItemList(
+                      text: 'Login',
+                      icon: Icon(Icons.login),
+                      onTapFunction: () {
+                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>NewLoginScreen()), (route) => false);
+                      },
+                    ),
                     DrawerItemList(
                       text: 'Logout',
                       icon: Icon(Icons.logout),

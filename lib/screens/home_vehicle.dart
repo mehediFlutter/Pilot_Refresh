@@ -36,9 +36,11 @@ class _HomeVehicleState extends State<HomeVehicle> {
   String searchValue = '';
   bool searchInProgress = false;
   bool shareInProgress = false;
+  late String toki;
 
   @override
   void initState() {
+    initSharedPref();
     page = 1;
     i = 0;
     getProduct(page);
@@ -62,6 +64,14 @@ class _HomeVehicleState extends State<HomeVehicle> {
     //getDetails(products[0].id);
 
     //getDetails(i);
+  }
+
+  Future initSharedPref() async {
+    prefss = await SharedPreferences.getInstance();
+    toki = prefss.getString('token').toString();
+    setState(() {});
+    print('token is$toki');
+    print(toki);
   }
 
   static List allProductsForSearch = [];
@@ -154,17 +164,20 @@ class _HomeVehicleState extends State<HomeVehicle> {
       setState(() {});
     }
     Response response = await get(
-        Uri.parse(
-            "https://pilotbazar.com/api/merchants/vehicles/products?page=$page"),
+        Uri.parse(toki.isNotEmpty
+            ? "https://pilotbazar.com/api/merchants/vehicles/products?page=$page"
+            : 'https://pilotbazar.com/api/clients/vehicles/products?page=$page'),
+        // /https://pilotbazar.comapi/clients/vehicles/products?page=1
         headers: {
           'Accept': 'application/vnd.api+json',
           'Content-Type': 'application/vnd.api+json',
-          'Authorization': 'Bearer ${prefss.getString('token')}'
+        toki.isNotEmpty? 'Authorization': 'Bearer $toki':''
         });
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
     print(response.statusCode);
-    final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
+    final Map<String, dynamic> decodedResponse1 = jsonDecode(response.body);
+    final Map<String, dynamic> decodedResponse = decodedResponse1['payload'];
     if (decodedResponse['data'].isEmpty) {
       _getNewProductinProgress = false;
       if (mounted) {
@@ -238,7 +251,8 @@ class _HomeVehicleState extends State<HomeVehicle> {
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
     print(response.statusCode);
-    final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
+    final Map<String, dynamic> decodedResponse1 = jsonDecode(response.body);
+    final Map<String, dynamic> decodedResponse = decodedResponse1['payload'];
 
     if (mounted) {
       setState(() {});
@@ -263,7 +277,9 @@ class _HomeVehicleState extends State<HomeVehicle> {
         //price end
         imageName: decodedResponse['data'][i]['image']['name'],
         registration: decodedResponse['data'][i]['registration'] ?? 'None',
-        engine: decodedResponse['data'][i]['engine']?['translate'][0]['title']??decodedResponse['data'][i]['engines'],
+        engine: decodedResponse['data'][i]['engine']?['translate'][0]
+                ['title'] ??
+            decodedResponse['data'][i]['engines'],
         brandName: decodedResponse['data'][i]['brand']['translate'][0]['title'],
         transmission: decodedResponse['data'][i]['transmission']['translate'][0]
             ['title'],
@@ -423,11 +439,10 @@ class _HomeVehicleState extends State<HomeVehicle> {
         details.clear();
         ImageLinkList.clear();
         showImageList.clear();
-          shareInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
-
+        shareInProgress = false;
+        if (mounted) {
+          setState(() {});
+        }
       } else {
         print("No images to share.");
       }
@@ -438,7 +453,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
   Future<void> shareDetailsWithOneImage(String ImageName, vehicleName,
       manufacture, condition, registration, mileage, price, detailsLink) async {
-          shareInProgress = true;
+    shareInProgress = true;
     if (mounted) {
       setState(() {});
     }
@@ -482,17 +497,15 @@ class _HomeVehicleState extends State<HomeVehicle> {
     //"Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 017xxxxxxxx\n"
     unicTitle.clear();
     details.clear();
-      shareInProgress = false;
+    shareInProgress = false;
     if (mounted) {
       setState(() {});
     }
-
-  
   }
 
   Future<void> shareViaEmail(int id, String ImageName, vehicleName, manufacture,
       condition, registration, mileage, price, detailsLink) async {
-          shareInProgress = true;
+    shareInProgress = true;
     if (mounted) {
       setState(() {});
     }
@@ -561,12 +574,10 @@ class _HomeVehicleState extends State<HomeVehicle> {
         details.clear();
         ImageLinkList.clear();
         showImageList.clear();
-          shareInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
-
-    
+        shareInProgress = false;
+        if (mounted) {
+          setState(() {});
+        }
       } else {
         print("No images to share.");
       }
@@ -649,13 +660,15 @@ class _HomeVehicleState extends State<HomeVehicle> {
   bool _availabilityInProgress = false;
   List availableResponseList = [];
   Future getAvailability() async {
-     prefss = await SharedPreferences.getInstance();
+    prefss = await SharedPreferences.getInstance();
     _availabilityInProgress = true;
     if (mounted) {
       setState(() {});
     }
-    Response availableResponse = await get(Uri.parse(
-        'https://pilotbazar.com/api/merchants/vehicles/products/availables'),   headers: {
+    Response availableResponse = await get(
+        Uri.parse(
+            'https://pilotbazar.com/api/merchants/vehicles/products/availables'),
+        headers: {
           'Accept': 'application/vnd.api+json',
           'Content-Type': 'application/vnd.api+json',
           'Authorization': 'Bearer ${prefss.getString('token')}'
@@ -705,7 +718,6 @@ class _HomeVehicleState extends State<HomeVehicle> {
         leading: Image.asset(
           'assets/images/pilot_logo2.png',
         ),
-        
         title: TextField(
           controller: searchController,
           onSubmitted: (value) async {
@@ -945,60 +957,64 @@ class _HomeVehicleState extends State<HomeVehicle> {
                       backgroundColor: Color.fromARGB(221, 65, 64, 64),
                       radius: 25,
                       child: Expanded(
-                        child:shareInProgress?CircularProgressIndicator(): PopupMenuButton(
-                          child: Icon(
-                            Icons.share,
-                            color: Colors.white,
-                            size: 25,
-                          ),
-                          onSelected: (value) async {
-                            if (value == 'image') {
-                              sendAllImages(products[x + j].id);
-                            } else if (value == 'details') {
-                              await getLink(products[x + j].id.toString());
-                              shareDetailsWithOneImage(
-                                  products[x + j].imageName,
-                                  products[x + j].vehicleName,
-                                  products[x + j].manufacture,
-                                  products[x + j].condition,
-                                  products[x + j].registration,
-                                  products[x + j].mileage,
-                                  products[x + j].price,
-                                  detailsLink);
-                            } else if (value == 'email') {
-                              await getLink(products[x + j].id.toString());
-                              shareViaEmail(
-                                  products[x + j].id,
-                                  products[x + j].imageName,
-                                  products[x + j].vehicleName,
-                                  products[x + j].manufacture,
-                                  products[x + j].condition,
-                                  products[x + j].registration,
-                                  products[x + j].mileage,
-                                  products[x + j].price,
-                                  detailsLink);
-                            }
-                          },
-                          itemBuilder: (context) {
-                            return [
-                              PopupMenuItem(
-                                child: Text("Share One Image"),
-                                value: 'details',
-                                textStyle: popubItem,
+                        child: shareInProgress
+                            ? CircularProgressIndicator()
+                            : PopupMenuButton(
+                                child: Icon(
+                                  Icons.share,
+                                  color: Colors.white,
+                                  size: 25,
+                                ),
+                                onSelected: (value) async {
+                                  if (value == 'image') {
+                                    sendAllImages(products[x + j].id);
+                                  } else if (value == 'details') {
+                                    await getLink(
+                                        products[x + j].id.toString());
+                                    shareDetailsWithOneImage(
+                                        products[x + j].imageName,
+                                        products[x + j].vehicleName,
+                                        products[x + j].manufacture,
+                                        products[x + j].condition,
+                                        products[x + j].registration,
+                                        products[x + j].mileage,
+                                        products[x + j].price,
+                                        detailsLink);
+                                  } else if (value == 'email') {
+                                    await getLink(
+                                        products[x + j].id.toString());
+                                    shareViaEmail(
+                                        products[x + j].id,
+                                        products[x + j].imageName,
+                                        products[x + j].vehicleName,
+                                        products[x + j].manufacture,
+                                        products[x + j].condition,
+                                        products[x + j].registration,
+                                        products[x + j].mileage,
+                                        products[x + j].price,
+                                        detailsLink);
+                                  }
+                                },
+                                itemBuilder: (context) {
+                                  return [
+                                    PopupMenuItem(
+                                      child: Text("Share One Image"),
+                                      value: 'details',
+                                      textStyle: popubItem,
+                                    ),
+                                    PopupMenuItem(
+                                      child: Text("Share All Image"),
+                                      value: 'image',
+                                      textStyle: popubItem,
+                                    ),
+                                    PopupMenuItem(
+                                      child: Text("Send Email"),
+                                      value: 'email',
+                                      textStyle: popubItem,
+                                    ),
+                                  ];
+                                },
                               ),
-                              PopupMenuItem(
-                                child: Text("Share All Image"),
-                                value: 'image',
-                                textStyle: popubItem,
-                              ),
-                              PopupMenuItem(
-                                child: Text("Send Email"),
-                                value: 'email',
-                                textStyle: popubItem,
-                              ),
-                            ];
-                          },
-                        ),
                       ),
                     ),
                   ],

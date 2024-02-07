@@ -26,32 +26,35 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> loadSelectedScreenType() async {
     // Load the selected screen type during the app startup
     final prefs = await SharedPreferences.getInstance();
-  
+
     setState(() {
       // Use ?? to provide a default value in case the preference is not set
-      isDoubleScreenSelected =
-          prefs.getBool('isDoubleScreenSelected') ?? true;
-          print("Token is");
-         
-         
+      isDoubleScreenSelected = prefs.getBool('isDoubleScreenSelected') ?? true;
+      print("Token is");
     });
     navigateToLogin();
   }
 
+  late SharedPreferences preff;
   Future<void> navigateToLogin() async {
+    preff = await SharedPreferences.getInstance();
     final bool isLoggedIn = await AuthUtility.checkIfUserLoggedIn();
+    final login = await preff.getBool('isLogin');
+    setState(() {});
+    print("Is login");
+    print(preff.getBool('isLogin'));
 
-    Future.delayed(const Duration(seconds: 1)).then((_) =>
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => isLoggedIn
-                    ? BottomNavBaseScreen(
-                        isDoubleScreenSelected: isDoubleScreenSelected,
-                        isSingleScreenSelected: !isDoubleScreenSelected,
-                      )
-                    : const NewLoginScreen()),
-            (route) => false));
+    Future.delayed(const Duration(seconds: 1)).then(
+      (_) => Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => BottomNavBaseScreen(
+                    isDoubleScreenSelected: isDoubleScreenSelected,
+                    isSingleScreenSelected: !isDoubleScreenSelected,
+                    isLogedIn: login,
+                  )),
+          (route) => false),
+    );
   }
 
   @override
@@ -78,16 +81,16 @@ class _SplashScreenState extends State<SplashScreen> {
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              SizedBox(height: 200,),
-             // Spacer(),
+              SizedBox(
+                height: 200,
+              ),
+              // Spacer(),
               SpinKitSpinningLines(
-                 color: Colors.black,
-                 size: 60.0,
-                 
-               ),
+                color: Colors.black,
+                size: 60.0,
+              ),
             ],
           ),
-          
         ],
       ),
     );

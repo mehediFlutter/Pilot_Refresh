@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'dart:convert';
+import 'dart:ui';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pilot_refresh/add%20car/description_page.dart';
 import 'package:pilot_refresh/add%20car/diseable_border_color.dart';
 import 'package:pilot_refresh/advance/model_product.dart';
@@ -13,6 +15,7 @@ import 'package:pilot_refresh/screens/auth/login_model.dart';
 import 'package:pilot_refresh/widget/custom_text_fild.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class AddNewCar extends StatefulWidget {
   const AddNewCar({
@@ -51,7 +54,6 @@ class _AddNewCarState extends State<AddNewCar> {
   }
 
   late SharedPreferences prefss;
-  bool _availabilityInProgress = false;
   List<dynamic> availableList = []; // Store a list of dynamic objects
   List<dynamic> conditionList = [];
   List<dynamic> transmissionList = [];
@@ -234,7 +236,6 @@ class _AddNewCarState extends State<AddNewCar> {
     } catch (error) {
       print('Error fetching data: $error');
     } finally {
-      _conditionInProgress = false;
       setState(() {});
     }
   }
@@ -485,7 +486,6 @@ class _AddNewCarState extends State<AddNewCar> {
     }
   }
 
-  bool _conditionInProgress = false;
   Future getFuel() async {
     prefss = await SharedPreferences.getInstance();
     try {
@@ -568,13 +568,13 @@ class _AddNewCarState extends State<AddNewCar> {
     if (mounted) setState(() {});
     try {
       Response response = await get(
-          Uri.parse('https://pilotbazar.com/api/merchants/vehicles/editions/'),
-          headers: {
-            'Accept': 'application/vnd.api+json',
-            'Content-Type': 'application/vnd.api+json',
-            'Authorization': 'Bearer ${prefss.getString('token')}'
-          },
-          );
+        Uri.parse('https://pilotbazar.com/api/merchants/vehicles/editions/'),
+        headers: {
+          'Accept': 'application/vnd.api+json',
+          'Content-Type': 'application/vnd.api+json',
+          'Authorization': 'Bearer ${prefss.getString('token')}'
+        },
+      );
       print("Edition status code");
       print(response.statusCode);
       Map<String, dynamic> decodedResponse = jsonDecode(response.body);
@@ -634,7 +634,6 @@ class _AddNewCarState extends State<AddNewCar> {
     } catch (error) {
       print('Error fetching data: $error');
     } finally {
-      _availabilityInProgress = false;
       setState(() {});
     }
   }
@@ -742,16 +741,22 @@ class _AddNewCarState extends State<AddNewCar> {
     print(request.statusCode);
   }
 
-  List<XFile> selectedImages = [];
+  XFile? selectedImages;
+  XFile? conpressedFile;
   var resJson;
   Future<void> getImages() async {
-    final pickedImages = await ImagePicker().pickMultiImage();
+    final pickedImages =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     setState(() {
       selectedImages = pickedImages;
     });
+
+    print("selected image original image");
+    print(await selectedImages!.length());
   }
 
   int? newLyAddedCarId;
+  bool uploadImageInProgress = false;
 
   Future<void> onUploadImages(
       String titleEnglish,
@@ -780,6 +785,8 @@ class _AddNewCarState extends State<AddNewCar> {
       chassis_number,
       brand_id,
       color_id) async {
+    uploadImageInProgress = true;
+    if (mounted) setState(() {});
     print("Here is the data which i want to pass dynamically");
     print(titleBangla);
     print(titleEnglish);
@@ -843,8 +850,33 @@ class _AddNewCarState extends State<AddNewCar> {
       'Content-Type': 'application/vnd.api+json',
       'Authorization': 'Bearer ${prefss.getString('token')}'
     };
-    if (selectedImages.isNotEmpty) {
+    String targetPath = '/storage/emulated/0/Download/';
+
+    String CustomTargetPath = '';
+    String directoryName = 'PilotBazar';
+
+    // Directory? externalDir = await getExternalStorageDirectory();
+    if (selectedImages != null) {
+      Directory? externalDir = await getExternalStorageDirectory();
       try {
+        CustomTargetPath = '${externalDir?.path}/$directoryName/';
+        setState(() {});
+
+        // Create the directory if it doesn't exist
+        Directory directory = Directory(CustomTargetPath);
+        setState(() {});
+        if (!await directory.exists()) {
+          await directory.create(recursive: true);
+          print('Directory created successfully: ${directory.path}');
+        }
+
+        conpressedFile = await FlutterImageCompress.compressAndGetFile(
+            selectedImages!.path, "${directory.path}/${selectedImages!.name}",
+            quality: 50);
+        setState(() {});
+        print("Directory is");
+        print(directory);
+
         var request = http.MultipartRequest(
           'POST',
           Uri.parse(
@@ -854,21 +886,18 @@ class _AddNewCarState extends State<AddNewCar> {
         );
         request.headers.addAll(headers);
 
-        // Loop through each selected image
-        for (XFile? imageFile in selectedImages) {
-          if (imageFile != null) {
-            final fileLength = await imageFile.length();
+        final fileLength = await conpressedFile!.length();
+        final imageBytes = await conpressedFile!.readAsBytes().asStream();
 
-            request.files.add(
-              http.MultipartFile(
-                'image', // Adjust key based on your API
-                await imageFile.readAsBytes().asStream(),
-                fileLength,
-                filename: imageFile.name, // Use XFile's name property
-              ),
-            );
-          }
-        }
+        request.files.add(http.MultipartFile(
+          'image',
+          imageBytes,
+          fileLength,
+          filename: conpressedFile!.name,
+        ));
+        print("Compressed file name is");
+        print(conpressedFile!.name);
+        print(await conpressedFile!.length());
         request.fields.addAll(formData);
         var response = await request.send();
         final responseData = await response.stream.bytesToString();
@@ -880,18 +909,22 @@ class _AddNewCarState extends State<AddNewCar> {
         newLyAddedCarId = decodedResponse['payload']['id'];
         print("this is  response data");
         if (decodedResponse['status'] == "Request was successful") {
-          await Navigator.push(
+          await Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                  builder: (context) => DescriptionPage(
-                        newLyAddedCarId: newLyAddedCarId,
-                      )));
+                builder: (context) => DescriptionPage(
+                  newLyAddedCarId: newLyAddedCarId,
+                ),
+              ),
+              (route) => false);
         }
         //  print(responseData);
       } catch (error) {
         print(error);
       }
     }
+     uploadImageInProgress = false;
+    if (mounted) setState(() {});
   }
 
   @override
@@ -913,7 +946,6 @@ class _AddNewCarState extends State<AddNewCar> {
                       SzBx(),
                       textFildUpTextRow('Title in English', star: ' *'),
                       customTextField(
-                        
                         controller: titleControllerEnglish,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -1072,16 +1104,10 @@ class _AddNewCarState extends State<AddNewCar> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              if (selectedImages.isNotEmpty)
-                                Row(
-                                  children: selectedImages
-                                      .map((imageFile) => Image.file(
-                                            File(imageFile.path),
-                                            height: 100,
-                                            width: 100,
-                                          ))
-                                      .toList(),
-                                )
+                              if (selectedImages != null)
+                                Row(children: [
+                                  Image.file(File(selectedImages!.path))
+                                ])
                               else
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1451,7 +1477,7 @@ class _AddNewCarState extends State<AddNewCar> {
                             print("Fetured id is $featuredId");
                             print('code Selected id is$codeValue');
                             print('status is id is$statusId');
-                            print(codeValue);
+
                             print("Edition selected id is $editionSelectedId");
                             print("Here is my user info from Login model");
                             //    print(userInfo.payload!.merchant?.id);
@@ -1494,7 +1520,7 @@ class _AddNewCarState extends State<AddNewCar> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
                               elevation: 20),
-                          child: Text("Add this car",
+                          child: uploadImageInProgress? Center(child: CircularProgressIndicator(),): Text("Add this car",
                               style: Theme.of(context).textTheme.titleLarge),
                         ),
                       ),
@@ -1821,4 +1847,10 @@ class _AddNewCarState extends State<AddNewCar> {
       onChanged: onChanged,
     );
   }
+
+  //   void _removeImage(XFile? imageFile) {
+  //   setState(() {
+  //     selectedImages.remove(imageFile);
+  //   });
+  // }
 }

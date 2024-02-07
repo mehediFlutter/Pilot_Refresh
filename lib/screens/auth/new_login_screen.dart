@@ -42,11 +42,13 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
 
   bool myLoginInInProgress = false;
   Future myLogin() async {
+    prefss = await SharedPreferences.getInstance();
     myLoginInInProgress = true;
     if (mounted) {
       setState(() {});
     }
-    prefss = await SharedPreferences.getInstance();
+  
+   
     Map<String, dynamic> body = {
       "mobile": mobileController.text,
       "password": passwordController.text
@@ -65,15 +67,18 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
           LoginModel.fromJson(decodedBody.cast<String, dynamic>());
       await AuthUtility.saveUserInfo(model);
       print(decodedBody['payload']?['token']);
+    
       print(token);
       await prefss.setString('token', token);
       setState(() {});
       print(model.payload!.token);
+        await prefss.setBool('isLogin',true);
 
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => BottomNavBaseScreen(
+               isLogedIn: prefss.getBool('isLogin'),
                   token: decodedBody['payload']?['token'].toString())));
 
       print("Login Success");
@@ -248,11 +253,11 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                               ),
                               backgroundColor:
                                   const Color.fromARGB(255, 89, 170, 236)),
-                          onPressed: () {
+                          onPressed: () async {
                             if (!_globalKey.currentState!.validate()) {
                               return null;
                             }
-                            myLogin();
+                          await  myLogin();
                           },
                           child: Text(
                             "Login",
@@ -275,6 +280,13 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                     ),
                   ),
                 ),
+
+                TextButton(onPressed: () async{
+                   final bool isLoggedIn = await AuthUtility.checkIfUserLoggedIn();
+
+                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>
+                   BottomNavBaseScreen(isLogedIn: isLoggedIn,)), (route) => false);
+                }, child: Text("View as Gest")),
                 SizedBox(
                   height: size.height / 10,
                 ),
