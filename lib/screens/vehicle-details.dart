@@ -94,19 +94,27 @@ class _VehicleDetailsState extends State<VehicleDetails> {
       setState(() {});
     }
 
-    Response response = await get(
+    Response? response;
+    if (Preffs?.getString('token') == null) {
+      response = await get(
         Uri.parse(
-            "https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/detail"),
-        headers: {
-          'Accept': 'application/vnd.api+json',
-          'Content-Type': 'application/vnd.api+json',
-          'Authorization': 'Bearer ${Preffs!.getString('token')}'
-        });
+            "https://pilotbazar.com/api/clients/vehicles/products/${widget.id}/detail"),
+      );
+    } else {
+      response = await get(
+          Uri.parse(
+              "https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/detail"),
+          headers: {
+            'Accept': 'application/vnd.api+json',
+            'Content-Type': 'application/vnd.api+json',
+            'Authorization': 'Bearer ${Preffs!.getString('token')}'
+          });
+    }
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
     print("Get Details methodes");
     print(response.statusCode);
-    final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
+    final Map<String, dynamic> decodedResponse = jsonDecode(response!.body);
     List<dynamic> vehicleFeatures =
         decodedResponse['payload']['vehicle_feature'];
 
@@ -133,19 +141,27 @@ class _VehicleDetailsState extends State<VehicleDetails> {
 
   Future getImageLink() async {
     Preffs = await SharedPreferences.getInstance();
-    Response response = await get(
+    Response? response;
+    if (Preffs?.getString('token') == null) {
+      response = await get(
         Uri.parse(
-            'https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/detail'),
-        headers: {
-          'Accept': 'application/vnd.api+json',
-          'Content-Type': 'application/vnd.api+json',
-          'Authorization': 'Bearer ${Preffs!.getString('token')}'
-        });
+            'https://pilotbazar.com/api/clients/vehicles/products/${widget.id}/detail'),
+      );
+    } else {
+      response = await get(
+          Uri.parse(
+              'https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/detail'),
+          headers: {
+            'Accept': 'application/vnd.api+json',
+            'Content-Type': 'application/vnd.api+json',
+            'Authorization': 'Bearer ${Preffs!.getString('token')}'
+          });
+    }
     print("This is getImageLink function Status Code");
     print(response.statusCode);
     print(response.body);
 
-    final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
+    final Map<String, dynamic> decodedResponse = jsonDecode(response!.body);
     List<dynamic> imageGallry = decodedResponse['payload']['gallery'];
     print("Length");
     print(imageGallry.length);
@@ -157,17 +173,25 @@ class _VehicleDetailsState extends State<VehicleDetails> {
     if (mounted) {
       setState(() {});
     }
-    Response response1 = await get(
+    Response? response1;
+    if (Preffs?.getString('token') == null) {
+      response1 = await get(
         Uri.parse(
-            "https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/detail"),
-        headers: {
-          'Accept': 'application/vnd.api+json',
-          'Content-Type': 'application/vnd.api+json',
-          'Authorization': 'Bearer ${Preffs!.getString('token')}'
-        });
-    print(response1.statusCode);
+            "https://pilotbazar.com/api/clients/vehicles/products/${widget.id}/detail"),
+      );
+    } else {
+      response1 = await get(
+          Uri.parse(
+              "https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/detail"),
+          headers: {
+            'Accept': 'application/vnd.api+json',
+            'Content-Type': 'application/vnd.api+json',
+            'Authorization': 'Bearer ${Preffs!.getString('token')}'
+          });
+    }
+    print(response1?.statusCode);
 
-    final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
+    final Map<String, dynamic> decodedResponse1 = jsonDecode(response1!.body);
     List<dynamic> imageGallary = decodedResponse1['payload']['gallery'];
 
     imageGallary.forEach((e) {
@@ -490,7 +514,8 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                                 padding: EdgeInsets.all(
                                     8.0), // Adjust the padding as needed
                                 child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent),
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.transparent),
                                   onPressed: () {
                                     if (_currentIndex > 0) {
                                       _pageController.previousPage(
@@ -499,8 +524,11 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                                       );
                                     }
                                   },
-                                  child: Icon(Icons.arrow_back, size: 60,color: Colors.white,),
-                                 
+                                  child: Icon(
+                                    Icons.arrow_back,
+                                    size: 60,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
@@ -508,7 +536,8 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                               // top: 20,
                               right: -10,
                               child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent),
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.transparent),
                                 onPressed: () {
                                   if (_currentIndex <
                                       ImageLinkList.length - 1) {

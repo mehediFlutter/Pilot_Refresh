@@ -17,6 +17,7 @@ class _AppState extends State<App> {
       
         debugShowCheckedModeBanner: false,             
         theme: ThemeData(
+          fontFamily: '',
           useMaterial3: false,
           inputDecorationTheme: InputDecorationTheme(
             labelStyle: TextStyle(color: Colors.white, fontSize: 25),

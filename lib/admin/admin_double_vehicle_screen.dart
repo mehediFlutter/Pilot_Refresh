@@ -1,5 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart';
@@ -7,14 +8,18 @@ import 'package:pilot_refresh/admin/asking_fixed_stockList.dart';
 import 'package:pilot_refresh/item_class.dart';
 import 'package:pilot_refresh/product.dart';
 import 'package:pilot_refresh/widget/end_drawer.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class AdminDoublVehicle extends StatefulWidget {
   final String? token;
-  final bool ? isLogedIn;
+  final bool? isLogedIn;
   AdminDoublVehicle({
     super.key,
-    this.token, this.isLogedIn,
+    this.token,
+    this.isLogedIn,
   });
 
   @override
@@ -30,13 +35,31 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
   bool askingPriceChange = false;
   bool askingPriceInProgress = false;
   late SharedPreferences prefss;
+   bool _isDeviceConnected = false;
+  bool _isAlertShown = false;
+  late StreamSubscription<ConnectivityResult> _subscription;
+
   String? toki;
 
   // yVjInK9erYHC0iHW9ehY8c6J4y79fbNzCEIWtZvQ.jpg
   //https://pilotbazar.com/storage/vehicles/
+
+  int getIntPreef = 0;
+  Future<void> getPreffs() async {
+    prefss = await SharedPreferences.getInstance();
+    if (prefss.getString('token') == null) {
+      getIntPreef--;
+    } else {
+      getIntPreef++;
+    }
+  }
+
   @override
   void initState() {
     print("I am on Double vehicle screen");
+    _checkConnectivity(); 
+    _listenForChanges();
+     initializePreffsBool();
     page = 1;
     i = 0;
     getProduct(page);
@@ -58,12 +81,104 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
     setState(() {});
   }
 
-  Future initSharedPref() async {
-    prefss = await SharedPreferences.getInstance();
-    toki = prefss.getString('token').toString();
-    setState(() {});
-    print('token is$toki');
-    print(toki);
+  // @override
+  // void dispose() {
+  //   _subscription.cancel();
+  //   super.dispose();
+  // }
+
+ @override
+void dispose() {
+  _subscription.cancel(); // Cancel subscription on dispose
+  super.dispose();
+}
+
+Future<void> _checkConnectivity() async {
+  try {
+    _isDeviceConnected = await InternetConnectionChecker().hasConnection;
+    _showAlertDialogIfNeeded();
+  } catch (e) {
+    print("Error checking connectivity: $e");
+  }
+}
+
+void _listenForChanges() {
+  _subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) async {
+    try {
+      _isDeviceConnected = await InternetConnectionChecker().hasConnection;
+      _showAlertDialogIfNeeded();
+    } catch (e) {
+      print("Error listening for connectivity changes: $e");
+    }
+  });
+}
+
+        void _showAlertDialogIfNeeded() {
+    if (!_isDeviceConnected && !_isAlertShown) {
+      _isAlertShown = true;
+      showDialog(
+        
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => AlertDialog(
+        
+          contentPadding: EdgeInsets.symmetric(vertical: 10),
+         elevation: 5,
+       actionsPadding: EdgeInsets.all(5),
+          title: Center(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Text(
+                'No Internet Connection',
+                style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500,fontFamily: 'Axiforma'),
+              ),
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Please check your internet connection and",
+                style: TextStyle(color: Colors.black87, fontSize: 12,fontFamily: 'Axiforma'),
+              ),
+              Text(
+                "try again",
+                style: TextStyle(color: Colors.black87, fontSize: 12,fontFamily: 'Axiforma'),
+              ),
+             
+            ],
+          ),
+          actions: [
+              Divider(
+          thickness: 1, // Adjust thickness as needed
+          color: Colors.black26, // Adjust color as needed
+        ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                _isAlertShown = false;
+                await _checkConnectivity(); // Recheck after clicking OK
+                initState();
+              },
+              child: Center(
+                child: Text(
+                  "OK",
+                  style: TextStyle(fontSize: 17,fontFamily: 'Axiforma'),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  initializePreffsBool() async {
+    await getPreffs();
+    setState(() {
+      print("get Int Preef");
+      print(getIntPreef);
+    });
   }
 
   List products = [];
@@ -87,8 +202,7 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
     }
   }
 
-
-   getNewProduct(int page) async {
+  getNewProduct(int page) async {
     print("I am new products methode");
     print("Page");
     print(page);
@@ -102,18 +216,14 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
         Uri.parse(
             'https://pilotbazar.com/api/clients/vehicles/products?page=$page'),
       );
-    }
-
-  
-    else{
-       response = await get(
+    } else {
+      response = await get(
         Uri.parse(
             'https://pilotbazar.com/api/merchants/vehicles/products?page=$page'),
         headers: {
           'Accept': 'application/vnd.api+json',
           'Content-Type': 'application/vnd.api+json',
-          'Authorization': 'Bearer ${prefss.getString('token')
-          }'
+          'Authorization': 'Bearer ${prefss.getString('token')}'
         },
       );
     }
@@ -209,58 +319,37 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
     _getProductinProgress = true;
     if (mounted) {
       setState(() {});
-      
     }
 
-     Response? response;
+    Response? response;
 
-   if(prefss.getString('token') == null)
-   {  
-    response = await get(
-      Uri.parse(
-           "https://pilotbazar.com/api/clients/vehicles/products?page=$page"),
-      // headers: {
-      //   'Accept': 'application/vnd.api+json',
-      //   'Content-Type': 'application/vnd.api+json',
-        
-      // },
-    );
-    }
-else   {  
-    response = await get(
-      Uri.parse(
-           "https://pilotbazar.com/api/merchants/vehicles/products?page=$page"),
-      headers: {
-        'Accept': 'application/vnd.api+json',
-        'Content-Type': 'application/vnd.api+json',
-         'Authorization': 'Bearer ${prefss.getString('token')}',
-      },
-    );
+    if (prefss.getString('token') == null) {
+      response = await get(
+        Uri.parse(
+            "https://pilotbazar.com/api/clients/vehicles/products?page=$page"),
+      );
+    } else {
+      response = await get(
+        Uri.parse(
+            "https://pilotbazar.com/api/merchants/vehicles/products?page=$page"),
+        headers: {
+          'Accept': 'application/vnd.api+json',
+          'Content-Type': 'application/vnd.api+json',
+          'Authorization': 'Bearer ${prefss.getString('token')}',
+        },
+      );
     }
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
-    print(response?.statusCode);
-    print(response?.body);
+    print(response.statusCode);
+    print(response.body);
     print(widget.token);
-    final Map<String, dynamic> decodedResponse1 = jsonDecode(response!.body);
+    final Map<String, dynamic> decodedResponse1 = jsonDecode(response.body);
     final Map<String, dynamic> decodedResponse = decodedResponse1['payload'];
     final getproductsList = decodedResponse['data'];
     setState(() {});
     print('Length is');
     print(getproductsList.length);
-
-    // List<dynamic> vehicleFeatures =
-    //     decodedResponse['data'][0]['vehicle_feature'];
-    // List<FeatureDetailPair> featureDetailPairs =
-    //     extractFeatureDetails(vehicleFeatures);
-
-    // for (var pair in featureDetailPairs) {
-    //   featureDetails.add({pair.detailTitles.join(', ')});
-    //   featureUnicTitle.add({pair.featureTitle});
-    // }
-    // if (mounted) {
-    //   setState(() {});
-    // }
 
     for (i; i < getproductsList.length; i++) {
       print('length of this products');
@@ -338,53 +427,74 @@ else   {
     if (mounted) {
       setState(() {});
     }
-    Response response = await get(
-      Uri.parse(
-          'https://pilotbazar.com/api/merchants/vehicles/products/search?search=$value'),
-      headers: {
-        'Accept': 'application/vnd.api+json',
-        'Content-Type': 'application/vnd.api+json',
-        'Authorization': 'Bearer ${prefss.getString('token')}'
-      },
-    );
+    Response? response;
+
+    if (prefss.getString('token') == null) {
+      response = await get(Uri.parse(
+          'https://pilotbazar.com/api/clients/vehicles/products/search?search=$value'));
+    } else {
+      response = await get(
+        Uri.parse(
+            'https://pilotbazar.com/api/merchants/vehicles/products/search?search=$value'),
+        headers: {
+          'Accept': 'application/vnd.api+json',
+          'Content-Type': 'application/vnd.api+json',
+          'Authorization': 'Bearer ${prefss.getString('token')}'
+        },
+      );
+    }
     final Map<String, dynamic> decodedResponse1 = jsonDecode(response.body);
     final Map<String, dynamic> decodedResponse = decodedResponse1['payload'];
+    final getproductsList = decodedResponse['data'];
     int i = 0;
 
-    for (i; i < decodedResponse['payload'].length; i++) {
-      searchProducts.add(Product(
-        vehicleName:
-            decodedResponse['payload'][i]?['translate'][0]?['title'] ?? '-',
-        manufacture: decodedResponse['payload'][i]?['manufacture'] ?? '',
-        slug: decodedResponse['payload'][i]?['slug'] ?? '',
-        id: decodedResponse['payload'][i]?['id'] ?? '',
-        //  condition: decodedResponse['data'][i]['condition']['translate'][0]
-        //   ['title'],
-        condition: decodedResponse['payload'][i]?['condition']['translate'][0]
-                ?['title'] ??
-            'None',
-        price: decodedResponse['payload'][i]?['price'] ?? '',
-        purchase_price: decodedResponse['payload'][i]?['purchase_price'] ?? '',
-        fixed_price: decodedResponse['payload'][i]?['fixed_price'] ?? '',
-        imageName: decodedResponse['payload']?[i]?['image']['name'] ?? '',
-        registration:
-            decodedResponse['payload']?[i]?['registration'] ?? ' None',
-
-        engine: decodedResponse['payload'][i]?['engines'] ?? '-',
-        brandName: decodedResponse['payload'][i]?['brand']['slug'],
-        transmission: decodedResponse['payload']?[i]?['transmission']
-                ?['translate'][0]?['title'] ??
-            'None',
-        fuel: decodedResponse['payload']?[i]?['fuel']?['translate'][0]
-                ?['title'] ??
-            'None',
-        skeleton: decodedResponse['payload']?[i]?['skeleton']?['translate'][0]
-                ?['title'] ??
-            'None',
-        available: decodedResponse['payload'][i]?['available']['slug'] ?? '-',
-        code: decodedResponse['payload'][i]?['code'] ?? '-',
-        onlyMileage: decodedResponse['payload'][i]?['mileages'] ?? '--',
-      ));
+    for (i; i < getproductsList.length; i++) {
+      print('length of this products');
+      // print(decodedResponse['data'].length);
+      searchProducts.add(
+        Product(
+          vehicleName: getproductsList[i]['translate'][0]['title'],
+          vehicleNameBangla: getproductsList[i]['translate'][1]['title'],
+          manufacture: getproductsList[i]['manufacture'],
+          slug: getproductsList[i]['slug'],
+          id: getproductsList[i]['id'],
+          condition: getproductsList[i]['condition']?['translate'][0]
+                  ?['title'] ??
+              "Condition None",
+          mileage: getproductsList[i]['mileage']?['translate'][0]?['title'] ??
+              getproductsList[i]['mileages'],
+          //price here
+          price: getproductsList[i]['price'] ?? '',
+          purchase_price: getproductsList[i]?['purchase_price'] ?? '',
+          fixed_price: getproductsList[i]?['fixed_price'] ?? '',
+          //price end
+          imageName: getproductsList[i]['image']['name'],
+          registration: getproductsList[i]['registration'] ?? 'None',
+          engine: getproductsList[i]?['engines'] ?? '--',
+          brandName: getproductsList[i]['brand']['translate'][0]['title'],
+          transmission: getproductsList[i]['transmission']['translate'][0]
+              ['title'],
+          fuel: getproductsList[i]['fuel']['translate'][0]['title'],
+          skeleton: getproductsList[i]['skeleton']['translate'][0]['title'],
+          available:
+              getproductsList[i]?['available']?['translate'][0]?['title'] ?? '',
+          code: getproductsList[i]?['code'] ?? '',
+          //model: getproductsList,
+          carColor:
+              getproductsList[i]['color']?['translate'][0]['title'] ?? 'None',
+          edition:
+              getproductsList[i]['edition']['translate'][0]['title'] ?? 'None',
+          model:
+              getproductsList[i]?['carmodel']?['translate'][0]?['title'] ?? '',
+          grade: getproductsList[i]?['grade']?['translate'][0]?['title'] ?? '',
+          engineNumber: getproductsList[i]['engine_number'] ?? '--',
+          chassisNumber: getproductsList[i]['chassis_number'] ?? '--',
+          video: getproductsList[i]?['video'] ?? 'No Video',
+          engine_id: getproductsList[i]?['engine_id'] ?? '12',
+          onlyMileage: getproductsList[i]['mileages'] ?? '--',
+          engines: getproductsList[i]?['engines'] ?? '-',
+        ),
+      );
     }
     products.addAll(searchProducts);
     searchProducts.clear();
@@ -472,25 +582,27 @@ else   {
               children: [
                 Column(
                   children: [
-                    AskingFixedAndStockList(
-                      askingPriceFunction: () {
-                        print("Asking Price function is called");
-                        updateAskingPriceFunction();
-                        askingPriceInProgress = false;
-                        setState(() {});
-                        print(askingPriceInProgress);
-                      },
-                      fixedPriceFunction: () {
-                        print("Fixed Price Function is called");
-                        askingPriceInProgress = true;
-                        updateFixedPriceFunction();
-                        setState(() {});
-                        print(askingPriceInProgress);
-                      },
-                      stockListFunction: () {
-                        print("StockList Price Function is called");
-                      },
-                    ),
+                      (getIntPreef == 1)
+                        ? AskingFixedAndStockList(
+                            askingPriceFunction: () {
+                              print("Asking Price function is called");
+                              updateAskingPriceFunction();
+                              askingPriceInProgress = false;
+                              setState(() {});
+                              print(askingPriceInProgress);
+                            },
+                            fixedPriceFunction: () {
+                              print("Fixed Price Function is called");
+                              askingPriceInProgress = true;
+                              updateFixedPriceFunction();
+                              setState(() {});
+                              print(askingPriceInProgress);
+                            },
+                            stockListFunction: () {
+                              print("StockList Price Function is called");
+                            },
+                          )
+                        : SizedBox(),
                     Expanded(
                       child: RefreshIndicator(
                         onRefresh: () async {
@@ -510,9 +622,9 @@ else   {
                           itemBuilder: (BuildContext context, index) {
                             return Padding(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 0),
+                                  const EdgeInsets.symmetric(horizontal: 3),
                               child: Item(
-                              isLoggedIn: widget.isLogedIn,
+                                isLoggedIn: widget.isLogedIn,
                                 myAskingPrice: myBoolValue,
                                 id: products[index + j].id!,
                                 imageName:
@@ -578,4 +690,6 @@ else   {
   }
 
   static int j = x;
+
+
 }

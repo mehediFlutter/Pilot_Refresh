@@ -758,6 +758,8 @@ class _AddNewCarState extends State<AddNewCar> {
   int? newLyAddedCarId;
   bool uploadImageInProgress = false;
 
+  
+
   Future<void> onUploadImages(
       String titleEnglish,
       titleBangla,
@@ -785,6 +787,8 @@ class _AddNewCarState extends State<AddNewCar> {
       chassis_number,
       brand_id,
       color_id) async {
+    //   prefss = await SharedPreferences.getInstance();
+
     uploadImageInProgress = true;
     if (mounted) setState(() {});
     print("Here is the data which i want to pass dynamically");
@@ -792,35 +796,18 @@ class _AddNewCarState extends State<AddNewCar> {
     print(titleEnglish);
     print(userId);
     print(categoryId);
-    print("Marcent id pass");
-    print(merchantId);
-    print("marchen id end");
-    print(conditionId);
-    print(transmissionId);
-    print(engines);
-    print(fuelId);
-    print(skeletonId);
-    print(mileage);
-    print(manufacture);
-    print(is_feat);
-    print(statusId);
-    print(is_approved);
-    print(publish_at);
-    print(code);
-    print(available_id);
-    print(carmodel_id);
-    print(fixed_price);
-    print(price);
-    print(chassis_number);
-    print(brand_id);
-    print(color_id);
     prefss = await SharedPreferences.getInstance();
+    print("Merchant id from shared Preffs");
+    print(await prefss.getString('merchantId'));
     Map<String, String> formData = {
       'title[en]': titleEnglish,
       'title[bn]': titleBangla,
-      'user_id': '2',
+    //  'user_id': '2',
       'category_id': categoryId.toString(),
-      'merchant_id': merchantId,
+
+      'merchant_id': (prefss.getString('merchantId')).toString(),
+     // 'merchant_id': prefss.getS,
+
       'condition_id': conditionId,
       'transmission_id': transmissionId,
       'engines': engines,

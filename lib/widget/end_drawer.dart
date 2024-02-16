@@ -10,8 +10,9 @@ import 'package:pilot_refresh/screens/marcent_dash_board.dart';
 import 'package:pilot_refresh/widget/drawer_item_list.dart';
 import 'package:pilot_refresh/widget/save_user_data.dart';
 import 'package:pilot_refresh/widget/single_double_select.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class EndDrawer extends StatelessWidget {
+class EndDrawer extends StatefulWidget {
   const EndDrawer({
     super.key,
     required this.mounted,
@@ -19,6 +20,37 @@ class EndDrawer extends StatelessWidget {
 
   final bool mounted;
 
+  @override
+  State<EndDrawer> createState() => _EndDrawerState();
+}
+
+class _EndDrawerState extends State<EndDrawer> {
+  int getIntPreef = 0;
+late SharedPreferences pre;
+
+Future<void> getPreffs() async {
+  pre = await SharedPreferences.getInstance();
+  if (pre.getString('token') == null) {
+    getIntPreef--;
+  } else {
+    getIntPreef++;
+  }
+}
+
+@override
+  void initState() {
+    super.initState();
+    initializePreffsBool();
+    // TODO: implement initState
+    
+  }
+
+  void initializePreffsBool() async {
+  await getPreffs();
+  setState(() {
+    print(getIntPreef);
+  });
+}
   @override
   Widget build(BuildContext context) {
     return Align(
@@ -44,7 +76,7 @@ class EndDrawer extends StatelessWidget {
                                 builder: (context) => MarchentDashBoard()));
                       },
                     ),
-                    DrawerItemList(
+                  (getIntPreef==1)?  DrawerItemList(
                       text: 'Add New Car',
                       icon: Icon(Icons.dashboard),
                       onTapFunction: () {
@@ -53,7 +85,7 @@ class EndDrawer extends StatelessWidget {
                             MaterialPageRoute(
                                 builder: (context) => AddNewCar()));
                       },
-                    ),
+                    ):SizedBox(),
                     // DrawerItemList(
                     //   text: 'Item with whats app',
                     //   icon: Icon(Icons.view_module),
@@ -93,36 +125,36 @@ class EndDrawer extends StatelessWidget {
                         LogOutAlartDialog().showAlertDialog(context);
                       },
                     ),
-                    DrawerItemList(
-                        text: "Double or Single",
-                        icon: Icon(Icons.single_bed),
-                        onTapFunction:(){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>SingleOrDouble()));
-                        }),
-                    DrawerItemList(
-                        text: "Marcents",
-                        icon: Icon(Icons.single_bed),
-                        onTapFunction:(){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>MarcentsAccount()));
-                        }),
-                    DrawerItemList(
-                        text: "User Details",
-                        icon: Icon(Icons.person),
-                        onTapFunction:(){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>UserInfo()));
-                        }),
-                    DrawerItemList(
-                        text: "Description",
-                        icon: Icon(Icons.person),
-                        onTapFunction:(){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>DescriptionPage()));
-                        }),
-                    DrawerItemList(
-                        text: "Multiple images",
-                        icon: Icon(Icons.person),
-                        onTapFunction:(){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>UploadMultiPleImage()));
-                        }),
+                    // DrawerItemList(
+                    //     text: "Double or Single",
+                    //     icon: Icon(Icons.single_bed),
+                    //     onTapFunction:(){
+                    //       Navigator.push(context, MaterialPageRoute(builder: (context)=>SingleOrDouble()));
+                    //     }),
+                    // DrawerItemList(
+                    //     text: "Marcents",
+                    //     icon: Icon(Icons.single_bed),
+                    //     onTapFunction:(){
+                      //     Navigator.push(context, MaterialPageRoute(builder: (context)=>MarcentsAccount()));
+                    //     }),
+                    // DrawerItemList(
+                    //     text: "User Details",
+                    //     icon: Icon(Icons.person),
+                    //     onTapFunction:(){
+                    //       Navigator.push(context, MaterialPageRoute(builder: (context)=>UserInfo()));
+                    //     }),
+                    // DrawerItemList(
+                    //     text: "Description",
+                    //     icon: Icon(Icons.person),
+                    //     onTapFunction:(){
+                    //       Navigator.push(context, MaterialPageRoute(builder: (context)=>DescriptionPage()));
+                    //     }),
+                    // DrawerItemList(
+                    //     text: "Multiple images",
+                    //     icon: Icon(Icons.person),
+                    //     onTapFunction:(){
+                    //       Navigator.push(context, MaterialPageRoute(builder: (context)=>UploadMultiPleImage()));
+                    //     }),
                   ],
                 ),
               ),

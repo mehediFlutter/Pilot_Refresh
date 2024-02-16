@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:pilot_refresh/screens/auth/auth_utility.dart';
 import 'package:pilot_refresh/screens/auth/new_login_screen.dart';
 import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
@@ -15,11 +18,20 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   late bool isDoubleScreenSelected;
   // late String mToken;
+    late StreamSubscription subscription;
+  var isDeviceConnected = false;
+  var isAlertSet = false;
+
 
   @override
   void initState() {
     super.initState();
     loadSelectedScreenType();
+  }
+    @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
   }
 
   // Function to load the saved value from shared preferences
@@ -94,5 +106,38 @@ class _SplashScreenState extends State<SplashScreen> {
         ],
       ),
     );
+  }
+    showDialogBox() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Center(
+                child: Text(
+              'No Internet Connection',
+              style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500),
+            )),
+            content: Text("Please Check your internet connectivity", style: TextStyle(color: Colors.black87,fontSize: 15),),
+            actions: [
+              TextButton(
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    isAlertSet = false;
+                    isDeviceConnected =
+                        await InternetConnectionChecker().hasConnection;
+                    if (!isDeviceConnected) {
+                      showDialogBox();
+                     
+                      isAlertSet = true;
+                      setState(() {});
+                    }
+                  },
+                  child: Center(child: Text("OK",style: TextStyle(fontSize: 17),)))
+            ],
+          );
+        });
   }
 }

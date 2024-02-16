@@ -24,6 +24,7 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
   String phone = '01969944400';
   bool _loginInProgress = false;
   var token;
+  var merchantId;
   late SharedPreferences prefss;
   @override
   void initState() {
@@ -62,14 +63,19 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
         body: jsonEncode(body));
     if (response.statusCode == 200) {
       Map decodedBody = jsonDecode(response.body.toString());
+      print(decodedBody);
       token = decodedBody['payload']?['token']!;
+      merchantId = decodedBody['payload']?['merchant']?['id'];
       LoginModel model =
           LoginModel.fromJson(decodedBody.cast<String, dynamic>());
       await AuthUtility.saveUserInfo(model);
       print(decodedBody['payload']?['token']);
+
     
       print(token);
       await prefss.setString('token', token);
+      await prefss.setString('merchantId', merchantId.toString());
+    //  await prefss.setString('token', token);
       setState(() {});
       print(model.payload!.token);
         await prefss.setBool('isLogin',true);

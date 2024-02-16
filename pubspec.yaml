@@ -32,6 +32,8 @@ dependencies:
   provider: ^6.1.1
   photo_view: ^0.14.0
   flutter_image_compress: ^2.0.0
+  internet_connection_checker: ^1.0.0+1
+  connectivity_plus: ^5.0.2
 
 
 dev_dependencies:
@@ -67,4 +69,7 @@ flutter:
     - family: Roboto
       fonts:
         - asset: fonts/Roboto-Regular.ttf    
+    - family: Axiforma
+      fonts:
+        - asset: fonts/Axiforma-Regular.ttf   
 

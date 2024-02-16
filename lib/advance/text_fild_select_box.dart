@@ -795,7 +795,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
   TextStyle textFildUpText = TextStyle(
     color: Colors.white,
     fontSize: 15,
-    fontFamily: "Roboto",
+   fontFamily: 'Axiforma'
   );
 
   Row textFildUpTextRow(String title, {String? star}) {
@@ -1647,7 +1647,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
         border: OutlineInputBorder(),
       ),
       //value: availableValue,
-      value: value, style: TextStyle(fontSize: 15),
+      value: value, style: TextStyle(fontSize: 14,fontFamily: 'Axiforma'),
       items: list?.map((item) {
         return DropdownMenuItem<String>(
           //item['translate'][0]['title'] as String,
@@ -1780,7 +1780,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
         contentPadding: EdgeInsets.fromLTRB(7, 15, 0, 15),
         border: OutlineInputBorder(),
       ),
-      value: value,
+      value: value,style: TextStyle(fontSize: 14,fontFamily: 'Axiforma'),
       items: list
           ?.whereType<ModelProduct>() // Filter only Product items
           .map<DropdownMenuItem<String?>>((item) {
