@@ -4,6 +4,7 @@ import 'package:pilot_refresh/add%20car/description_page.dart';
 import 'package:pilot_refresh/add%20car/upload_multiple_image.dart';
 import 'package:pilot_refresh/methodes/log_out_methode.dart';
 import 'package:pilot_refresh/marcent/marcents.dart';
+import 'package:pilot_refresh/screens/auth/auth_utility.dart';
 import 'package:pilot_refresh/screens/auth/new_login_screen.dart';
 import 'package:pilot_refresh/screens/double_vehicle_screen.dart';
 import 'package:pilot_refresh/screens/marcent_dash_board.dart';
@@ -114,7 +115,13 @@ Future<void> getPreffs() async {
                     DrawerItemList(
                       text: 'Login',
                       icon: Icon(Icons.login),
-                      onTapFunction: () {
+                      onTapFunction: () async {
+                         pre = await SharedPreferences.getInstance();
+                       print("Log out er age clear info er pore");
+                      print(pre.getString('token').toString());
+                      await AuthUtility.clearUserInfo();
+                      print("Log out er pore clear info er pore");
+                      print(pre.getString('token').toString());
                         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>NewLoginScreen()), (route) => false);
                       },
                     ),
@@ -155,6 +162,33 @@ Future<void> getPreffs() async {
                     //     onTapFunction:(){
                     //       Navigator.push(context, MaterialPageRoute(builder: (context)=>UploadMultiPleImage()));
                     //     }),
+
+                      DrawerItemList(
+                      text: 'Customer Care Login',
+                      icon: Icon(Icons.login),
+                      onTapFunction: () async {
+                         pre = await SharedPreferences.getInstance();
+                       print("Log out er age clear info er pore");
+                      print(pre.getString('token').toString());
+                      await AuthUtility.clearUserInfo();
+                      print("Log out er pore clear info er pore");
+                      print(pre.getString('token').toString());
+                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>NewLoginScreen()), (route) => false);
+                      },
+                    ),
+                      DrawerItemList(
+                      text: 'Pilot Bazae Authority Login',
+                      icon: Icon(Icons.login),
+                      onTapFunction: () async {
+                         pre = await SharedPreferences.getInstance();
+                       print("Log out er age clear info er pore");
+                      print(pre.getString('token').toString());
+                      await AuthUtility.clearUserInfo();
+                      print("Log out er pore clear info er pore");
+                      print(pre.getString('token').toString());
+                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>NewLoginScreen()), (route) => false);
+                      },
+                    ),
                   ],
                 ),
               ),
