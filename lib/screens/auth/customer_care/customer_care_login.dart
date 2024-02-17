@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:pilot_refresh/const_border/border_color_radious.dart';
 import 'package:pilot_refresh/screens/auth/auth_utility.dart';
+import 'package:pilot_refresh/screens/auth/customer_care/customer_care_registration.dart';
 import 'package:pilot_refresh/screens/auth/login_model.dart';
 import 'package:pilot_refresh/screens/auth/new_registration_screen.dart';
 import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
@@ -22,7 +23,6 @@ class _CustomerCareLoginState extends State<CustomerCareLogin> {
   TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> _globalKey = GlobalKey();
   String phone = '01969944400';
-  bool _loginInProgress = false;
   var token;
   var merchantId;
   late SharedPreferences prefss;
@@ -253,7 +253,7 @@ class _CustomerCareLoginState extends State<CustomerCareLogin> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => NewRegistrationScreen()));
+                              builder: (context) => CustomerCareRegistration()));
                     },
                     child: Text(
                       "Customer Care Registration",

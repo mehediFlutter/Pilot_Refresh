@@ -4,8 +4,7 @@ import 'package:pilot_refresh/add%20car/description_page.dart';
 import 'package:pilot_refresh/add%20car/upload_multiple_image.dart';
 import 'package:pilot_refresh/methodes/log_out_methode.dart';
 import 'package:pilot_refresh/marcent/marcents.dart';
-import 'package:pilot_refresh/screens/auth/auth_utility.dart';
-import 'package:pilot_refresh/screens/auth/customer_care_login.dart';
+import 'package:pilot_refresh/screens/auth/customer_care/customer_care_registration.dart';
 import 'package:pilot_refresh/screens/auth/new_login_screen.dart';
 import 'package:pilot_refresh/screens/double_vehicle_screen.dart';
 import 'package:pilot_refresh/screens/marcent_dash_board.dart';
@@ -58,7 +57,7 @@ Future<void> getPreffs() async {
     return Align(
       alignment: Alignment.topRight,
       child: SizedBox(
-        height: 230,
+        height: (getIntPreef==1 || getIntPreef>=0)?300:160,
         width: 200,
         child: Drawer(
           backgroundColor: Color(0xFF333333),
@@ -78,7 +77,7 @@ Future<void> getPreffs() async {
                                 builder: (context) => MarchentDashBoard()));
                       },
                     ),
-                  (getIntPreef==1)?  DrawerItemList(
+                  (getIntPreef==1 || getIntPreef>=0)?  DrawerItemList(
                       text: 'Add New Car',
                       icon: Icon(Icons.dashboard),
                       onTapFunction: () {
@@ -113,83 +112,25 @@ Future<void> getPreffs() async {
                     //               builder: (context) => DoublVehicle()));
                     //   },
                     // ),
-                    DrawerItemList(
-                      text: 'Login',
+                   (getIntPreef !=1)?  DrawerItemList(
+                      text: 'Merchent Login',
                       icon: Icon(Icons.login),
-                      onTapFunction: () async {
-                         pre = await SharedPreferences.getInstance();
-                       print("Log out er age clear info er pore");
-                      print(pre.getString('token').toString());
-                      await AuthUtility.clearUserInfo();
-                      print("Log out er pore clear info er pore");
-                      print(pre.getString('token').toString());
+                      onTapFunction: () {
                         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>NewLoginScreen()), (route) => false);
                       },
-                    ),
-                    DrawerItemList(
-                      text: 'Logout',
+                    ):SizedBox(),
+                  (getIntPreef ==1 || getIntPreef>=0)?   DrawerItemList(
+                      text: 'Merchent Logout',
                       icon: Icon(Icons.logout),
                       onTapFunction: () {
                         LogOutAlartDialog().showAlertDialog(context);
                       },
-                    ),
-                    // DrawerItemList(
-                    //     text: "Double or Single",
-                    //     icon: Icon(Icons.single_bed),
-                    //     onTapFunction:(){
-                    //       Navigator.push(context, MaterialPageRoute(builder: (context)=>SingleOrDouble()));
-                    //     }),
-                    // DrawerItemList(
-                    //     text: "Marcents",
-                    //     icon: Icon(Icons.single_bed),
-                    //     onTapFunction:(){
-                      //     Navigator.push(context, MaterialPageRoute(builder: (context)=>MarcentsAccount()));
-                    //     }),
-                    // DrawerItemList(
-                    //     text: "User Details",
-                    //     icon: Icon(Icons.person),
-                    //     onTapFunction:(){
-                    //       Navigator.push(context, MaterialPageRoute(builder: (context)=>UserInfo()));
-                    //     }),
-                    // DrawerItemList(
-                    //     text: "Description",
-                    //     icon: Icon(Icons.person),
-                    //     onTapFunction:(){
-                    //       Navigator.push(context, MaterialPageRoute(builder: (context)=>DescriptionPage()));
-                    //     }),
-                    // DrawerItemList(
-                    //     text: "Multiple images",
-                    //     icon: Icon(Icons.person),
-                    //     onTapFunction:(){
-                    //       Navigator.push(context, MaterialPageRoute(builder: (context)=>UploadMultiPleImage()));
-                    //     }),
-
-                      DrawerItemList(
-                      text: 'Customer Care Login',
-                      icon: Icon(Icons.login),
-                      onTapFunction: () async {
-                         pre = await SharedPreferences.getInstance();
-                       print("Log out er age clear info er pore");
-                      print(pre.getString('token').toString());
-                      await AuthUtility.clearUserInfo();
-                      print("Log out er pore clear info er pore");
-                      print(pre.getString('token').toString());
-                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>CustomerCareLogin()), (route) => false);
-                      },
-                    ),
-                      DrawerItemList(
-                      text: 'Pilot Bazae Authority Login',
-                      icon: Icon(Icons.login),
-                      onTapFunction: () async {
-                         pre = await SharedPreferences.getInstance();
-                       print("Log out er age clear info er pore");
-                      print(pre.getString('token').toString());
-                      await AuthUtility.clearUserInfo();
-                      print("Log out er pore clear info er pore");
-                      print(pre.getString('token').toString());
-                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>NewLoginScreen()), (route) => false);
-                      },
-                    ),
+                    ):SizedBox(),
+                    
+                     (getIntPreef==1 || getIntPreef>=0)? DrawerItemList(text: 'Customar care Registration',
+                      icon: Icon(Icons.login), onTapFunction: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>CustomerCareRegistration()));
+                      }):SizedBox(),
                   ],
                 ),
               ),

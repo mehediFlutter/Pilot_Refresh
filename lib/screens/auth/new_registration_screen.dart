@@ -17,6 +17,17 @@ class _NewRegistrationScreenState extends State<NewRegistrationScreen> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
+//   {
+//     "name" : "CustomerCare",
+//     "mobile" : "012548789653",
+//     "password" : "11111111"
+// }
+
+Future<void> customerCareRegistration() async{
+  
+
+}
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);

@@ -18,7 +18,6 @@ class NewLoginScreen extends StatefulWidget {
 }
 
 class _NewLoginScreenState extends State<NewLoginScreen> {
-  
   TextEditingController mobileController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> _globalKey = GlobalKey();

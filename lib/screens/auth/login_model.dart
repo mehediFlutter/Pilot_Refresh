@@ -53,7 +53,7 @@ class Merchant {
   String? emailVerifiedAt;
   String? mobile;
   String? mobileVerifiedAt;
-  String? status;
+  int? status;
   String? merchantType;
   String? createdAt;
   String? updatedAt;
