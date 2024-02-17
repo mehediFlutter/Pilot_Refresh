@@ -5,6 +5,7 @@ import 'package:pilot_refresh/add%20car/upload_multiple_image.dart';
 import 'package:pilot_refresh/methodes/log_out_methode.dart';
 import 'package:pilot_refresh/marcent/marcents.dart';
 import 'package:pilot_refresh/screens/auth/auth_utility.dart';
+import 'package:pilot_refresh/screens/auth/customer_care_login.dart';
 import 'package:pilot_refresh/screens/auth/new_login_screen.dart';
 import 'package:pilot_refresh/screens/double_vehicle_screen.dart';
 import 'package:pilot_refresh/screens/marcent_dash_board.dart';
@@ -173,7 +174,7 @@ Future<void> getPreffs() async {
                       await AuthUtility.clearUserInfo();
                       print("Log out er pore clear info er pore");
                       print(pre.getString('token').toString());
-                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>NewLoginScreen()), (route) => false);
+                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>CustomerCareLogin()), (route) => false);
                       },
                     ),
                       DrawerItemList(

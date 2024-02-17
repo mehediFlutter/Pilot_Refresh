@@ -1,24 +1,23 @@
 import 'dart:convert';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:pilot_refresh/const_border/border_color_radious.dart';
 import 'package:pilot_refresh/screens/auth/auth_utility.dart';
 import 'package:pilot_refresh/screens/auth/login_model.dart';
 import 'package:pilot_refresh/screens/auth/new_registration_screen.dart';
-import 'package:pilot_refresh/service/network_caller.dart';
-import 'package:pilot_refresh/service/network_response.dart';
 import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class NewLoginScreen extends StatefulWidget {
-  const NewLoginScreen({super.key});
+class CustomerCareLogin extends StatefulWidget {
+  const CustomerCareLogin({super.key});
 
   @override
-  State<NewLoginScreen> createState() => _NewLoginScreenState();
+  State<CustomerCareLogin> createState() => _CustomerCareLoginState();
 }
 
-class _NewLoginScreenState extends State<NewLoginScreen> {
-  
+class _CustomerCareLoginState extends State<CustomerCareLogin> {
   TextEditingController mobileController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> _globalKey = GlobalKey();
@@ -29,7 +28,6 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
   late SharedPreferences prefss;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     initSharedPref();
   }
@@ -49,8 +47,7 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
     if (mounted) {
       setState(() {});
     }
-  
-   
+
     Map<String, dynamic> body = {
       "mobile": mobileController.text,
       "password": passwordController.text
@@ -72,27 +69,26 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
       await AuthUtility.saveUserInfo(model);
       print(decodedBody['payload']?['token']);
 
-    
       print(token);
       await prefss.setString('token', token);
       await prefss.setString('merchantId', merchantId.toString());
-    //  await prefss.setString('token', token);
+      //  await prefss.setString('token', token);
       setState(() {});
       print(model.payload!.token);
-        await prefss.setBool('isLogin',true);
+      await prefss.setBool('isLogin', true);
 
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => BottomNavBaseScreen(
-               isLogedIn: prefss.getBool('isLogin'),
+                  isLogedIn: prefss.getBool('isLogin'),
                   token: decodedBody['payload']?['token'].toString())));
 
       print("Login Success");
     }
 
     // token = decodedBody['payload']['token'];
-  await  Navigator.pushAndRemoveUntil(
+    await Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
             builder: (context) => BottomNavBaseScreen(
@@ -172,69 +168,47 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                   style: TextStyle(color: Colors.black87, fontSize: 13),
                 ),
                 SizedBox(height: size.height / 10),
-                Theme(
-                  data: Theme.of(context).copyWith(
-                    inputDecorationTheme: InputDecorationTheme(
+
+
+                SizedBox(height: size.height/30),
+                TextFormField(
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: Colors.black,fontSize: 15),
+                  cursorColor: Colors.black,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                      hintText: 'Phone Number',
+                      hintStyle: TextStyle(color: Colors.grey),
                       contentPadding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey)),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.grey), // Focused border color
-                      ),
-                    ),
-                  ),
-                  child: TextFormField(
-                    controller: mobileController,
-                    style: TextStyle(color: Colors.black, fontSize: 15),
-                    decoration: InputDecoration(
-                      labelText: "Mobile No",
-                      labelStyle: TextStyle(color: Colors.grey, fontSize: 13),
-                    ),
-                    validator: (String? value) {
-                      if (value?.isEmpty ?? true) {
-                        return 'Enter mobile number';
-                      }
-                      return null;
-                    },
-                  ),
+                       textFildContentPadding,
+                      border: customBorderPackage,
+                      focusedBorder: customFocusBorder,
+                      disabledBorder: customBorderPackage),
                 ),
+                SizedBox(height: size.height/50),
+                TextFormField(
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: Colors.black),
+                  cursorColor: Colors.black,
+                  
+                  decoration: InputDecoration(
+                      hintText: 'Password',
+                      hintStyle: TextStyle(color: Colors.grey),
+                      contentPadding:
+                         textFildContentPadding,
+                      border: customBorderPackage,
+                      focusedBorder: customFocusBorder,
+                      disabledBorder: customBorderPackage),
+                ),
+                SizedBox(height: 20),
                 SizedBox(
                   height: 15,
                 ),
-                Theme(
-                  data: Theme.of(context).copyWith(
-                    inputDecorationTheme: InputDecorationTheme(
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey)),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.grey), // Focused border color
-                      ),
-                    ),
-                  ),
-                  child: TextFormField(
-                    cursorColor: Colors.black,
-                    controller: passwordController,
-                    style: TextStyle(color: Colors.black, fontSize: 15),
-                    decoration: InputDecoration(
-                      labelText: "Password",
-                      labelStyle: TextStyle(color: Colors.grey, fontSize: 13),
-                    ),
-                    validator: (String? value) {
-                      if (value?.isEmpty ?? true) {
-                        return 'Enter password';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                SizedBox(
-                  height: 15,
-                ),
+
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -264,7 +238,7 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                             if (!_globalKey.currentState!.validate()) {
                               return null;
                             }
-                          await  myLogin();
+                            await myLogin();
                           },
                           child: Text(
                             "Login",
@@ -282,18 +256,25 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                               builder: (context) => NewRegistrationScreen()));
                     },
                     child: Text(
-                      " Registration",
+                      "Customer Care Registration",
                       style: TextStyle(color: Colors.black87, fontSize: 13),
                     ),
                   ),
                 ),
+                TextButton(
+                    onPressed: () async {
+                      final bool isLoggedIn =
+                          await AuthUtility.checkIfUserLoggedIn();
 
-                TextButton(onPressed: () async{
-                   final bool isLoggedIn = await AuthUtility.checkIfUserLoggedIn();
-
-                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>
-                   BottomNavBaseScreen(isLogedIn: isLoggedIn,)), (route) => false);
-                }, child: Text("View as Gest")),
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BottomNavBaseScreen(
+                                    isLogedIn: isLoggedIn,
+                                  )),
+                          (route) => false);
+                    },
+                    child: Text("View as Gest")),
                 SizedBox(
                   height: size.height / 10,
                 ),
