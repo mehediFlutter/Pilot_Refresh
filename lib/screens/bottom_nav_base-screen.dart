@@ -36,18 +36,15 @@ class _BottomNavBaseScreenState extends State<BottomNavBaseScreen> {
        tokeno = widget.token ?? '';
     });
 
-    // Check if widget.isDoubleScreenSelected and widget.isSingleScreenSelected are not null
     if (widget.isDoubleScreenSelected != null &&
         widget.isSingleScreenSelected != null) {
-      // Set the default index based on the selected screen type
       _selectedScreenIndex = widget.isDoubleScreenSelected!
           ? 0
           : widget.isSingleScreenSelected!
               ? 1
               : 0;
     } else {
-      // Handle the case where either widget.isDoubleScreenSelected or widget.isSingleScreenSelected is null
-      // You may want to set a default value or handle this case differently based on your requirements.
+
       _selectedScreenIndex = 0;
     }
     getToken() ;
@@ -96,9 +93,9 @@ class _BottomNavBaseScreenState extends State<BottomNavBaseScreen> {
   }
 
   List<Widget> get _screens {
-    return [
-     AdminDoublVehicle(isLogedIn: widget.isLogedIn,),
-      HomeVehicle(token: 'hello i am token'),
+    return  [
+     AdminDoublVehicle(),
+      HomeVehicle(),
     ];
   }
 }

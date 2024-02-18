@@ -76,7 +76,7 @@ class _AppState extends State<App> {
                 ),
           ),
         ),
-        home: SplashScreen());
+        home:  SplashScreen());
       
   }
 }

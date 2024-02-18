@@ -786,7 +786,7 @@ void _listenForChanges() {
     print("get details methode");
     prefss = await SharedPreferences.getInstance();
 
-    imageInProgress = true;
+    shareInProgress =  true;
     if (mounted) {
       setState(() {});
     }
@@ -820,7 +820,7 @@ void _listenForChanges() {
       unicTitle.add(pair.featureTitle);
       details.add(pair.detailTitles.join(', '));
     }
-    imageInProgress = false;
+    shareInProgress = false;
     if (mounted) {
       setState(() {});
     }
@@ -829,17 +829,23 @@ void _listenForChanges() {
     print("End get details methode");
   }
 
-
+ bool enterDetailsMethodeWithLotsOfDetails=false;
+ bool emailInPRogress=false;
   Future<void> shareViaEmail(int id, String ImageName, vehicleName, manufacture,
-      condition, registration, mileage, price, detailsLink) async {
-    shareInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
+      condition, registration, mileage, price, detailsLink, {bool isMedia = false}
+  
+  ) async {
+    // print("Shared via email methode ${imageInProgress}");
     prefss = await SharedPreferences.getInstance();
-    Response ? response1;
+    showImageList.clear();
+   emailInPRogress=true;
+    setState(() {});
+    print('Start of emailInPRogress ${emailInPRogress}');
+
+    Response? response1;
+
     try {
-        if (prefss.getString('token') == null) {
+      if (prefss.getString('token') == null) {
         response1 = await get(
           Uri.parse(
               "https://pilotbazar.com/api/clients/vehicles/products/$id/detail"),
@@ -855,7 +861,8 @@ void _listenForChanges() {
             });
       }
       print(response1.statusCode);
-      final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
+      final Map<String, dynamic> decodedResponse1 = jsonDecode(response1!.body);
+      print("Shared via email methode ${imageInProgress}");
 
       for (int b = 0; b < decodedResponse1['payload']['gallery'].length; b++) {
         ImageLink = decodedResponse1['payload']["gallery"][b]?['name'] ?? '';
@@ -867,14 +874,16 @@ void _listenForChanges() {
         print(ImageLinkList[c]);
       }
 
-      List<XFile> showImageList = [];
+      //List<XFile> showImageList = [];
       for (int y = 0; y < ImageLinkList.length; y++) {
+        print('loop of image in prpgress emailInPRogress ${emailInPRogress}');
         final uri = Uri.parse(
             "https://pilotbazar.com/storage/galleries/${ImageLinkList[y]}");
         final response = await http.get(uri);
         final imageBytes = response.bodyBytes;
         final tempDirectory = await getTemporaryDirectory();
-        print("hello");
+        // print("Single Image get");
+        // print(" ${imageInProgress}");
         final tempFile = await File('${tempDirectory.path}/sharedImage$y.jpg')
             .writeAsBytes(imageBytes);
 
@@ -884,41 +893,72 @@ void _listenForChanges() {
 
       print("Length is Unic title");
       print(unicTitle.length);
-      late String info;
+      final Map<String, dynamic> decodedResponseForFeatures =
+          jsonDecode(response1.body);
+      List<dynamic> vehicleFeatures =
+          decodedResponseForFeatures['payload']['vehicle_feature'];
 
+      List<FeatureDetailPair> featureDetailPairs =
+          extractFeatureDetails(vehicleFeatures);
+
+      for (var pair in featureDetailPairs) {
+        unicTitle.add(pair.featureTitle);
+        details.add(pair.detailTitles.join(', '));
+      }
+
+      print("details length is");
+      print(details.length);
+      print("End get details methode");
       String message =
-          "Vehicle Name:$vehicleName  \nManufacture:$manufacture   \nConditiion:$condition  \nRegistration:$registration  \nMillage:$mileage  \nPrice:$price \nSee more\n$detailsLink ";
-
-      if (unicTitle.length != 0) {
-        info = "\n${unicTitle[0]} : ${details[0]}";
-        _detailsInProgress = true;
-        setState(() {});
-        for (int b = 1; b < unicTitle.length; b++) {
-          info += "\n${unicTitle[b]} : ${details[b]}";
+          "${vehicleName},Manufacture: ${manufacture}, ${condition}, Registration:${registration},Mileage: ${mileage},${isMedia ? '' : 'price:${price}'} ";
+      print("length of unit title");
+      print(unicTitle.length);
+      String message2 = '';
+      for (int i = 0; i < details.length; i++) {
+        message2 += " ${details[i]}";
+        if (i < details.length - 1) {
+          message2 += ", "; // Add a comma and space if it's not the last index
         }
+      }
+      setState(() {});
+      print(message2);
+      String message3 =
+          "\n\nOur HotLine Number: 0196-99-444-00\n Show More\n $detailsLink";
+      if (isMedia == true) {
+        message3 = '';
+        imageInProgress = false;
+        setState(() {});
       }
 
       if (showImageList.isNotEmpty) {
         // Share all images with text
         await Share.shareXFiles(
             showImageList.map((image) => image as XFile).toList(),
-            text: _detailsInProgress ? message + info : message);
+            text: enterDetailsMethodeWithLotsOfDetails
+                ? message + message2 + message3
+                : message + message3);
 
         // Clear lists and reset state
         unicTitle.clear();
         details.clear();
         ImageLinkList.clear();
         showImageList.clear();
-        shareInProgress = false;
+        enterDetailsMethodeWithLotsOfDetails = false;
         if (mounted) {
           setState(() {});
         }
+        print("bool Whare via email loop ${imageInProgress}");
       } else {
         print("No images to share.");
       }
     } catch (error) {
       print("Error: $error");
     }
+    emailInPRogress = false;
+    if (mounted) {
+      setState(() {});
+    }
+    print('End of emailInPRogress ${emailInPRogress}');
   }
 
   List searchProducts = [];
@@ -1351,18 +1391,17 @@ void _listenForChanges() {
                                         products[x + j].price,
                                         detailsLink);
                                   } else if (value == 'email') {
-                                    await getLink(
-                                        products[x + j].id.toString());
-                                        // shareDetails( products[x + j].id,
-                                        // products[x + j].imageName,
-                                        // products[x + j].vehicleName,
-                                        // products[x + j].manufacture,
-                                        // products[x + j].condition,
-                                        // products[x + j].registration,
-                                        // products[x + j].mileage,
-                                        // products[x + j].price,
-                                        // detailsLink);
-                                        sendAllImages(products[x + j].id);
+                                      
+                                      newGetDetails(products[x + j].id ?? 12);
+
+
+                                                    getLink(
+                                                        products[x +j].id.toString());
+                                                    
+
+                                  
+                                     
+                                    //  sendAllImages(products[x + j].id);
                                     shareViaEmail(
                                         products[x + j].id,
                                         products[x + j].imageName,
@@ -1373,7 +1412,7 @@ void _listenForChanges() {
                                         products[x + j].mileage,
                                         products[x + j].price,
                                         detailsLink);
-                                      await  sendAllImages(products[x + j].id);
+                                    //  await  sendAllImages(products[x + j].id);
                                   } else if (value == 'media') {
                                     await getLink(
                                         products[x + j].id.toString());

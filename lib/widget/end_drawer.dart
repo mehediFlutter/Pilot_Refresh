@@ -9,7 +9,7 @@ import 'package:pilot_refresh/screens/auth/customer_care/customer_care_registrat
 import 'package:pilot_refresh/screens/auth/new_login_screen.dart';
 import 'package:pilot_refresh/screens/double_vehicle_screen.dart';
 import 'package:pilot_refresh/screens/marcent_dash_board.dart';
-import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
+import 'package:pilot_refresh/screens/bottom_nav_base-screen.dart';
 import 'package:pilot_refresh/widget/drawer_item_list.dart';
 import 'package:pilot_refresh/widget/save_user_data.dart';
 import 'package:pilot_refresh/widget/single_double_select.dart';

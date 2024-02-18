@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pilot_refresh/const_color/constant_color.dart';
-import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
+import 'package:pilot_refresh/screens/bottom_nav_base-screen.dart';
 
 class CustomerCareDetails extends StatefulWidget {
   const CustomerCareDetails({super.key});

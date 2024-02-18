@@ -6,7 +6,7 @@ import 'package:pilot_refresh/const_color/base_api_url.dart';
 import 'package:pilot_refresh/const_color/border_color_radious.dart';
 import 'package:pilot_refresh/screens/auth/auth_utility.dart';
 import 'package:pilot_refresh/screens/auth/customer_care/customer_care_details.dart';
-import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
+import 'package:pilot_refresh/screens/bottom_nav_base-screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 

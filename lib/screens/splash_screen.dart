@@ -2,9 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:pilot_refresh/For_Customer_Care/screens/C_bottom_nav_base_screen.dart';
 import 'package:pilot_refresh/screens/auth/auth_utility.dart';
 import 'package:pilot_refresh/screens/auth/new_login_screen.dart';
-import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
+import 'package:pilot_refresh/screens/bottom_nav_base-screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -34,9 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.dispose();
   }
 
-  // Function to load the saved value from shared preferences
   Future<void> loadSelectedScreenType() async {
-    // Load the selected screen type during the app startup
     final prefs = await SharedPreferences.getInstance();
 
     setState(() {
@@ -48,7 +47,9 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   late SharedPreferences preff;
+  
   Future<void> navigateToLogin() async {
+
     preff = await SharedPreferences.getInstance();
     final bool isLoggedIn = await AuthUtility.checkIfUserLoggedIn();
     final login = await preff.getBool('isLogin');
@@ -60,11 +61,17 @@ class _SplashScreenState extends State<SplashScreen> {
       (_) => Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-              builder: (context) => BottomNavBaseScreen(
+              builder: (context) =>(preff.getString('type')!='customercare' ||preff.getString('type')==null)? BottomNavBaseScreen(
                     isDoubleScreenSelected: isDoubleScreenSelected,
                     isSingleScreenSelected: !isDoubleScreenSelected,
                     isLogedIn: login,
-                  )),
+                  ):C_BottomNavBaseScreen(
+                    isDoubleScreenSelected: isDoubleScreenSelected,
+                    isSingleScreenSelected: !isDoubleScreenSelected,
+                    isLogedIn: login,
+                  )
+                  
+                  ),
           (route) => false),
     );
   }

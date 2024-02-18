@@ -16,7 +16,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Item extends StatefulWidget {
+class C_Item extends StatefulWidget {
   final bool? myAskingPrice;
   final String? toki;
   final int? id;
@@ -52,7 +52,7 @@ class Item extends StatefulWidget {
   final String? engines;
   final String? vehiclaNameModel;
 
-  Item({
+  C_Item({
     this.id,
     this.imageName,
     this.code,
@@ -90,10 +90,10 @@ class Item extends StatefulWidget {
   });
 
   @override
-  State<Item> createState() => _ItemState();
+  State<C_Item> createState() => _C_ItemState();
 }
 
-class _ItemState extends State<Item> {
+class _C_ItemState extends State<C_Item> {
   // yVjInK9erYHC0iHW9ehY8c6J4y79fbNzCEIWtZvQ.jpg
   //https://pilotbazar.com/storage/vehicles/
   late int id;
@@ -971,10 +971,14 @@ class _ItemState extends State<Item> {
                                                   // Open Delete Popup
                                                   //deleteById(id);
                                                   // }
-                                                  if (value == 'Edit price') {
-                                                    navigateToAdvancePage(
-                                                        widget.id ?? 0);
-                                                  } else if (value ==
+
+
+                                                  // if (value == 'Edit price') {
+                                                  //   navigateToAdvancePage(
+                                                  //       widget.id ?? 0);
+                                                  // }
+                                                  
+                                                   else if (value ==
                                                       'Booked') {
                                                     updateBooked(
                                                         widget.id ?? 0);
@@ -1216,11 +1220,11 @@ class _ItemState extends State<Item> {
                                                 },
                                                 itemBuilder: (context) {
                                                   return [
-                                                    PopupMenuItem(
-                                                      child: Text("Edit price"),
-                                                      value: 'Edit price',
-                                                      textStyle: popubItem,
-                                                    ),
+                                                    // PopupMenuItem(
+                                                    //   child: Text("Edit price"),
+                                                    //   value: 'Edit price',
+                                                    //   textStyle: popubItem,
+                                                    // ),
                                                     PopupMenuItem(
                                                       child: Text("Booked"),
                                                       value: 'Booked',

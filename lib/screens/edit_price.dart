@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:pilot_refresh/screens/double_vehicle_screen.dart';
 import 'package:pilot_refresh/screens/home_vehicle.dart';
-import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
+import 'package:pilot_refresh/screens/bottom_nav_base-screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PriceEditScreen extends StatefulWidget {

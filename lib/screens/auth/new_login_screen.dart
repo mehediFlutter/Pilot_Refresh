@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:pilot_refresh/For_Customer_Care/customer_care_login.dart';
+import 'package:pilot_refresh/For_Customer_Care/auth/customer_care_login.dart';
 import 'package:pilot_refresh/screens/auth/auth_utility.dart';
 import 'package:pilot_refresh/screens/auth/customer_care/customer_care_registration.dart';
 import 'package:pilot_refresh/screens/auth/login_model.dart';
 import 'package:pilot_refresh/screens/auth/new_registration_screen.dart';
 import 'package:pilot_refresh/service/network_caller.dart';
 import 'package:pilot_refresh/service/network_response.dart';
-import 'package:pilot_refresh/widget/bottom_nav_base-screen.dart';
+import 'package:pilot_refresh/screens/bottom_nav_base-screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -86,8 +86,9 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
           context,
           MaterialPageRoute(
               builder: (context) => BottomNavBaseScreen(
-               isLogedIn: prefss.getBool('isLogin'),
-                  token: decodedBody['payload']?['token'].toString())));
+              //  isLogedIn: prefss.getBool('isLogin'),
+              //     token: decodedBody['payload']?['token'].toString()
+                  )));
 
       print("Login Success");
     }
