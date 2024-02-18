@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:pilot_refresh/const_border/border_color_radious.dart';
+import 'package:pilot_refresh/const_color/border_color_radious.dart';
 import 'package:pilot_refresh/screens/auth/auth_utility.dart';
 import 'package:pilot_refresh/screens/auth/customer_care/customer_care_registration.dart';
 import 'package:pilot_refresh/screens/auth/login_model.dart';
@@ -246,21 +246,21 @@ class _CustomerCareLoginState extends State<CustomerCareLogin> {
                           )),
                 ),
                 SizedBox(height: 15),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: OutlinedButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => CustomerCareRegistration()));
-                    },
-                    child: Text(
-                      "Customer Care Registration",
-                      style: TextStyle(color: Colors.black87, fontSize: 13),
-                    ),
-                  ),
-                ),
+                // Align(
+                //   alignment: Alignment.centerRight,
+                //   child: OutlinedButton(
+                //     onPressed: () {
+                //       Navigator.push(
+                //           context,
+                //           MaterialPageRoute(
+                //               builder: (context) => CustomerCareRegistration()));
+                //     },
+                //     child: Text(
+                //       "Customer Care Registration",
+                //       style: TextStyle(color: Colors.black87, fontSize: 13),
+                //     ),
+                //   ),
+                // ),
                 TextButton(
                     onPressed: () async {
                       final bool isLoggedIn =

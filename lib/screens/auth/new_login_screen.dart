@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:pilot_refresh/For_Customer_Care/customer_care_login.dart';
 import 'package:pilot_refresh/screens/auth/auth_utility.dart';
+import 'package:pilot_refresh/screens/auth/customer_care/customer_care_registration.dart';
 import 'package:pilot_refresh/screens/auth/login_model.dart';
 import 'package:pilot_refresh/screens/auth/new_registration_screen.dart';
 import 'package:pilot_refresh/service/network_caller.dart';
@@ -152,14 +154,14 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
     return Scaffold(
       //backgroundColor: Colors.white,
       body: Padding(
-        padding: EdgeInsets.only(left: 27, right: 27, top: size.height / 7),
+        padding: EdgeInsets.only(left: 27, right: 27, top: 10),
         child: SingleChildScrollView(
           child: Form(
             key: _globalKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: size.height / 30),
+                SizedBox(height: size.height/6),
                 Image.asset(
                   'assets/images/pilot_logo3.png',
                   width: 170,
@@ -170,7 +172,7 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                   " Do Business with Us",
                   style: TextStyle(color: Colors.black87, fontSize: 13),
                 ),
-                SizedBox(height: size.height / 10),
+                SizedBox(height:  size.height/10),
                 Theme(
                   data: Theme.of(context).copyWith(
                     inputDecorationTheme: InputDecorationTheme(
@@ -286,15 +288,30 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                     ),
                   ),
                 ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CustomerCareLogin()));
+                    },
+                    child: Text(
+                      "Customer Care Login",
+                      style: TextStyle(color: Colors.black87, fontSize: 13),
+                    ),
+                  ),
+                ),
 
                 TextButton(onPressed: () async{
                    final bool isLoggedIn = await AuthUtility.checkIfUserLoggedIn();
 
                   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>
-                   BottomNavBaseScreen(isLogedIn: isLoggedIn,)), (route) => false);
+                   BottomNavBaseScreen()), (route) => false);
                 }, child: Text("View as Gest")),
                 SizedBox(
-                  height: size.height / 10,
+                  height: 20
                 ),
                 Text(
                   "By signing in your agreeing our",

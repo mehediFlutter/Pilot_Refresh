@@ -9,12 +9,13 @@ class BottomNavBaseScreen extends StatefulWidget {
   final bool? isSingleScreenSelected;
   final String? token;
   final bool? isLogedIn;
+  final bool? isCustomerDetails;
 
   const BottomNavBaseScreen({
     Key? key,
     this.isDoubleScreenSelected,
     this.isSingleScreenSelected,
-    this.token, this.isLogedIn,
+    this.token, this.isLogedIn, this.isCustomerDetails=false,
   }) : super(key: key);
 
   @override
@@ -96,7 +97,7 @@ class _BottomNavBaseScreenState extends State<BottomNavBaseScreen> {
 
   List<Widget> get _screens {
     return [
-      AdminDoublVehicle(isLogedIn: widget.isLogedIn,),
+     AdminDoublVehicle(isLogedIn: widget.isLogedIn,),
       HomeVehicle(token: 'hello i am token'),
     ];
   }

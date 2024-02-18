@@ -270,13 +270,13 @@ void _listenForChanges() {
           slug: e['slug'] ?? '',
           manufacture: e['manufacture'] ?? '',
           condition: e['condition']['translate'][0]?['title'] ?? '',
-          mileage: e['mileage']?['translate'][0]?['title'] ?? e['mileages'],
-          price: e['price'] ?? '',
-          purchase_price: e['purchase_price'] ?? '',
-          fixed_price: e['fixed_price'] ?? '',
+          mileage: e['mileage']?['translate'][0]?['title'].toString() ?? e['mileages'].toString(),
+          price: e['price'].toString() ?? '',
+          purchase_price: e['purchase_price'].toString() ?? '',
+          fixed_price: e['fixed_price'].toString() ?? '',
           imageName: e['image']?['name'] ?? '',
           registration: e['registration'] ?? 'None',
-          engine: e['engine']?['translate'][0]?['title'] ?? e['engines'],
+          engine: e['engine']?['translate'][0]?['title'] ?? e['engines'].toString(),
           brandName: e['brand']?['translate'][0]?['title'] ?? '',
           transmission: e['transmission']?['translate'][0]?['title'] ?? '',
           fuel: e['fuel']?['translate'][0]?['title'] ?? '',
@@ -290,9 +290,9 @@ void _listenForChanges() {
           engineNumber: e['engine_number'] ?? '--',
           chassisNumber: e['chassis_number'] ?? '--',
           video: e['video'] ?? 'No Video',
-          engine_id: e['engine_id'] ?? '--',
-          onlyMileage: e['mileages'] ?? '--',
-          engines: e['engines'] ?? '-',
+          engine_id: e['engine_id'].toString() ?? '--',
+          onlyMileage: e['mileages'].toString() ?? '--',
+          engines: e['engines'].toString() ?? '-',
         ));
       });
 
@@ -365,13 +365,13 @@ void _listenForChanges() {
           mileage:
               getproductsList[i]['mileage']?['translate'][0]?['title'] ?? '--',
           //price here
-          price: getproductsList[i]['price'] ?? '',
-          purchase_price: getproductsList[i]?['purchase_price'] ?? '',
-          fixed_price: getproductsList[i]?['fixed_price'] ?? '',
+          price: getproductsList[i]['price'].toString() ,
+          purchase_price: getproductsList[i]?['purchase_price'].toString() ?? '',
+          fixed_price: getproductsList[i]?['fixed_price'].toString() ?? '',
           //price end
           imageName: getproductsList[i]['image']['name'],
           registration: getproductsList[i]['registration'] ?? 'None',
-          engine: getproductsList[i]?['engines'] ?? '--',
+          engine: getproductsList[i]?['engines'].toString()??'None',
           brandName: getproductsList[i]['brand']['translate'][0]['title'],
           transmission: getproductsList[i]['transmission']['translate'][0]
               ['title'],
@@ -391,11 +391,14 @@ void _listenForChanges() {
           engineNumber: getproductsList[i]['engine_number'] ?? '--',
           chassisNumber: getproductsList[i]['chassis_number'] ?? '--',
           video: getproductsList[i]?['video'] ?? 'No Video',
-          engine_id: getproductsList[i]?['engine_id'] ?? '12',
-          onlyMileage: getproductsList[i]['mileages'] ?? '--',
-          engines: getproductsList[i]?['engines'] ?? '-',
+          engine_id: getproductsList[i]?['engine_id'] .toString()?? '12',
+          onlyMileage: getproductsList[i]['mileages'].toString() ?? '--',
+          engines: getproductsList[i]?['engines'].toString() ?? '-',
         ),
       );
+      for(var item in products){
+        print(item.vehicleName.toString());
+      }
     }
     if (getproductsList == null) {
       return;
@@ -461,16 +464,16 @@ void _listenForChanges() {
           condition: getproductsList[i]['condition']?['translate'][0]
                   ?['title'] ??
               "Condition None",
-          mileage: getproductsList[i]['mileage']?['translate'][0]?['title'] ??
-              getproductsList[i]['mileages'],
+          mileage: getproductsList[i]['mileage']?['translate'][0]?['title'].toString() ??
+              getproductsList[i]['mileages'].toString(),
           //price here
-          price: getproductsList[i]['price'] ?? '',
-          purchase_price: getproductsList[i]?['purchase_price'] ?? '',
-          fixed_price: getproductsList[i]?['fixed_price'] ?? '',
+          price: getproductsList[i]['price'].toString() ?? '',
+          purchase_price: getproductsList[i]?['purchase_price'].toString() ?? '',
+          fixed_price: getproductsList[i]?['fixed_price'].toString() ?? '',
           //price end
           imageName: getproductsList[i]['image']['name'],
           registration: getproductsList[i]['registration'] ?? 'None',
-          engine: getproductsList[i]?['engines'] ?? '--',
+          engine: getproductsList[i]?['engines'].toString() ?? '--',
           brandName: getproductsList[i]['brand']['translate'][0]['title'],
           transmission: getproductsList[i]['transmission']['translate'][0]
               ['title'],
@@ -478,7 +481,7 @@ void _listenForChanges() {
           skeleton: getproductsList[i]['skeleton']['translate'][0]['title'],
           available:
               getproductsList[i]?['available']?['translate'][0]?['title'] ?? '',
-          code: getproductsList[i]?['code'] ?? '',
+          code: getproductsList[i]?['code'].toString() ?? '',
           //model: getproductsList,
           carColor:
               getproductsList[i]['color']?['translate'][0]['title'] ?? 'None',
@@ -487,12 +490,12 @@ void _listenForChanges() {
           model:
               getproductsList[i]?['carmodel']?['translate'][0]?['title'] ?? '',
           grade: getproductsList[i]?['grade']?['translate'][0]?['title'] ?? '',
-          engineNumber: getproductsList[i]['engine_number'] ?? '--',
-          chassisNumber: getproductsList[i]['chassis_number'] ?? '--',
+          engineNumber: getproductsList[i]['engine_number'].toString() ?? '--',
+          chassisNumber: getproductsList[i]['chassis_number'].toString() ?? '--',
           video: getproductsList[i]?['video'] ?? 'No Video',
-          engine_id: getproductsList[i]?['engine_id'] ?? '12',
-          onlyMileage: getproductsList[i]['mileages'] ?? '--',
-          engines: getproductsList[i]?['engines'] ?? '-',
+          engine_id: getproductsList[i]?['engine_id'].toString() ?? '12',
+          onlyMileage: getproductsList[i]['mileages'].toString() ?? '--',
+          engines: getproductsList[i]?['engines'].toString() ?? '-',
         ),
       );
     }

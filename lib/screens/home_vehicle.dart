@@ -301,29 +301,29 @@ void _listenForChanges() {
           slug: e['slug'] ?? '',
           manufacture: e['manufacture'] ?? '',
           condition: e['condition']['translate'][0]?['title'] ?? '',
-          mileage: e['mileage']?['translate'][0]?['title'] ?? '--',
-          price: e['price'] ?? '',
-          purchase_price: e['purchase_price'] ?? '',
-          fixed_price: e['fixed_price'] ?? '',
+          mileage: e['mileage']?['translate'][0]?['title'].toString() ?? e['mileages'].toString() ?? '--',
+          price: e['price'].toString() ?? '',
+          purchase_price: e['purchase_price'].toString() ?? '',
+          fixed_price: e['fixed_price'].toString() ?? '',
           imageName: e['image']?['name'] ?? '',
           registration: e['registration'] ?? 'None',
-          engine: e['engine']?['translate'][0]?['title'] ?? '',
+          engine: e['engine']?['translate'][0]?['title'].toString() ?? '',
           brandName: e['brand']?['translate'][0]?['title'] ?? '',
           transmission: e['transmission']?['translate'][0]?['title'] ?? '',
           fuel: e['fuel']?['translate'][0]?['title'] ?? '',
           skeleton: e['skeleton']?['translate'][0]?['title'] ?? '',
           available: e['available']?['translate'][0]?['title'] ?? '',
-          code: e['code'] ?? '',
+          code: e['code'].toString() ?? '',
           carColor: e['color']['translate'][0]['title'] ?? 'None',
           edition: e['edition']['translate'][0]['title'] ?? 'None',
           model: e['carmodel']?['translate'][0]?['title'] ?? '',
           grade: e['grade']?['translate'][0]?['title'] ?? '',
-          engineNumber: e['engine_number'] ?? '--',
-          chassisNumber: e['chassis_number'] ?? '--',
+          engineNumber: e['engine_number'].toString() ?? '--',
+          chassisNumber: e['chassis_number'].toString() ?? '--',
           video: e['video'] ?? 'No Video',
-          engine_id: e['engine_id'] ?? '--',
-          onlyMileage: e['mileages'] ?? '--',
-          engines: e['engines'] ?? '-',
+          engine_id: e['engine_id'].toString() ?? '--',
+          onlyMileage: e['mileages'].toString() ?? '--',
+          engines: e['engines'].toString() ?? '-',
         ));
       });
 
@@ -386,14 +386,14 @@ void _listenForChanges() {
                 ?['title'] ??
             '--',
         //price here
-        price: decodedResponse['data'][i]['price'] ?? '',
-        purchase_price: decodedResponse['data'][i]?['purchase_price'] ?? '',
-        fixed_price: decodedResponse['data'][i]?['fixed_price'] ?? '',
+        price: decodedResponse['data'][i]['price'].toString() ?? '',
+        purchase_price: decodedResponse['data'][i]?['purchase_price'].toString() ?? '',
+        fixed_price: decodedResponse['data'][i]?['fixed_price'].toString() ?? '',
         //price end
         imageName: decodedResponse['data'][i]['image']['name'],
         registration: decodedResponse['data'][i]['registration'] ?? 'None',
         engine: decodedResponse['data'][i]['engine']?['translate'][0]
-                ['title'] ??
+                ['title'].toString() ??
             decodedResponse['data'][i]['engines'],
         brandName: decodedResponse['data'][i]['brand']['translate'][0]['title'],
         transmission: decodedResponse['data'][i]['transmission']['translate'][0]
@@ -404,7 +404,7 @@ void _listenForChanges() {
         available: decodedResponse['data'][i]?['available']?['translate'][0]
                 ?['title'] ??
             '',
-        code: decodedResponse['data'][i]?['code'] ?? '',
+        code: decodedResponse['data'][i]?['code'].toString() ?? '',
         //model: decodedResponse['data'],
         carColor: decodedResponse['data'][i]['color']?['translate'][0]
                 ['title'] ??
@@ -419,12 +419,12 @@ void _listenForChanges() {
         grade: decodedResponse['data'][i]?['grade']?['translate'][0]
                 ?['title'] ??
             '',
-        engineNumber: decodedResponse['data'][i]['engine_number'] ?? '--',
-        chassisNumber: decodedResponse['data'][i]['chassis_number'] ?? '--',
+        engineNumber: decodedResponse['data'][i]['engine_number'].toString() ?? '--',
+        chassisNumber: decodedResponse['data'][i]['chassis_number'].toString() ?? '--',
         video: decodedResponse['data'][i]?['video'] ?? 'No Video',
-        engine_id: decodedResponse['data'][i]?['engine_id'] ?? '12',
-        onlyMileage: decodedResponse['data'][i]['mileages'] ?? '--',
-        engines: decodedResponse['data'][i]?['engines'] ?? '-',
+        engine_id: decodedResponse['data'][i]?['engine_id'].toString() ?? '12',
+        onlyMileage: decodedResponse['data'][i]['mileages'].toString() ?? '--',
+        engines: decodedResponse['data'][i]?['engines'].toString() ?? '-',
       ));
     }
     if (decodedResponse['data'] == null) {
@@ -570,6 +570,7 @@ void _listenForChanges() {
   }
 
   static String? detailsLink;
+    bool imageInProgress = false;
 
   Future getLink(String id) async {
     imageInProgress = true;
@@ -679,7 +680,7 @@ void _listenForChanges() {
     }
   }
 
-  bool imageInProgress = false;
+
 
   Future<void> shareDetailsWithOneImage(int id, String ImageName, vehicleName,
       manufacture, condition, registration, mileage, price, detailsLink) async {
@@ -733,6 +734,45 @@ void _listenForChanges() {
 
     await Share.shareXFiles([image], text: message + message2 + message3);
     //"Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 017xxxxxxxx\n"
+    unicTitle.clear();
+    details.clear();
+
+    imageInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  // only details share
+  Future<void> shareDetails(int id, String ImageName, vehicleName,
+      manufacture, condition, registration, mileage, price, detailsLink) async {
+    imageInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    prefss = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {});
+    }
+
+    String message =
+        "$vehicleName,Manufacture: $manufacture, $condition, Registration:$registration,Mileage: $mileage,price:$price ";
+    print("length of unit title");
+    print(unicTitle.length);
+    String message2 = '';
+    for (int i = 0; i < details.length; i++) {
+      message2 += " ${details[i]}";
+      if (i < details.length - 1) {
+        message2 += ", "; 
+      }
+    }
+    print(message2);
+    String message3 =
+        "\n\nOur HotLine Number: 0196-99-444-00\n Show More\n $detailsLink";
+ 
+    setState(() {});
+   
+    await Share.share(message + message2 + message3);
     unicTitle.clear();
     details.clear();
 
@@ -1313,6 +1353,15 @@ void _listenForChanges() {
                                   } else if (value == 'email') {
                                     await getLink(
                                         products[x + j].id.toString());
+                                        // shareDetails( products[x + j].id,
+                                        // products[x + j].imageName,
+                                        // products[x + j].vehicleName,
+                                        // products[x + j].manufacture,
+                                        // products[x + j].condition,
+                                        // products[x + j].registration,
+                                        // products[x + j].mileage,
+                                        // products[x + j].price,
+                                        // detailsLink);
                                         sendAllImages(products[x + j].id);
                                     shareViaEmail(
                                         products[x + j].id,

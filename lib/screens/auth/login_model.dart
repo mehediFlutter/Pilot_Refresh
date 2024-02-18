@@ -53,7 +53,7 @@ class Merchant {
   String? emailVerifiedAt;
   String? mobile;
   String? mobileVerifiedAt;
-  int? status;
+  String? status; // Change type to String?
   String? merchantType;
   String? createdAt;
   String? updatedAt;
@@ -77,7 +77,7 @@ class Merchant {
     emailVerifiedAt = json['email_verified_at'];
     mobile = json['mobile'];
     mobileVerifiedAt = json['mobile_verified_at'];
-    status = json['status'];
+    status = json['status'].toString()??'';
     merchantType = json['merchant_type'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];

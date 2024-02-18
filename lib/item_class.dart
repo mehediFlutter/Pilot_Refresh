@@ -233,7 +233,7 @@ class _ItemState extends State<Item> {
           headers: {
             'Accept': 'application/vnd.api+json',
             'Content-Type': 'application/vnd.api+json',
-            //  'Authorization': 'Bearer ${pre.getString('token')}'
+              'Authorization': 'Bearer ${pre.getString('token')}'
           });
     }
     print("Get Details methodes");

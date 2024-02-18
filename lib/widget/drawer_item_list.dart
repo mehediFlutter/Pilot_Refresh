@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class DrawerItemList extends StatelessWidget {
   final String text;
-  final Icon icon;
+  final Widget icon;
   final Function onTapFunction;
 
   const DrawerItemList({
