@@ -30,7 +30,7 @@ class _BottomNavBaseScreenState extends State<BottomNavBaseScreen> {
   initState() {
     
     super.initState();
-    print("i am bottom nav base screen token is ${widget.token}");
+    print("i am bottom nav base screen admin and general people login token is ${widget.token}");
    
     setState(() {
        tokeno = widget.token ?? '';
@@ -47,15 +47,10 @@ class _BottomNavBaseScreenState extends State<BottomNavBaseScreen> {
 
       _selectedScreenIndex = 0;
     }
-    getToken() ;
    
   }
 
- Future getToken() async{
-    String? token =await  GlobalVariables.authToken;
-    print('token Global $token');
 
- }
 
   @override
   Widget build(BuildContext context) {

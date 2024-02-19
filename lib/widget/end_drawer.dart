@@ -81,7 +81,7 @@ Future<void> getPreffs() async {
                     ),
                   (getIntPreef==1 || getIntPreef>=0)?  DrawerItemList(
                       text: 'Add New Car',
-                      icon: Icon(Icons.dashboard),
+                      icon: Icon(Icons.add_box_sharp),
                       onTapFunction: () {
                         Navigator.push(
                             context,
@@ -106,12 +106,12 @@ Future<void> getPreffs() async {
                     ):SizedBox(),
                     
                      (getIntPreef==1 || getIntPreef>=0)? DrawerItemList(text: 'Customar care Registration',
-                      icon: Icon(Icons.login), onTapFunction: (){
+                      icon: Icon(Icons.person_add), onTapFunction: (){
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>CustomerCareRegistration()));
                       }):SizedBox(),
 
                      (getIntPreef==1 || getIntPreef>=0)? DrawerItemList(text: 'Customar care Details',
-                      icon: Icon(Icons.person), onTapFunction: (){
+                      icon: Icon(Icons.note), onTapFunction: (){
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>CustomerCareDetails()));
                       }):SizedBox(),
                   ],

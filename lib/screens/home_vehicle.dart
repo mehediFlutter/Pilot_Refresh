@@ -19,7 +19,6 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class HomeVehicle extends StatefulWidget {
   final String? token;
   const HomeVehicle({super.key, this.token});
@@ -41,7 +40,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
   bool searchInProgress = false;
   bool shareInProgress = false;
   late String toki;
-     bool _isDeviceConnected = false;
+  bool _isDeviceConnected = false;
   bool _isAlertShown = false;
   late StreamSubscription<ConnectivityResult> _subscription;
 
@@ -57,7 +56,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
   @override
   initState() {
-     _checkConnectivity(); 
+    _checkConnectivity();
     _listenForChanges();
     page = 1;
     initializePreffsBool();
@@ -80,50 +79,55 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
     setState(() {});
   }
-   @override
-void dispose() {
-  _subscription.cancel(); // Cancel subscription on dispose
-  super.dispose();
-}
 
-Future<void> _checkConnectivity() async {
-  try {
-    _isDeviceConnected = await InternetConnectionChecker().hasConnection;
-    _showAlertDialogIfNeeded();
-  } catch (e) {
-    print("Error checking connectivity: $e");
+  @override
+  void dispose() {
+    _subscription.cancel(); // Cancel subscription on dispose
+    super.dispose();
   }
-}
 
-void _listenForChanges() {
-  _subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) async {
+  Future<void> _checkConnectivity() async {
     try {
       _isDeviceConnected = await InternetConnectionChecker().hasConnection;
       _showAlertDialogIfNeeded();
     } catch (e) {
-      print("Error listening for connectivity changes: $e");
+      print("Error checking connectivity: $e");
     }
-  });
-}
+  }
 
-    void _showAlertDialogIfNeeded() {
+  void _listenForChanges() {
+    _subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) async {
+      try {
+        _isDeviceConnected = await InternetConnectionChecker().hasConnection;
+        _showAlertDialogIfNeeded();
+      } catch (e) {
+        print("Error listening for connectivity changes: $e");
+      }
+    });
+  }
+
+  void _showAlertDialogIfNeeded() {
     if (!_isDeviceConnected && !_isAlertShown) {
       _isAlertShown = true;
       showDialog(
-        
         barrierDismissible: false,
         context: context,
         builder: (context) => AlertDialog(
-        
           contentPadding: EdgeInsets.symmetric(vertical: 10),
-         elevation: 5,
-       actionsPadding: EdgeInsets.all(5),
+          elevation: 5,
+          actionsPadding: EdgeInsets.all(5),
           title: Center(
             child: Padding(
               padding: const EdgeInsets.only(top: 10),
               child: Text(
                 'No Internet Connection',
-                style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500,fontFamily: 'Axiforma'),
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Axiforma'),
               ),
             ),
           ),
@@ -132,20 +136,25 @@ void _listenForChanges() {
             children: [
               Text(
                 "Please check your internet connection and",
-                style: TextStyle(color: Colors.black87, fontSize: 12,fontFamily: 'Axiforma'),
+                style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 12,
+                    fontFamily: 'Axiforma'),
               ),
               Text(
                 "try again",
-                style: TextStyle(color: Colors.black87, fontSize: 12,fontFamily: 'Axiforma'),
+                style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 12,
+                    fontFamily: 'Axiforma'),
               ),
-             
             ],
           ),
           actions: [
-              Divider(
-          thickness: 1, // Adjust thickness as needed
-          color: Colors.black26, // Adjust color as needed
-        ),
+            Divider(
+              thickness: 1, // Adjust thickness as needed
+              color: Colors.black26, // Adjust color as needed
+            ),
             TextButton(
               onPressed: () async {
                 Navigator.pop(context);
@@ -156,7 +165,7 @@ void _listenForChanges() {
               child: Center(
                 child: Text(
                   "OK",
-                  style: TextStyle(fontSize: 17,fontFamily: 'Axiforma'),
+                  style: TextStyle(fontSize: 17, fontFamily: 'Axiforma'),
                 ),
               ),
             ),
@@ -301,7 +310,9 @@ void _listenForChanges() {
           slug: e['slug'] ?? '',
           manufacture: e['manufacture'] ?? '',
           condition: e['condition']['translate'][0]?['title'] ?? '',
-          mileage: e['mileage']?['translate'][0]?['title'].toString() ?? e['mileages'].toString() ?? '--',
+          mileage: e['mileage']?['translate'][0]?['title'].toString() ??
+              e['mileages'].toString() ??
+              '--',
           price: e['price'].toString() ?? '',
           purchase_price: e['purchase_price'].toString() ?? '',
           fixed_price: e['fixed_price'].toString() ?? '',
@@ -387,13 +398,15 @@ void _listenForChanges() {
             '--',
         //price here
         price: decodedResponse['data'][i]['price'].toString() ?? '',
-        purchase_price: decodedResponse['data'][i]?['purchase_price'].toString() ?? '',
-        fixed_price: decodedResponse['data'][i]?['fixed_price'].toString() ?? '',
+        purchase_price:
+            decodedResponse['data'][i]?['purchase_price'].toString() ?? '',
+        fixed_price:
+            decodedResponse['data'][i]?['fixed_price'].toString() ?? '',
         //price end
         imageName: decodedResponse['data'][i]['image']['name'],
         registration: decodedResponse['data'][i]['registration'] ?? 'None',
-        engine: decodedResponse['data'][i]['engine']?['translate'][0]
-                ['title'].toString() ??
+        engine: decodedResponse['data'][i]['engine']?['translate'][0]['title']
+                .toString() ??
             decodedResponse['data'][i]['engines'],
         brandName: decodedResponse['data'][i]['brand']['translate'][0]['title'],
         transmission: decodedResponse['data'][i]['transmission']['translate'][0]
@@ -419,8 +432,10 @@ void _listenForChanges() {
         grade: decodedResponse['data'][i]?['grade']?['translate'][0]
                 ?['title'] ??
             '',
-        engineNumber: decodedResponse['data'][i]['engine_number'].toString() ?? '--',
-        chassisNumber: decodedResponse['data'][i]['chassis_number'].toString() ?? '--',
+        engineNumber:
+            decodedResponse['data'][i]['engine_number'].toString() ?? '--',
+        chassisNumber:
+            decodedResponse['data'][i]['chassis_number'].toString() ?? '--',
         video: decodedResponse['data'][i]?['video'] ?? 'No Video',
         engine_id: decodedResponse['data'][i]?['engine_id'].toString() ?? '12',
         onlyMileage: decodedResponse['data'][i]['mileages'].toString() ?? '--',
@@ -570,23 +585,35 @@ void _listenForChanges() {
   }
 
   static String? detailsLink;
-    bool imageInProgress = false;
+  bool imageInProgress = false;
 
-  Future getLink(String id) async {
+  Future getLink(int id) async {
     imageInProgress = true;
     if (mounted) {
       setState(() {});
     }
+    print("get Link start bool ${imageInProgress}");
+
+    prefss = await SharedPreferences.getInstance();
+
     print("This is get Link methode");
     prefss = await SharedPreferences.getInstance();
-    Response response1 = await get(
+    Response? response1;
+    if (prefss.getString('token') == null) {
+      response1 = await get(
         Uri.parse(
-            "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"),
-        headers: {
-          'Accept': 'application/vnd.api+json',
-          'Content-Type': 'application/vnd.api+json',
-          'Authorization': 'Bearer ${prefss.getString('token')}'
-        });
+            "https://pilotbazar.com/api/clients/vehicles/products/$id/detail"),
+      );
+    } else {
+      response1 = await get(
+          Uri.parse(
+              "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"),
+          headers: {
+            'Accept': 'application/vnd.api+json',
+            'Content-Type': 'application/vnd.api+json',
+            'Authorization': 'Bearer ${prefss.getString('token')}'
+          });
+    }
     final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
     detailsLink = decodedResponse1['message'];
     print(detailsLink);
@@ -594,6 +621,7 @@ void _listenForChanges() {
     if (mounted) {
       setState(() {});
     }
+    print("get details end bool ${imageInProgress}");
   }
 
   static List showImageList = [];
@@ -680,8 +708,6 @@ void _listenForChanges() {
     }
   }
 
-
-
   Future<void> shareDetailsWithOneImage(int id, String ImageName, vehicleName,
       manufacture, condition, registration, mileage, price, detailsLink) async {
     imageInProgress = true;
@@ -708,8 +734,6 @@ void _listenForChanges() {
     //await getDetails(widget.id);
     final image = XFile(tempFile.path);
     late String info;
-
-
 
     String message =
         "$vehicleName,Manufacture: $manufacture, $condition, Registration:$registration,Mileage: $mileage,price:$price ";
@@ -744,8 +768,8 @@ void _listenForChanges() {
   }
 
   // only details share
-  Future<void> shareDetails(int id, String ImageName, vehicleName,
-      manufacture, condition, registration, mileage, price, detailsLink) async {
+  Future<void> shareDetails(int id, String ImageName, vehicleName, manufacture,
+      condition, registration, mileage, price, detailsLink) async {
     imageInProgress = true;
     if (mounted) {
       setState(() {});
@@ -763,15 +787,15 @@ void _listenForChanges() {
     for (int i = 0; i < details.length; i++) {
       message2 += " ${details[i]}";
       if (i < details.length - 1) {
-        message2 += ", "; 
+        message2 += ", ";
       }
     }
     print(message2);
     String message3 =
         "\n\nOur HotLine Number: 0196-99-444-00\n Show More\n $detailsLink";
- 
+
     setState(() {});
-   
+
     await Share.share(message + message2 + message3);
     unicTitle.clear();
     details.clear();
@@ -782,11 +806,12 @@ void _listenForChanges() {
     }
   }
 
+  bool enterDetailsMethodeWithLotsOfDetails = false;
   Future newGetDetails(int id) async {
     print("get details methode");
     prefss = await SharedPreferences.getInstance();
 
-    shareInProgress =  true;
+    shareInProgress = true;
     if (mounted) {
       setState(() {});
     }
@@ -804,7 +829,7 @@ void _listenForChanges() {
           headers: {
             'Accept': 'application/vnd.api+json',
             'Content-Type': 'application/vnd.api+json',
-              'Authorization': 'Bearer ${prefss.getString('token')}'
+            'Authorization': 'Bearer ${prefss.getString('token')}'
           });
     }
     print("Get Details methodes");
@@ -815,6 +840,10 @@ void _listenForChanges() {
 
     List<FeatureDetailPair> featureDetailPairs =
         extractFeatureDetails(vehicleFeatures);
+    if (featureDetailPairs.isNotEmpty) {
+      enterDetailsMethodeWithLotsOfDetails = true;
+      setState(() {});
+    }
 
     for (var pair in featureDetailPairs) {
       unicTitle.add(pair.featureTitle);
@@ -829,18 +858,19 @@ void _listenForChanges() {
     print("End get details methode");
   }
 
- bool enterDetailsMethodeWithLotsOfDetails=false;
- bool emailInPRogress=false;
-  Future<void> shareViaEmail(int id, String ImageName, vehicleName, manufacture,
-      condition, registration, mileage, price, detailsLink, {bool isMedia = false}
-  
-  ) async {
-    // print("Shared via email methode ${imageInProgress}");
+  bool emailInPRogress = false;
+
+  bool emailInProgress = false;
+
+  Future<void> shareViaEmail(int id, String vehicleName, manufacture, condition,
+      registration, mileage, price, detailsLink,
+      {bool isMedia = false}) async {
+    print("Shared via email methode ${imageInProgress}");
     prefss = await SharedPreferences.getInstance();
     showImageList.clear();
-   emailInPRogress=true;
+    emailInProgress = true;
     setState(() {});
-    print('Start of emailInPRogress ${emailInPRogress}');
+    print('Start of emailInPRogress ${emailInProgress}');
 
     Response? response1;
 
@@ -876,7 +906,7 @@ void _listenForChanges() {
 
       //List<XFile> showImageList = [];
       for (int y = 0; y < ImageLinkList.length; y++) {
-        print('loop of image in prpgress emailInPRogress ${emailInPRogress}');
+        print('loop of image in prpgress emailInPRogress ${emailInProgress}');
         final uri = Uri.parse(
             "https://pilotbazar.com/storage/galleries/${ImageLinkList[y]}");
         final response = await http.get(uri);
@@ -891,26 +921,26 @@ void _listenForChanges() {
         showImageList.add(image);
       }
 
-      print("Length is Unic title");
-      print(unicTitle.length);
-      final Map<String, dynamic> decodedResponseForFeatures =
-          jsonDecode(response1.body);
-      List<dynamic> vehicleFeatures =
-          decodedResponseForFeatures['payload']['vehicle_feature'];
+      print("Length is Unic details");
+      print(details.length);
+      // final Map<String, dynamic> decodedResponseForFeatures =
+      //     jsonDecode(response1.body);
+      // List<dynamic> vehicleFeatures =
+      //     decodedResponseForFeatures['payload']['vehicle_feature'];
 
-      List<FeatureDetailPair> featureDetailPairs =
-          extractFeatureDetails(vehicleFeatures);
+      // List<FeatureDetailPair> featureDetailPairs =
+      //     extractFeatureDetails(vehicleFeatures);
 
-      for (var pair in featureDetailPairs) {
-        unicTitle.add(pair.featureTitle);
-        details.add(pair.detailTitles.join(', '));
-      }
+      // for (var pair in featureDetailPairs) {
+      //   unicTitle.add(pair.featureTitle);
+      //   details.add(pair.detailTitles.join(', '));
+      // }
 
       print("details length is");
       print(details.length);
       print("End get details methode");
       String message =
-          "${vehicleName},Manufacture: ${manufacture}, ${condition}, Registration:${registration},Mileage: ${mileage},${isMedia ? '' : 'price:${price}'} ";
+          "$vehicleName,Manufacture: $manufacture, $condition, Registration:$registration,Mileage: $mileage,${isMedia ? '' : 'price:$price'} ";
       print("length of unit title");
       print(unicTitle.length);
       String message2 = '';
@@ -920,6 +950,7 @@ void _listenForChanges() {
           message2 += ", "; // Add a comma and space if it's not the last index
         }
       }
+      print(message2);
       setState(() {});
       print(message2);
       String message3 =
@@ -954,17 +985,17 @@ void _listenForChanges() {
     } catch (error) {
       print("Error: $error");
     }
-    emailInPRogress = false;
+    emailInProgress = false;
     if (mounted) {
       setState(() {});
     }
-    print('End of emailInPRogress ${emailInPRogress}');
+    print('End of emailInPRogress ${emailInProgress}');
   }
 
   List searchProducts = [];
   bool _searchInProgress = false;
   TextEditingController searchController = TextEditingController();
-
+ // Search
   Future<void> search(String value) async {
     searchProducts.clear();
     products.clear();
@@ -996,53 +1027,63 @@ void _listenForChanges() {
     final getproductsList = decodedResponse['data'];
     int i = 0;
 
-    for (i; i < getproductsList.length; i++) {
-      print('length of this products');
-      // print(decodedResponse['data'].length);
-      searchProducts.add(
-        Product(
-          vehicleName: getproductsList[i]['translate'][0]['title'],
-          vehicleNameBangla: getproductsList[i]['translate'][1]['title'],
-          manufacture: getproductsList[i]['manufacture'],
-          slug: getproductsList[i]['slug'],
-          id: getproductsList[i]['id'],
-          condition: getproductsList[i]['condition']?['translate'][0]
-                  ?['title'] ??
-              "Condition None",
-          mileage: getproductsList[i]['mileage']?['translate'][0]?['title'] ??
-              getproductsList[i]['mileages'],
-          //price here
-          price: getproductsList[i]['price'] ?? '',
-          purchase_price: getproductsList[i]?['purchase_price'] ?? '',
-          fixed_price: getproductsList[i]?['fixed_price'] ?? '',
-          //price end
-          imageName: getproductsList[i]['image']['name'],
-          registration: getproductsList[i]['registration'] ?? 'None',
-          engine: getproductsList[i]?['engines'] ?? '--',
-          brandName: getproductsList[i]['brand']['translate'][0]['title'],
-          transmission: getproductsList[i]['transmission']['translate'][0]
-              ['title'],
-          fuel: getproductsList[i]['fuel']['translate'][0]['title'],
-          skeleton: getproductsList[i]['skeleton']['translate'][0]['title'],
-          available:
-              getproductsList[i]?['available']?['translate'][0]?['title'] ?? '',
-          code: getproductsList[i]?['code'] ?? '',
-          //model: getproductsList,
-          carColor:
-              getproductsList[i]['color']?['translate'][0]['title'] ?? 'None',
-          edition:
-              getproductsList[i]['edition']['translate'][0]['title'] ?? 'None',
-          model:
-              getproductsList[i]?['carmodel']?['translate'][0]?['title'] ?? '',
-          grade: getproductsList[i]?['grade']?['translate'][0]?['title'] ?? '',
-          engineNumber: getproductsList[i]['engine_number'] ?? '--',
-          chassisNumber: getproductsList[i]['chassis_number'] ?? '--',
-          video: getproductsList[i]?['video'] ?? 'No Video',
-          engine_id: getproductsList[i]?['engine_id'] ?? '12',
-          onlyMileage: getproductsList[i]['mileages'] ?? '--',
-          engines: getproductsList[i]?['engines'] ?? '-',
-        ),
-      );
+       for (i; i < decodedResponse['data'].length; i++) {
+      products.add(Product(
+        vehicleName: decodedResponse['data'][i]['translate'][0]['title'],
+        vehicleNameBangla: decodedResponse['data'][i]['translate'][1]['title'],
+        manufacture: decodedResponse['data'][i]['manufacture'],
+        slug: decodedResponse['data'][i]['slug'],
+        id: decodedResponse['data'][i]['id'],
+        condition: decodedResponse['data'][i]['condition']['translate'][0]
+            ['title'],
+        mileage: decodedResponse['data'][i]['mileage']?['translate'][0]
+                ?['title'] ??
+            '--',
+        //price here
+        price: decodedResponse['data'][i]['price'].toString() ?? '',
+        purchase_price:
+            decodedResponse['data'][i]?['purchase_price'].toString() ?? '',
+        fixed_price:
+            decodedResponse['data'][i]?['fixed_price'].toString() ?? '',
+        //price end
+        imageName: decodedResponse['data'][i]['image']['name'],
+        registration: decodedResponse['data'][i]['registration'] ?? 'None',
+        engine: decodedResponse['data'][i]['engine']?['translate'][0]['title']
+                .toString() ??
+            decodedResponse['data'][i]['engines'],
+        brandName: decodedResponse['data'][i]['brand']['translate'][0]['title'],
+        transmission: decodedResponse['data'][i]['transmission']['translate'][0]
+            ['title'],
+        fuel: decodedResponse['data'][i]['fuel']['translate'][0]['title'],
+        skeleton: decodedResponse['data'][i]['skeleton']['translate'][0]
+            ['title'],
+        available: decodedResponse['data'][i]?['available']?['translate'][0]
+                ?['title'] ??
+            '',
+        code: decodedResponse['data'][i]?['code'].toString() ?? '',
+        //model: decodedResponse['data'],
+        carColor: decodedResponse['data'][i]['color']?['translate'][0]
+                ['title'] ??
+            'None',
+        edition: decodedResponse['data'][i]['edition']['translate'][0]
+                ['title'] ??
+            'None',
+        model: decodedResponse['data'][i]?['carmodel']?['translate'][0]
+                ?['title'] ??
+            '',
+
+        grade: decodedResponse['data'][i]?['grade']?['translate'][0]
+                ?['title'] ??
+            '',
+        engineNumber:
+            decodedResponse['data'][i]['engine_number'].toString() ?? '--',
+        chassisNumber:
+            decodedResponse['data'][i]['chassis_number'].toString() ?? '--',
+        video: decodedResponse['data'][i]?['video'] ?? 'No Video',
+        engine_id: decodedResponse['data'][i]?['engine_id'].toString() ?? '12',
+        onlyMileage: decodedResponse['data'][i]['mileages'].toString() ?? '--',
+        engines: decodedResponse['data'][i]?['engines'].toString() ?? '-',
+      ));
     }
     products.addAll(searchProducts);
     searchProducts.clear();
@@ -1364,95 +1405,102 @@ void _listenForChanges() {
                     CircleAvatar(
                       backgroundColor: Color.fromARGB(221, 65, 64, 64),
                       radius: 25,
-                      child: Expanded(
-                        child: shareInProgress
-                            ? CircularProgressIndicator()
-                            : PopupMenuButton(
-                                child: Icon(
-                                  Icons.share,
-                                  color: Colors.white,
-                                  size: 25,
-                                ),
-                                onSelected: (value) async {
-                                  if (value == 'image') {
-                                    sendAllImages(products[x + j].id);
-                                  } else if (value == 'details') {
-                                   // await newGetDetails(products[x + j].id);
-                                    await getLink(
-                                        products[x + j].id.toString());
-                                    shareDetailsWithOneImage(
-                                        products[x + j].id,
-                                        products[x + j].imageName,
-                                        products[x + j].vehicleName,
-                                        products[x + j].manufacture,
-                                        products[x + j].condition,
-                                        products[x + j].registration,
-                                        products[x + j].mileage,
-                                        products[x + j].price,
-                                        detailsLink);
-                                  } else if (value == 'email') {
-                                      
-                                      newGetDetails(products[x + j].id ?? 12);
-
-
-                                                    getLink(
-                                                        products[x +j].id.toString());
-                                                    
-
-                                  
-                                     
-                                    //  sendAllImages(products[x + j].id);
-                                    shareViaEmail(
-                                        products[x + j].id,
-                                        products[x + j].imageName,
-                                        products[x + j].vehicleName,
-                                        products[x + j].manufacture,
-                                        products[x + j].condition,
-                                        products[x + j].registration,
-                                        products[x + j].mileage,
-                                        products[x + j].price,
-                                        detailsLink);
-                                    //  await  sendAllImages(products[x + j].id);
-                                  } else if (value == 'media') {
-                                    await getLink(
-                                        products[x + j].id.toString());
-                                    shareMedia(
-                                        products[x + j].imageName,
-                                        products[x + j].vehicleName,
-                                        products[x + j].manufacture,
-                                        products[x + j].condition,
-                                        products[x + j].registration,
-                                        products[x + j].mileage,
-                                        products[x + j].price,
-                                        detailsLink);
-                                  }
-                                },
-                                itemBuilder: (context) {
-                                  return [
-                                    PopupMenuItem(
-                                      child: Text("Share One Image"),
-                                      value: 'details',
-                                      textStyle: popubItem,
-                                    ),
-                                    PopupMenuItem(
-                                      child: Text("Share All Image"),
-                                      value: 'image',
-                                      textStyle: popubItem,
-                                    ),
-                                    PopupMenuItem(
-                                      child: Text("Send Email"),
-                                      value: 'email',
-                                      textStyle: popubItem,
-                                    ),
-                                    PopupMenuItem(
-                                      child: Text("Send Media"),
-                                      value: 'media',
-                                      textStyle: popubItem,
-                                    ),
-                                  ];
-                                },
+                      child: shareInProgress
+                          ? CircularProgressIndicator()
+                          : PopupMenuButton(
+                              child: Icon(
+                                Icons.share,
+                                color: Colors.white,
+                                size: 25,
                               ),
-                      ),
+                              onSelected: (value) async {
+                                if (value == 'image') {
+                                  sendAllImages(products[x + j].id);
+                                } else if (value == 'details') {
+                                  newGetDetails(products[x + j].id);
+                                  await getLink(products[x + j].id);
+                                  shareDetailsWithOneImage(
+                                      products[x + j].id,
+                                      products[x + j].imageName,
+                                      products[x + j].vehicleName,
+                                      products[x + j].manufacture,
+                                      products[x + j].condition,
+                                      products[x + j].registration,
+                                      products[x + j].mileage,
+                                      products[x + j].price,
+                                      detailsLink);
+                                } else if (value == 'email') {
+                                  await newGetDetails(products[x + j].id ?? 12);
+                                  await getLink(products[x + j].id ?? 12);
+                                  await shareViaEmail(
+                                      products[x + j].id,
+                                      products[x + j].vehicleName,
+                                      products[x + j].manufacture,
+                                      products[x + j].condition,
+                                      products[x + j].registration,
+                                      products[x + j].mileage,
+                                      products[x + j].price,
+                                      detailsLink);
+                                }
+
+                                // else if (value == 'email') {
+                                //   newGetDetails(products[x + j].id ?? 12);
+
+                                //   getLink(products[x + j].id.toString());
+                                //   shareViaEmail(
+                                //       products[x + j].id,
+
+                                //       products[x + j].vehicleName,
+                                //       products[x + j].manufacture,
+                                //       products[x + j].condition,
+                                //       products[x + j].registration,
+                                //       products[x + j].mileage,
+                                //       products[x + j].price,
+                                //       detailsLink);
+                                //   //  await  sendAllImages(products[x + j].id);
+                                // }
+
+                                else if (value == 'media') {
+                                   await newGetDetails(products[x + j].id ?? 12);
+                                  await getLink(products[x + j].id ?? 12);
+                                  await shareViaEmail(
+                                      products[x + j].id,
+                                      products[x + j].vehicleName,
+                                      products[x + j].manufacture,
+                                      products[x + j].condition,
+                                      products[x + j].registration,
+                                      products[x + j].mileage,
+                                      products[x + j].price,
+                                      detailsLink,
+                                      isMedia: true
+                                      );
+                                }
+                              },
+                              itemBuilder: (context) {
+                                return [
+                                  PopupMenuItem(
+                                    child: Text("Share One Image"),
+                                    value: 'details',
+                                    textStyle: popubItem,
+                                  ),
+                                  PopupMenuItem(
+                                    child: Text("Share All Image"),
+                                    value: 'image',
+                                    textStyle: popubItem,
+                                  ),
+                                  PopupMenuItem(
+                                    child: Text("Send Email"),
+                                    value: 'email',
+                                    textStyle: popubItem,
+                                  ),
+                                  PopupMenuItem(
+                                    child: Text("Send Media"),
+                                    value: 'media',
+                                    textStyle: popubItem,
+                                  ),
+                                ];
+                              },
+                            ),
                     )
                     // : SizedBox(),
                   ],
@@ -1501,8 +1549,7 @@ void _listenForChanges() {
                               ),
                               onSelected: (value) async {
                                 if (value == 'Delete') {
-                               
-                                deleteMethode(x);
+                                  deleteMethode(x);
                                 }
                                 if (value == 'Edit Price') {
                                   navigateToPriceEditPage(x);
@@ -1723,8 +1770,8 @@ void _listenForChanges() {
       print("Succesfully Booked");
     }
   }
-  
-  // delete 
+
+  // delete
   void deleteMethode(int index) async {
     prefss = await SharedPreferences.getInstance();
     // final body = {
@@ -1734,7 +1781,7 @@ void _listenForChanges() {
     final url =
         "https://pilotbazar.com/api/merchants/vehicles/products/${products[index].id}/update/booked";
     final uri = Uri.parse(url);
-    final response = await http.put(uri,  headers: {
+    final response = await http.put(uri, headers: {
       'Accept': 'application/vnd.api+json',
       'Content-Type': 'application/vnd.api+json',
       'Authorization': 'Bearer ${prefss.getString('token')}'

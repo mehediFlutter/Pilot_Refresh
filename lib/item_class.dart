@@ -824,14 +824,18 @@ class _ItemState extends State<Item> {
                                                     shareViaEmail(
                                                         widget.id.toString(),
                                                         isMedia: true);
-                                                  } else if (value == 'email') {
+                                                  }
+                                                  
+                                                   else if (value == 'email') {
                                                     newGetDetails(
                                                         widget.id ?? 12);
                                                     getLink(
                                                         widget.id.toString());
                                                     shareViaEmail(
-                                                        widget.id.toString());
-                                                  } else if (value ==
+                                                        widget.id.toString(),isMedia: true);
+                                                  } 
+                                                  
+                                                  else if (value ==
                                                       'Availability') {
                                                     await getAvailability();
                                                     showDialog(

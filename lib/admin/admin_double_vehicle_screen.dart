@@ -240,18 +240,7 @@ void _listenForChanges() {
       }
     }
 
-    // List<dynamic> vehicleFeatures =
-    //     decodedResponse['data'][0]?['vehicle_feature'] ?? '';
-    // List<FeatureDetailPair> featureDetailPairs =
-    //     extractFeatureDetails(vehicleFeatures);
 
-    // for (var pair in featureDetailPairs) {
-    //   // print('Feature: ${pair.featureTitle}');
-    //   // print('Details: ${pair.detailTitles.join(', ')}');
-    //   featureDetails.add({pair.detailTitles.join(', ')});
-    //   featureUnicTitle.add({pair.featureTitle});
-    // }
-    // int total_index = decodedResponse['data'].length;
 
     if (response.statusCode == 200) {
       decodedResponse['data'].forEach((e) {
