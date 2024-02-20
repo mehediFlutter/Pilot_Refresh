@@ -50,8 +50,7 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
     if (mounted) {
       setState(() {});
     }
-  
-   
+
     Map<String, dynamic> body = {
       "mobile": mobileController.text,
       "password": passwordController.text
@@ -63,6 +62,9 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
           'Content-Type': 'application/vnd.api+json'
         },
         body: jsonEncode(body));
+        print("status code");
+        print(response.statusCode);
+
     if (response.statusCode == 200) {
       Map decodedBody = jsonDecode(response.body.toString());
       print(decodedBody);
@@ -73,37 +75,27 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
       await AuthUtility.saveUserInfo(model);
       print(decodedBody['payload']?['token']);
 
-    
       print(token);
       await prefss.setString('token', token);
       await prefss.setString('merchantId', merchantId.toString());
-    //  await prefss.setString('token', token);
       setState(() {});
       print(model.payload!.token);
-        await prefss.setBool('isLogin',true);
-
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => BottomNavBaseScreen(
-              //  isLogedIn: prefss.getBool('isLogin'),
-              //     token: decodedBody['payload']?['token'].toString()
-                  )));
+      await prefss.setBool('isLogin', true);
 
       print("Login Success");
-    }
-
-    // token = decodedBody['payload']['token'];
-  await  Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-            builder: (context) => BottomNavBaseScreen(
-                  token: token,
-                )),
-        (route) => false);
+     
+    } 
     myLoginInInProgress = false;
     if (mounted) {
       setState(() {});
+    }
+
+    if(response.statusCode==200){
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>BottomNavBaseScreen()), (route) => false);
+    }
+    else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Error Phone number or Password try again!!!")));
     }
   }
 
@@ -162,7 +154,7 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: size.height/6),
+                SizedBox(height: size.height / 6),
                 Image.asset(
                   'assets/images/pilot_logo3.png',
                   width: 170,
@@ -173,7 +165,7 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                   " Do Business with Us",
                   style: TextStyle(color: Colors.black87, fontSize: 13),
                 ),
-                SizedBox(height:  size.height/10),
+                SizedBox(height: size.height / 10),
                 Theme(
                   data: Theme.of(context).copyWith(
                     inputDecorationTheme: InputDecorationTheme(
@@ -266,7 +258,7 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                             if (!_globalKey.currentState!.validate()) {
                               return null;
                             }
-                          await  myLogin();
+                            await myLogin();
                           },
                           child: Text(
                             "Login",
@@ -274,21 +266,21 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                           )),
                 ),
                 SizedBox(height: 15),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: OutlinedButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => NewRegistrationScreen()));
-                    },
-                    child: Text(
-                      " Registration",
-                      style: TextStyle(color: Colors.black87, fontSize: 13),
-                    ),
-                  ),
-                ),
+                // Align(
+                //   alignment: Alignment.centerRight,
+                //   child: OutlinedButton(
+                //     onPressed: () {
+                //       Navigator.push(
+                //           context,
+                //           MaterialPageRoute(
+                //               builder: (context) => NewRegistrationScreen()));
+                //     },
+                //     child: Text(
+                //       " Registration",
+                //       style: TextStyle(color: Colors.black87, fontSize: 13),
+                //     ),
+                //   ),
+                // ),
                 Align(
                   alignment: Alignment.centerRight,
                   child: OutlinedButton(
@@ -304,16 +296,19 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                     ),
                   ),
                 ),
+                TextButton(
+                    onPressed: () async {
+                      final bool isLoggedIn =
+                          await AuthUtility.checkIfUserLoggedIn();
 
-                TextButton(onPressed: () async{
-                   final bool isLoggedIn = await AuthUtility.checkIfUserLoggedIn();
-
-                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>
-                   BottomNavBaseScreen()), (route) => false);
-                }, child: Text("View as Gest")),
-                SizedBox(
-                  height: 20
-                ),
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BottomNavBaseScreen()),
+                          (route) => false);
+                    },
+                    child: Text("View as Gest")),
+                SizedBox(height: 20),
                 Text(
                   "By signing in your agreeing our",
                   style: TextStyle(color: Colors.black87, fontSize: 13),

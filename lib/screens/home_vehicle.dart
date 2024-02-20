@@ -313,7 +313,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
           mileage: e['mileage']?['translate'][0]?['title'].toString() ??
               e['mileages'].toString() ??
               '--',
-          price: e['price'].toString() ?? '',
+          price: e['price'].toString(),
           purchase_price: e['purchase_price'].toString() ?? '',
           fixed_price: e['fixed_price'].toString() ?? '',
           imageName: e['image']?['name'] ?? '',
@@ -488,6 +488,8 @@ class _HomeVehicleState extends State<HomeVehicle> {
   //   //return unicTitle+details;
   // }
 
+  
+
   Future getDetails(int id) async {
     prefss = await SharedPreferences.getInstance();
 
@@ -584,6 +586,9 @@ class _HomeVehicleState extends State<HomeVehicle> {
     setState(() {});
   }
 
+  
+  
+  
   static String? detailsLink;
   bool imageInProgress = false;
 
@@ -992,6 +997,83 @@ class _HomeVehicleState extends State<HomeVehicle> {
     print('End of emailInPRogress ${emailInProgress}');
   }
 
+  
+  Future<void> shareOnlyDetailsForMedia(
+    int id, String vehicleName, manufacture, condition,
+      registration, mileage,
+  ) async {
+    imageInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    prefss = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {});
+    }
+
+    String message =
+          "$vehicleName,Manufacture: $manufacture, $condition, Registration:$registration,Mileage: $mileage ";
+    print(unicTitle.length);
+    String message2 = '';
+    for (int i = 0; i < details.length; i++) {
+      message2 += " ${details[i]}";
+      if (i < details.length - 1) {
+        message2 += ", "; // Add a comma and space if it's not the last index
+      }
+    }
+    print(message2);
+
+    setState(() {});
+    await Share.share(message + message2);
+   
+
+    imageInProgress = false;
+     unicTitle.clear();
+    details.clear();
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> shareOnlyDetailsWithLink(
+    int id, String vehicleName, manufacture, condition,
+      registration, mileage,price
+  ) async {
+    imageInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+ 
+
+    String message =
+          "$vehicleName,Manufacture: $manufacture, $condition, Registration:$registration,Mileage: $mileage Price : $price ";
+    print("length of unit title");
+    print(unicTitle.length);
+    String message2 = '';
+    for (int i = 0; i < details.length; i++) {
+      message2 += " ${details[i]}";
+      if (i < details.length - 1) {
+        message2 += ", "; // Add a comma and space if it's not the last index
+      }
+    }
+    print(message2);
+    String message3 =
+        "\nShow More\n $detailsLink";
+
+    setState(() {});
+    await Share.share(message + message2 +message3);
+    unicTitle.clear();
+    details.clear();
+
+    imageInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+  
+  
+  
+  
   List searchProducts = [];
   bool _searchInProgress = false;
   TextEditingController searchController = TextEditingController();
@@ -1402,107 +1484,89 @@ class _HomeVehicleState extends State<HomeVehicle> {
                     ),
                     // ((getIntPreef >=0))
                     //     ?
-                    CircleAvatar(
-                      backgroundColor: Color.fromARGB(221, 65, 64, 64),
-                      radius: 25,
-                      child: shareInProgress
-                          ? CircularProgressIndicator()
-                          : PopupMenuButton(
-                              child: Icon(
-                                Icons.share,
-                                color: Colors.white,
-                                size: 25,
-                              ),
-                              onSelected: (value) async {
-                                if (value == 'image') {
-                                  sendAllImages(products[x + j].id);
-                                } else if (value == 'details') {
-                                  newGetDetails(products[x + j].id);
-                                  await getLink(products[x + j].id);
-                                  shareDetailsWithOneImage(
-                                      products[x + j].id,
-                                      products[x + j].imageName,
-                                      products[x + j].vehicleName,
-                                      products[x + j].manufacture,
-                                      products[x + j].condition,
-                                      products[x + j].registration,
-                                      products[x + j].mileage,
-                                      products[x + j].price,
-                                      detailsLink);
-                                } else if (value == 'email') {
-                                  await newGetDetails(products[x + j].id ?? 12);
-                                  await getLink(products[x + j].id ?? 12);
-                                  await shareViaEmail(
-                                      products[x + j].id,
-                                      products[x + j].vehicleName,
-                                      products[x + j].manufacture,
-                                      products[x + j].condition,
-                                      products[x + j].registration,
-                                      products[x + j].mileage,
-                                      products[x + j].price,
-                                      detailsLink);
-                                }
-
-                                // else if (value == 'email') {
-                                //   newGetDetails(products[x + j].id ?? 12);
-
-                                //   getLink(products[x + j].id.toString());
-                                //   shareViaEmail(
-                                //       products[x + j].id,
-
-                                //       products[x + j].vehicleName,
-                                //       products[x + j].manufacture,
-                                //       products[x + j].condition,
-                                //       products[x + j].registration,
-                                //       products[x + j].mileage,
-                                //       products[x + j].price,
-                                //       detailsLink);
-                                //   //  await  sendAllImages(products[x + j].id);
-                                // }
-
-                                else if (value == 'media') {
-                                   await newGetDetails(products[x + j].id ?? 12);
-                                  await getLink(products[x + j].id ?? 12);
-                                  await shareViaEmail(
-                                      products[x + j].id,
-                                      products[x + j].vehicleName,
-                                      products[x + j].manufacture,
-                                      products[x + j].condition,
-                                      products[x + j].registration,
-                                      products[x + j].mileage,
-                                      products[x + j].price,
-                                      detailsLink,
-                                      isMedia: true
-                                      );
-                                }
-                              },
-                              itemBuilder: (context) {
-                                return [
-                                  PopupMenuItem(
-                                    child: Text("Share One Image"),
-                                    value: 'details',
-                                    textStyle: popubItem,
-                                  ),
-                                  PopupMenuItem(
-                                    child: Text("Share All Image"),
-                                    value: 'image',
-                                    textStyle: popubItem,
-                                  ),
-                                  PopupMenuItem(
-                                    child: Text("Send Email"),
-                                    value: 'email',
-                                    textStyle: popubItem,
-                                  ),
-                                  PopupMenuItem(
-                                    child: Text("Send Media"),
-                                    value: 'media',
-                                    textStyle: popubItem,
-                                  ),
-                                ];
-                              },
+                    shareInProgress
+                        ? CircularProgressIndicator()
+                        : PopupMenuButton(
+                            child: Icon(
+                              Icons.share,
+                              color: Colors.white,
+                              size: 28,
                             ),
-                    )
+                            onSelected: (value) async {
+                              if (value == 'image') {
+                              await  sendAllImages(products[x + j].id);
+                              }
+                    
+                            
+                              
+                               else if (value == 'details') {
+                               await newGetDetails(products[x + j].id);
+                                await getLink(products[x + j].id);
+                             await   shareDetailsWithOneImage(
+                                    products[x + j].id,
+                                    products[x + j].imageName,
+                                    products[x + j].vehicleName,
+                                    products[x + j].manufacture,
+                                    products[x + j].condition,
+                                    products[x + j].registration,
+                                    products[x + j].mileage,
+                                    products[x + j].price,
+                                    detailsLink);
+                              } 
+                    
+                              else if (value == 'detailsWithLink') {
+                              await newGetDetails(products[x + j].id ?? 12);
+                                await getLink(products[x + j].id ?? 12);
+                            await   shareOnlyDetailsWithLink(   products[x + j].id,
+                              
+                                    products[x + j].vehicleName,
+                                    products[x + j].manufacture,
+                                    products[x + j].condition,
+                                    products[x + j].registration,
+                                    products[x + j].mileage,
+                                     products[x + j].price,
+                                   
+                                   );
+                              }
+                                else if (value == 'detailsMedia') {
+                                await newGetDetails(products[x + j].id ?? 12);
+                                await getLink(products[x + j].id ?? 12);
+                            await   shareOnlyDetailsForMedia(   products[x + j].id,
+                                    products[x + j].vehicleName,
+                                    products[x + j].manufacture,
+                                    products[x + j].condition,
+                                    products[x + j].registration,
+                                    products[x + j].mileage);
+                              }
+                            },
+                            itemBuilder: (context) {
+                              return [
+                                PopupMenuItem(
+                                  child: Text("Share One Image"),
+                                  value: 'details',
+                                  textStyle: popubItem,
+                                ),
+                                PopupMenuItem(
+                                  child: Text("Share All Image"),
+                                  value: 'image',
+                                  textStyle: popubItem,
+                                ),
+                                  PopupMenuItem(
+                                  child: Text("Share Details With Link"),
+                                  value: 'detailsWithLink',
+                                  textStyle: popubItem,
+                                ),
+                                PopupMenuItem(
+                                  child: Text("Share Details In Media"),
+                                  value: 'detailsMedia',
+                                  textStyle: popubItem,
+                                ),
+                              
+                              ];
+                            },
+                          ),
                     // : SizedBox(),
+                 SizedBox(width: 20),
                   ],
                 ),
                 SizedBox(height: 11),
@@ -1529,208 +1593,207 @@ class _HomeVehicleState extends State<HomeVehicle> {
                                 products[x].price.toString(),
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
+                              
 
                               //  SizedBox(width: 100,),
                             ],
                           ),
+                          Text(''),
                         ],
                       ),
                     ),
+                    Spacer(),
                     (getIntPreef >= 0)
-                        ? CircleAvatar(
-                            backgroundColor:
-                                const Color.fromARGB(221, 73, 73, 73),
-                            radius: 25,
-                            child: PopupMenuButton(
-                              child: Icon(
-                                Icons.more_vert,
-                                color: Colors.white,
-                                size: 30,
-                              ),
-                              onSelected: (value) async {
-                                if (value == 'Delete') {
-                                  deleteMethode(x);
-                                }
-                                if (value == 'Edit Price') {
-                                  navigateToPriceEditPage(x);
-                                } else if (value == 'Booked') {
-                                  updateBooked(x);
-                                } else if (value == 'Sold') {
-                                  await updateSold(x);
-                                } else if (value == 'Availability') {
-                                  await getAvailability();
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          backgroundColor: const Color.fromARGB(
-                                              255, 61, 59, 59),
-                                          title: Center(
-                                              child: Text(
-                                            "Availability",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleSmall,
-                                          )),
-                                          content: Container(
-                                            height: double.infinity,
-                                            width: 350,
-                                            child: ListView.builder(
-                                              primary: false,
-                                              shrinkWrap: true,
-                                              itemCount:
-                                                  availableResponseList.length,
-                                              itemBuilder: (context, index) {
-                                                final item =
-                                                    availableResponseList[index]
-                                                        as Map;
-                                                return Expanded(
-                                                  child: Expanded(
-                                                    child: Expanded(
-                                                        child: ElevatedButton(
-                                                            onPressed:
-                                                                () async {
-                                                              print(
-                                                                  "this is car id");
-                                                              print(products[
-                                                                      index]
-                                                                  .id);
-                                                              updateAvailable(
-                                                                  item['id'],
-                                                                  x);
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                            style: ElevatedButton
-                                                                .styleFrom(
-                                                                    backgroundColor:
-                                                                        Color.fromARGB(
-                                                                            255,
-                                                                            97,
-                                                                            93,
-                                                                            90)),
-                                                            child: Text(
-                                                                item['translate']
-                                                                            [0][
-                                                                        'title']
-                                                                    .toString(),
-                                                                style: Theme.of(
-                                                                        context)
-                                                                    .textTheme
-                                                                    .bodySmall))),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                          actions: <Widget>[
-                                            IconButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              icon: Icon(Icons.close),
-                                              color: Colors
-                                                  .white, // Set icon color
-                                            ),
-                                          ],
-                                          contentPadding: EdgeInsets.only(
-                                              top: 8,
-                                              right: 8,
-                                              bottom: 0,
-                                              left: 8),
-                                        );
-                                      });
-                                } else if (value == 'Advance') {
-                                  // this is for solving problem
-                                  // await Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) => ModelShowingData(
-
-                                  //             )));
-
-                                  // this is for text fild selected box
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => TextFildSelectBox(
-                                        id: products[x].id,
-                                        availableDD: products[x].available,
-                                        vehiclaName: products[x].vehicleName,
-                                        vehiclaNameBangla:
-                                            products[x].vehicleNameBangla,
-                                        conditionValue: products[x].condition,
-                                        brandName: products[x].brandName,
-                                        fuel: products[x].fuel,
-                                        skeleton: products[x].skeleton,
-                                        transmission: products[x].transmission,
-                                        registration: products[x].registration,
-                                        carColor: products[x].carColor,
-                                        edition: products[x].edition,
-                                        model: products[x].model,
-                                        grade: products[x].grade,
-                                        mileage: products[x].mileage.toString(),
-                                        engine: products[x].engine.toString(),
-                                        purchase_price:
-                                            products[x].purchase_price,
-                                        price: products[x].price,
-                                        fixed_price: products[x].fixed_price,
-                                        engine_number: products[x].engineNumber,
-                                        chassis_number:
-                                            products[x].chassisNumber,
-                                        code: products[x].code,
-                                        video: products[x].video.toString(),
-                                        manufacture: products[x].manufacture,
-                                        engineId: products[x].engine_id,
-                                        onlyMileage: products[x].onlyMileage,
-                                        engines: products[x].engines,
+                        ? PopupMenuButton(
+                          child: Icon(
+                            Icons.more_vert,
+                            color: Colors.white,
+                            size: 35,
+                          ),
+                          onSelected: (value) async {
+                            if (value == 'Delete') {
+                              deleteMethode(x);
+                            }
+                            if (value == 'Edit Price') {
+                              navigateToPriceEditPage(x);
+                            } else if (value == 'Booked') {
+                              updateBooked(x);
+                            } else if (value == 'Sold') {
+                              await updateSold(x);
+                            } else if (value == 'Availability') {
+                              await getAvailability();
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      backgroundColor: const Color.fromARGB(
+                                          255, 61, 59, 59),
+                                      title: Center(
+                                          child: Text(
+                                        "Availability",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall,
+                                      )),
+                                      content: Container(
+                                        height: double.infinity,
+                                        width: 350,
+                                        child: ListView.builder(
+                                          primary: false,
+                                          shrinkWrap: true,
+                                          itemCount:
+                                              availableResponseList.length,
+                                          itemBuilder: (context, index) {
+                                            final item =
+                                                availableResponseList[index]
+                                                    as Map;
+                                            return Expanded(
+                                              child: Expanded(
+                                                child: Expanded(
+                                                    child: ElevatedButton(
+                                                        onPressed:
+                                                            () async {
+                                                          print(
+                                                              "this is car id");
+                                                          print(products[
+                                                                  index]
+                                                              .id);
+                                                          updateAvailable(
+                                                              item['id'],
+                                                              x);
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                                backgroundColor:
+                                                                    Color.fromARGB(
+                                                                        255,
+                                                                        97,
+                                                                        93,
+                                                                        90)),
+                                                        child: Text(
+                                                            item['translate']
+                                                                        [0][
+                                                                    'title']
+                                                                .toString(),
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .textTheme
+                                                                .bodySmall))),
+                                              ),
+                                            );
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                }
-                              },
-                              itemBuilder: (context) {
-                                return [
-                                  //  PopupMenuItem(
-                                  //   child: Text("Delete"),
-                                  //   value: 'Delete',
-                                  // ),
-                                  PopupMenuItem(
-                                    child: Text("Edit Price"),
-                                    value: 'Edit Price',
-                                    textStyle: popubItem,
+                                      actions: <Widget>[
+                                        IconButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          icon: Icon(Icons.close),
+                                          color: Colors
+                                              .white, // Set icon color
+                                        ),
+                                      ],
+                                      contentPadding: EdgeInsets.only(
+                                          top: 8,
+                                          right: 8,
+                                          bottom: 0,
+                                          left: 8),
+                                    );
+                                  });
+                            } else if (value == 'Advance') {
+                              // this is for solving problem
+                              // await Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //         builder: (context) => ModelShowingData(
+                        
+                              //             )));
+                        
+                              // this is for text fild selected box
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => TextFildSelectBox(
+                                    id: products[x].id,
+                                    availableDD: products[x].available,
+                                    vehiclaName: products[x].vehicleName,
+                                    vehiclaNameBangla:
+                                        products[x].vehicleNameBangla,
+                                    conditionValue: products[x].condition,
+                                    brandName: products[x].brandName,
+                                    fuel: products[x].fuel,
+                                    skeleton: products[x].skeleton,
+                                    transmission: products[x].transmission,
+                                    registration: products[x].registration,
+                                    carColor: products[x].carColor,
+                                    edition: products[x].edition,
+                                    model: products[x].model,
+                                    grade: products[x].grade,
+                                    mileage: products[x].mileage.toString(),
+                                    engine: products[x].engine.toString(),
+                                    purchase_price:
+                                        products[x].purchase_price,
+                                    price: products[x].price,
+                                    fixed_price: products[x].fixed_price,
+                                    engine_number: products[x].engineNumber,
+                                    chassis_number:
+                                        products[x].chassisNumber,
+                                    code: products[x].code,
+                                    video: products[x].video.toString(),
+                                    manufacture: products[x].manufacture,
+                                    engineId: products[x].engine_id,
+                                    onlyMileage: products[x].onlyMileage,
+                                    engines: products[x].engines,
                                   ),
-                                  PopupMenuItem(
-                                    child: Text("Booked"),
-                                    value: 'Booked',
-                                    textStyle: popubItem,
-                                  ),
-                                  PopupMenuItem(
-                                    child: Text("Sold"),
-                                    value: 'Sold',
-                                    textStyle: popubItem,
-                                  ),
-
-                                  PopupMenuItem(
-                                    child: Text("Availability"),
-                                    value: 'Availability',
-                                    textStyle: popubItem,
-                                  ),
-                                  PopupMenuItem(
-                                    child: Text("Advance"),
-                                    value: 'Advance',
-                                    textStyle: popubItem,
-                                  ),
-                                  PopupMenuItem(
-                                    child: Text("Delete"),
-                                    value: 'Delete',
-                                    textStyle: popubItem,
-                                  ),
-                                ];
-                              },
-                            ),
-                          )
+                                ),
+                              );
+                            }
+                          },
+                          itemBuilder: (context) {
+                            return [
+                              //  PopupMenuItem(
+                              //   child: Text("Delete"),
+                              //   value: 'Delete',
+                              // ),
+                              PopupMenuItem(
+                                child: Text("Edit Price"),
+                                value: 'Edit Price',
+                                textStyle: popubItem,
+                              ),
+                              PopupMenuItem(
+                                child: Text("Booked"),
+                                value: 'Booked',
+                                textStyle: popubItem,
+                              ),
+                              PopupMenuItem(
+                                child: Text("Sold"),
+                                value: 'Sold',
+                                textStyle: popubItem,
+                              ),
+                        
+                              PopupMenuItem(
+                                child: Text("Availability"),
+                                value: 'Availability',
+                                textStyle: popubItem,
+                              ),
+                              PopupMenuItem(
+                                child: Text("Advance"),
+                                value: 'Advance',
+                                textStyle: popubItem,
+                              ),
+                              PopupMenuItem(
+                                child: Text("Delete"),
+                                value: 'Delete',
+                                textStyle: popubItem,
+                              ),
+                            ];
+                          },
+                        )
                         : SizedBox(),
+                        SizedBox(width: 20),
                   ],
                 ),
               ],

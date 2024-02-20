@@ -90,15 +90,25 @@ class _CustomerCareLoginState extends State<CustomerCareLogin> {
       checkType = await prefss.getString('type');
       setState(() {});
       print(checkType);
-
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => C_BottomNavBaseScreen(
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>C_BottomNavBaseScreen(
                   isLogedIn: prefss.getBool('isLogin'),
-                  token: decodedBody['payload']?['token'].toString())));
+                  token: decodedBody['payload']?['token'].toString())), (route) => false);
+              
+
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login Success !!!!')));
+
+      // Navigator.push(
+      //     context,
+      //     MaterialPageRoute(
+      //         builder: (context) => C_BottomNavBaseScreen(
+      //             isLogedIn: prefss.getBool('isLogin'),
+      //             token: decodedBody['payload']?['token'].toString())
+      //             ));
 
       print("Login Success");
+    }
+    else{
+       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login Faild Try Again !!!!')));
     }
 
     // token = decodedBody['payload']['token'];

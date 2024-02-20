@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pilot_refresh/For_Customer_Care/auth/customer_care_login.dart';
 import 'package:pilot_refresh/add%20car/add-car.dart';
 import 'package:pilot_refresh/add%20car/description_page.dart';
 import 'package:pilot_refresh/add%20car/upload_multiple_image.dart';
@@ -59,7 +60,7 @@ Future<void> getPreffs() async {
     return Align(
       alignment: Alignment.topRight,
       child: SizedBox(
-        height: (getIntPreef==1 || getIntPreef>=0)?300:160,     
+        height: (getIntPreef==1 || getIntPreef>=0)?300:215,     
         width: 200,
         child: Drawer(
           backgroundColor: Color(0xFF333333),
@@ -95,6 +96,13 @@ Future<void> getPreffs() async {
                       icon: Icon(Icons.login),
                       onTapFunction: () {
                         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>NewLoginScreen()), (route) => false);
+                      },
+                    ):SizedBox(),
+                   (getIntPreef !=1)?  DrawerItemList(
+                      text: 'Customer Care Login',
+                      icon: Icon(Icons.login),
+                      onTapFunction: () {
+                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>CustomerCareLogin()), (route) => false);
                       },
                     ):SizedBox(),
                   (getIntPreef ==1 || getIntPreef>=0)?   DrawerItemList(

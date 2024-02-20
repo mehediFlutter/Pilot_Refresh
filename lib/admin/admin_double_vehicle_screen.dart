@@ -607,14 +607,14 @@ void _listenForChanges() {
                             crossAxisCount: 2,
                             //childAspectRatio: 1.0,
                             mainAxisSpacing: 2.0,
-                            crossAxisSpacing: 0.0,
+                            
                           ),
                           controller: _scrollController,
                           itemCount: products.length,
                           itemBuilder: (BuildContext context, index) {
                             return Padding(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 3),
+                                  const EdgeInsets.symmetric(horizontal: 1),
                               child: Item(
                                 isLoggedIn: widget.isLogedIn,
                                 myAskingPrice: myBoolValue,
