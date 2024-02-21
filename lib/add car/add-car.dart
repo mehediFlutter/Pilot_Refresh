@@ -229,6 +229,8 @@ class _AddNewCarState extends State<AddNewCar> {
           print(skeletonSectedDropdownItem);
           // print(conditionSectedDropdownItem?['id']);
         });
+        print("length of skeleton");
+        print(skeletionList.length);
       } else {
         // Handle error if API request fails
         print('API request failed with status: ${response.statusCode}');
@@ -703,6 +705,7 @@ class _AddNewCarState extends State<AddNewCar> {
   SizedBox SzBx() => SizedBox(height: 20);
 
   imageUpload() async {
+    prefss= await SharedPreferences.getInstance();
     final body = {
       "title[en]": "Toyota Demo Car",
       "title[bn]": "Toyota Demo Car",
@@ -736,7 +739,8 @@ class _AddNewCarState extends State<AddNewCar> {
     final uri = Uri.parse(url);
     final request = await http.post(uri, body: jsonEncode(body), headers: {
       'Content-Type': 'application/vnd.api+json',
-      'Accept': 'application/vnd.api+json'
+      'Accept': 'application/vnd.api+json',
+       'Authorization': 'Bearer ${prefss.getString('token')}'
     });
     print(request.statusCode);
   }
@@ -761,76 +765,70 @@ class _AddNewCarState extends State<AddNewCar> {
   
 
   Future<void> onUploadImages(
-      String titleEnglish,
-      titleBangla,
-      userId,
-      categoryId,
-      merchantId,
-      conditionId,
-      transmissionId,
-      engines,
-      editionId,
-      fuelId,
-      skeletonId,
-      mileage,
-      manufacture,
-      is_feat,
-      statusId,
-      is_approved,
-      publish_at,
-      code,
-      available_id,
-      registration_id,
-      carmodel_id,
-      fixed_price,
-      price,
-      chassis_number,
-      brand_id,
-      color_id) async {
-    //   prefss = await SharedPreferences.getInstance();
+    //   String titleEnglish,
+    //   titleBangla,
+    //   userId,
+     
+    //  int categoryId,
+    //   merchantId,
+    //   conditionId,
+    //   transmissionId,
+    //   engines,
+    //   editionId,
+    //   fuelId,
+    //   skeletonId,
+    //   mileage,
+    //   manufacture,
+    //   is_feat,
+    //   statusId,
+    //   is_approved,
+    //   publish_at,
+    //   code,
+    //   available_id,
+    //   registration_id,
+    //   carmodel_id,
+    //   fixed_price,
+    //   price,
+    //   chassis_number,
+    //   brand_id,
+    //   color_id
+      ) async {
 
     uploadImageInProgress = true;
     if (mounted) setState(() {});
-    print("Here is the data which i want to pass dynamically");
-    print(titleBangla);
-    print(titleEnglish);
-    print(userId);
-    print(categoryId);
+    
     prefss = await SharedPreferences.getInstance();
-    print("Merchant id from shared Preffs");
-    print(await prefss.getString('merchantId'));
+
+
     Map<String, String> formData = {
-      'title[en]': titleEnglish,
-      'title[bn]': titleBangla,
-    //  'user_id': '2',
-      'category_id': categoryId.toString(),
+      'title[en]': 'titleEnglish',
+      'title[bn]': 'titleBangla',
+      'category_id': '1',
+      'user_id':'1',
+    
+      'merchant_id': '1',
+      'condition_id': '1',
+      'transmission_id': '5',
+      'engines': '1',
+      'edition_id':'1',
+      'fuel_id': '1',
+      'skeleton_id':'1' ,
+      'mileages': '1',
+      'manufacture': '1',
+      'is_feat': '1',
+      'status': '1',
+      'is_approved':'1' ,
+      'publish_at': '2002-2-2',
 
-      'merchant_id': (prefss.getString('merchantId')).toString(),
-     // 'merchant_id': prefss.getS,
-
-      'condition_id': conditionId,
-      'transmission_id': transmissionId,
-      'engines': engines,
-      'edition_id': editionId.toString(),
-      'fuel_id': fuelId.toString(),
-      'skeleton_id': skeletonId.toString(),
-      'mileages': mileage.toString(),
-      'manufacture': manufacture.toString(),
-      'is_feat': isFeat.toString(),
-      'status': statusId.toString(),
-      'is_approved': is_approved.toString(),
-      'publish_at': publish_at.toString(),
-      // code
-
-      'code': code.toString(),
-      'available_id': available_id.toString(),
-      'registration_id': registration_id.toString(),
-      'carmodel_id': carmodel_id.toString(),
-      'fixed_price': fixed_price.toString(),
-      'price': price.toString(),
-      'chassis_number': chassis_number.toString(),
-      'brand_id': brand_id.toString(),
-      'color_id': color_id.toString(),
+      'code' :'19',
+      'available_id':'1',
+      'registration_id': '1',
+      'carmodel_id': '1',
+      'fixed_price': '1',
+      'price': '1',
+      'chassis_number': 'dksf32',
+      'brand_id': '1',
+      'color_id': '1',
     };
     Map<String, String> headers = {
       'Accept': 'application/vnd.api+json',
@@ -869,6 +867,7 @@ class _AddNewCarState extends State<AddNewCar> {
           Uri.parse(
             "https://pilotbazar.com/api/merchants/vehicles/products",
           ),
+         
           // Replace with your actual API URL
         );
         request.headers.addAll(headers);
@@ -890,10 +889,14 @@ class _AddNewCarState extends State<AddNewCar> {
         final responseData = await response.stream.bytesToString();
 
         Map decodedResponse = jsonDecode(responseData.toString());
+        print('statrus code is');
+        print(response.statusCode);
         print("Return id is");
         print(decodedResponse['payload']);
         print(decodedResponse['payload']['id']);
         newLyAddedCarId = decodedResponse['payload']['id'];
+        print("decoded response id is");
+        print(decodedResponse['payload']['id']);
         print("this is  response data");
         if (decodedResponse['status'] == "Request was successful") {
           await Navigator.pushAndRemoveUntil(
@@ -1471,35 +1474,36 @@ class _AddNewCarState extends State<AddNewCar> {
 
                             print(userInfo.payload?.merchant?.id);
                             print(userInfo.payload?.token);
+                            onUploadImages();
 
-                            onUploadImages(
-                                titleControllerEnglish.text,
-                                titleControllerBangla.text,
-                                2.toString(),
-                                1.toString(),
-                                userInfo.payload?.merchant?.id.toString(),
-                                conditionSelectedId.toString(),
-                                transmissionSelectedId.toString(),
-                                engineController.text.toString(),
-                                editionSelectedId.toString(),
-                                fuelSelectedId.toString(),
-                                skeletonSectedDropdownItem?['id'].toString(),
-                                mileagesController.text.toString(),
-                                manufactureController.text.toString(),
-                                isFeat.toString(),
-                                statusId.toString(),
-                                appruvalId.toString(),
-                                dateTime.toString(),
-                                codeValue.toString(),
-                                availableSelectedId.toString(),
-                                registrationSectedDropdownItem?['id']
-                                    .toString(),
-                                modelSelectedId.toString(),
-                                fixedPriceController.text.toString(),
-                                askingPriceController.text.toString(),
-                                chassisNumberController.text.toString(),
-                                brandSectedDropdownItem?['id'].toString(),
-                                colorSelectedId.toString());
+                            // onUploadImages(
+                            //     titleControllerEnglish.text,
+                            //     titleControllerBangla.text,
+                            //     2,
+                            //     1,
+                            //     userInfo.payload?.merchant?.id,
+                            //     conditionSelectedId,
+                            //     transmissionSelectedId,
+                            //     engineController.text,
+                            //     editionSelectedId,
+                            //     fuelSelectedId,
+                            //     skeletonSectedDropdownItem?['id'],
+                            //     mileagesController.text,
+                            //     manufactureController.text,
+                            //     isFeat,
+                            //     statusId,
+                            //     appruvalId,
+                            //     dateTime,
+                            //     codeValue,
+                            //     availableSelectedId,
+                            //     registrationSectedDropdownItem?['id']
+                            //        ,
+                            //     modelSelectedId,
+                            //     fixedPriceController.text,
+                            //     askingPriceController.text,
+                            //     chassisNumberController.text,
+                            //     brandSectedDropdownItem?['id'],
+                            //     colorSelectedId);
                           },
                           //  },
                           style: ElevatedButton.styleFrom(

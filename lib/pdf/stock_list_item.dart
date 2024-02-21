@@ -150,14 +150,14 @@ class _StockListItemState extends State<StockListItem> {
             skeleton: e['skeleton']?['translate'][0]?['title'] ?? '--',
             mileage: e['mileage']?['translate'][0]?['title'] ?? '--',
 
-            fixed_price: e['fixed_price'] ?? '--',
+            fixed_price: e['fixed_price'].toString() ?? '',
             model: e['carmodel']?['translate'][0]?['title'] ?? '--',
             manufacture: e['manufacture'] ?? '--',
             registration: e['registration'] ?? '--',
             grade: e['grade']?['translate'][0]?['title'] ?? '--',
             available: e['available']?['translate'][0]?['title'] ?? '--',
-            asking_price: e['price'] ?? '--',
-            pdfDetailsLink: e['link'] ?? '--',
+            asking_price: e['price'].toString(),
+            pdfDetailsLink: e['link'] ,
           ));
         },
       );
