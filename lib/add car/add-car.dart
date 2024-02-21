@@ -765,33 +765,36 @@ class _AddNewCarState extends State<AddNewCar> {
   
 
   Future<void> onUploadImages(
-    //   String titleEnglish,
-    //   titleBangla,
-    //   userId,
-     
-    //  int categoryId,
-    //   merchantId,
-    //   conditionId,
-    //   transmissionId,
-    //   engines,
-    //   editionId,
-    //   fuelId,
-    //   skeletonId,
-    //   mileage,
-    //   manufacture,
-    //   is_feat,
-    //   statusId,
-    //   is_approved,
-    //   publish_at,
-    //   code,
-    //   available_id,
-    //   registration_id,
-    //   carmodel_id,
-    //   fixed_price,
-    //   price,
-    //   chassis_number,
-    //   brand_id,
-    //   color_id
+      String titleEnglish,
+      titleBangla,
+
+      userId,
+      categoryId,
+
+      conditionId,
+      transmissionId,
+      engines,
+      editionId,
+      fuelId,
+      skeletonId,
+      mileage,
+      manufacture,
+      is_feat,
+      statusId,
+      is_approved,
+      publish_at,
+      code,
+      available_id,
+      registration_id,
+      carmodel_id,
+      fixed_price,
+      price,
+      chassis_number,
+        brand_id,
+      color_id,
+      grade
+      
+    
       ) async {
 
     uploadImageInProgress = true;
@@ -801,34 +804,34 @@ class _AddNewCarState extends State<AddNewCar> {
 
 
     Map<String, String> formData = {
-      'title[en]': 'titleEnglish',
-      'title[bn]': 'titleBangla',
-      'category_id': '1',
-      'user_id':'1',
-    
-      'merchant_id': '1',
-      'condition_id': '1',
-      'transmission_id': '5',
-      'engines': '1',
-      'edition_id':'1',
-      'fuel_id': '1',
-      'skeleton_id':'1' ,
-      'mileages': '1',
-      'manufacture': '1',
+      'title[en]':titleEnglish.toString(),
+      'title[bn]': titleBangla.toString(),
+      "user_id":userId.toString(),
+      'category_id':categoryId.toString(),
+        'merchant_id': prefss.getString('merchantId').toString(),
+      'condition_id': conditionId.toString(),
+      'transmission_id': transmissionId.toString(),
+      'engines': engines.toString(),
+      'edition_id':editionId.toString(),
+      'fuel_id': fuelId.toString(),
+      'skeleton_id': skeletonId.toString(),
+      'mileages':mileage.toString(),
+      'manufacture': manufacture.toString(),
       'is_feat': '1',
       'status': '1',
-      'is_approved':'1' ,
-      'publish_at': '2002-2-2',
-
-      'code' :'19',
-      'available_id':'1',
-      'registration_id': '1',
-      'carmodel_id': '1',
-      'fixed_price': '1',
-      'price': '1',
-      'chassis_number': 'dksf32',
-      'brand_id': '1',
-      'color_id': '1',
+      'is_approved':'1',
+      'publish_at': publish_at.toString(),
+  
+      'code' : code.toString(),
+      'available_id': available_id.toString(),
+      'registration_id': registration_id.toString(),
+      'carmodel_id':carmodel_id.toString(),
+      'fixed_price':fixed_price.toString(),
+      'price': price.toString(),
+      'chassis_number': chassis_number.toString(),
+      'brand_id': brand_id.toString(),
+      'color_id':  color_id.toString(),
+      'grade': grade.toString()
     };
     Map<String, String> headers = {
       'Accept': 'application/vnd.api+json',
@@ -881,6 +884,31 @@ class _AddNewCarState extends State<AddNewCar> {
           fileLength,
           filename: conpressedFile!.name,
         ));
+
+        print('here is the details of my dynamic value of body ');
+
+        print(titleControllerBangla.text);
+        print( titleControllerEnglish.text);
+        print(prefss.getString('merchantId').toString());
+        // print(conditionId.toString());
+        // print(transmissionId.toString());
+        // print(engines.toString());
+        // print(editionId);
+        // print(fuelId);
+        // print(skeletonId);
+        // print(mileage);
+        // print(manufactureController);
+        // print(color_id);
+        // print(brand_id);
+        // print(chassisNumberController);
+        // print(askingPriceController);
+        // print(fixedPriceController);
+        // print(carmodel_id);
+        // print(registration_id);
+        // print(available_id);
+        //         print(code);
+        // print(publish_at);
+   
         print("Compressed file name is");
         print(conpressedFile!.name);
         print(await conpressedFile!.length());
@@ -1266,32 +1294,32 @@ class _AddNewCarState extends State<AddNewCar> {
                           return null;
                         },
                       ),
-                      SzBx(),
-                      textFildUpTextRow('Registration', star: ' *'),
-                      customTextField(
-                        controller: registrationController,
-                        hintText: 'Enter Registration',
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Enter Value';
-                          }
-                          return null;
-                        },
-                      ),
-                      SzBx(),
-                      textFildUpTextRow('Prioty', star: ' *'),
-                      customTextField(
-                        controller: priotyController,
-                        hintText: 'Enter Prioty',
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Enter Value';
-                          }
-                          return null;
-                        },
-                      ),
+                      // SzBx(),
+                      // textFildUpTextRow('Registration', star: ' *'),
+                      // customTextField(
+                      //   controller: registrationController,
+                      //   hintText: 'Enter Registration',
+                      //   keyboardType: TextInputType.number,
+                      //   validator: (value) {
+                      //     if (value == null || value.isEmpty) {
+                      //       return 'Enter Value';
+                      //     }
+                      //     return null;
+                      //   },
+                      // ),
+                      // SzBx(),
+                      // textFildUpTextRow('Prioty', star: ' *'),
+                      // customTextField(
+                      //   controller: priotyController,
+                      //   hintText: 'Enter Prioty',
+                      //   keyboardType: TextInputType.number,
+                      //   validator: (value) {
+                      //     if (value == null || value.isEmpty) {
+                      //       return 'Enter Value';
+                      //     }
+                      //     return null;
+                      //   },
+                      // ),
                       SzBx(),
                       textFildUpTextRow('Video', star: ' *'),
                       customTextField(
@@ -1338,15 +1366,15 @@ class _AddNewCarState extends State<AddNewCar> {
                         child: Container(),
                       ),
                       SzBx(),
-                      textFildUpTextRow('Engine Number'),
-                      customTextField(controller: engineController),
-                      SzBx(),
+                      // textFildUpTextRow('Engine Number'),
+                      // customTextField(controller: engineController),
+                      // SzBx(),
                       textFildUpTextRow('Chassis Number'),
                       customTextField(controller: chassisNumberController),
                       SzBx(),
-                      textFildUpTextRow('Registration'),
-                      customTextField(controller: registrationController),
-                      SzBx(),
+                      // textFildUpTextRow('Registration'),
+                      // customTextField(controller: registrationController),
+                      // SzBx(),
                       textFildUpTextRow('Manufacture', star: ' *'),
                       customTextField(controller: manufactureController),
                       SzBx(),
@@ -1474,36 +1502,37 @@ class _AddNewCarState extends State<AddNewCar> {
 
                             print(userInfo.payload?.merchant?.id);
                             print(userInfo.payload?.token);
-                            onUploadImages();
+                         
 
-                            // onUploadImages(
-                            //     titleControllerEnglish.text,
-                            //     titleControllerBangla.text,
-                            //     2,
-                            //     1,
-                            //     userInfo.payload?.merchant?.id,
-                            //     conditionSelectedId,
-                            //     transmissionSelectedId,
-                            //     engineController.text,
-                            //     editionSelectedId,
-                            //     fuelSelectedId,
-                            //     skeletonSectedDropdownItem?['id'],
-                            //     mileagesController.text,
-                            //     manufactureController.text,
-                            //     isFeat,
-                            //     statusId,
-                            //     appruvalId,
-                            //     dateTime,
-                            //     codeValue,
-                            //     availableSelectedId,
-                            //     registrationSectedDropdownItem?['id']
-                            //        ,
-                            //     modelSelectedId,
-                            //     fixedPriceController.text,
-                            //     askingPriceController.text,
-                            //     chassisNumberController.text,
-                            //     brandSectedDropdownItem?['id'],
-                            //     colorSelectedId);
+                            onUploadImages(
+                                titleControllerEnglish.text,
+                                titleControllerBangla.text,
+                                1,
+                                1,
+                                conditionSelectedId,
+                                transmissionSelectedId,
+                                engineController.text,
+                                editionSelectedId,
+                                fuelSelectedId,
+                                skeletonSectedDropdownItem?['id'],
+                                mileagesController.text,
+                                manufactureController.text,
+                                isFeat,
+                                statusId,
+                                appruvalId,
+                                dateTime,
+                                codeValue,
+                                availableSelectedId,
+                                registrationSectedDropdownItem?['id'] ,
+                                modelSelectedId,
+                                fixedPriceController.text,
+                                askingPriceController.text,
+                                chassisNumberController.text,
+                                brandSectedDropdownItem?['id'],
+                                colorSelectedId,
+                                gradeSelectedId,
+                                
+                                );
                           },
                           //  },
                           style: ElevatedButton.styleFrom(
