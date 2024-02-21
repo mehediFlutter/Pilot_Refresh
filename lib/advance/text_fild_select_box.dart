@@ -171,10 +171,10 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
   void initState() {
     super.initState();
 
-    setState(() {
+    setState(()  {
       getAvailability();
     });
-    setState(() {
+    setState(()  {
       getConditions();
     });
     setState(() {
@@ -195,19 +195,19 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
     setState(() {
       getColor();
     });
-    setState(() {
+    setState(()  {
       getGrade();
     });
-    setState(() {
+    setState(()  {
       getTransmission();
     });
     // Model
-    setState(() {
+    setState(()  {
       getModel();
     });
 
     //Edition
-    setState(() {
+    setState(()  {
       getEdition();
     });
 
@@ -295,6 +295,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
   bool editionInProgress = false;
 
   Future getEdition() async {
+    print("this is enter point getEdition methode");
     prefss = await SharedPreferences.getInstance();
     editionInProgress = true;
     if (mounted) setState(() {});
@@ -308,6 +309,8 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
           });
       print(response.statusCode);
       Map<String, dynamic> decodedResponse = jsonDecode(response.body);
+         print("this is the length of getEdition");
+         print(decodedResponse['payload'].length);     
 
       for (int i = 0; i < decodedResponse['payload'].length; i++) {
         List<Map<String, dynamic>> translateList =
@@ -336,6 +339,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
     }
     editionInProgress = false;
     if (mounted) setState(() {});
+    print("this is enter point getEdition methode");
   }
 
   Future getModel() async {
@@ -792,11 +796,8 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
     }
   }
 
-  TextStyle textFildUpText = TextStyle(
-    color: Colors.white,
-    fontSize: 15,
-   fontFamily: 'Axiforma'
-  );
+  TextStyle textFildUpText =
+      TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'Axiforma');
 
   Row textFildUpTextRow(String title, {String? star}) {
     return Row(
@@ -879,7 +880,8 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
     print(response.statusCode);
 
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Advance Update Successful!!')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Advance Update Successful!!')));
       Navigator.pop(context);
     }
   }
@@ -1109,13 +1111,15 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
                                   transmissionValue,
                             );
                           });
+                          print(newValue);
                         },
+                        
                       ),
                       SzBx(),
 
                       textFildUpTextRow('Model', star: ' *'),
                       custom_Model_Edition_DropDownFormField(
-                        value: modelValue,
+                      //  value: modelValue,
                         list: modelList,
                         onChanged: (newValue) {
                           setState(() {
@@ -1125,6 +1129,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
                                   item['translate'][0]['title'] == modelValue,
                             );
                             setState(() {});
+                            print(modelValue);
                           });
                         },
                       ),
@@ -1156,6 +1161,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
                                             item['translate'][0]['title'] ==
                                             colorValue,
                                       );
+                                      print(colorValue);
                                     });
                                   },
                                 ),
@@ -1606,10 +1612,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
                                 statusId,
                               );
                             }
-                          
-                          
                           },
-                      
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blue,
                               shape: RoundedRectangleBorder(
@@ -1640,14 +1643,14 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
     return DropdownButtonFormField<String>(
       validator: validator,
 
-       dropdownColor: Color.fromARGB(255, 61, 59, 59),
+      dropdownColor: Color.fromARGB(255, 61, 59, 59),
       menuMaxHeight: 500,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.fromLTRB(7, 15, 0, 15),
         border: OutlineInputBorder(),
       ),
       //value: availableValue,
-      value: value, style: TextStyle(fontSize: 14,fontFamily: 'Axiforma'),
+      value: value, style: TextStyle(fontSize: 14, fontFamily: 'Axiforma'),
       items: list?.map((item) {
         return DropdownMenuItem<String>(
           //item['translate'][0]['title'] as String,
@@ -1669,7 +1672,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
     final Function(int? newValue)? onChanged,
   }) {
     return DropdownButtonFormField<int>(
-        dropdownColor: Color.fromARGB(255, 61, 59, 59),
+      dropdownColor: Color.fromARGB(255, 61, 59, 59),
       menuMaxHeight: 500,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.fromLTRB(7, 15, 0, 15),
@@ -1705,7 +1708,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
     final Function(int? newValue)? onChanged,
   }) {
     return DropdownButtonFormField<int>(
-       dropdownColor: Color.fromARGB(255, 61, 59, 59),
+      dropdownColor: Color.fromARGB(255, 61, 59, 59),
       menuMaxHeight: 500,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.fromLTRB(7, 15, 0, 15),
@@ -1743,7 +1746,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
     List<int> years = List.generate(75, (index) => 2024 - index);
 
     return DropdownButtonFormField<int>(
-        dropdownColor: Color.fromARGB(255, 61, 59, 59),
+      dropdownColor: Color.fromARGB(255, 61, 59, 59),
       menuMaxHeight: 500,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.fromLTRB(7, 15, 0, 15),
@@ -1774,13 +1777,14 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
     final Function(String? newValue)? onChanged,
   }) {
     return DropdownButtonFormField<String?>(
-        dropdownColor: Color.fromARGB(255, 61, 59, 59),
+      dropdownColor: Color.fromARGB(255, 61, 59, 59),
       menuMaxHeight: 500,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.fromLTRB(7, 15, 0, 15),
         border: OutlineInputBorder(),
       ),
-      value: value,style: TextStyle(fontSize: 14,fontFamily: 'Axiforma'),
+      value: value,
+      style: TextStyle(fontSize: 14, fontFamily: 'Axiforma'),
       items: list
           ?.whereType<ModelProduct>() // Filter only Product items
           .map<DropdownMenuItem<String?>>((item) {

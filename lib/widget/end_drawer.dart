@@ -122,6 +122,11 @@ Future<void> getPreffs() async {
                       icon: Icon(Icons.note), onTapFunction: (){
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>CustomerCareDetails()));
                       }):SizedBox(),
+
+                      DrawerItemList(text: 'Calculate Car Price',
+                      icon: Icon(Icons.note), onTapFunction: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>CustomerCareDetails()));
+                      })
                   ],
                 ),
               ),
