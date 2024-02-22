@@ -78,6 +78,11 @@ class _CalculateCarPriceState extends State<CalculateCarPrice> {
   convertIntoDoller() async {
     //   totalResultIntoDoller = totalResult! / dollerRate!;
     isDoller = !isDoller;
+//    totalResultIntoDoller = totalResult! / dollerRate!;
+    setState(() {});
+  }
+
+  totalResultInDoller() {
     totalResultIntoDoller = totalResult! / dollerRate!;
     setState(() {});
   }
@@ -248,6 +253,7 @@ class _CalculateCarPriceState extends State<CalculateCarPrice> {
                         SizedBox(height: 10),
                         InkWell(
                           onTap: () async {
+                            totalResultInDoller();
                             convertIntoDoller();
                             setState(() {});
                             print(dollerCostResult);
@@ -256,7 +262,8 @@ class _CalculateCarPriceState extends State<CalculateCarPrice> {
                             isDoller
                                 ? 'Convert into Doller'
                                 : 'Convert into Taka',
-                            style: keyAndValueStyle.copyWith(color: Colors.blue),
+                            style:
+                                keyAndValueStyle.copyWith(color: Colors.blue),
                           ),
                         )
                       ],
@@ -313,7 +320,7 @@ class _CalculateCarPriceState extends State<CalculateCarPrice> {
                 Center(
                     child: Text(
                   "Calculate Your Car Current Price",
-                  style: TextStyle(color: Colors.white, fontSize: 15),
+                  style: TextStyle(color: Colors.white, fontSize: 20),
                 )),
                 SizedBox(height: size.height / 20),
                 TextFormField(
