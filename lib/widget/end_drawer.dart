@@ -3,6 +3,7 @@ import 'package:pilot_refresh/For_Customer_Care/auth/customer_care_login.dart';
 import 'package:pilot_refresh/add%20car/add-car.dart';
 import 'package:pilot_refresh/add%20car/description_page.dart';
 import 'package:pilot_refresh/add%20car/upload_multiple_image.dart';
+import 'package:pilot_refresh/calculate_car_price/calculate_car_price.dart';
 import 'package:pilot_refresh/methodes/log_out_methode.dart';
 import 'package:pilot_refresh/marcent/marcents.dart';
 import 'package:pilot_refresh/screens/auth/customer_care/customer_care_details.dart';
@@ -125,7 +126,7 @@ Future<void> getPreffs() async {
 
                       DrawerItemList(text: 'Calculate Car Price',
                       icon: Icon(Icons.note), onTapFunction: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>CustomerCareDetails()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>CalculateCarPrice()));
                       })
                   ],
                 ),

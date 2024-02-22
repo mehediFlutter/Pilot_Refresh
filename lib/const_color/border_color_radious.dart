@@ -17,3 +17,8 @@ final customFocusBorder = OutlineInputBorder(
   borderRadius: smallRound,
   borderSide: borderBlack,
 );
+
+final smallHeightGap = SizedBox(height: 8);
+final largeHeightGap = SizedBox(height: 16);
+final smallWeighttGap = SizedBox(height: 8);
+final largeWeighttGap = SizedBox(height: 16);
