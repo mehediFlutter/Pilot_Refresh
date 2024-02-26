@@ -275,7 +275,7 @@ void _listenForChanges() {
           carColor: e['color']['translate'][0]['title'] ?? 'None',
           edition: e['edition']['translate'][0]['title'] ?? 'None',
           model: e['carmodel']?['translate'][0]?['title'] ?? '',
-          grade: e['grade']?['translate'][0]?['title'] ?? '',
+          grade: e['grade']?['translate'][0]?['title'] ?? 'none',
           engineNumber: e['engine_number'] ?? '--',
           chassisNumber: e['chassis_number'] ?? '--',
           video: e['video'] ?? 'No Video',
@@ -376,7 +376,7 @@ void _listenForChanges() {
               getproductsList[i]['edition']['translate'][0]['title'] ?? 'None',
           model:
               getproductsList[i]?['carmodel']?['translate'][0]?['title'] ?? '',
-          grade: getproductsList[i]?['grade']?['translate'][0]?['title'] ?? '',
+          grade: getproductsList[i]?['grade']?['translate'][0]?['title'] ?? 'none',
           engineNumber: getproductsList[i]['engine_number'] ?? '--',
           chassisNumber: getproductsList[i]['chassis_number'] ?? '--',
           video: getproductsList[i]?['video'] ?? 'No Video',
@@ -478,7 +478,7 @@ void _listenForChanges() {
               getproductsList[i]['edition']['translate'][0]['title'] ?? 'None',
           model:
               getproductsList[i]?['carmodel']?['translate'][0]?['title'] ?? '',
-          grade: getproductsList[i]?['grade']?['translate'][0]?['title'] ?? '',
+          grade: getproductsList[i]?['grade']?['translate'][0]?['title'] ?? 'none',
           engineNumber: getproductsList[i]['engine_number'].toString() ?? '--',
           chassisNumber: getproductsList[i]['chassis_number'].toString() ?? '--',
           video: getproductsList[i]?['video'] ?? 'No Video',
@@ -621,7 +621,7 @@ void _listenForChanges() {
                                 id: products[index + j].id!,
                                 imageName:
                                     products[index + j].imageName.toString(),
-                                price: products[index + j].price.toString(),
+                                price: products[index + j].price??1,
                                 purchase_price: products[index + j]
                                     .purchase_price
                                     .toString(),

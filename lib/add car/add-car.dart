@@ -705,7 +705,7 @@ class _AddNewCarState extends State<AddNewCar> {
   SizedBox SzBx() => SizedBox(height: 20);
 
   imageUpload() async {
-    prefss= await SharedPreferences.getInstance();
+    prefss = await SharedPreferences.getInstance();
     final body = {
       "title[en]": "Toyota Demo Car",
       "title[bn]": "Toyota Demo Car",
@@ -740,7 +740,7 @@ class _AddNewCarState extends State<AddNewCar> {
     final request = await http.post(uri, body: jsonEncode(body), headers: {
       'Content-Type': 'application/vnd.api+json',
       'Accept': 'application/vnd.api+json',
-       'Authorization': 'Bearer ${prefss.getString('token')}'
+      'Authorization': 'Bearer ${prefss.getString('token')}'
     });
     print(request.statusCode);
   }
@@ -762,15 +762,11 @@ class _AddNewCarState extends State<AddNewCar> {
   int? newLyAddedCarId;
   bool uploadImageInProgress = false;
 
-  
-
   Future<void> onUploadImages(
       String titleEnglish,
       titleBangla,
-
       userId,
       categoryId,
-
       conditionId,
       transmissionId,
       engines,
@@ -790,48 +786,43 @@ class _AddNewCarState extends State<AddNewCar> {
       fixed_price,
       price,
       chassis_number,
-        brand_id,
+      brand_id,
       color_id,
-      grade
-      
-    
-      ) async {
-
+      grade) async {
     uploadImageInProgress = true;
     if (mounted) setState(() {});
-    
+
     prefss = await SharedPreferences.getInstance();
 
-
     Map<String, String> formData = {
-      'title[en]':titleEnglish.toString(),
+      'title[en]': titleEnglish.toString(),
       'title[bn]': titleBangla.toString(),
-      "user_id":userId.toString(),
-      'category_id':categoryId.toString(),
-        'merchant_id': prefss.getString('merchantId').toString(),
+      "user_id": userId.toString(),
+      'category_id': categoryId.toString(),
+      'merchant_id': prefss.getString('merchantId').toString(),
       'condition_id': conditionId.toString(),
       'transmission_id': transmissionId.toString(),
       'engines': engines.toString(),
-      'edition_id':editionId.toString(),
+      'edition_id': editionId.toString(),
       'fuel_id': fuelId.toString(),
       'skeleton_id': skeletonId.toString(),
-      'mileages':mileage.toString(),
+      'mileages': mileage.toString(),
       'manufacture': manufacture.toString(),
       'is_feat': '1',
       'status': '1',
-      'is_approved':'1',
+      'is_approved': '1',
       'publish_at': publish_at.toString(),
-  
-      'code' : code.toString(),
+      'code': code.toString(),
       'available_id': available_id.toString(),
       'registration_id': registration_id.toString(),
-      'carmodel_id':carmodel_id.toString(),
-      'fixed_price':fixed_price.toString(),
+      'carmodel_id': carmodel_id.toString(),
+      'fixed_price': fixed_price.toString(),
       'price': price.toString(),
       'chassis_number': chassis_number.toString(),
       'brand_id': brand_id.toString(),
-      'color_id':  color_id.toString(),
-      'grade': grade.toString()
+      'color_id': color_id.toString(),
+      'grade_id': grade == null ? '' : grade.toString(),
+      'registration': registrationController.text,
     };
     Map<String, String> headers = {
       'Accept': 'application/vnd.api+json',
@@ -870,7 +861,7 @@ class _AddNewCarState extends State<AddNewCar> {
           Uri.parse(
             "https://pilotbazar.com/api/merchants/vehicles/products",
           ),
-         
+
           // Replace with your actual API URL
         );
         request.headers.addAll(headers);
@@ -888,7 +879,7 @@ class _AddNewCarState extends State<AddNewCar> {
         print('here is the details of my dynamic value of body ');
 
         print(titleControllerBangla.text);
-        print( titleControllerEnglish.text);
+        print(titleControllerEnglish.text);
         print(prefss.getString('merchantId').toString());
         // print(conditionId.toString());
         // print(transmissionId.toString());
@@ -908,7 +899,7 @@ class _AddNewCarState extends State<AddNewCar> {
         // print(available_id);
         //         print(code);
         // print(publish_at);
-   
+
         print("Compressed file name is");
         print(conpressedFile!.name);
         print(await conpressedFile!.length());
@@ -941,7 +932,7 @@ class _AddNewCarState extends State<AddNewCar> {
         print(error);
       }
     }
-     uploadImageInProgress = false;
+    uploadImageInProgress = false;
     if (mounted) setState(() {});
   }
 
@@ -1000,6 +991,7 @@ class _AddNewCarState extends State<AddNewCar> {
                           });
                         },
                       ),
+
                       SzBx(),
                       textFildUpTextRow('Category', star: ' *'),
                       categorySelect(
@@ -1149,6 +1141,16 @@ class _AddNewCarState extends State<AddNewCar> {
                       textFildUpTextRow('Engine', star: ' *'),
                       customTextField(
                           controller: engineController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Enter Value';
+                            }
+                            return null;
+                          }),
+                      SzBx(),
+                      textFildUpTextRow('Registration', star: ' *'),
+                      customTextField(
+                          controller: registrationController,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Enter Value';
@@ -1359,12 +1361,12 @@ class _AddNewCarState extends State<AddNewCar> {
                           print('Selected ID: $newValue');
                         },
                       ),
-                      SzBx(),
-                      textFildUpTextRow('Cover or Main Image'),
-                      GestureDetector(
-                        onTap: () {},
-                        child: Container(),
-                      ),
+                     // SzBx(),
+                      // textFildUpTextRow('Cover or Main Image'),
+                      // GestureDetector(
+                      //   onTap: () {},
+                      //   child: Container(),
+                      // ),
                       SzBx(),
                       // textFildUpTextRow('Engine Number'),
                       // customTextField(controller: engineController),
@@ -1502,37 +1504,35 @@ class _AddNewCarState extends State<AddNewCar> {
 
                             print(userInfo.payload?.merchant?.id);
                             print(userInfo.payload?.token);
-                         
 
                             onUploadImages(
-                                titleControllerEnglish.text,
-                                titleControllerBangla.text,
-                                1,
-                                1,
-                                conditionSelectedId,
-                                transmissionSelectedId,
-                                engineController.text,
-                                editionSelectedId,
-                                fuelSelectedId,
-                                skeletonSectedDropdownItem?['id'],
-                                mileagesController.text,
-                                manufactureController.text,
-                                isFeat,
-                                statusId,
-                                appruvalId,
-                                dateTime,
-                                codeValue,
-                                availableSelectedId,
-                                registrationSectedDropdownItem?['id'] ,
-                                modelSelectedId,
-                                fixedPriceController.text,
-                                askingPriceController.text,
-                                chassisNumberController.text,
-                                brandSectedDropdownItem?['id'],
-                                colorSelectedId,
-                                gradeSelectedId,
-                                
-                                );
+                              titleControllerEnglish.text,
+                              titleControllerBangla.text,
+                              1,
+                              1,
+                              conditionSelectedId,
+                              transmissionSelectedId,
+                              engineController.text,
+                              editionSelectedId,
+                              fuelSelectedId,
+                              skeletonSectedDropdownItem?['id'],
+                              mileagesController.text,
+                              manufactureController.text,
+                              isFeat,
+                              statusId,
+                              appruvalId,
+                              dateTime,
+                              codeValue,
+                              availableSelectedId,
+                              registrationSectedDropdownItem?['id'],
+                              modelSelectedId,
+                              fixedPriceController.text,
+                              askingPriceController.text,
+                              chassisNumberController.text,
+                              brandSectedDropdownItem?['id'],
+                              colorSelectedId,
+                              gradeSelectedId,
+                            );
                           },
                           //  },
                           style: ElevatedButton.styleFrom(
@@ -1540,8 +1540,13 @@ class _AddNewCarState extends State<AddNewCar> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
                               elevation: 20),
-                          child: uploadImageInProgress? Center(child: CircularProgressIndicator(),): Text("Add this car",
-                              style: Theme.of(context).textTheme.titleLarge),
+                          child: uploadImageInProgress
+                              ? Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                              : Text("Add this car",
+                                  style:
+                                      Theme.of(context).textTheme.titleLarge),
                         ),
                       ),
                       SizedBox(height: 40),
@@ -1556,14 +1561,46 @@ class _AddNewCarState extends State<AddNewCar> {
     );
   }
 
+  Row customDropDownWithIcon({
+    final IconData? icon,
+    required Widget dropdownField,
+  }) {
+    return Row(
+      children: [
+        Icon(Icons.clear), // Icon added to the left side
+        SizedBox(width: 10), // Adjust the spacing between the icon and dropdown
+        Expanded(
+          child: dropdownField,
+        ),
+      ],
+    );
+  }
+
   DropdownButtonFormField<String> customDropDownFormField({
     final String? value,
     final List? list,
     final Function(String? newValue)? onChanged,
+    // final Function? click,
     final String? labelText,
     FormFieldValidator<String>? validator,
   }) {
     return DropdownButtonFormField<String>(
+      icon: Row(
+        children: [
+          InkWell(child: Icon(Icons.arrow_drop_down)),
+          // ElevatedButton(
+          //     style: ElevatedButton.styleFrom(
+          //       backgroundColor: Colors.transparent,
+
+          //       //  shadowColor: Colors.red
+          //     ),
+          //     onPressed: () {
+          //       click;
+          //     },
+          //     child: Icon(Icons.close, color: Color.fromARGB(255, 82, 29, 26))),
+        ],
+      ),
+
       dropdownColor: Color.fromARGB(255, 61, 59, 59),
       menuMaxHeight: 500,
 

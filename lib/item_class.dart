@@ -1207,8 +1207,7 @@ class _ItemState extends State<Item> {
                                                               widget
                                                                   .transmission,
                                                           registration:
-                                                              widget
-                                                                  .registration,
+                                                             widget.registration,
                                                           carColor: widget
                                                               .carColor,
                                                           edition: widget
@@ -1217,8 +1216,7 @@ class _ItemState extends State<Item> {
                                                               .model,
                                                           grade: widget
                                                               .grade,
-                                                          mileage: widget
-                                                              .nMillage
+                                                          mileage: widget.registration
                                                               .toString(),
                                                           engine: widget
                                                               .engine
@@ -1441,11 +1439,14 @@ class _ItemState extends State<Item> {
 
   deleteMethode(int id) async {
     prefss = await SharedPreferences.getInstance();
+    //  final body = {
+    //   "delete_id": 1,
+    // };
     print(widget.id);
     final url =
-        "https://pilotbazar.com/api/merchants/vehicles/products/$id/update/sold";
+        "https://pilotbazar.com/api/merchants/vehicles/products/$id";
     final uri = Uri.parse(url);
-    final response = await http.put(uri, headers: {
+    final response = await http.delete(uri, headers: {
       'Accept': 'application/vnd.api+json',
       'Content-Type': 'application/vnd.api+json',
       'Authorization': 'Bearer ${prefss.getString('token')}'
@@ -1454,6 +1455,7 @@ class _ItemState extends State<Item> {
 
     if (response.statusCode == 200) {
       print("Succesfully Booked");
+      Navigator.pop(context);
     }
   }
 

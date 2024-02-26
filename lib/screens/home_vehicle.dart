@@ -328,7 +328,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
           carColor: e['color']['translate'][0]['title'] ?? 'None',
           edition: e['edition']['translate'][0]['title'] ?? 'None',
           model: e['carmodel']?['translate'][0]?['title'] ?? '',
-          grade: e['grade']?['translate'][0]?['title'] ?? '',
+          grade: e['grade']?['translate'][0]?['title'] ?? 'none',
           engineNumber: e['engine_number'].toString() ?? '--',
           chassisNumber: e['chassis_number'].toString() ?? '--',
           video: e['video'] ?? 'No Video',
@@ -431,7 +431,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
         grade: decodedResponse['data'][i]?['grade']?['translate'][0]
                 ?['title'] ??
-            '',
+            'none',
         engineNumber:
             decodedResponse['data'][i]['engine_number'].toString() ?? '--',
         chassisNumber:

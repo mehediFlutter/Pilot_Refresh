@@ -38,16 +38,28 @@ class _PriceEditScreenState extends State<PriceEditScreen> {
       TextEditingController();
   TextEditingController _fixed_PriceEditingController = TextEditingController();
   late SharedPreferences preffs;
+  String? purchasePrice;
+  String? fixedPrice;
 
   @override
   void initState() {
-    // TODO: implement initState
-    super.initState();
-    //String n=widget.name.toString();
+    
 
     _asking_PriceEditingController.text = widget.price.toString();
-    _purchase_PriceEditingcontroller.text = widget.purchase_price.toString();
-    _fixed_PriceEditingController.text = widget.fixed_price.toString();
+   // _purchase_PriceEditingcontroller.text = widget.purchase_price.toString();
+  //  _fixed_PriceEditingController.text = widget.fixed_price.toString();
+   initializingPricesValues();
+  }
+
+  initializingPricesValues() async{
+   if(widget.purchase_price==null) {
+    _purchase_PriceEditingcontroller.text= await purchasePrice??'1';
+
+   };
+   if( widget.fixed_price==null) {
+    _fixed_PriceEditingController.text= await fixedPrice?? '1';
+
+   };
   }
 
   bool updateDataInProgress = false;
@@ -128,7 +140,7 @@ class _PriceEditScreenState extends State<PriceEditScreen> {
                           color: Colors
                               .white), // Set focused border color to white
                     ),
-                    disabledBorder: OutlineInputBorder(
+                    enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                     ),
                     errorBorder: OutlineInputBorder(
@@ -162,7 +174,7 @@ class _PriceEditScreenState extends State<PriceEditScreen> {
                           color: Colors
                               .white), // Set focused border color to white
                     ),
-                    disabledBorder: OutlineInputBorder(
+                    enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                     ),
                     errorBorder: OutlineInputBorder(
@@ -228,7 +240,7 @@ class _PriceEditScreenState extends State<PriceEditScreen> {
                           color: Colors
                               .white), // Set focused border color to white
                     ),
-                    disabledBorder: OutlineInputBorder(
+                    enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                     ),
                     errorBorder: OutlineInputBorder(

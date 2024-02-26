@@ -169,12 +169,18 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
 
   @override
   void initState() {
-    super.initState();
+    print("grade ${widget.grade}");
+    if(widget.grade=='none'){
+      print("No Grade");
+    }
+    else{
+      print("Grade is available!!!!");
+    }
 
-    setState(()  {
+    setState(() {
       getAvailability();
     });
-    setState(()  {
+    setState(() {
       getConditions();
     });
     setState(() {
@@ -195,19 +201,19 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
     setState(() {
       getColor();
     });
-    setState(()  {
+    setState(() {
       getGrade();
     });
-    setState(()  {
+    setState(() {
       getTransmission();
     });
     // Model
-    setState(()  {
+    setState(() {
       getModel();
     });
 
     //Edition
-    setState(()  {
+    setState(() {
       getEdition();
     });
 
@@ -309,8 +315,8 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
           });
       print(response.statusCode);
       Map<String, dynamic> decodedResponse = jsonDecode(response.body);
-         print("this is the length of getEdition");
-         print(decodedResponse['payload'].length);     
+      print("this is the length of getEdition");
+      print(decodedResponse['payload'].length);
 
       for (int i = 0; i < decodedResponse['payload'].length; i++) {
         List<Map<String, dynamic>> translateList =
@@ -331,9 +337,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
         );
         setState(() {});
       });
-      for (var product in editionlList) {
-        print('Name: ${product.name}');
-      }
+      print("End of Edition Methode");
     } catch (error) {
       print('Error fetching data: $error');
     }
@@ -344,6 +348,10 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
 
   Future getModel() async {
     prefss = await SharedPreferences.getInstance();
+    print("get Model methode ");
+    print("length of grade list");
+    print(gradeList.length);
+    print(gradeList);
     try {
       Response response = await get(
           Uri.parse('https://pilotbazar.com/api/merchants/vehicles/models/'),
@@ -354,6 +362,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
           });
       print(response.statusCode);
       Map<String, dynamic> decodedResponse = jsonDecode(response.body);
+      print("Length of get model ${decodedResponse.length}");
 
       for (int i = 0; i < decodedResponse['payload'].length; i++) {
         List<Map<String, dynamic>> translateList =
@@ -374,9 +383,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
         );
         setState(() {});
       });
-      for (var product in modelList) {
-        print('Name: ${product.name}');
-      }
+      print("end of get model methode");
     } catch (error) {
       print('Error fetching data: $error');
     }
@@ -384,6 +391,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
 
   Future getAvailability() async {
     prefss = await SharedPreferences.getInstance();
+    print("Enter Get Availability methode");
     try {
       final response = await http.get(
           Uri.parse(
@@ -407,6 +415,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
           );
         });
       } else {
+        print("Length of availability ${availableList.length}");
         // Handle error if API request fails
         print('API request failed with status: ${response.statusCode}');
       }
@@ -420,6 +429,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
 
   Future getGrade() async {
     prefss = await SharedPreferences.getInstance();
+    print("enter get grade");
     try {
       final response = await http.get(
           Uri.parse('https://pilotbazar.com/api/merchants/vehicles/grades/'),
@@ -428,19 +438,27 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
             'Content-Type': 'application/vnd.api+json',
             'Authorization': 'Bearer ${prefss.getString('token')}'
           });
+      print("get grade statucode");
+      print(response.statusCode);
 
       if (response.statusCode == 200) {
         final decodedResponse = jsonDecode(response.body);
         final gradeParse = decodedResponse['payload'] as List<dynamic>;
+        gradeList = await gradeParse;
+        setState(() {});
+        print("length of grade list");
+        print(gradeList.length);
+        print(gradeList);
 
         setState(() {
-          gradeList = gradeParse;
           // Set initial value to 'On Shipment'
-          gradeValue = widget.grade ?? gradeList[0].toString();
+          gradeValue = widget.grade ?? 'None';
+          setState(() {});
           gradeSectedDropdownItem = gradeList.firstWhere(
             (item) => item['translate'][0]['title'] == gradeValue,
           );
         });
+        print("Length of grade is ${gradeList.length}");
       } else {
         // Handle error if API request fails
         print('API request failed with status: ${response.statusCode}');
@@ -454,6 +472,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
   }
 
   Future getColor() async {
+    print("Enter Get color methode");
     prefss = await SharedPreferences.getInstance();
     try {
       final response = await http.get(
@@ -854,7 +873,8 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
       "registration_id": registrationId,
       "carmodel_id": carModel,
       "color_id": colorId,
-      "grade_id": gradeId,
+      "grade_id": gradeId.toString(),
+      //gradeId
       "video": video,
       "chassis_number": chassisNumber,
       "engine_number": engineNumber,
@@ -865,10 +885,14 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
       "is_approved": is_appruval,
       "publish_at": publish_at,
       "is_feat": is_feat,
-      "status": status
+      "status": status,
+      
+      
+      
     };
     prefss = await SharedPreferences.getInstance();
-    final url = "https://pilotbazar.com/api/merchants/vehicles/products/12";
+    final url =
+        "https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}";
     final uri = Uri.parse(url);
     final response = await http.put(uri, body: jsonEncode(body), headers: {
       'Accept': 'application/vnd.api+json',
@@ -1113,13 +1137,12 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
                           });
                           print(newValue);
                         },
-                        
                       ),
                       SzBx(),
 
                       textFildUpTextRow('Model', star: ' *'),
                       custom_Model_Edition_DropDownFormField(
-                      //  value: modelValue,
+                         value: modelValue,
                         list: modelList,
                         onChanged: (newValue) {
                           setState(() {
@@ -1181,13 +1204,14 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
                         ],
                       ),
 
-                      SzBx(),
+                      widget.grade=='none'?SizedBox(): SzBx(),
 
                       //Start Condition Dropdown *
 
                       // Start Grade
-                      textFildUpTextRow('Grade', star: ' *'),
-                      customDropDownFormField(
+                      widget.grade=='none'?SizedBox(): textFildUpTextRow('Grade', star: ' *'),
+                     // widget.grade=='none'? Text("No Grade",style: TextStyle(color: Colors.white)):Text("Grade Available",style: TextStyle(color: Colors.white),),
+                      widget.grade=='none'?SizedBox(): customDropDownFormField(
                         value: gradeValue,
                         list: gradeList,
                         onChanged: (newValue) {
@@ -1196,6 +1220,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
                             gradeSectedDropdownItem = gradeList.firstWhere(
                               (item) =>
                                   item['translate'][0]['title'] == gradeValue,
+                              // Default value when no match is found
                             );
                           });
                         },
@@ -1203,7 +1228,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
 
                       //End Condition Dropdown
 
-                      SzBx(),
+                     SzBx(),
 
                       textFildUpTextRow('Available', star: ' *'),
                       _availabilityInProgress
