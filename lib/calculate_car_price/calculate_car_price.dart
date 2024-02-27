@@ -14,6 +14,8 @@ class CalculateCarPrice extends StatefulWidget {
 }
 
 class _CalculateCarPriceState extends State<CalculateCarPrice> {
+  final GlobalKey<FormState> _globalKey = GlobalKey();
+
   TextEditingController texController = TextEditingController();
   TextEditingController dollerRateController = TextEditingController();
   TextEditingController howManyDollerController = TextEditingController();
@@ -74,7 +76,7 @@ class _CalculateCarPriceState extends State<CalculateCarPrice> {
     totalResult = dayCostResult! + dollerCostResult! + tax! + otherCost!;
   }
 
-  bool isDoller = false;
+  bool isDoller = true;
   convertIntoDoller() async {
     //   totalResultIntoDoller = totalResult! / dollerRate!;
     isDoller = !isDoller;
@@ -87,7 +89,7 @@ class _CalculateCarPriceState extends State<CalculateCarPrice> {
     setState(() {});
   }
 
-  void priceAlartDialog(BuildContext context) {
+  priceAlartDialog(BuildContext context) {
     showDialog(
         context: context,
         builder: (context) {
@@ -305,6 +307,11 @@ class _CalculateCarPriceState extends State<CalculateCarPrice> {
     );
   }
 
+  Future getMethodes() async {
+    await calculate();
+    await priceAlartDialog(context);
+  }
+
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
     return SafeArea(
@@ -313,47 +320,57 @@ class _CalculateCarPriceState extends State<CalculateCarPrice> {
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: size.height / 12),
-                Center(
-                    child: Text(
-                  "Calculate Your Car Current Price",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                )),
-                SizedBox(height: size.height / 20),
-                TextFormField(
-                  keyboardType: TextInputType.number,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(color: Colors.white),
-                  cursorColor: Colors.white,
-                  cursorHeight: 20,
-                  controller: texController,
-                  decoration: InputDecoration(
-                    labelText: 'Enter Tax',
-                    labelStyle: labelTextStyle,
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red)),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
-                        borderRadius: BorderRadius.circular(12)),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(12)),
-                    disabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(12)),
+            child: Form(
+              key: _globalKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: size.height / 12),
+                  Center(
+                      child: Text(
+                    "Calculate Your Car Current Price",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  )),
+                  SizedBox(height: size.height / 20),
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(color: Colors.white),
+                    cursorColor: Colors.white,
+                    cursorHeight: 20,
+                    controller: texController,
+                    decoration: InputDecoration(
+                        labelText: 'Enter Tax',
+                        labelStyle: labelTextStyle,
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red)),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(12)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(12)),
+                        disabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(12)),
+                        errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.red))),
+                    validator: (String? value) {
+                      if (value?.isEmpty ?? true) {
+                        return 'Enter mobile number';
+                      }
+                      return null;
+                    },
                   ),
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  keyboardType: TextInputType.number,
-                  controller: perDayChargeController,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  decoration: InputDecoration(
+                  SizedBox(height: 20),
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    controller: perDayChargeController,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    decoration: InputDecoration(
                       labelText: 'Per day Cost',
                       labelStyle: labelTextStyle,
                       enabledBorder: OutlineInputBorder(
@@ -362,14 +379,24 @@ class _CalculateCarPriceState extends State<CalculateCarPrice> {
                       ),
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.white))),
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  keyboardType: TextInputType.number,
-                  controller: howManyDaysController,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  decoration: InputDecoration(
+                          borderSide: BorderSide(color: Colors.white)),
+                      errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.red)),
+                    ),
+                    validator: (value) {
+                      if (value?.isEmpty ?? true) {
+                        return 'Enter Par Day cost';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    controller: howManyDaysController,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    decoration: InputDecoration(
                       labelText: 'How Many Days',
                       labelStyle: labelTextStyle,
                       enabledBorder: OutlineInputBorder(
@@ -378,36 +405,57 @@ class _CalculateCarPriceState extends State<CalculateCarPrice> {
                       ),
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.white))),
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  keyboardType: TextInputType.number,
-                  controller: howManyDollerController,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(color: Colors.white),
-                  cursorColor: Colors.white,
-                  cursorHeight: 20,
-                  decoration: InputDecoration(
+                          borderSide: BorderSide(color: Colors.white)),
+                      errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.red)),
+                    ),
+                    validator: (value) {
+                      if (value?.isEmpty ?? true) {
+                        return 'Enter Days';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    controller: howManyDollerController,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(color: Colors.white),
+                    cursorColor: Colors.white,
+                    cursorHeight: 20,
+                    decoration: InputDecoration(
                       labelText: 'How Many Doller',
                       labelStyle: labelTextStyle,
                       enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(color: Colors.grey)),
                       focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      errorBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.white))),
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  keyboardType: TextInputType.number,
-                  controller: dollerRateController,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  cursorColor: Colors.white,
-                  cursorHeight: 20,
-                  decoration: InputDecoration(
+                          borderSide: BorderSide(color: Colors.red)),
+                    ),
+                    //   validator: (value) {
+                    //   if(value?.isEmpty??true){
+                    //     return 'Enter Doller Amount';
+                    //   }
+                    //   return null;
+                    // },
+                  ),
+                  SizedBox(height: 20),
+            TextFormField(
+                    keyboardType: TextInputType.number,
+                    controller: dollerRateController,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    cursorColor: Colors.white,
+                    cursorHeight: 20,
+                    decoration: InputDecoration(
                       labelText: 'Enter Doller Rate',
                       labelStyle: labelTextStyle,
                       enabledBorder: OutlineInputBorder(
@@ -416,44 +464,68 @@ class _CalculateCarPriceState extends State<CalculateCarPrice> {
                       ),
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.white))),
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  keyboardType: TextInputType.number,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(color: Colors.white),
-                  controller: otherCostController,
-                  cursorColor: Colors.white,
-                  cursorHeight: 20,
-                  decoration: InputDecoration(
-                      labelText: 'Other Cost',
-                      labelStyle: labelTextStyle,
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Colors.grey),
-                      ),
-                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white)),
+                      errorBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.white))),
-                ),
-                SizedBox(height: 20),
-                SizedBox(
-                    height: 60,
-                    width: double.infinity,
-                    child: ElevatedButton(
-                        onPressed: () async {
-                          await calculate();
-                          priceAlartDialog(context);
-                        },
-                        child: Text(
-                          "Calculate Price",
-                          style: TextStyle(color: Colors.white, fontSize: 15),
-                        ))),
-                SizedBox(height: 20),
-              ],
+                          borderSide: BorderSide(color: Colors.red)),
+                    ),
+                    validator: (howManyDollerController.text.isNotEmpty)
+                        ? (value) {
+                            if (value!.isEmpty) {
+                              return 'Doller Rate is required';
+                            }
+                            // You can add more validation logic here if needed
+                            return null;
+                          }
+                        : null,
+                  ),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    validator: (String? value) {
+                      if (value?.isEmpty ?? true) {
+                        return 'Enter Tax';
+                      }
+                      return null;
+                    },
+                    keyboardType: TextInputType.number,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(color: Colors.white),
+                    controller: otherCostController,
+                    cursorColor: Colors.white,
+                    cursorHeight: 20,
+                    decoration: InputDecoration(
+                        labelText: 'Other Cost',
+                        labelStyle: labelTextStyle,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.white))),
+                  ),
+                  SizedBox(height: 20),
+                  SizedBox(
+                      height: 60,
+                      width: double.infinity,
+                      child: ElevatedButton(
+                          onPressed: () async {
+                            if (!_globalKey.currentState!.validate()) {
+                              return null;
+                            }
+                            await calculate();
+                            await priceAlartDialog(context);
+                            //     getMethodes();
+                          },
+                          child: Text(
+                            "Calculate Price",
+                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          ))),
+                  SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
         ),

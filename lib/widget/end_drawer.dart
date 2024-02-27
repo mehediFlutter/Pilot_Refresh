@@ -125,7 +125,7 @@ Future<void> getPreffs() async {
                       }):SizedBox(),
 
                       DrawerItemList(text: 'Calculate Car Price',
-                      icon: Icon(Icons.note), onTapFunction: (){
+                      icon: Icon(Icons.calculate), onTapFunction: (){
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>CalculateCarPrice()));
                       })
                   ],

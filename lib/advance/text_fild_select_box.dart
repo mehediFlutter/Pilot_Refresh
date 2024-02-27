@@ -170,10 +170,9 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
   @override
   void initState() {
     print("grade ${widget.grade}");
-    if(widget.grade=='none'){
+    if (widget.grade == 'none') {
       print("No Grade");
-    }
-    else{
+    } else {
       print("Grade is available!!!!");
     }
 
@@ -873,7 +872,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
       "registration_id": registrationId,
       "carmodel_id": carModel,
       "color_id": colorId,
-      "grade_id": gradeId.toString(),
+     'grade_id': gradeId == null ? '' : gradeId.toString(),
       //gradeId
       "video": video,
       "chassis_number": chassisNumber,
@@ -886,9 +885,6 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
       "publish_at": publish_at,
       "is_feat": is_feat,
       "status": status,
-      
-      
-      
     };
     prefss = await SharedPreferences.getInstance();
     final url =
@@ -1142,7 +1138,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
 
                       textFildUpTextRow('Model', star: ' *'),
                       custom_Model_Edition_DropDownFormField(
-                         value: modelValue,
+                        value: modelValue,
                         list: modelList,
                         onChanged: (newValue) {
                           setState(() {
@@ -1204,31 +1200,37 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
                         ],
                       ),
 
-                      widget.grade=='none'?SizedBox(): SzBx(),
+                      widget.grade == 'none' ? SizedBox() : SzBx(),
 
                       //Start Condition Dropdown *
 
                       // Start Grade
-                      widget.grade=='none'?SizedBox(): textFildUpTextRow('Grade', star: ' *'),
-                     // widget.grade=='none'? Text("No Grade",style: TextStyle(color: Colors.white)):Text("Grade Available",style: TextStyle(color: Colors.white),),
-                      widget.grade=='none'?SizedBox(): customDropDownFormField(
-                        value: gradeValue,
-                        list: gradeList,
-                        onChanged: (newValue) {
-                          setState(() {
-                            gradeValue = newValue;
-                            gradeSectedDropdownItem = gradeList.firstWhere(
-                              (item) =>
-                                  item['translate'][0]['title'] == gradeValue,
-                              // Default value when no match is found
-                            );
-                          });
-                        },
-                      ),
+                      widget.grade == 'none'
+                          ? SizedBox()
+                          : textFildUpTextRow('Grade', star: ' *'),
+                      // widget.grade=='none'? Text("No Grade",style: TextStyle(color: Colors.white)):Text("Grade Available",style: TextStyle(color: Colors.white),),
+                      widget.grade == 'none'
+                          ? SizedBox()
+                          : customDropDownFormField(
+                              value: gradeValue,
+                              list: gradeList,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  gradeValue = newValue;
+                                  gradeSectedDropdownItem =
+                                      gradeList.firstWhere(
+                                    (item) =>
+                                        item['translate'][0]['title'] ==
+                                        gradeValue,
+                                    // Default value when no match is found
+                                  );
+                                });
+                              },
+                            ),
 
                       //End Condition Dropdown
 
-                     SzBx(),
+                      SzBx(),
 
                       textFildUpTextRow('Available', star: ' *'),
                       _availabilityInProgress
