@@ -85,6 +85,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
   List details = [];
   //final todo = widget.todo;
   SharedPreferences? Preffs;
+  bool isDetailsEmpty = false;
 
   Future getDetails() async {
     Preffs = await SharedPreferences.getInstance();
@@ -115,6 +116,10 @@ class _VehicleDetailsState extends State<VehicleDetails> {
     print("Get Details methodes");
     print(response.statusCode);
     final Map<String, dynamic> decodedResponse = jsonDecode(response!.body);
+    if (decodedResponse['payload']['vehicle_feature'].length == 0) {
+      isDetailsEmpty = true;
+      setState(() {});
+    }
     List<dynamic> vehicleFeatures =
         decodedResponse['payload']['vehicle_feature'];
 
@@ -813,11 +818,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                 SizedBox(
                   height: 10,
                 ),
-                _getDataInProgress
-                    ? Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : Text(
+               isDetailsEmpty?SizedBox(): Text(
                         "Special Features",
                         style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             // decoration: TextDecoration.underline,
@@ -826,7 +827,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                             fontSize: 20),
                       ),
 
-                Container(
+              isDetailsEmpty?SizedBox():  Container(
                     width: double.infinity,
                     child: ListView.separated(
                       primary: false,

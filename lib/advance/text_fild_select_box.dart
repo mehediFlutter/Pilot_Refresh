@@ -206,6 +206,7 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
     setState(() {
       getTransmission();
     });
+    
     // Model
     setState(() {
       getModel();

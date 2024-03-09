@@ -1,6 +1,7 @@
 class Product {
   final int? id;
     final String? engineNumber;
+    final String? newPrice;
   final String? chassisNumber;
   final String?edition;
   final String? code;
@@ -35,10 +36,11 @@ class Product {
   final String? engines;
   final String? vehiclaNameModel;
 
-  Product( 
+  Product(
       {this.imageName,
 
       this.id,
+      this.newPrice,  
 
            this.engineNumber,
       this.chassisNumber,
