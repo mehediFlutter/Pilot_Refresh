@@ -77,6 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       children: [
                         TextField(
+                          style: Theme.of(context).textTheme.bodySmall,
                           decoration: InputDecoration(
                             // contentPadding: EdgeInsets.only(top: 10),
                             // enabledBorder: UnderlineInputBorder(

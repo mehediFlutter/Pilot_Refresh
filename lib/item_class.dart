@@ -18,7 +18,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Item extends StatefulWidget {
-  final bool? myAskingPrice;
+  final bool? showAskingPrice;
   final String? toki;
   final int? id;
   final String? code;
@@ -54,6 +54,7 @@ class Item extends StatefulWidget {
   final String? engines;
   final String? vehiclaNameModel;
   final String? token;
+  final String? fixedOrAskingPrice;
 
   Item({
     this.id,
@@ -80,7 +81,6 @@ class Item extends StatefulWidget {
     this.skeleton,
     this.termAndCondition,
     this.detailsLink,
-    this.myAskingPrice,
     this.carColor,
     this.edition,
     this.grade,
@@ -92,6 +92,8 @@ class Item extends StatefulWidget {
     this.engines,
     this.vehiclaNameModel,
     this.token,
+    this.fixedOrAskingPrice,
+    this.showAskingPrice,
   });
 
   @override
@@ -122,6 +124,8 @@ class _ItemState extends State<Item> {
 
   @override
   void initState() {
+    print(widget.new_price);
+    print(widget.price);
     super.initState();
     print("get prefs bool is");
     initializePreffsBool();
@@ -561,7 +565,7 @@ class _ItemState extends State<Item> {
     final image = XFile(tempFile.path);
 
     String message =
-        "${widget.vehiclaName},Manufacture: ${widget.manufacture}, ${widget.condition}, Registration:${widget.registration},Mileage: ${widget.nMillage},price:${widget.price} ";
+        "${widget.vehiclaName},Manufacture: ${widget.manufacture}, ${widget.condition}, Registration:${widget.registration},Mileage: ${widget.nMillage},price:${getIntPreef > 0 ? widget.showAskingPrice! ? widget.price : widget.fixed_price : widget.new_price} ";
     print("length of unit title");
     print(unicTitle.length);
     String message2 = '';
@@ -571,9 +575,10 @@ class _ItemState extends State<Item> {
         message2 += ", "; // Add a comma and space if it's not the last index
       }
     }
+
     print(message2);
     String message3 =
-        "\n\nOur HotLine Number: 0196-99-444-00\n Show More\n $detailsLink";
+        "\nOut HotLine Number ${prefss.getString('mobileNumber')}\nShow More\n $detailsLink";
 
     setState(() {});
     await Share.shareXFiles([image], text: message + message2 + message3);
@@ -644,7 +649,7 @@ class _ItemState extends State<Item> {
     await tempFile.writeAsBytes(imageBytes);
 
     String message =
-        "${widget.vehiclaName},Manufacture: ${widget.manufacture}, ${widget.condition}, Registration:${widget.registration},Mileage: ${widget.nMillage}, Price: ${widget.price}} ";
+        "${widget.vehiclaName},Manufacture: ${widget.manufacture}, ${widget.condition}, Registration:${widget.registration},Mileage: ${widget.nMillage}, Price: ${getIntPreef > 0 ? widget.showAskingPrice! ? widget.price : widget.fixed_price : widget.new_price} ";
     print("length of unit title");
     print(unicTitle.length);
     String message2 = '';
@@ -655,7 +660,7 @@ class _ItemState extends State<Item> {
       }
     }
     print(message2);
-    String message3 = "\nShow More\n $detailsLink";
+    String message3 = "\nOut HotLine Number ${prefss.getString('mobileNumber')}\nShow More\n $detailsLink";
 
     setState(() {});
     await Share.share(message + message2 + message3);
@@ -906,176 +911,305 @@ class _ItemState extends State<Item> {
                                           .textTheme
                                           .bodyLarge!
                                           .copyWith(fontSize: 10)),
-                                 getIntPreef>0? Text(widget.new_price.toString()): Text(
-                                      widget.myAskingPrice!
-                                          ? widget.price.toString()
-                                          : widget.purchase_price.toString(),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge!
-                                          .copyWith(fontSize: 10)),
+
+                                  //  getIntPreef>0? Text(widget.new_price.toString()): Text(
+                                  //        widget.price.toString(),
+
+                                  //       style: Theme.of(context)
+                                  //           .textTheme
+                                  //           .bodyLarge!
+                                  //           .copyWith(fontSize: 10)),
+
+                                  // Text(
+                                  //             widget.fixedOrAskingPrice.toString(),
+                                  //             style: Theme.of(context)
+                                  //                 .textTheme
+                                  //                 .bodyLarge!
+                                  //                 .copyWith(fontSize: 10),
+                                  //           ),
+
+                                  getIntPreef > 0
+                                      ? Text(
+                                          widget.price.toString(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .copyWith(fontSize: 10),
+                                        )
+                                      : Text(
+                                          widget.new_price.toString(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .copyWith(fontSize: 10),
+                                        ),
+
                                   Spacer(),
                                   // Spacer(),
                                   // (getIntPreef == 1)
                                   //     ?
                                   (imageInProgress || emailInProgress)
-                                      ? CircularProgressIndicator()
-                                      : Container(
-                                        child: PopupMenuButton(
-                                            child: Icon(
-                                              Icons.share,
-                                              color: Colors.white,
-                                              size: 19,
-                                            ),
-                                            onSelected: (value) async {
-                                              if (value == 'details') {
-                                                await newGetDetails(
-                                                    widget.id ?? 12);
-                                                await getLink(
-                                                    widget.id.toString());
-                                                shareDetailsWithOneImage();
-                                              } else if (value == 'image') {
-                                                shareAllImages();
-                                              } else if (value == 'media') {
-                                                await newGetDetails(
-                                                    widget.id ?? 12);
-                                                await getLink(
-                                                    widget.id.toString());
-                                                await shareOnlyDetailsForMedia();
-                                              } else if (value == 'email') {
-                                                await newGetDetails(
-                                                    widget.id ?? 12);
-                                                await getLink(
-                                                    widget.id.toString());
-                                                await shareOnlyDetailsWithLink();
-                                              } else if (value ==
-                                                  'Availability') {
-                                                await getAvailability();
-                                                showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return AlertDialog(
-                                                        backgroundColor:
-                                                            const Color.fromARGB(
-                                                                255, 61, 59, 59),
-                                                        title: Center(
-                                                            child: Text(
-                                                          "Availability",
-                                                          style: Theme.of(context)
-                                                              .textTheme
-                                                              .titleSmall,
-                                                        )),
-                                                        content: Container(
-                                                          height: double.infinity,
-                                                          width: 350,
-                                                          child: ListView.builder(
-                                                            primary: false,
-                                                            shrinkWrap: true,
-                                                            itemCount:
-                                                                availableResponseList
-                                                                    .length,
-                                                            itemBuilder:
-                                                                (context, index) {
-                                                              final item =
-                                                                  availableResponseList[
-                                                                          index]
-                                                                      as Map;
-                                                              return Expanded(
-                                                                child: Expanded(
-                                                                  child: Expanded(
-                                                                      child: ElevatedButton(
-                                                                          onPressed: () async {
-                                                                            print(
-                                                                                "this is car id");
-                                                                            print(
-                                                                                widget.id);
-                                                                            updateAvailable(
-                                                                                item['id'],
-                                                                                index);
-                                                                            Navigator.pop(
-                                                                                context);
-                                                                          },
-                                                                          style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(255, 97, 93, 90)),
-                                                                          child: Text(item['translate'][0]['title'].toString(), style: Theme.of(context).textTheme.bodySmall))),
-                                                                ),
-                                                              );
-                                                            },
-                                                          ),
-                                                        ),
-                                                        actions: <Widget>[
-                                                          IconButton(
-                                                            onPressed: () {
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                            icon:
-                                                                Icon(Icons.close),
-                                                            color: Colors
-                                                                .white, // Set icon color
-                                                          ),
-                                                        ],
-                                                        contentPadding:
-                                                            EdgeInsets.only(
-                                                                top: 8,
-                                                                right: 8,
-                                                                bottom: 0,
-                                                                left: 8),
-                                                      );
-                                                    });
-                                              }
-                                            },
-                                            itemBuilder: (context) {
-                                              return [
-                                                
-                                              //  Text(''),
-                                                PopupMenuItem(
-                                                 // enabled: false,
-                                                  padding: EdgeInsets.zero,
-                                                  child: Center(child: Text("Send as Visitor")),
-                                                  textStyle: popubItem,
-                                                ),
-                                                
-                                                PopupMenuItem(
-                                                  child: Text("Taka, Link, Detail, Image"),
-                                                  value: 'details',
-                                                  textStyle: popubItem,
-                                                ),
-                                                 PopupMenuItem(
-                                                  child: Text(
-                                                      "Taka, Link, Detail"),
-                                                  value: 'email',
-                                                  textStyle: popubItem,
-                                                ),
-                                                 PopupMenuItem(
-                                                  child: Center(child: Text("Send as Media (মিডিয়া)")),
-                                                
-                                                  textStyle: popubItem,
-                                                ),
-                                        
-                                        
-                                                PopupMenuItem(
-                                                  child: Text("All Images (শুধু ছবি)"),
-                                                  value: 'image',
-                                                  textStyle: popubItem,
-                                                ),
-                                               
-                                                // PopupMenuItem(
-                                                //   child: Text(
-                                                //       "Send Details with Link (শুধু তথ্য) "),
-                                                //   value: 'email',
-                                                //   textStyle: popubItem,
-                                                // ),
-                                                PopupMenuItem(
-                                                  child: Text(
-                                                      "Details (শুধু তথ্য)"),
-                                                  value: 'media',
-                                                  textStyle: popubItem,
-                                                ),
-                                              ];
-                                            },
+                                      ? SizedBox(
+                                        height: 19,width: 19,
+                                        child: CircularProgressIndicator(strokeWidth: 3,))
+                                      : PopupMenuButton(
+                                          child: Icon(
+                                            Icons.share,
+                                            color: Colors.white,
+                                            size: 19,
                                           ),
-                                      ),
+                                          itemBuilder: (context) {
+                                            return [
+                                              PopupMenuItem(
+                                                  child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Align(
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      'Send as Visitor',
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          fontSize: 12),
+                                                    ),
+                                                  ),
+                                                  Divider(
+                                                    color: Colors.black,
+                                                  ),
+                                                  InkWell(
+                                                    onTap: () async {
+                                                      Navigator.pop(context);
+                                                      await newGetDetails(
+                                                          widget.id ?? 12);
+                                                      await getLink(await widget
+                                                          .id
+                                                          .toString());
+                                                      await shareDetailsWithOneImage();
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: insidePopubButton(context,
+                                                        "Taka, Link, Details, Image  "),
+                                                  ),
+                                                  SizedBox(width: 10),
+                                                  SizedBox(height: 10),
+                                                  InkWell(
+                                                    child: insidePopubButton(context,
+                                                        "Taka, Link, Details"),
+                                                    onTap: () async {
+                                                      Navigator.pop(context);
+                                                      await newGetDetails(
+                                                          widget.id ?? 12);
+                                                      await getLink(
+                                                          widget.id.toString());
+                                                      await shareOnlyDetailsWithLink();
+
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                  SizedBox(height: 10),
+                                                  SizedBox(height: 10),
+                                                  Align(
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      'Send as Media (মিডিয়া)',
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          fontSize: 12),
+                                                    ),
+                                                  ),
+                                                  Divider(
+                                                    color: Colors.black,
+                                                  ),
+                                                  InkWell(
+                                                    child: insidePopubButton(context,
+                                                        "All Images (শুধু ছবি)"),
+                                                    onTap: () async {
+                                                      Navigator.pop(context);
+                                                      await shareAllImages();
+                                                      print(
+                                                          "I am  Taka, Link, Details");
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                  SizedBox(height: 10),
+                                                  InkWell(
+                                                      onTap: () async {
+                                                        print("Onli image");
+                                                        Navigator.pop(context);
+
+                                                        await newGetDetails(
+                                                            widget.id ?? 12);
+                                                        await getLink(widget.id
+                                                            .toString());
+                                                        await shareOnlyDetailsForMedia();
+                                                      },
+                                                      child: insidePopubButton(
+                                                          context,
+                                                          "Details (শুধু তথ্য)")),
+                                                ],
+                                              ))
+                                            ];
+                                          }),
+
+                                  // : PopupMenuButton(
+
+                                  //   onSelected: (value) async {
+                                  //     if (value == 'details') {
+                                  //       await newGetDetails(
+                                  //           widget.id ?? 12);
+                                  //       await getLink(
+                                  //           widget.id.toString());
+                                  //       shareDetailsWithOneImage();
+                                  //     } else if (value == 'image') {
+                                  //       shareAllImages();
+                                  //     } else if (value == 'media') {
+                                  //       await newGetDetails(
+                                  //           widget.id ?? 12);
+                                  //       await getLink(
+                                  //           widget.id.toString());
+                                  //       await shareOnlyDetailsForMedia();
+                                  //     } else if (value == 'email') {
+                                  //       await newGetDetails(
+                                  //           widget.id ?? 12);
+                                  //       await getLink(
+                                  //           widget.id.toString());
+                                  //       await shareOnlyDetailsWithLink();
+                                  //     } else if (value ==
+                                  //         'Availability') {
+                                  //       await getAvailability();
+                                  //       showDialog(
+                                  //           context: context,
+                                  //           builder:
+                                  //               (BuildContext context) {
+                                  //             return AlertDialog(
+                                  //               backgroundColor:
+                                  //                   const Color
+                                  //                       .fromARGB(255,
+                                  //                       61, 59, 59),
+                                  //               title: Center(
+                                  //                   child: Text(
+                                  //                 "Availability",
+                                  //                 style:
+                                  //                     Theme.of(context)
+                                  //                         .textTheme
+                                  //                         .titleSmall,
+                                  //               )),
+                                  //               content: Container(
+                                  //                 height:
+                                  //                     double.infinity,
+                                  //                 width: 350,
+                                  //                 child:
+                                  //                     ListView.builder(
+                                  //                   primary: false,
+                                  //                   shrinkWrap: true,
+                                  //                   itemCount:
+                                  //                       availableResponseList
+                                  //                           .length,
+                                  //                   itemBuilder:
+                                  //                       (context,
+                                  //                           index) {
+                                  //                     final item =
+                                  //                         availableResponseList[
+                                  //                                 index]
+                                  //                             as Map;
+                                  //                     return Expanded(
+                                  //                       child: Expanded(
+                                  //                         child: Expanded(
+                                  //                             child: ElevatedButton(
+                                  //                                 onPressed: () async {
+                                  //                                   print("this is car id");
+                                  //                                   print(widget.id);
+                                  //                                   updateAvailable(item['id'],
+                                  //                                       index);
+                                  //                                   Navigator.pop(context);
+                                  //                                 },
+                                  //                                 style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(255, 97, 93, 90)),
+                                  //                                 child: Text(item['translate'][0]['title'].toString(), style: Theme.of(context).textTheme.bodySmall))),
+                                  //                       ),
+                                  //                     );
+                                  //                   },
+                                  //                 ),
+                                  //               ),
+                                  //               actions: <Widget>[
+                                  //                 IconButton(
+                                  //                   onPressed: () {
+                                  //                     Navigator.pop(
+                                  //                         context);
+                                  //                   },
+                                  //                   icon: Icon(
+                                  //                       Icons.close),
+                                  //                   color: Colors
+                                  //                       .white, // Set icon color
+                                  //                 ),
+                                  //               ],
+                                  //               contentPadding:
+                                  //                   EdgeInsets.only(
+                                  //                       top: 8,
+                                  //                       right: 8,
+                                  //                       bottom: 0,
+                                  //                       left: 8),
+                                  //             );
+                                  //           });
+                                  //     }
+                                  //   },
+                                  //   itemBuilder: (context) {
+                                  //     return [
+                                  //       //  Text(''),
+                                  //       PopupMenuItem(
+                                  //         // enabled: false,
+                                  //         padding: EdgeInsets.zero,
+                                  //         child: Center(
+                                  //             child: Text(
+                                  //                 "Send as Visitor")),
+                                  //         textStyle: popubItem,
+                                  //       ),
+
+                                  //       PopupMenuItem(
+                                  //         child: Text(
+                                  //             "Taka, Link, Detail, Image"),
+                                  //         value: 'details',
+                                  //         textStyle: popubItem,
+                                  //       ),
+                                  //       PopupMenuItem(
+                                  //         child: Text(
+                                  //             "Taka, Link, Detail"),
+                                  //         value: 'email',
+                                  //         textStyle: popubItem,
+                                  //       ),
+                                  //       PopupMenuItem(
+                                  //         child: Center(
+                                  //             child: Text(
+                                  //                 "Send as Media (মিডিয়া)")),
+                                  //         textStyle: popubItem,
+                                  //       ),
+
+                                  //       PopupMenuItem(
+                                  //         child: Text(
+                                  //             "All Images (শুধু ছবি)"),
+                                  //         value: 'image',
+                                  //         textStyle: popubItem,
+                                  //       ),
+
+                                  //       // PopupMenuItem(
+                                  //       //   child: Text(
+                                  //       //       "Send Details with Link (শুধু তথ্য) "),
+                                  //       //   value: 'email',
+                                  //       //   textStyle: popubItem,
+                                  //       // ),
+                                  //       PopupMenuItem(
+                                  //         child: Text(
+                                  //             "Details (শুধু তথ্য)"),
+                                  //         value: 'media',
+                                  //         textStyle: popubItem,
+                                  //       ),
+                                  //     ];
+                                  //   },
+                                  // ),
                                   // : SizedBox(),
 
                                   // popup menu
@@ -1215,7 +1349,6 @@ class _ItemState extends State<Item> {
                                                                 .transmission,
                                                             registration: widget
                                                                 .registration,
-                                                                
                                                             carColor:
                                                                 widget.carColor,
                                                             edition:
@@ -1527,6 +1660,31 @@ class _ItemState extends State<Item> {
       setState(() {});
     }
   }
+
+  Container insidePopubButton(BuildContext context, String name) {
+    return Container(
+      height: 25,
+      padding: EdgeInsets.only(top: 5),
+      child: Row(
+        children: [
+          green10R,
+           SizedBox(width: 10),
+          Text(
+            name,
+            style: TextStyle(fontSize: 12, color: Colors.black87),
+          ),
+         
+          
+        ],
+      ),
+    );
+  }
+
+  Icon green10R = Icon(
+    Icons.circle,
+    color: Colors.green,
+    size: 10,
+  );
 }
 
 //  Future<void> shareViaEmail(String id, {bool isMedia = false}) async {

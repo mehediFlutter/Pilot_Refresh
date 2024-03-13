@@ -27,6 +27,8 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
   bool _loginInProgress = false;
   var token;
   var merchantId;
+  var merchantName;
+  var mobileNumber;
   late SharedPreferences prefss;
   @override
   void initState() {
@@ -70,6 +72,8 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
       print(decodedBody);
       token = decodedBody['payload']?['token']!;
       merchantId = decodedBody['payload']?['merchant']?['id'];
+      merchantName = decodedBody['payload']?['merchant']?['name'];
+      mobileNumber = decodedBody['payload']?['merchant']?['mobile'];
       LoginModel model =
           LoginModel.fromJson(decodedBody.cast<String, dynamic>());
       await AuthUtility.saveUserInfo(model);
@@ -78,6 +82,8 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
       print(token);
       await prefss.setString('token', token);
       await prefss.setString('merchantId', merchantId.toString());
+      await prefss.setString('merchantName', merchantName.toString());
+      await prefss.setString('mobileNumber', mobileNumber.toString());
       setState(() {});
       print(model.payload!.token);
       await prefss.setBool('isLogin', true);
@@ -180,9 +186,11 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                     ),
                   ),
                   child: TextFormField(
+                    cursorColor: Colors.black,
                     controller: mobileController,
-                    style: TextStyle(color: Colors.black, fontSize: 15),
+                    style:  Theme.of(context).textTheme.bodyMedium!.copyWith( fontSize: 15,color: Colors.black),
                     decoration: InputDecoration(
+                      
                       labelText: "Mobile No",
                       labelStyle: TextStyle(color: Colors.grey, fontSize: 13),
                     ),
@@ -213,7 +221,7 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                   child: TextFormField(
                     cursorColor: Colors.black,
                     controller: passwordController,
-                    style: TextStyle(color: Colors.black, fontSize: 15),
+                    style:  Theme.of(context).textTheme.bodyMedium!.copyWith( fontSize: 15,color: Colors.black),
                     decoration: InputDecoration(
                       labelText: "Password",
                       labelStyle: TextStyle(color: Colors.grey, fontSize: 13),

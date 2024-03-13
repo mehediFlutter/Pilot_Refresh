@@ -350,14 +350,17 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
   bool isLoading = false;
   @override
-  getProduct(int page) async {
+  Future getProduct(int page) async {
     prefss = await SharedPreferences.getInstance();
+    print("Here double vehicle token from share preff");
     products.clear();
     _getProductinProgress = true;
     if (mounted) {
       setState(() {});
     }
+
     Response? response;
+
     if (prefss.getString('token') == null) {
       response = await get(
         Uri.parse(
@@ -376,78 +379,87 @@ class _HomeVehicleState extends State<HomeVehicle> {
     }
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
-    print(response.statusCode);
+
     final Map<String, dynamic> decodedResponse1 = jsonDecode(response.body);
     final Map<String, dynamic> decodedResponse = decodedResponse1['payload'];
+    final getproductsList = decodedResponse['data'];
+    setState(() {});
+    print('Length is');
+    print(getproductsList.length);
 
-    if (mounted) {
+    for (i; i < getproductsList.length; i++) {
+      print('length of this products');
+      // print(decodedResponse['data'].length);
+
+      newPrice = (getproductsList[i]['fixed_price'] != null &&
+              getproductsList[i]['fixed_price'].toInt() > 0)
+          ? (getproductsList[i]['fixed_price'] +
+              (getproductsList[i]['additional_price'] ?? 0))
+          : int.parse(getproductsList[i]['price'].toString());
       setState(() {});
-    }
 
-    for (i; i < decodedResponse['data'].length; i++) {
-      products.add(Product(
-        vehicleName: decodedResponse['data'][i]['translate'][0]['title'],
-        vehicleNameBangla: decodedResponse['data'][i]['translate'][1]['title'],
-        manufacture: decodedResponse['data'][i]['manufacture'],
-        slug: decodedResponse['data'][i]['slug'],
-        id: decodedResponse['data'][i]['id'],
-        condition: decodedResponse['data'][i]['condition']['translate'][0]
-            ['title'],
-        mileage: decodedResponse['data'][i]['mileage']?['translate'][0]
-                ?['title'] ??
-            '--',
-        //price here
-        price: decodedResponse['data'][i]['price'].toString() ?? '',
-        purchase_price:
-            decodedResponse['data'][i]?['purchase_price'].toString() ?? '',
-        fixed_price:
-            decodedResponse['data'][i]?['fixed_price'].toString() ?? '',
-        //price end
-        imageName: decodedResponse['data'][i]['image']['name'],
-        registration: decodedResponse['data'][i]['registration'] ?? 'None',
-        engine: decodedResponse['data'][i]['engine']?['translate'][0]['title']
-                .toString() ??
-            decodedResponse['data'][i]['engines'],
-        brandName: decodedResponse['data'][i]['brand']['translate'][0]['title'],
-        transmission: decodedResponse['data'][i]['transmission']['translate'][0]
-            ['title'],
-        fuel: decodedResponse['data'][i]['fuel']['translate'][0]['title'],
-        skeleton: decodedResponse['data'][i]['skeleton']['translate'][0]
-            ['title'],
-        available: decodedResponse['data'][i]?['available']?['translate'][0]
-                ?['title'] ??
-            '',
-        code: decodedResponse['data'][i]?['code'].toString() ?? '',
-        //model: decodedResponse['data'],
-        carColor: decodedResponse['data'][i]['color']?['translate'][0]
-                ['title'] ??
-            'None',
-        edition: decodedResponse['data'][i]['edition']['translate'][0]
-                ['title'] ??
-            'None',
-        model: decodedResponse['data'][i]?['carmodel']?['translate'][0]
-                ?['title'] ??
-            '',
+      print(newPrice);
 
-        grade: decodedResponse['data'][i]?['grade']?['translate'][0]
-                ?['title'] ??
-            'none',
-        engineNumber:
-            decodedResponse['data'][i]['engine_number'].toString() ?? '--',
-        chassisNumber:
-            decodedResponse['data'][i]['chassis_number'].toString() ?? '--',
-        video: decodedResponse['data'][i]?['video'] ?? 'No Video',
-        engine_id: decodedResponse['data'][i]?['engine_id'].toString() ?? '12',
-        onlyMileage: decodedResponse['data'][i]['mileages'].toString() ?? '--',
-        engines: decodedResponse['data'][i]?['engines'].toString() ?? '-',
-      ));
+      products.add(
+        Product(
+          vehicleName: getproductsList[i]['translate'][0]['title'],
+          vehicleNameBangla: getproductsList[i]['translate'][1]['title'],
+          manufacture: getproductsList[i]['manufacture'],
+          slug: getproductsList[i]['slug'],
+          id: getproductsList[i]['id'],
+          condition: getproductsList[i]['condition']['translate'][0]['title'],
+          mileage:
+              getproductsList[i]['mileage']?['translate'][0]?['title'] ?? '--',
+          //price here
+          price: getproductsList[i]['price'].toString(),
+          purchase_price:
+              getproductsList[i]?['purchase_price'].toString() ?? '',
+          fixed_price: getproductsList[i]?['fixed_price'].toString() ?? '',
+          //price end
+          imageName: getproductsList[i]['image']['name'],
+          registration: getproductsList[i]['registration'] ?? 'None',
+          engine: getproductsList[i]?['engines'].toString() ?? 'None',
+          brandName: getproductsList[i]['brand']['translate'][0]['title'],
+          transmission: getproductsList[i]['transmission']['translate'][0]
+              ['title'],
+          fuel: getproductsList[i]['fuel']['translate'][0]['title'],
+          skeleton: getproductsList[i]['skeleton']['translate'][0]['title'],
+          available:
+              getproductsList[i]?['available']?['translate'][0]?['title'] ?? '',
+          code: getproductsList[i]?['code'] ?? '',
+          //model: getproductsList,
+          carColor:
+              getproductsList[i]['color']?['translate'][0]['title'] ?? 'None',
+          edition:
+              getproductsList[i]['edition']['translate'][0]['title'] ?? 'None',
+          model:
+              getproductsList[i]?['carmodel']?['translate'][0]?['title'] ?? '',
+          grade:
+              getproductsList[i]?['grade']?['translate'][0]?['title'] ?? 'none',
+          engineNumber: getproductsList[i]['engine_number'] ?? '--',
+          chassisNumber: getproductsList[i]['chassis_number'] ?? '--',
+          video: getproductsList[i]?['video'] ?? 'No Video',
+          engine_id: getproductsList[i]?['engine_id'].toString() ?? '12',
+          onlyMileage: getproductsList[i]['mileages'].toString() ?? '--',
+          engines: getproductsList[i]?['engines'].toString() ?? '-',
+          newPrice: newPrice.toString(),
+        ),
+      );
     }
-    if (decodedResponse['data'] == null) {
+    for (var item in products) {
+      //  print("new Price");
+      print(item.newPrice.toString());
+    }
+    if (getproductsList == null) {
       return;
     }
     _getProductinProgress = false;
     if (mounted) {
       setState(() {});
+    }
+
+    if (getproductsList == null) {
+      return;
     }
   }
 
@@ -708,8 +720,17 @@ class _HomeVehicleState extends State<HomeVehicle> {
     }
   }
 
-  Future<void> shareDetailsWithOneImage(int id, String ImageName, vehicleName,
-      manufacture, condition, registration, mileage, price, detailsLink) async {
+  Future<void> shareDetailsWithOneImage(
+      int id,
+      String ImageName,
+      vehicleName,
+      manufacture,
+      condition,
+      registration,
+      mileage,
+      price,
+      newPrice,
+      detailsLink) async {
     imageInProgress = true;
     if (mounted) {
       setState(() {});
@@ -733,10 +754,9 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
     //await getDetails(widget.id);
     final image = XFile(tempFile.path);
-    late String info;
 
     String message =
-        "$vehicleName,Manufacture: $manufacture, $condition, Registration:$registration,Mileage: $mileage,price:$price ";
+        "$vehicleName,Manufacture: $manufacture, $condition, Registration:$registration,Mileage: $mileage,price:${getIntPreef >= 0 ? price : newPrice} ";
     print("length of unit title");
     print(unicTitle.length);
     String message2 = '';
@@ -748,7 +768,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
     }
     print(message2);
     String message3 =
-        "\n\nOur HotLine Number: 0196-99-444-00\n Show More\n $detailsLink";
+        "\nOut HotLine Number ${prefss.getString('mobileNumber')}\nShow More\n $detailsLink";
     //  info = "\n${unicTitle[0]} : ${details[0]}";
     //   _detailsInProgress = true;
     setState(() {});
@@ -757,6 +777,68 @@ class _HomeVehicleState extends State<HomeVehicle> {
     // }
 
     await Share.shareXFiles([image], text: message + message2 + message3);
+    //"Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 017xxxxxxxx\n"
+    unicTitle.clear();
+    details.clear();
+
+    imageInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> shareDetailsWithLink(
+      int id,
+      String ImageName,
+      vehicleName,
+      manufacture,
+      condition,
+      registration,
+      mileage,
+      price,
+      newPrice,
+      detailsLink) async {
+    imageInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    prefss = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {});
+    }
+    //setState() {});
+    final uri = Uri.parse("https://pilotbazar.com/storage/vehicles/$ImageName");
+    final response = await http.get(uri, headers: {
+      'Accept': 'application/vnd.api+json',
+      'Content-Type': 'application/vnd.api+json',
+      'Authorization': 'Bearer ${prefss.getString('token')}'
+    });
+
+    //await getDetails(widget.id);
+
+    String message =
+        "$vehicleName,Manufacture: $manufacture, $condition, Registration:$registration,Mileage: $mileage,price:${getIntPreef >= 0 ? price : newPrice} ";
+    print("length of unit title");
+    print(unicTitle.length);
+    String message2 = '';
+    for (int i = 0; i < details.length; i++) {
+      message2 += " ${details[i]}";
+      if (i < details.length - 1) {
+        message2 += ", "; // Add a comma and space if it's not the last index
+      }
+    }
+    print(message2);
+    String message3 =
+        "\n\nOut HotLine Number: ${prefss.getString('mobileNumber')}\n\nShow More\n $detailsLink";
+    //  info = "\n${unicTitle[0]} : ${details[0]}";
+    //   _detailsInProgress = true;
+    setState(() {});
+    // for (int b = 1; b < unicTitle.length; b++) {
+    //   info += "\n${unicTitle[b]} : ${details[b]}";
+    // }
+    await Share.share(message + message2 + message3);
+
+    // await Share.shareXFiles([image], text: message + message2 + message3);
     //"Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 017xxxxxxxx\n"
     unicTitle.clear();
     details.clear();
@@ -1064,6 +1146,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
     }
   }
 
+  int? newPrice;
   List searchProducts = [];
   bool _searchInProgress = false;
   TextEditingController searchController = TextEditingController();
@@ -1097,9 +1180,15 @@ class _HomeVehicleState extends State<HomeVehicle> {
     final Map<String, dynamic> decodedResponse1 = jsonDecode(response.body);
     final Map<String, dynamic> decodedResponse = decodedResponse1['payload'];
     final getproductsList = decodedResponse['data'];
+
     int i = 0;
 
     for (i; i < decodedResponse['data'].length; i++) {
+      newPrice = (getproductsList[i]['fixed_price'] != null &&
+              getproductsList[i]['fixed_price'].toInt() > 0)
+          ? (getproductsList[i]['fixed_price'] +
+              (getproductsList[i]['additional_price'] ?? 0))
+          : int.parse(getproductsList[i]['price'].toString());
       products.add(Product(
         vehicleName: decodedResponse['data'][i]['translate'][0]['title'],
         vehicleNameBangla: decodedResponse['data'][i]['translate'][1]['title'],
@@ -1475,79 +1564,203 @@ class _HomeVehicleState extends State<HomeVehicle> {
                     // ((getIntPreef >=0))
                     //     ?
                     shareInProgress
-                        ? CircularProgressIndicator()
+                        ? SizedBox(
+                            height: 28,
+                            width: 28,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 3,
+                            ))
                         : PopupMenuButton(
                             child: Icon(
                               Icons.share,
                               color: Colors.white,
                               size: 28,
                             ),
-                            onSelected: (value) async {
-                              if (value == 'image') {
-                                await sendAllImages(products[x + j].id);
-                              } else if (value == 'details') {
-                                await newGetDetails(products[x + j].id);
-                                await getLink(products[x + j].id);
-                                await shareDetailsWithOneImage(
-                                    products[x + j].id,
-                                    products[x + j].imageName,
-                                    products[x + j].vehicleName,
-                                    products[x + j].manufacture,
-                                    products[x + j].condition,
-                                    products[x + j].registration,
-                                    products[x + j].mileage,
-                                    products[x + j].price,
-                                    detailsLink);
-                              } else if (value == 'detailsWithLink') {
-                                await newGetDetails(products[x + j].id ?? 12);
-                                await getLink(products[x + j].id ?? 12);
-                                await shareOnlyDetailsWithLink(
-                                  products[x + j].id,
-                                  products[x + j].vehicleName,
-                                  products[x + j].manufacture,
-                                  products[x + j].condition,
-                                  products[x + j].registration,
-                                  products[x + j].mileage,
-                                  products[x + j].price,
-                                );
-                              } else if (value == 'detailsMedia') {
-                                await newGetDetails(products[x + j].id ?? 12);
-                                await getLink(products[x + j].id ?? 12);
-                                await shareOnlyDetailsForMedia(
-                                    products[x + j].id,
-                                    products[x + j].vehicleName,
-                                    products[x + j].manufacture,
-                                    products[x + j].condition,
-                                    products[x + j].registration,
-                                    products[x + j].mileage);
-                              }
-                            },
                             itemBuilder: (context) {
                               return [
                                 PopupMenuItem(
-                                  child: Text("Share One Image"),
-                                  value: 'details',
-                                  textStyle: popubItem,
-                                ),
-                                PopupMenuItem(
-                                  child: Text("Share All Image"),
-                                  value: 'image',
-                                  textStyle: popubItem,
-                                ),
-                                PopupMenuItem(
-                                  child: Text("Share Details With Link"),
-                                  value: 'detailsWithLink',
-                                  textStyle: popubItem,
-                                ),
-                                PopupMenuItem(
-                                  child: Text("Share Details In Media"),
-                                  value: 'detailsMedia',
-                                  textStyle: popubItem,
-                                ),
+                                    child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Send as Visitor',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 12),
+                                      ),
+                                    ),
+                                    Divider(
+                                      color: Colors.black,
+                                    ),
+                                    InkWell(
+                                      onTap: () async {
+                                        Navigator.pop(context);
+                                        await newGetDetails(products[x + j].id);
+                                        await getLink(products[x + j].id);
+                                        await shareDetailsWithOneImage(
+                                            products[x + j].id,
+                                            products[x + j].imageName,
+                                            products[x + j].vehicleName,
+                                            products[x + j].manufacture,
+                                            products[x + j].condition,
+                                            products[x + j].registration,
+                                            products[x + j].mileage,
+                                            products[x + j].price,
+                                            products[x + j].newPrice,
+                                            detailsLink);
+                                      },
+                                      child: insidePopubButton(context,
+                                          "Taka, Link, Details, Image  "),
+                                    ),
+                                    SizedBox(width: 10),
+                                    SizedBox(height: 10),
+                                    InkWell(
+                                      child: insidePopubButton(
+                                          context, "Taka, Link, Details"),
+                                      onTap: () async {
+                                        Navigator.pop(context);
+                                        await newGetDetails(products[x + j].id);
+                                        await getLink(products[x + j].id);
+                                        await shareDetailsWithLink(
+                                            products[x + j].id,
+                                            products[x + j].imageName,
+                                            products[x + j].vehicleName,
+                                            products[x + j].manufacture,
+                                            products[x + j].condition,
+                                            products[x + j].registration,
+                                            products[x + j].mileage,
+                                            products[x + j].price,
+                                            products[x + j].newPrice,
+                                            detailsLink);
+                                      },
+                                    ),
+                                    SizedBox(height: 10),
+                                    SizedBox(height: 10),
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Send as Media (মিডিয়া)',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 12),
+                                      ),
+                                    ),
+                                    Divider(
+                                      color: Colors.black,
+                                    ),
+                                    InkWell(
+                                      child: insidePopubButton(
+                                          context, "All Images (শুধু ছবি)"),
+                                      onTap: () async {
+                                        Navigator.pop(context);
+                                        await sendAllImages(products[x + j].id);
+                                        print("I am  Taka, Link, Details");
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                    SizedBox(height: 10),
+                                    InkWell(
+                                        onTap: () async {
+                                          print("Onli image");
+                                          Navigator.pop(context);
+
+                                          await newGetDetails(
+                                              products[x + j].id ?? 12);
+                                          await getLink(
+                                              products[x + j].id ?? 12);
+                                          await shareOnlyDetailsForMedia(
+                                              products[x + j].id,
+                                              products[x + j].vehicleName,
+                                              products[x + j].manufacture,
+                                              products[x + j].condition,
+                                              products[x + j].registration,
+                                              products[x + j].mileage);
+                                        },
+                                        child: insidePopubButton(
+                                            context, "Details (শুধু তথ্য)")),
+                                  ],
+                                ))
                               ];
-                            },
-                          ),
-                    // : SizedBox(),
+                            }),
+
+                    // CircularProgressIndicator()
+                    // : PopupMenuButton(
+                    //     child: Icon(
+                    //       Icons.share,
+                    //       color: Colors.white,
+                    //       size: 28,
+                    //     ),
+                    //     onSelected: (value) async {
+                    //       if (value == 'image') {
+                    //         await sendAllImages(products[x + j].id);
+                    //       } else if (value == 'details') {
+                    //         await newGetDetails(products[x + j].id);
+                    //         await getLink(products[x + j].id);
+                    //         await shareDetailsWithOneImage(
+                    //             products[x + j].id,
+                    //             products[x + j].imageName,
+                    //             products[x + j].vehicleName,
+                    //             products[x + j].manufacture,
+                    //             products[x + j].condition,
+                    //             products[x + j].registration,
+                    //             products[x + j].mileage,
+                    //             products[x + j].price,
+                    //             detailsLink);
+                    //       } else if (value == 'detailsWithLink') {
+                    //         await newGetDetails(products[x + j].id ?? 12);
+                    //         await getLink(products[x + j].id ?? 12);
+                    //         await shareOnlyDetailsWithLink(
+                    //           products[x + j].id,
+                    //           products[x + j].vehicleName,
+                    //           products[x + j].manufacture,
+                    //           products[x + j].condition,
+                    //           products[x + j].registration,
+                    //           products[x + j].mileage,
+                    //           products[x + j].price,
+                    //         );
+                    //       } else if (value == 'detailsMedia') {
+
+                    //         await newGetDetails(products[x + j].id ?? 12);
+                    //         await getLink(products[x + j].id ?? 12);
+                    //         await shareOnlyDetailsForMedia(
+                    //             products[x + j].id,
+                    //             products[x + j].vehicleName,
+                    //             products[x + j].manufacture,
+                    //             products[x + j].condition,
+                    //             products[x + j].registration,
+                    //             products[x + j].mileage);
+                    //       }
+                    //     },
+                    //     itemBuilder: (context) {
+                    //       return [
+                    //         PopupMenuItem(
+                    //           child: Text("Share One Image"),
+                    //           value: 'details',
+                    //           textStyle: popubItem,
+                    //         ),
+                    //         PopupMenuItem(
+                    //           child: Text("Share All Image"),
+                    //           value: 'image',
+                    //           textStyle: popubItem,
+                    //         ),
+                    //         PopupMenuItem(
+                    //           child: Text("Share Details With Link"),
+                    //           value: 'detailsWithLink',
+                    //           textStyle: popubItem,
+                    //         ),
+                    //         PopupMenuItem(
+                    //           child: Text("Share Details In Media"),
+                    //           value: 'detailsMedia',
+                    //           textStyle: popubItem,
+                    //         ),
+                    //       ];
+                    //     },
+                    //   ),
+                    //  : SizedBox(),
                     SizedBox(width: 20),
                   ],
                 ),
@@ -1571,10 +1784,19 @@ class _HomeVehicleState extends State<HomeVehicle> {
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
                               SizedBox(width: 5),
-                              Text(
-                                products[x].price.toString(),
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
+                              getIntPreef >= 0
+                                  ? Text(
+                                      products[x].price.toString(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge,
+                                    )
+                                  : Text(
+                                      products[x].newPrice.toString(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge,
+                                    ),
 
                               //  SizedBox(width: 100,),
                             ],
@@ -1960,4 +2182,27 @@ class _HomeVehicleState extends State<HomeVehicle> {
             ));
     Navigator.push(context, route);
   }
+
+  Container insidePopubButton(BuildContext context, String name) {
+    return Container(
+      height: 25,
+      padding: EdgeInsets.only(top: 5),
+      child: Row(
+        children: [
+          green10R,
+          SizedBox(width: 10),
+          Text(
+            name,
+            style: TextStyle(fontSize: 12, color: Colors.black87),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Icon green10R = Icon(
+    Icons.circle,
+    color: Colors.green,
+    size: 10,
+  );
 }

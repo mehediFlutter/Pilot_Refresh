@@ -70,6 +70,7 @@ class _AskingFixedAndStockListState extends State<AskingFixedAndStockList> {
                  child: Text(
                   "Asking Price",
                   style: TextStyle(color: askingPriceColor),
+                  
                 )),
             TextButton(
                 onPressed: () {

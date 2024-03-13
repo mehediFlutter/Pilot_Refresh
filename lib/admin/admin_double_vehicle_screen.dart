@@ -259,58 +259,62 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
           }
         }
         if (prefss.getString('token') == null) {
-        newPrice = (e['fixed_price'] != null &&
-               e['fixed_price'] > 0)
+          newPrice = (e['fixed_price'] != null && e['fixed_price'] > 0)
+              ? (e['fixed_price'] + (e['additional_price'] ?? 0))
+              : e['price'];
+          //  print(newPrice);
+          setState(() {});
+        } else {
+          newPrice = e['price'];
+          setState(() {});
+          //  print(newPrice);
+        }
+        //  List<Product> products = [];
+         newPrice = (e['fixed_price'] != null &&
+                e['fixed_price'].toInt() > 0)
             ? (e['fixed_price'] +
                 (e['additional_price'] ?? 0))
-            : e['price'];
-        //  print(newPrice);
+            : int.parse(e['price'].toString());
         setState(() {});
-      } else {
-        newPrice = e['price'];
-        setState(() {});
-        //  print(newPrice);
-      }
-        //  List<Product> products = [];
         products.add(Product(
-            vehicleName: e['translate'][0]['title'],
-            vehicleNameBangla: e['translate'][1]['title'],
-            id: e['id'],
-            slug: e['slug'] ?? '',
-            manufacture: e['manufacture'] ?? '',
-            condition: e['condition']['translate'][0]?['title'] ?? '',
-            mileage: e['mileage']?['translate'][0]?['title'].toString() ??
-                e['mileages'].toString(),
-            price: e['price'].toString() ?? '',
-            purchase_price: e['purchase_price'].toString() ?? '',
-            fixed_price: e['fixed_price'].toString() ?? '',
-            imageName: e['image']?['name'] ?? '',
-            registration: e['registration'] ?? 'None',
-            engine: e['engine']?['translate'][0]?['title'] ??
-                e['engines'].toString(),
-            brandName: e['brand']?['translate'][0]?['title'] ?? '',
-            transmission: e['transmission']?['translate'][0]?['title'] ?? '',
-            fuel: e['fuel']?['translate'][0]?['title'] ?? '',
-            skeleton: e['skeleton']?['translate'][0]?['title'] ?? '',
-            available: e['available']?['translate'][0]?['title'] ?? '',
-            code: e['code'] ?? '',
-            carColor: e['color']['translate'][0]['title'] ?? 'None',
-            edition: e['edition']['translate'][0]['title'] ?? 'None',
-            model: e['carmodel']?['translate'][0]?['title'] ?? '',
-            grade: e['grade']?['translate'][0]?['title'] ?? 'none',
-            engineNumber: e['engine_number'] ?? '--',
-            chassisNumber: e['chassis_number'] ?? '--',
-            video: e['video'] ?? 'No Video',
-            engine_id: e['engine_id'].toString() ?? '--',
-            onlyMileage: e['mileages'].toString() ?? '--',
-            engines: e['engines'].toString() ?? '-',
-            newPrice: newPrice.toString(),
-            ));
+          vehicleName: e['translate'][0]['title'],
+          vehicleNameBangla: e['translate'][1]['title'],
+          id: e['id'],
+          slug: e['slug'] ?? '',
+          manufacture: e['manufacture'] ?? '',
+          condition: e['condition']['translate'][0]?['title'] ?? '',
+          mileage: e['mileage']?['translate'][0]?['title'].toString() ??
+              e['mileages'].toString(),
+          price: e['price'].toString() ?? '',
+          purchase_price: e['purchase_price'].toString() ?? '',
+          fixed_price: e['fixed_price'].toString() ?? '',
+          imageName: e['image']?['name'] ?? '',
+          registration: e['registration'] ?? 'None',
+          engine:
+              e['engine']?['translate'][0]?['title'] ?? e['engines'].toString(),
+          brandName: e['brand']?['translate'][0]?['title'] ?? '',
+          transmission: e['transmission']?['translate'][0]?['title'] ?? '',
+          fuel: e['fuel']?['translate'][0]?['title'] ?? '',
+          skeleton: e['skeleton']?['translate'][0]?['title'] ?? '',
+          available: e['available']?['translate'][0]?['title'] ?? '',
+          code: e['code'] ?? '',
+          carColor: e['color']['translate'][0]['title'] ?? 'None',
+          edition: e['edition']['translate'][0]['title'] ?? 'None',
+          model: e['carmodel']?['translate'][0]?['title'] ?? '',
+          grade: e['grade']?['translate'][0]?['title'] ?? 'none',
+          engineNumber: e['engine_number'] ?? '--',
+          chassisNumber: e['chassis_number'] ?? '--',
+          video: e['video'] ?? 'No Video',
+          engine_id: e['engine_id'].toString() ?? '--',
+          onlyMileage: e['mileages'].toString() ?? '--',
+          engines: e['engines'].toString() ?? '-',
+          newPrice: newPrice.toString(),
+        ));
       });
 
       x = j + 1;
     }
-    for(var item in products){
+    for (var item in products) {
       print(item.newPrice.toString());
     }
     _getNewProductinProgress = false;
@@ -327,6 +331,8 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
 
   bool isLoading = false;
   int? newPrice;
+    bool showAskingPrice = true;
+
 
   Future getProduct(int page) async {
     prefss = await SharedPreferences.getInstance();
@@ -369,19 +375,16 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
     for (i; i < getproductsList.length; i++) {
       print('length of this products');
       // print(decodedResponse['data'].length);
-      if (prefss.getString('token') == null) {
-        newPrice = (getproductsList[i]['fixed_price'] != null ||
-                getproductsList[i]['fixed_price'] > 0)
+      
+        newPrice = (getproductsList[i]['fixed_price'] != null &&
+                getproductsList[i]['fixed_price'].toInt() > 0)
             ? (getproductsList[i]['fixed_price'] +
                 (getproductsList[i]['additional_price'] ?? 0))
-            : double.parse(getproductsList[i]['price']);
-        //  print(newPrice);
+            : int.parse(getproductsList[i]['price'].toString());
         setState(() {});
-      } else {
-        newPrice = getproductsList[i]['price'];
-        setState(() {});
-        //  print(newPrice);
-      }
+      
+      
+      print(newPrice);
 
       products.add(
         Product(
@@ -426,6 +429,7 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
           onlyMileage: getproductsList[i]['mileages'].toString() ?? '--',
           engines: getproductsList[i]?['engines'].toString() ?? '-',
           newPrice: newPrice.toString(),
+          
         ),
       );
     }
@@ -494,6 +498,12 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
     for (i; i < getproductsList.length; i++) {
       print('length of this products');
       // print(decodedResponse['data'].length);
+       newPrice = (getproductsList[i]['fixed_price'] != null &&
+                getproductsList[i]['fixed_price'].toInt() > 0)
+            ? (getproductsList[i]['fixed_price'] +
+                (getproductsList[i]['additional_price'] ?? 0))
+            : int.parse(getproductsList[i]['price'].toString());
+        setState(() {});
       searchProducts.add(
         Product(
           vehicleName: getproductsList[i]['translate'][0]['title'],
@@ -539,6 +549,7 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
           engine_id: getproductsList[i]?['engine_id'].toString() ?? '12',
           onlyMileage: getproductsList[i]['mileages'].toString() ?? '--',
           engines: getproductsList[i]?['engines'].toString() ?? '-',
+           newPrice: newPrice.toString(),
         ),
       );
     }
@@ -566,6 +577,8 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
       myBoolValue = false; // Toggle the value
     });
   }
+
+  bool showFixedPrice = true;
 
   Widget build(BuildContext context) {
     _searchInProgress
@@ -637,19 +650,13 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
                         children: [
                           (getIntPreef == 1)
                               ? AskingFixedAndStockList(
-                                  askingPriceFunction: () {
-                                    print("Asking Price function is called");
-                                    updateAskingPriceFunction();
-                                    askingPriceInProgress = false;
+                                  askingPriceFunction: () {                              
+                                    showAskingPrice = true;
                                     setState(() {});
-                                    print(askingPriceInProgress);
                                   },
-                                  fixedPriceFunction: () {
-                                    print("Fixed Price Function is called");
-                                    askingPriceInProgress = true;
-                                    updateFixedPriceFunction();
+                                  fixedPriceFunction: () {                               
+                                    showAskingPrice = false;
                                     setState(() {});
-                                    print(askingPriceInProgress);
                                   },
                                   stockListFunction: () {
                                     print("StockList Price Function is called");
@@ -677,7 +684,7 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
                                         horizontal: 1),
                                     child: Item(
                                       isLoggedIn: widget.isLogedIn,
-                                      myAskingPrice: myBoolValue,
+                                      showAskingPrice: showAskingPrice,
                                       id: products[index + j].id!,
                                       imageName: products[index + j]
                                           .imageName
@@ -720,6 +727,9 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
                                           products[index + j].chassisNumber,
                                       video: products[index + j].video,
                                       new_price: products[index + j].newPrice,
+                                      fixedOrAskingPrice: showFixedPrice
+                                          ? products[index + j].price
+                                          : products[index + j].newPrice,
                                     ),
                                   );
                                 },

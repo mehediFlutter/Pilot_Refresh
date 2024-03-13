@@ -43,6 +43,7 @@ class _PriceEditScreenState extends State<PriceEditScreen> {
 
   @override
   void initState() {
+    print(widget.fixed_price);
     
 
     _asking_PriceEditingController.text = widget.price.toString();
@@ -57,9 +58,12 @@ class _PriceEditScreenState extends State<PriceEditScreen> {
 
    };
    if( widget.fixed_price==null) {
-    _fixed_PriceEditingController.text= await fixedPrice?? '1';
+    _fixed_PriceEditingController.text= await '0';
 
-   };
+   }
+   else{
+    _fixed_PriceEditingController.text=widget.fixed_price??'1';
+   }
   }
 
   bool updateDataInProgress = false;

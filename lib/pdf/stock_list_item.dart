@@ -190,6 +190,7 @@ class _StockListItemState extends State<StockListItem> {
     bool fixedPriceBool = false,
   }) async {
     await getProduct();
+    prefss = await SharedPreferences.getInstance();
     final totalPages = (products.length / 18).ceil();
 
     final pdf = p.Document();
@@ -235,7 +236,7 @@ class _StockListItemState extends State<StockListItem> {
         ),
       );
     }
-    return _saveDocument(name: 'Pilot_Bazar_Stock_List.pdf', pdf: pdf);
+    return await _saveDocument(name: "${prefss.getString('merchantName')} Stock List", pdf: pdf);
   }
 
   titleStock(String title) {
