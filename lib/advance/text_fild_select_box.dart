@@ -194,9 +194,9 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
     setState(() {
       getSkeletitions();
     });
-    setState(() {
-      getRegistration();
-    });
+    // setState(() {
+    //   getRegistration();
+    // });
     setState(() {
       getColor();
     });
@@ -1253,44 +1253,48 @@ class _TextFildSelectBoxState extends State<TextFildSelectBox> {
                             ),
                       SzBx(),
 
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      //   children: [
                           //  Text('child 1',style: TextStyle(color: Colors.white),),
-                          Expanded(
-                            child: Column(
-                              children: [
-                                textFildUpTextRow('Registration'),
-                                customDropDownFormField(
-                                  value: registrationValue,
-                                  list: registrationList,
-                                  onChanged: (newValue) {
-                                    registrationValue = newValue;
-                                    registrationSectedDropdownItem =
-                                        registrationList.firstWhere(
-                                      (item) =>
-                                          item['translate'][0]['title'] ==
-                                          registrationValue,
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: 10),
+                          // Expanded(
+                          //   child: Column(
+                          //     children: [
+                          //       textFildUpTextRow('Registration'),
+                          //       customDropDownFormField(
+                          //         value: registrationValue,
+                          //         list: registrationList,
+                          //         onChanged: (newValue) {
+                          //           registrationValue = newValue;
+                          //           registrationSectedDropdownItem =
+                          //               registrationList.firstWhere(
+                          //             (item) =>
+                          //                 item['translate'][0]['title'] ==
+                          //                 registrationValue,
+                          //           );
+                          //         },
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
+                      //     SizedBox(width: 10),
 
-                          Expanded(
-                            child: Column(
-                              children: [
-                                textFildUpTextRow('Manufacture', star: ' *'),
+                      //     Expanded(
+                      //       child: Column(
+                      //         children: [
+                      //           textFildUpTextRow('Manufacture', star: ' *'),
+                      //           customTextField(
+                      //               controller: manufactureController),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
+
+                   //   SzBx(),
+                        textFildUpTextRow('Manufacture', star: ' *'),
                                 customTextField(
                                     controller: manufactureController),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-
                       SzBx(),
 
                       Row(

@@ -58,6 +58,7 @@ class _UploadMultiPleImageState extends State<UploadMultiPleImage> {
           await directory.create(recursive: true);
           print('Directory created successfully: ${directory.path}');
         }
+
         var request = http.MultipartRequest(
           'POST',
           Uri.parse(
@@ -67,9 +68,24 @@ class _UploadMultiPleImageState extends State<UploadMultiPleImage> {
         request.headers.addAll(headers);
 
         for (XFile? imageFile in selectedImages) {
+
+             String fileExtension = imageFile!.path.split('.').last.toLowerCase();
+    String fileName;
+        if (fileExtension == 'jpeg') {
+      fileName = '${imageFile.name}.jpg';
+    } else if (imageFile == 'png') {
+      fileName = '${imageFile.name}.jpg';
+    }
+    else if (imageFile == 'jpg') {
+      fileName = '${imageFile.name}.jpg';
+    }
+     else {
+      fileName = '${imageFile.name}.jpg';
+    }
+          
           if (imageFile != null) {
             conpressedFile = await FlutterImageCompress.compressAndGetFile(
-                imageFile.path, "${directory.path}/${imageFile.name}",
+                imageFile.path, "${directory.path}/${fileName}",
                 quality: 50);
             print("compressed image");
             if (mounted) setState(() {});

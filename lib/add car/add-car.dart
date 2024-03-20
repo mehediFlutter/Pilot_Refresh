@@ -848,22 +848,36 @@ class _AddNewCarState extends State<AddNewCar> {
           await directory.create(recursive: true);
           print('Directory created successfully: ${directory.path}');
         }
+        
 
-        conpressedFile = await FlutterImageCompress.compressAndGetFile(
-            selectedImages!.path, "${directory.path}/${selectedImages!.name}",
-            quality: 50);
-        setState(() {});
-        print("Directory is");
-        print(directory);
 
-        var request = http.MultipartRequest(
-          'POST',
-          Uri.parse(
-            "https://pilotbazar.com/api/merchants/vehicles/products",
-          ),
 
-          // Replace with your actual API URL
-        );
+      String fileExtension = selectedImages!.path.split('.').last.toLowerCase();
+    String fileName;
+        if (fileExtension == 'jpeg') {
+      fileName = '${selectedImages!.name}.jpg';
+    } else if (fileExtension == 'png') {
+      fileName = '${selectedImages!.name}.jpg';
+    }
+     else if (selectedImages!.name == 'jpg') {
+      fileName = '${selectedImages!.name}.jpg';
+    } 
+    else {
+      fileName = '${selectedImages!.name}.jpg';
+    }
+
+   conpressedFile = await FlutterImageCompress.compressAndGetFile(
+        selectedImages!.path, "${directory.path}/${fileName}",
+        quality: 50);
+    setState(() {});
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse(
+        "https://pilotbazar.com/api/merchants/vehicles/products",
+      ),
+
+      // Replace with your actual API URL
+    );
         request.headers.addAll(headers);
 
         final fileLength = await conpressedFile!.length();
@@ -876,47 +890,14 @@ class _AddNewCarState extends State<AddNewCar> {
           filename: conpressedFile!.name,
         ));
 
-        print('here is the details of my dynamic value of body ');
-
-        print(titleControllerBangla.text);
-        print(titleControllerEnglish.text);
-        print(prefss.getString('merchantId').toString());
-        // print(conditionId.toString());
-        // print(transmissionId.toString());
-        // print(engines.toString());
-        // print(editionId);
-        // print(fuelId);
-        // print(skeletonId);
-        // print(mileage);
-        // print(manufactureController);
-        // print(color_id);
-        // print(brand_id);
-        // print(chassisNumberController);
-        // print(askingPriceController);
-        // print(fixedPriceController);
-        // print(carmodel_id);
-        // print(registration_id);
-        // print(available_id);
-        //         print(code);
-        // print(publish_at);
-
-        print("Compressed file name is");
-        print(conpressedFile!.name);
-        print(await conpressedFile!.length());
         request.fields.addAll(formData);
         var response = await request.send();
         final responseData = await response.stream.bytesToString();
 
         Map decodedResponse = jsonDecode(responseData.toString());
-        print('statrus code is');
-        print(response.statusCode);
-        print("Return id is");
-        print(decodedResponse['payload']);
-        print(decodedResponse['payload']['id']);
+
         newLyAddedCarId = decodedResponse['payload']['id'];
-        print("decoded response id is");
-        print(decodedResponse['payload']['id']);
-        print("this is  response data");
+
         if (decodedResponse['status'] == "Request was successful") {
           await Navigator.pushAndRemoveUntil(
               context,
@@ -1361,7 +1342,7 @@ class _AddNewCarState extends State<AddNewCar> {
                           print('Selected ID: $newValue');
                         },
                       ),
-                     // SzBx(),
+                      // SzBx(),
                       // textFildUpTextRow('Cover or Main Image'),
                       // GestureDetector(
                       //   onTap: () {},
@@ -1677,14 +1658,13 @@ class _AddNewCarState extends State<AddNewCar> {
     final String? hintText,
     final Function(int? newValue)? onChanged,
     FormFieldValidator? validator,
-  
   }) {
     return DropdownButtonFormField<int>(
       dropdownColor: Color.fromARGB(255, 61, 59, 59),
       menuMaxHeight: 500,
       validator: validator,
-            decoration: InputDecoration(
-                hintText: hintText,
+      decoration: InputDecoration(
+        hintText: hintText,
         hintStyle: TextStyle(color: Colors.grey, fontSize: 15),
         contentPadding: EdgeInsets.fromLTRB(7, 15, 0, 15),
         border: OutlineInputBorder(),
