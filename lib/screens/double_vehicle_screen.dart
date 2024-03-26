@@ -7,10 +7,8 @@ import 'package:pilot_refresh/item_class.dart';
 import 'package:pilot_refresh/product.dart';
 import 'package:pilot_refresh/screens/auth/auth_utility.dart';
 import 'package:pilot_refresh/screens/auth/new_login_screen.dart';
-import 'package:pilot_refresh/screens/auth/searchBar.dart';
 import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
 import 'package:pilot_refresh/widget/end_drawer.dart';
-import 'package:pilot_refresh/widget/search_bar.dart';
 import 'package:provider/provider.dart';
 
 class DoublVehicle extends StatefulWidget {

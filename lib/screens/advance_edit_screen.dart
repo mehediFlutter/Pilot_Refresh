@@ -2,8 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
-import 'package:pilot_refresh/screens/home_vehicle.dart';
 
 class AdvanceScreen extends StatefulWidget {
   final String? name;
@@ -64,7 +62,6 @@ class _AdvanceScreenState extends State<AdvanceScreen> {
     if (mounted) {
       setState(() {});
     }
-    final id = widget.id;
 
     final body = {"purchase_price": _priceEditingController.text};
     final url =

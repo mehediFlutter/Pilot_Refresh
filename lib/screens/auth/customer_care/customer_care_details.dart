@@ -108,36 +108,7 @@ class _CustomerCareDetailsState extends State<CustomerCareDetails> {
                         ),
                       ],
                     ),
-                  // TableRow(
-                  //   children: [
-                  //     TableCell(
-                  //         child: Center(
-                  //             child: Padding(
-                  //       padding: const EdgeInsets.all(8.0),
-                  //       child: Text('Maisha', style: cellStyle),
-                  //     ))),
-                  //     TableCell(
-                  //         child: Center(
-                  //       child: Padding(
-                  //         padding: const EdgeInsets.all(8.0),
-                  //         child: Text(
-                  //           '01745215478',
-                  //           style: cellStyle,
-                  //         ),
-                  //       ),
-                  //     )),
-                  //     TableCell(
-                  //         child: Center(
-                  //       child: Padding(
-                  //         padding: const EdgeInsets.all(8.0),
-                  //         child: Text(
-                  //           'pilot87654321',
-                  //           style: cellStyle,
-                  //         ),
-                  //       ),
-                  //     )),
-                  //   ],
-                  // ),
+           
                 ],
               ),
               Spacer(),

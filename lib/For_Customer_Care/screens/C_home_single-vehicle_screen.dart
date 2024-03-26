@@ -6,6 +6,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:pilot_refresh/For_Customer_Care/C_advance/c_textFildSelectBox.dart';
+import 'package:pilot_refresh/For_Customer_Care/end_drawer/C_end_drawer.dart';
 import 'package:pilot_refresh/admin/asking_fixed_stockList.dart';
 import 'package:pilot_refresh/product.dart';
 import 'package:pilot_refresh/screens/advance_edit_screen.dart';
@@ -18,7 +20,6 @@ import 'package:share_plus/share_plus.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 class C_HomeVehicle extends StatefulWidget {
   final String? token;
@@ -41,7 +42,7 @@ class _C_HomeVehicleState extends State<C_HomeVehicle> {
   bool searchInProgress = false;
   bool shareInProgress = false;
   late String toki;
-     bool _isDeviceConnected = false;
+  bool _isDeviceConnected = false;
   bool _isAlertShown = false;
   late StreamSubscription<ConnectivityResult> _subscription;
 
@@ -57,7 +58,7 @@ class _C_HomeVehicleState extends State<C_HomeVehicle> {
 
   @override
   initState() {
-     _checkConnectivity(); 
+    _checkConnectivity();
     _listenForChanges();
     page = 1;
     initializePreffsBool();
@@ -80,50 +81,55 @@ class _C_HomeVehicleState extends State<C_HomeVehicle> {
 
     setState(() {});
   }
-   @override
-void dispose() {
-  _subscription.cancel(); // Cancel subscription on dispose
-  super.dispose();
-}
 
-Future<void> _checkConnectivity() async {
-  try {
-    _isDeviceConnected = await InternetConnectionChecker().hasConnection;
-    _showAlertDialogIfNeeded();
-  } catch (e) {
-    print("Error checking connectivity: $e");
+  @override
+  void dispose() {
+    _subscription.cancel(); // Cancel subscription on dispose
+    super.dispose();
   }
-}
 
-void _listenForChanges() {
-  _subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) async {
+  Future<void> _checkConnectivity() async {
     try {
       _isDeviceConnected = await InternetConnectionChecker().hasConnection;
       _showAlertDialogIfNeeded();
     } catch (e) {
-      print("Error listening for connectivity changes: $e");
+      print("Error checking connectivity: $e");
     }
-  });
-}
+  }
 
-    void _showAlertDialogIfNeeded() {
+  void _listenForChanges() {
+    _subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) async {
+      try {
+        _isDeviceConnected = await InternetConnectionChecker().hasConnection;
+        _showAlertDialogIfNeeded();
+      } catch (e) {
+        print("Error listening for connectivity changes: $e");
+      }
+    });
+  }
+
+  void _showAlertDialogIfNeeded() {
     if (!_isDeviceConnected && !_isAlertShown) {
       _isAlertShown = true;
       showDialog(
-        
         barrierDismissible: false,
         context: context,
         builder: (context) => AlertDialog(
-        
           contentPadding: EdgeInsets.symmetric(vertical: 10),
-         elevation: 5,
-       actionsPadding: EdgeInsets.all(5),
+          elevation: 5,
+          actionsPadding: EdgeInsets.all(5),
           title: Center(
             child: Padding(
               padding: const EdgeInsets.only(top: 10),
               child: Text(
                 'No Internet Connection',
-                style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.w500,fontFamily: 'Axiforma'),
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Axiforma'),
               ),
             ),
           ),
@@ -132,20 +138,25 @@ void _listenForChanges() {
             children: [
               Text(
                 "Please check your internet connection and",
-                style: TextStyle(color: Colors.black87, fontSize: 12,fontFamily: 'Axiforma'),
+                style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 12,
+                    fontFamily: 'Axiforma'),
               ),
               Text(
                 "try again",
-                style: TextStyle(color: Colors.black87, fontSize: 12,fontFamily: 'Axiforma'),
+                style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 12,
+                    fontFamily: 'Axiforma'),
               ),
-             
             ],
           ),
           actions: [
-              Divider(
-          thickness: 1, // Adjust thickness as needed
-          color: Colors.black26, // Adjust color as needed
-        ),
+            Divider(
+              thickness: 1, // Adjust thickness as needed
+              color: Colors.black26, // Adjust color as needed
+            ),
             TextButton(
               onPressed: () async {
                 Navigator.pop(context);
@@ -156,7 +167,7 @@ void _listenForChanges() {
               child: Center(
                 child: Text(
                   "OK",
-                  style: TextStyle(fontSize: 17,fontFamily: 'Axiforma'),
+                  style: TextStyle(fontSize: 17, fontFamily: 'Axiforma'),
                 ),
               ),
             ),
@@ -257,32 +268,26 @@ void _listenForChanges() {
     }
   }
 
-  void getNewProduct(int page) async {
-    prefss = await SharedPreferences.getInstance();
+  getNewProduct(int page) async {
+    print("I am new products methode");
+    print("Page");
+    print(page);
     _getNewProductinProgress = true;
     if (mounted) {
       setState(() {});
     }
-    Response? response;
-    if (prefss.getString('token') == null) {
-      response = await get(
-        Uri.parse(
-            "https://pilotbazar.com/api/clients/vehicles/products?page=$page"),
-      );
-    } else {
-      response = await get(
-        Uri.parse(
-            "https://pilotbazar.com/api/merchants/vehicles/products?page=$page"),
-        headers: {
-          'Accept': 'application/vnd.api+json',
-          'Content-Type': 'application/vnd.api+json',
-          'Authorization': 'Bearer ${prefss.getString('token')}',
-        },
-      );
-    }
+    Response response = await get(
+      Uri.parse('https://pilotbazar.com/api/customer-care/products?page=$page'),
+      headers: {
+        'Accept': 'application/vnd.api+json',
+        'Content-Type': 'application/vnd.api+json',
+        'Authorization': 'Bearer ${prefss.getString('token')}'
+      },
+    );
+
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
-    print(response.statusCode);
+    print(response!.statusCode);
     final Map<String, dynamic> decodedResponse1 = jsonDecode(response.body);
     final Map<String, dynamic> decodedResponse = decodedResponse1['payload'];
     if (decodedResponse['data'].isEmpty) {
@@ -292,8 +297,29 @@ void _listenForChanges() {
       }
     }
 
+    // List<dynamic> vehicleFeatures =
+    //     decodedResponse['data'][0]?['vehicle_feature'] ?? '';
+    // List<FeatureDetailPair> featureDetailPairs =
+    //     extractFeatureDetails(vehicleFeatures);
+
+    // for (var pair in featureDetailPairs) {
+    //   // print('Feature: ${pair.featureTitle}');
+    //   // print('Details: ${pair.detailTitles.join(', ')}');
+    //   featureDetails.add({pair.detailTitles.join(', ')});
+    //   featureUnicTitle.add({pair.featureTitle});
+    // }
+    // int total_index = decodedResponse['data'].length;
+
     if (response.statusCode == 200) {
       decodedResponse['data'].forEach((e) {
+        if (decodedResponse['data'].isEmpty) {
+          _getNewProductinProgress = false;
+          if (mounted) {
+            setState(() {});
+          }
+        }
+
+        //  List<Product> products = [];
         products.add(Product(
           vehicleName: e['translate'][0]['title'],
           vehicleNameBangla: e['translate'][1]['title'],
@@ -301,25 +327,27 @@ void _listenForChanges() {
           slug: e['slug'] ?? '',
           manufacture: e['manufacture'] ?? '',
           condition: e['condition']['translate'][0]?['title'] ?? '',
-          mileage: e['mileage']?['translate'][0]?['title'].toString() ?? e['mileages'].toString() ?? '--',
+          mileage: e['mileage']?['translate'][0]?['title'].toString() ??
+              e['mileages'].toString(),
           price: e['price'].toString() ?? '',
           purchase_price: e['purchase_price'].toString() ?? '',
           fixed_price: e['fixed_price'].toString() ?? '',
           imageName: e['image']?['name'] ?? '',
           registration: e['registration'] ?? 'None',
-          engine: e['engine']?['translate'][0]?['title'].toString() ?? '',
+          engine:
+              e['engine']?['translate'][0]?['title'] ?? e['engines'].toString(),
           brandName: e['brand']?['translate'][0]?['title'] ?? '',
           transmission: e['transmission']?['translate'][0]?['title'] ?? '',
           fuel: e['fuel']?['translate'][0]?['title'] ?? '',
           skeleton: e['skeleton']?['translate'][0]?['title'] ?? '',
           available: e['available']?['translate'][0]?['title'] ?? '',
-          code: e['code'].toString() ?? '',
+          code: e['code'] ?? '',
           carColor: e['color']['translate'][0]['title'] ?? 'None',
           edition: e['edition']['translate'][0]['title'] ?? 'None',
           model: e['carmodel']?['translate'][0]?['title'] ?? '',
           grade: e['grade']?['translate'][0]?['title'] ?? '',
-          engineNumber: e['engine_number'].toString() ?? '--',
-          chassisNumber: e['chassis_number'].toString() ?? '--',
+          engineNumber: e['engine_number'] ?? '--',
+          chassisNumber: e['chassis_number'] ?? '--',
           video: e['video'] ?? 'No Video',
           engine_id: e['engine_id'].toString() ?? '--',
           onlyMileage: e['mileages'].toString() ?? '--',
@@ -333,145 +361,112 @@ void _listenForChanges() {
     if (mounted) {
       setState(() {});
     }
-    print("Page Number is");
-    print(page);
+    if (decodedResponse['data'].isEmpty) {
+      _getNewProductinProgress = false;
+      setState(() {});
+    }
   }
-
   bool isLoading = false;
   @override
-  getProduct(int page) async {
+ 
+  Future getProduct(int page) async {
     prefss = await SharedPreferences.getInstance();
+    print("Here double vehicle token from share preff");
     products.clear();
     _getProductinProgress = true;
     if (mounted) {
       setState(() {});
     }
-    Response? response;
-    if (prefss.getString('token') == null) {
-      response = await get(
-        Uri.parse(
-            "https://pilotbazar.com/api/clients/vehicles/products?page=$page"),
-      );
-    } else {
-      response = await get(
-        Uri.parse(
-            "https://pilotbazar.com/api/merchants/vehicles/products?page=$page"),
-        headers: {
-          'Accept': 'application/vnd.api+json',
-          'Content-Type': 'application/vnd.api+json',
-          'Authorization': 'Bearer ${prefss.getString('token')}',
-        },
-      );
-    }
+
+    Response response = await get(
+      Uri.parse("https://pilotbazar.com/api/customer-care/products?page=$page"),
+      headers: {
+        'Accept': 'application/vnd.api+json',
+        'Content-Type': 'application/vnd.api+json',
+        'Authorization': 'Bearer ${prefss.getString('token')}',
+      },
+    );
+
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
     print(response.statusCode);
+    print(response.body);
+    print(widget.token);
     final Map<String, dynamic> decodedResponse1 = jsonDecode(response.body);
     final Map<String, dynamic> decodedResponse = decodedResponse1['payload'];
+    final getproductsList = decodedResponse['data'];
+    setState(() {});
+    print('Length is');
+    print(getproductsList.length);
 
-    if (mounted) {
-      setState(() {});
+    for (i; i < getproductsList.length; i++) {
+      print('length of this products');
+      // print(decodedResponse['data'].length);
+      products.add(
+        Product(
+          vehicleName: getproductsList[i]['translate'][0]['title'],
+          vehicleNameBangla: getproductsList[i]['translate'][1]['title'],
+          manufacture: getproductsList[i]['manufacture'],
+          slug: getproductsList[i]['slug'],
+          id: getproductsList[i]['id'],
+          condition: getproductsList[i]['condition']['translate'][0]['title'],
+          mileage:
+              getproductsList[i]['mileage']?['translate'][0]?['title'] ?? '--',
+          //price here
+          price: getproductsList[i]['price'].toString(),
+          purchase_price:
+              getproductsList[i]?['purchase_price'].toString() ?? '',
+          fixed_price: getproductsList[i]?['fixed_price'].toString() ?? '',
+          //price end
+          imageName: getproductsList[i]['image']['name'],
+          registration: getproductsList[i]['registration'] ?? 'None',
+          engine: getproductsList[i]?['engines'].toString() ?? 'None',
+          brandName: getproductsList[i]['brand']['translate'][0]['title'],
+          transmission: getproductsList[i]['transmission']['translate'][0]
+              ['title'],
+          fuel: getproductsList[i]['fuel']['translate'][0]['title'],
+          skeleton: getproductsList[i]['skeleton']['translate'][0]['title'],
+          available:
+              getproductsList[i]?['available']?['translate'][0]?['title'] ?? '',
+          code: getproductsList[i]?['code'] ?? '',
+          //model: getproductsList,
+          carColor:
+              getproductsList[i]['color']?['translate'][0]['title'] ?? 'None',
+          edition:
+              getproductsList[i]['edition']['translate'][0]['title'] ?? 'None',
+          model:
+              getproductsList[i]?['carmodel']?['translate'][0]?['title'] ?? '',
+          grade: getproductsList[i]?['grade']?['translate'][0]?['title'] ?? '',
+          engineNumber: getproductsList[i]['engine_number'] ?? '--',
+          chassisNumber: getproductsList[i]['chassis_number'] ?? '--',
+          video: getproductsList[i]?['video'] ?? 'No Video',
+          engine_id: getproductsList[i]?['engine_id'].toString() ?? '12',
+          onlyMileage: getproductsList[i]['mileages'].toString() ?? '--',
+          engines: getproductsList[i]?['engines'].toString() ?? '-',
+        ),
+      );
+      for (var item in products) {
+        print(item.vehicleName.toString());
+      }
     }
-
-    for (i; i < decodedResponse['data'].length; i++) {
-      products.add(Product(
-        vehicleName: decodedResponse['data'][i]['translate'][0]['title'],
-        vehicleNameBangla: decodedResponse['data'][i]['translate'][1]['title'],
-        manufacture: decodedResponse['data'][i]['manufacture'],
-        slug: decodedResponse['data'][i]['slug'],
-        id: decodedResponse['data'][i]['id'],
-        condition: decodedResponse['data'][i]['condition']['translate'][0]
-            ['title'],
-        mileage: decodedResponse['data'][i]['mileage']?['translate'][0]
-                ?['title'] ??
-            '--',
-        //price here
-        price: decodedResponse['data'][i]['price'].toString() ?? '',
-        purchase_price: decodedResponse['data'][i]?['purchase_price'].toString() ?? '',
-        fixed_price: decodedResponse['data'][i]?['fixed_price'].toString() ?? '',
-        //price end
-        imageName: decodedResponse['data'][i]['image']['name'],
-        registration: decodedResponse['data'][i]['registration'] ?? 'None',
-        engine: decodedResponse['data'][i]['engine']?['translate'][0]
-                ['title'].toString() ??
-            decodedResponse['data'][i]['engines'],
-        brandName: decodedResponse['data'][i]['brand']['translate'][0]['title'],
-        transmission: decodedResponse['data'][i]['transmission']['translate'][0]
-            ['title'],
-        fuel: decodedResponse['data'][i]['fuel']['translate'][0]['title'],
-        skeleton: decodedResponse['data'][i]['skeleton']['translate'][0]
-            ['title'],
-        available: decodedResponse['data'][i]?['available']?['translate'][0]
-                ?['title'] ??
-            '',
-        code: decodedResponse['data'][i]?['code'].toString() ?? '',
-        //model: decodedResponse['data'],
-        carColor: decodedResponse['data'][i]['color']?['translate'][0]
-                ['title'] ??
-            'None',
-        edition: decodedResponse['data'][i]['edition']['translate'][0]
-                ['title'] ??
-            'None',
-        model: decodedResponse['data'][i]?['carmodel']?['translate'][0]
-                ?['title'] ??
-            '',
-
-        grade: decodedResponse['data'][i]?['grade']?['translate'][0]
-                ?['title'] ??
-            '',
-        engineNumber: decodedResponse['data'][i]['engine_number'].toString() ?? '--',
-        chassisNumber: decodedResponse['data'][i]['chassis_number'].toString() ?? '--',
-        video: decodedResponse['data'][i]?['video'] ?? 'No Video',
-        engine_id: decodedResponse['data'][i]?['engine_id'].toString() ?? '12',
-        onlyMileage: decodedResponse['data'][i]['mileages'].toString() ?? '--',
-        engines: decodedResponse['data'][i]?['engines'].toString() ?? '-',
-      ));
-    }
-    if (decodedResponse['data'] == null) {
+    if (getproductsList == null) {
       return;
     }
     _getProductinProgress = false;
     if (mounted) {
       setState(() {});
     }
-  }
 
+    if (getproductsList == null) {
+      return;
+    }
+  }
   bool _getDataInProgress = false;
   static List unicTitle = [];
   static List details = [];
   static List imageLInk = [];
 
-  // Future getDetails(int id) async {
-  //   _getDataInProgress = true;
-  //   if (mounted) {
-  //     setState(() {});
-  //   }
-  //   Response response = await get(Uri.parse(
-  //       "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
-  //   //https://pilotbazar.com/api/vehicle?page=0
-  //   //https://crud.teamrabbil.com/api/v1/ReadProduct
-  //   print(response.statusCode);
-  //   final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
-  //   List<dynamic> vehicleFeatures =
-  //       decodedResponse['payload']['vehicle_feature'];
 
-  //   List<FeatureDetailPair> featureDetailPairs =
-  //       extractFeatureDetails(vehicleFeatures);
-
-  //   for (var pair in featureDetailPairs) {
-  //     unicTitle.add(pair.featureTitle);
-  //     details.add(pair.detailTitles.join(', '));
-  //   }
-
-  //   // get image link in list
-
-  //   _getDataInProgress = false;
-  //   if (mounted) {
-  //     setState(() {});
-  //   }
-
-  //   //return unicTitle+details;
-  // }
 
   Future getDetails(int id) async {
     prefss = await SharedPreferences.getInstance();
@@ -570,23 +565,35 @@ void _listenForChanges() {
   }
 
   static String? detailsLink;
-    bool imageInProgress = false;
+  bool imageInProgress = false;
 
-  Future getLink(String id) async {
+  Future getLink(int id) async {
     imageInProgress = true;
     if (mounted) {
       setState(() {});
     }
+    print("get Link start bool ${imageInProgress}");
+
+    prefss = await SharedPreferences.getInstance();
+
     print("This is get Link methode");
     prefss = await SharedPreferences.getInstance();
-    Response response1 = await get(
+    Response? response1;
+    if (prefss.getString('token') == null) {
+      response1 = await get(
         Uri.parse(
-            "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"),
-        headers: {
-          'Accept': 'application/vnd.api+json',
-          'Content-Type': 'application/vnd.api+json',
-          'Authorization': 'Bearer ${prefss.getString('token')}'
-        });
+            "https://pilotbazar.com/api/clients/vehicles/products/$id/detail"),
+      );
+    } else {
+      response1 = await get(
+          Uri.parse(
+              "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"),
+          headers: {
+            'Accept': 'application/vnd.api+json',
+            'Content-Type': 'application/vnd.api+json',
+            'Authorization': 'Bearer ${prefss.getString('token')}'
+          });
+    }
     final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
     detailsLink = decodedResponse1['message'];
     print(detailsLink);
@@ -594,6 +601,7 @@ void _listenForChanges() {
     if (mounted) {
       setState(() {});
     }
+    print("get details end bool ${imageInProgress}");
   }
 
   static List showImageList = [];
@@ -680,10 +688,17 @@ void _listenForChanges() {
     }
   }
 
-
-
-  Future<void> shareDetailsWithOneImage(int id, String ImageName, vehicleName,
-      manufacture, condition, registration, mileage, price, detailsLink) async {
+  Future<void> shareDetailsWithOneImage(
+      int id,
+      String ImageName,
+      vehicleName,
+      manufacture,
+      condition,
+      registration,
+      mileage,
+      price,
+      newPrice,
+      detailsLink) async {
     imageInProgress = true;
     if (mounted) {
       setState(() {});
@@ -707,12 +722,9 @@ void _listenForChanges() {
 
     //await getDetails(widget.id);
     final image = XFile(tempFile.path);
-    late String info;
-
-
 
     String message =
-        "$vehicleName,Manufacture: $manufacture, $condition, Registration:$registration,Mileage: $mileage,price:$price ";
+        "$vehicleName,Manufacture: $manufacture, $condition, Registration:$registration,Mileage: $mileage,price:${getIntPreef >= 0 ? price : newPrice} ";
     print("length of unit title");
     print(unicTitle.length);
     String message2 = '';
@@ -724,7 +736,7 @@ void _listenForChanges() {
     }
     print(message2);
     String message3 =
-        "\n\nOur HotLine Number: 0196-99-444-00\n Show More\n $detailsLink";
+        "\nOut HotLine Number ${prefss.getString('mobileNumber')}\nShow More\n $detailsLink";
     //  info = "\n${unicTitle[0]} : ${details[0]}";
     //   _detailsInProgress = true;
     setState(() {});
@@ -743,9 +755,71 @@ void _listenForChanges() {
     }
   }
 
+  Future<void> shareDetailsWithLink(
+      int id,
+      String ImageName,
+      vehicleName,
+      manufacture,
+      condition,
+      registration,
+      mileage,
+      price,
+      newPrice,
+      detailsLink) async {
+    imageInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    prefss = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {});
+    }
+    //setState() {});
+    final uri = Uri.parse("https://pilotbazar.com/storage/vehicles/$ImageName");
+    final response = await http.get(uri, headers: {
+      'Accept': 'application/vnd.api+json',
+      'Content-Type': 'application/vnd.api+json',
+      'Authorization': 'Bearer ${prefss.getString('token')}'
+    });
+
+    //await getDetails(widget.id);
+
+    String message =
+        "$vehicleName,Manufacture: $manufacture, $condition, Registration:$registration,Mileage: $mileage,price:${getIntPreef >= 0 ? price : newPrice} ";
+    print("length of unit title");
+    print(unicTitle.length);
+    String message2 = '';
+    for (int i = 0; i < details.length; i++) {
+      message2 += " ${details[i]}";
+      if (i < details.length - 1) {
+        message2 += ", "; // Add a comma and space if it's not the last index
+      }
+    }
+    print(message2);
+    String message3 =
+        "\n\nOut HotLine Number: ${prefss.getString('mobileNumber')}\n\nShow More\n $detailsLink";
+    //  info = "\n${unicTitle[0]} : ${details[0]}";
+    //   _detailsInProgress = true;
+    setState(() {});
+    // for (int b = 1; b < unicTitle.length; b++) {
+    //   info += "\n${unicTitle[b]} : ${details[b]}";
+    // }
+    await Share.share(message + message2 + message3);
+
+    // await Share.shareXFiles([image], text: message + message2 + message3);
+    //"Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 017xxxxxxxx\n"
+    unicTitle.clear();
+    details.clear();
+
+    imageInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   // only details share
-  Future<void> shareDetails(int id, String ImageName, vehicleName,
-      manufacture, condition, registration, mileage, price, detailsLink) async {
+  Future<void> shareDetails(int id, String ImageName, vehicleName, manufacture,
+      condition, registration, mileage, price, detailsLink) async {
     imageInProgress = true;
     if (mounted) {
       setState(() {});
@@ -763,15 +837,15 @@ void _listenForChanges() {
     for (int i = 0; i < details.length; i++) {
       message2 += " ${details[i]}";
       if (i < details.length - 1) {
-        message2 += ", "; 
+        message2 += ", ";
       }
     }
     print(message2);
     String message3 =
         "\n\nOur HotLine Number: 0196-99-444-00\n Show More\n $detailsLink";
- 
+
     setState(() {});
-   
+
     await Share.share(message + message2 + message3);
     unicTitle.clear();
     details.clear();
@@ -782,11 +856,12 @@ void _listenForChanges() {
     }
   }
 
+  bool enterDetailsMethodeWithLotsOfDetails = false;
   Future newGetDetails(int id) async {
     print("get details methode");
     prefss = await SharedPreferences.getInstance();
 
-    imageInProgress = true;
+    shareInProgress = true;
     if (mounted) {
       setState(() {});
     }
@@ -804,7 +879,7 @@ void _listenForChanges() {
           headers: {
             'Accept': 'application/vnd.api+json',
             'Content-Type': 'application/vnd.api+json',
-              'Authorization': 'Bearer ${prefss.getString('token')}'
+            'Authorization': 'Bearer ${prefss.getString('token')}'
           });
     }
     print("Get Details methodes");
@@ -815,12 +890,16 @@ void _listenForChanges() {
 
     List<FeatureDetailPair> featureDetailPairs =
         extractFeatureDetails(vehicleFeatures);
+    if (featureDetailPairs.isNotEmpty) {
+      enterDetailsMethodeWithLotsOfDetails = true;
+      setState(() {});
+    }
 
     for (var pair in featureDetailPairs) {
       unicTitle.add(pair.featureTitle);
       details.add(pair.detailTitles.join(', '));
     }
-    imageInProgress = false;
+    shareInProgress = false;
     if (mounted) {
       setState(() {});
     }
@@ -829,17 +908,24 @@ void _listenForChanges() {
     print("End get details methode");
   }
 
+  bool emailInPRogress = false;
 
-  Future<void> shareViaEmail(int id, String ImageName, vehicleName, manufacture,
-      condition, registration, mileage, price, detailsLink) async {
-    shareInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
+  bool emailInProgress = false;
+
+  Future<void> shareViaEmail(int id, String vehicleName, manufacture, condition,
+      registration, mileage, price, detailsLink,
+      {bool isMedia = false}) async {
+    print("Shared via email methode ${imageInProgress}");
     prefss = await SharedPreferences.getInstance();
-    Response ? response1;
+    showImageList.clear();
+    emailInProgress = true;
+    setState(() {});
+    print('Start of emailInPRogress ${emailInProgress}');
+
+    Response? response1;
+
     try {
-        if (prefss.getString('token') == null) {
+      if (prefss.getString('token') == null) {
         response1 = await get(
           Uri.parse(
               "https://pilotbazar.com/api/clients/vehicles/products/$id/detail"),
@@ -855,7 +941,8 @@ void _listenForChanges() {
             });
       }
       print(response1.statusCode);
-      final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
+      final Map<String, dynamic> decodedResponse1 = jsonDecode(response1!.body);
+      print("Shared via email methode ${imageInProgress}");
 
       for (int b = 0; b < decodedResponse1['payload']['gallery'].length; b++) {
         ImageLink = decodedResponse1['payload']["gallery"][b]?['name'] ?? '';
@@ -867,14 +954,16 @@ void _listenForChanges() {
         print(ImageLinkList[c]);
       }
 
-      List<XFile> showImageList = [];
+      //List<XFile> showImageList = [];
       for (int y = 0; y < ImageLinkList.length; y++) {
+        print('loop of image in prpgress emailInPRogress ${emailInProgress}');
         final uri = Uri.parse(
             "https://pilotbazar.com/storage/galleries/${ImageLinkList[y]}");
         final response = await http.get(uri);
         final imageBytes = response.bodyBytes;
         final tempDirectory = await getTemporaryDirectory();
-        print("hello");
+        // print("Single Image get");
+        // print(" ${imageInProgress}");
         final tempFile = await File('${tempDirectory.path}/sharedImage$y.jpg')
             .writeAsBytes(imageBytes);
 
@@ -882,50 +971,158 @@ void _listenForChanges() {
         showImageList.add(image);
       }
 
-      print("Length is Unic title");
-      print(unicTitle.length);
-      late String info;
+      print("Length is Unic details");
+      print(details.length);
+      // final Map<String, dynamic> decodedResponseForFeatures =
+      //     jsonDecode(response1.body);
+      // List<dynamic> vehicleFeatures =
+      //     decodedResponseForFeatures['payload']['vehicle_feature'];
 
+      // List<FeatureDetailPair> featureDetailPairs =
+      //     extractFeatureDetails(vehicleFeatures);
+
+      // for (var pair in featureDetailPairs) {
+      //   unicTitle.add(pair.featureTitle);
+      //   details.add(pair.detailTitles.join(', '));
+      // }
+
+      print("details length is");
+      print(details.length);
+      print("End get details methode");
       String message =
-          "Vehicle Name:$vehicleName  \nManufacture:$manufacture   \nConditiion:$condition  \nRegistration:$registration  \nMillage:$mileage  \nPrice:$price \nSee more\n$detailsLink ";
-
-      if (unicTitle.length != 0) {
-        info = "\n${unicTitle[0]} : ${details[0]}";
-        _detailsInProgress = true;
-        setState(() {});
-        for (int b = 1; b < unicTitle.length; b++) {
-          info += "\n${unicTitle[b]} : ${details[b]}";
+          "$vehicleName,Manufacture: $manufacture, $condition, Registration:$registration,Mileage: $mileage,${isMedia ? '' : 'price:$price'} ";
+      print("length of unit title");
+      print(unicTitle.length);
+      String message2 = '';
+      for (int i = 0; i < details.length; i++) {
+        message2 += " ${details[i]}";
+        if (i < details.length - 1) {
+          message2 += ", "; // Add a comma and space if it's not the last index
         }
+      }
+      print(message2);
+      setState(() {});
+      print(message2);
+      String message3 =
+          "\n\nOur HotLine Number: 0196-99-444-00\n Show More\n $detailsLink";
+      if (isMedia == true) {
+        message3 = '';
+        imageInProgress = false;
+        setState(() {});
       }
 
       if (showImageList.isNotEmpty) {
         // Share all images with text
         await Share.shareXFiles(
             showImageList.map((image) => image as XFile).toList(),
-            text: _detailsInProgress ? message + info : message);
+            text: enterDetailsMethodeWithLotsOfDetails
+                ? message + message2 + message3
+                : message + message3);
 
         // Clear lists and reset state
         unicTitle.clear();
         details.clear();
         ImageLinkList.clear();
         showImageList.clear();
-        shareInProgress = false;
+        enterDetailsMethodeWithLotsOfDetails = false;
         if (mounted) {
           setState(() {});
         }
+        print("bool Whare via email loop ${imageInProgress}");
       } else {
         print("No images to share.");
       }
     } catch (error) {
       print("Error: $error");
     }
+    emailInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
+    print('End of emailInPRogress ${emailInProgress}');
   }
 
+  Future<void> shareOnlyDetailsForMedia(
+    int id,
+    String vehicleName,
+    manufacture,
+    condition,
+    registration,
+    mileage,
+  ) async {
+    imageInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    prefss = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {});
+    }
+
+    String message =
+        "$vehicleName,Manufacture: $manufacture, $condition, Registration:$registration,Mileage: $mileage ";
+    print(unicTitle.length);
+    String message2 = '';
+    for (int i = 0; i < details.length; i++) {
+      message2 += " ${details[i]}";
+      if (i < details.length - 1) {
+        message2 += ", "; // Add a comma and space if it's not the last index
+      }
+    }
+    print(message2);
+
+    setState(() {});
+    await Share.share(message + message2);
+
+    imageInProgress = false;
+    unicTitle.clear();
+    details.clear();
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> shareOnlyDetailsWithLink(int id, String vehicleName, manufacture,
+      condition, registration, mileage, price) async {
+    imageInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+
+    String message =
+        "$vehicleName,Manufacture: $manufacture, $condition, Registration:$registration,Mileage: $mileage Price : $price ";
+    print("length of unit title");
+    print(unicTitle.length);
+    String message2 = '';
+    for (int i = 0; i < details.length; i++) {
+      message2 += " ${details[i]}";
+      if (i < details.length - 1) {
+        message2 += ", "; // Add a comma and space if it's not the last index
+      }
+    }
+    print(message2);
+    String message3 = "\nShow More\n $detailsLink";
+
+    setState(() {});
+    await Share.share(message + message2 + message3);
+    unicTitle.clear();
+    details.clear();
+
+    imageInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  int? newPrice;
   List searchProducts = [];
   bool _searchInProgress = false;
   TextEditingController searchController = TextEditingController();
+  // Search
 
-  Future<void> search(String value) async {
+
+
+     Future<void> search(String value) async {
     searchProducts.clear();
     products.clear();
     if (searchController.text.isEmpty) {
@@ -935,22 +1132,17 @@ void _listenForChanges() {
     if (mounted) {
       setState(() {});
     }
-    Response? response;
+    Response response = await get(
+      Uri.parse(
+          //https://pilotbazar.com/api/customer-care/products?page=$page
+          'https://pilotbazar.com/api/customer-care/products/search?search=$value'),
+      headers: {
+        'Accept': 'application/vnd.api+json',
+        'Content-Type': 'application/vnd.api+json',
+        'Authorization': 'Bearer ${prefss.getString('token')}'
+      },
+    );
 
-    if (prefss.getString('token') == null) {
-      response = await get(Uri.parse(
-          'https://pilotbazar.com/api/clients/vehicles/products/search?search=$value'));
-    } else {
-      response = await get(
-        Uri.parse(
-            'https://pilotbazar.com/api/merchants/vehicles/products/search?search=$value'),
-        headers: {
-          'Accept': 'application/vnd.api+json',
-          'Content-Type': 'application/vnd.api+json',
-          'Authorization': 'Bearer ${prefss.getString('token')}'
-        },
-      );
-    }
     final Map<String, dynamic> decodedResponse1 = jsonDecode(response.body);
     final Map<String, dynamic> decodedResponse = decodedResponse1['payload'];
     final getproductsList = decodedResponse['data'];
@@ -969,16 +1161,18 @@ void _listenForChanges() {
           condition: getproductsList[i]['condition']?['translate'][0]
                   ?['title'] ??
               "Condition None",
-          mileage: getproductsList[i]['mileage']?['translate'][0]?['title'] ??
-              getproductsList[i]['mileages'],
+          mileage: getproductsList[i]['mileage']?['translate'][0]?['title']
+                  .toString() ??
+              getproductsList[i]['mileages'].toString(),
           //price here
-          price: getproductsList[i]['price'] ?? '',
-          purchase_price: getproductsList[i]?['purchase_price'] ?? '',
-          fixed_price: getproductsList[i]?['fixed_price'] ?? '',
+          price: getproductsList[i]['price'].toString() ?? '',
+          purchase_price:
+              getproductsList[i]?['purchase_price'].toString() ?? '',
+          fixed_price: getproductsList[i]?['fixed_price'].toString() ?? '',
           //price end
           imageName: getproductsList[i]['image']['name'],
           registration: getproductsList[i]['registration'] ?? 'None',
-          engine: getproductsList[i]?['engines'] ?? '--',
+          engine: getproductsList[i]?['engines'].toString() ?? '--',
           brandName: getproductsList[i]['brand']['translate'][0]['title'],
           transmission: getproductsList[i]['transmission']['translate'][0]
               ['title'],
@@ -986,7 +1180,7 @@ void _listenForChanges() {
           skeleton: getproductsList[i]['skeleton']['translate'][0]['title'],
           available:
               getproductsList[i]?['available']?['translate'][0]?['title'] ?? '',
-          code: getproductsList[i]?['code'] ?? '',
+          code: getproductsList[i]?['code'].toString() ?? '',
           //model: getproductsList,
           carColor:
               getproductsList[i]['color']?['translate'][0]['title'] ?? 'None',
@@ -995,12 +1189,13 @@ void _listenForChanges() {
           model:
               getproductsList[i]?['carmodel']?['translate'][0]?['title'] ?? '',
           grade: getproductsList[i]?['grade']?['translate'][0]?['title'] ?? '',
-          engineNumber: getproductsList[i]['engine_number'] ?? '--',
-          chassisNumber: getproductsList[i]['chassis_number'] ?? '--',
+          engineNumber: getproductsList[i]['engine_number'].toString() ?? '--',
+          chassisNumber:
+              getproductsList[i]['chassis_number'].toString() ?? '--',
           video: getproductsList[i]?['video'] ?? 'No Video',
-          engine_id: getproductsList[i]?['engine_id'] ?? '12',
-          onlyMileage: getproductsList[i]['mileages'] ?? '--',
-          engines: getproductsList[i]?['engines'] ?? '-',
+          engine_id: getproductsList[i]?['engine_id'].toString() ?? '12',
+          onlyMileage: getproductsList[i]['mileages'].toString() ?? '--',
+          engines: getproductsList[i]?['engines'].toString() ?? '-',
         ),
       );
     }
@@ -1119,34 +1314,34 @@ void _listenForChanges() {
           cursorColor: Colors.white,
         ),
       ),
-      endDrawer: EndDrawer(mounted: mounted),
+      endDrawer: C_EndDrawer(mounted: mounted),
       body: (_getProductinProgress || _searchInProgress)
           ? loading()
           : Stack(
               children: [
                 Column(
                   children: [
-                    (getIntPreef == 1)
-                        ? AskingFixedAndStockList(
-                            askingPriceFunction: () {
-                              print("Asking Price function is called");
-                              updateAskingPriceFunction();
-                              askingPriceInProgress = false;
-                              setState(() {});
-                              print(askingPriceInProgress);
-                            },
-                            fixedPriceFunction: () {
-                              print("Fixed Price Function is called");
-                              askingPriceInProgress = true;
-                              updateFixedPriceFunction();
-                              setState(() {});
-                              print(askingPriceInProgress);
-                            },
-                            stockListFunction: () {
-                              print("StockList Price Function is called");
-                            },
-                          )
-                        : SizedBox(),
+                    // (getIntPreef == 1)
+                    //     ? AskingFixedAndStockList(
+                    //         askingPriceFunction: () {
+                    //           print("Asking Price function is called");
+                    //           updateAskingPriceFunction();
+                    //           askingPriceInProgress = false;
+                    //           setState(() {});
+                    //           print(askingPriceInProgress);
+                    //         },
+                    //         fixedPriceFunction: () {
+                    //           print("Fixed Price Function is called");
+                    //           askingPriceInProgress = true;
+                    //           updateFixedPriceFunction();
+                    //           setState(() {});
+                    //           print(askingPriceInProgress);
+                    //         },
+                    //         stockListFunction: () {
+                    //           print("StockList Price Function is called");
+                    //         },
+                    //       )
+                    //     : SizedBox(),
                     Expanded(
                       child: RefreshIndicator(
                         onRefresh: () async {
@@ -1321,101 +1516,132 @@ void _listenForChanges() {
                     ),
                     // ((getIntPreef >=0))
                     //     ?
-                    CircleAvatar(
-                      backgroundColor: Color.fromARGB(221, 65, 64, 64),
-                      radius: 25,
-                      child: Expanded(
-                        child: shareInProgress
-                            ? CircularProgressIndicator()
-                            : PopupMenuButton(
-                                child: Icon(
-                                  Icons.share,
-                                  color: Colors.white,
-                                  size: 25,
-                                ),
-                                onSelected: (value) async {
-                                  if (value == 'image') {
-                                    sendAllImages(products[x + j].id);
-                                  } else if (value == 'details') {
-                                   // await newGetDetails(products[x + j].id);
-                                    await getLink(
-                                        products[x + j].id.toString());
-                                    shareDetailsWithOneImage(
-                                        products[x + j].id,
-                                        products[x + j].imageName,
-                                        products[x + j].vehicleName,
-                                        products[x + j].manufacture,
-                                        products[x + j].condition,
-                                        products[x + j].registration,
-                                        products[x + j].mileage,
-                                        products[x + j].price,
-                                        detailsLink);
-                                  } else if (value == 'email') {
-                                    await getLink(
-                                        products[x + j].id.toString());
-                                        // shareDetails( products[x + j].id,
-                                        // products[x + j].imageName,
-                                        // products[x + j].vehicleName,
-                                        // products[x + j].manufacture,
-                                        // products[x + j].condition,
-                                        // products[x + j].registration,
-                                        // products[x + j].mileage,
-                                        // products[x + j].price,
-                                        // detailsLink);
-                                        sendAllImages(products[x + j].id);
-                                    shareViaEmail(
-                                        products[x + j].id,
-                                        products[x + j].imageName,
-                                        products[x + j].vehicleName,
-                                        products[x + j].manufacture,
-                                        products[x + j].condition,
-                                        products[x + j].registration,
-                                        products[x + j].mileage,
-                                        products[x + j].price,
-                                        detailsLink);
-                                      await  sendAllImages(products[x + j].id);
-                                  } else if (value == 'media') {
-                                    await getLink(
-                                        products[x + j].id.toString());
-                                    shareMedia(
-                                        products[x + j].imageName,
-                                        products[x + j].vehicleName,
-                                        products[x + j].manufacture,
-                                        products[x + j].condition,
-                                        products[x + j].registration,
-                                        products[x + j].mileage,
-                                        products[x + j].price,
-                                        detailsLink);
-                                  }
-                                },
-                                itemBuilder: (context) {
-                                  return [
-                                    PopupMenuItem(
-                                      child: Text("Share One Image"),
-                                      value: 'details',
-                                      textStyle: popubItem,
+                   
+                                   shareInProgress
+                        ? SizedBox(
+                            height: 28,
+                            width: 28,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 3,
+                            ))
+                        : PopupMenuButton(
+                            child: Icon(
+                              Icons.share,
+                              color: Colors.white,
+                              size: 28,
+                            ),
+                            itemBuilder: (context) {
+                              return [
+                                PopupMenuItem(
+                                    child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Send as Visitor',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 12),
+                                      ),
                                     ),
-                                    PopupMenuItem(
-                                      child: Text("Share All Image"),
-                                      value: 'image',
-                                      textStyle: popubItem,
+                                    Divider(
+                                      color: Colors.black,
                                     ),
-                                    PopupMenuItem(
-                                      child: Text("Send Email"),
-                                      value: 'email',
-                                      textStyle: popubItem,
+                                    InkWell(
+                                      onTap: () async {
+                                        Navigator.pop(context);
+                                        await newGetDetails(products[x + j].id);
+                                        await getLink(products[x + j].id);
+                                        await shareDetailsWithOneImage(
+                                            products[x + j].id,
+                                            products[x + j].imageName,
+                                            products[x + j].vehicleName,
+                                            products[x + j].manufacture,
+                                            products[x + j].condition,
+                                            products[x + j].registration,
+                                            products[x + j].mileage,
+                                            products[x + j].price,
+                                            products[x + j].newPrice,
+                                            detailsLink);
+                                      },
+                                      child: insidePopubButton(context,
+                                          "Taka, Link, Details, Image  "),
                                     ),
-                                    PopupMenuItem(
-                                      child: Text("Send Media"),
-                                      value: 'media',
-                                      textStyle: popubItem,
+                                    SizedBox(width: 10),
+                                    SizedBox(height: 10),
+                                    InkWell(
+                                      child: insidePopubButton(
+                                          context, "Taka, Link, Details"),
+                                      onTap: () async {
+                                        Navigator.pop(context);
+                                        await newGetDetails(products[x + j].id);
+                                        await getLink(products[x + j].id);
+                                        await shareDetailsWithLink(
+                                            products[x + j].id,
+                                            products[x + j].imageName,
+                                            products[x + j].vehicleName,
+                                            products[x + j].manufacture,
+                                            products[x + j].condition,
+                                            products[x + j].registration,
+                                            products[x + j].mileage,
+                                            products[x + j].price,
+                                            products[x + j].newPrice,
+                                            detailsLink);
+                                      },
                                     ),
-                                  ];
-                                },
-                              ),
-                      ),
-                    )
-                    // : SizedBox(),
+                                    SizedBox(height: 10),
+                                    SizedBox(height: 10),
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Send as Media (মিডিয়া)',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 12),
+                                      ),
+                                    ),
+                                    Divider(
+                                      color: Colors.black,
+                                    ),
+                                    InkWell(
+                                      child: insidePopubButton(
+                                          context, "All Images (শুধু ছবি)"),
+                                      onTap: () async {
+                                        Navigator.pop(context);
+                                        await sendAllImages(products[x + j].id);
+                                        print("I am  Taka, Link, Details");
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                    SizedBox(height: 10),
+                                    InkWell(
+                                        onTap: () async {
+                                          print("Onli image");
+                                          Navigator.pop(context);
+
+                                          await newGetDetails(
+                                              products[x + j].id ?? 12);
+                                          await getLink(
+                                              products[x + j].id ?? 12);
+                                          await shareOnlyDetailsForMedia(
+                                              products[x + j].id,
+                                              products[x + j].vehicleName,
+                                              products[x + j].manufacture,
+                                              products[x + j].condition,
+                                              products[x + j].registration,
+                                              products[x + j].mileage);
+                                        },
+                                        child: insidePopubButton(
+                                            context, "Details (শুধু তথ্য)")),
+                                  ],
+                                ))
+                              ];
+                            }),
+
+                    SizedBox(width: 20),
                   ],
                 ),
                 SizedBox(height: 11),
@@ -1438,213 +1664,272 @@ void _listenForChanges() {
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
                               SizedBox(width: 5),
-                              Text(
-                                products[x].price.toString(),
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
+                              getIntPreef >= 0
+                                  ? Text(
+                                      products[x].price.toString(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge,
+                                    )
+                                  : Text(
+                                      products[x].newPrice.toString(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge,
+                                    ),
 
                               //  SizedBox(width: 100,),
                             ],
                           ),
+                          Text(''),
                         ],
                       ),
                     ),
+                    Spacer(),
                     (getIntPreef >= 0)
-                        ? CircleAvatar(
-                            backgroundColor:
-                                const Color.fromARGB(221, 73, 73, 73),
-                            radius: 25,
-                            child: PopupMenuButton(
-                              child: Icon(
-                                Icons.more_vert,
-                                color: Colors.white,
-                                size: 30,
-                              ),
-                              onSelected: (value) async {
-                                if (value == 'Delete') {
-                               
+                        ? PopupMenuButton(
+                            child: Icon(
+                              Icons.more_vert,
+                              color: Colors.white,
+                              size: 35,
+                            ),
+                            onSelected: (value) async {
+                              if (value == 'Delete') {
                                 deleteMethode(x);
-                                }
-                                if (value == 'Edit Price') {
-                                  navigateToPriceEditPage(x);
-                                } else if (value == 'Booked') {
-                                  updateBooked(x);
-                                } else if (value == 'Sold') {
-                                  await updateSold(x);
-                                } else if (value == 'Availability') {
-                                  await getAvailability();
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          backgroundColor: const Color.fromARGB(
-                                              255, 61, 59, 59),
-                                          title: Center(
-                                              child: Text(
-                                            "Availability",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleSmall,
-                                          )),
-                                          content: Container(
-                                            height: double.infinity,
-                                            width: 350,
-                                            child: ListView.builder(
-                                              primary: false,
-                                              shrinkWrap: true,
-                                              itemCount:
-                                                  availableResponseList.length,
-                                              itemBuilder: (context, index) {
-                                                final item =
-                                                    availableResponseList[index]
-                                                        as Map;
-                                                return Expanded(
+                              }
+
+                              // if (value == 'Edit Price') {
+                              //   navigateToPriceEditPage(x);
+                              // } 
+                              
+                              else if (value == 'Booked') {
+                                updateBooked(x);
+                              } else if (value == 'Sold') {
+                                await updateSold(x);
+                              } else if (value == 'Availability') {
+                                await getAvailability();
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        backgroundColor: const Color.fromARGB(
+                                            255, 61, 59, 59),
+                                        title: Center(
+                                            child: Text(
+                                          "Availability",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleSmall,
+                                        )),
+                                        content: Container(
+                                          height: double.infinity,
+                                          width: 350,
+                                          child: ListView.builder(
+                                            primary: false,
+                                            shrinkWrap: true,
+                                            itemCount:
+                                                availableResponseList.length,
+                                            itemBuilder: (context, index) {
+                                              final item =
+                                                  availableResponseList[index]
+                                                      as Map;
+                                              return Expanded(
+                                                child: Expanded(
                                                   child: Expanded(
-                                                    child: Expanded(
-                                                        child: ElevatedButton(
-                                                            onPressed:
-                                                                () async {
-                                                              print(
-                                                                  "this is car id");
-                                                              print(products[
-                                                                      index]
-                                                                  .id);
-                                                              updateAvailable(
-                                                                  item['id'],
-                                                                  x);
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                            style: ElevatedButton
-                                                                .styleFrom(
-                                                                    backgroundColor:
-                                                                        Color.fromARGB(
-                                                                            255,
-                                                                            97,
-                                                                            93,
-                                                                            90)),
-                                                            child: Text(
-                                                                item['translate']
-                                                                            [0][
-                                                                        'title']
-                                                                    .toString(),
-                                                                style: Theme.of(
-                                                                        context)
-                                                                    .textTheme
-                                                                    .bodySmall))),
-                                                  ),
-                                                );
-                                              },
-                                            ),
+                                                      child: ElevatedButton(
+                                                          onPressed: () async {
+                                                            print(
+                                                                "this is car id");
+                                                            print(
+                                                                products[index]
+                                                                    .id);
+                                                            updateAvailable(
+                                                                item['id'], x);
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          style: ElevatedButton
+                                                              .styleFrom(
+                                                                  backgroundColor:
+                                                                      Color.fromARGB(
+                                                                          255,
+                                                                          97,
+                                                                          93,
+                                                                          90)),
+                                                          child: Text(
+                                                              item['translate']
+                                                                          [0]
+                                                                      ['title']
+                                                                  .toString(),
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodySmall))),
+                                                ),
+                                              );
+                                            },
                                           ),
-                                          actions: <Widget>[
-                                            IconButton(
+                                        ),
+                                        actions: <Widget>[
+                                          IconButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            icon: Icon(Icons.close),
+                                            color:
+                                                Colors.white, // Set icon color
+                                          ),
+                                        ],
+                                        contentPadding: EdgeInsets.only(
+                                            top: 8,
+                                            right: 8,
+                                            bottom: 0,
+                                            left: 8),
+                                      );
+                                    });
+                              } else if (value == 'Advance') {
+                                // this is for solving problem
+                                // await Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //         builder: (context) => ModelShowingData(
+
+                                //             )));
+
+                                // this is for text fild selected box
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => C_TextFildSelectBox(
+                                      id: products[x].id,
+                                      availableDD: products[x].available,
+                                      vehiclaName: products[x].vehicleName,
+                                      vehiclaNameBangla:
+                                          products[x].vehicleNameBangla,
+                                      conditionValue: products[x].condition,
+                                      brandName: products[x].brandName,
+                                      fuel: products[x].fuel,
+                                      skeleton: products[x].skeleton,
+                                      transmission: products[x].transmission,
+                                      registration: products[x].registration,
+                                      carColor: products[x].carColor,
+                                      edition: products[x].edition,
+                                      model: products[x].model,
+                                      grade: products[x].grade,
+                                      mileage: products[x].mileage.toString(),
+                                      engine: products[x].engine.toString(),
+                                      purchase_price:
+                                          products[x].purchase_price,
+                                      price: products[x].price,
+                                      fixed_price: products[x].fixed_price,
+                                      engine_number: products[x].engineNumber,
+                                      chassis_number: products[x].chassisNumber,
+                                      code: products[x].code,
+                                      video: products[x].video.toString(),
+                                      manufacture: products[x].manufacture,
+                                      engineId: products[x].engine_id,
+                                      onlyMileage: products[x].onlyMileage,
+                                      engines: products[x].engines,
+                                    ),
+                                  ),
+                                );
+                              } else if (value == 'Delete') {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              5), // Remove rounded corners
+                                        ),
+                                        backgroundColor: const Color.fromARGB(
+                                            255, 61, 59, 59),
+                                        contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 50, vertical: 20),
+                                        title: Center(
+                                            child: Text(
+                                          "Do you want to delete?",
+                                          style: TextStyle(
+                                              fontSize: 17,
+                                              fontFamily: 'Axiforma'),
+                                        )),
+                                        // titlePadding: EdgeInsets.only(top: 20),
+                                        content: Row(
+                                          children: [
+                                            SizedBox(height: 10),
+                                            Spacer(),
+                                            TextButton(
+                                              onPressed: () async {
+                                                await deleteMethode(
+                                                    products[x + j].id ?? 0);
+                                                initState();
+                                              },
+                                              child: Text(
+                                                'Yes',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontFamily: 'Axiforma'),
+                                              ),
+                                            ),
+                                            TextButton(
                                               onPressed: () {
                                                 Navigator.pop(context);
                                               },
-                                              icon: Icon(Icons.close),
-                                              color: Colors
-                                                  .white, // Set icon color
+                                              child: Text(
+                                                'No',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontFamily: 'Axiforma'),
+                                              ),
                                             ),
                                           ],
-                                          contentPadding: EdgeInsets.only(
-                                              top: 8,
-                                              right: 8,
-                                              bottom: 0,
-                                              left: 8),
-                                        );
-                                      });
-                                } else if (value == 'Advance') {
-                                  // this is for solving problem
-                                  // await Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) => ModelShowingData(
+                                        ),
+                                      );
+                                    });
+                              }
+                            },
+                            itemBuilder: (context) {
+                              return [
+                                //  PopupMenuItem(
+                                //   child: Text("Delete"),
+                                //   value: 'Delete',
+                                // ),
+                                // PopupMenuItem(
+                                //   child: Text("Edit Price"),
+                                //   value: 'Edit Price',
+                                //   textStyle: popubItem,
+                                // ),
+                                PopupMenuItem(
+                                  child: Text("Booked"),
+                                  value: 'Booked',
+                                  textStyle: popubItem,
+                                ),
+                                PopupMenuItem(
+                                  child: Text("Sold"),
+                                  value: 'Sold',
+                                  textStyle: popubItem,
+                                ),
 
-                                  //             )));
-
-                                  // this is for text fild selected box
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => TextFildSelectBox(
-                                        id: products[x].id,
-                                        availableDD: products[x].available,
-                                        vehiclaName: products[x].vehicleName,
-                                        vehiclaNameBangla:
-                                            products[x].vehicleNameBangla,
-                                        conditionValue: products[x].condition,
-                                        brandName: products[x].brandName,
-                                        fuel: products[x].fuel,
-                                        skeleton: products[x].skeleton,
-                                        transmission: products[x].transmission,
-                                        registration: products[x].registration,
-                                        carColor: products[x].carColor,
-                                        edition: products[x].edition,
-                                        model: products[x].model,
-                                        grade: products[x].grade,
-                                        mileage: products[x].mileage.toString(),
-                                        engine: products[x].engine.toString(),
-                                        purchase_price:
-                                            products[x].purchase_price,
-                                        price: products[x].price,
-                                        fixed_price: products[x].fixed_price,
-                                        engine_number: products[x].engineNumber,
-                                        chassis_number:
-                                            products[x].chassisNumber,
-                                        code: products[x].code,
-                                        video: products[x].video.toString(),
-                                        manufacture: products[x].manufacture,
-                                        engineId: products[x].engine_id,
-                                        onlyMileage: products[x].onlyMileage,
-                                        engines: products[x].engines,
-                                      ),
-                                    ),
-                                  );
-                                }
-                              },
-                              itemBuilder: (context) {
-                                return [
-                                  //  PopupMenuItem(
-                                  //   child: Text("Delete"),
-                                  //   value: 'Delete',
-                                  // ),
-                                  PopupMenuItem(
-                                    child: Text("Edit Price"),
-                                    value: 'Edit Price',
-                                    textStyle: popubItem,
-                                  ),
-                                  PopupMenuItem(
-                                    child: Text("Booked"),
-                                    value: 'Booked',
-                                    textStyle: popubItem,
-                                  ),
-                                  PopupMenuItem(
-                                    child: Text("Sold"),
-                                    value: 'Sold',
-                                    textStyle: popubItem,
-                                  ),
-
-                                  PopupMenuItem(
-                                    child: Text("Availability"),
-                                    value: 'Availability',
-                                    textStyle: popubItem,
-                                  ),
-                                  PopupMenuItem(
-                                    child: Text("Advance"),
-                                    value: 'Advance',
-                                    textStyle: popubItem,
-                                  ),
-                                  PopupMenuItem(
-                                    child: Text("Delete"),
-                                    value: 'Delete',
-                                    textStyle: popubItem,
-                                  ),
-                                ];
-                              },
-                            ),
+                                PopupMenuItem(
+                                  child: Text("Availability"),
+                                  value: 'Availability',
+                                  textStyle: popubItem,
+                                ),
+                                PopupMenuItem(
+                                  child: Text("Advance"),
+                                  value: 'Advance',
+                                  textStyle: popubItem,
+                                ),
+                                PopupMenuItem(
+                                  child: Text("Delete"),
+                                  value: 'Delete',
+                                  textStyle: popubItem,
+                                ),
+                              ];
+                            },
                           )
                         : SizedBox(),
+                    SizedBox(width: 20),
                   ],
                 ),
               ],
@@ -1684,27 +1969,26 @@ void _listenForChanges() {
       print("Succesfully Booked");
     }
   }
-  
-  // delete 
-  void deleteMethode(int index) async {
-    prefss = await SharedPreferences.getInstance();
-    // final body = {
-    //   "available_id": 20,
-    // };
 
-    final url =
-        "https://pilotbazar.com/api/merchants/vehicles/products/${products[index].id}/update/booked";
+  // delete
+  deleteMethode(int id) async {
+    prefss = await SharedPreferences.getInstance();
+    //  final body = {
+    //   "delete_id": 1,
+    // };
+    print(id);
+    final url = "https://pilotbazar.com/api/merchants/vehicles/products/$id";
     final uri = Uri.parse(url);
-    final response = await http.put(uri,  headers: {
+    final response = await http.delete(uri, headers: {
       'Accept': 'application/vnd.api+json',
       'Content-Type': 'application/vnd.api+json',
       'Authorization': 'Bearer ${prefss.getString('token')}'
     });
     print(response.statusCode);
-    print(products[index].id);
 
     if (response.statusCode == 200) {
       print("Succesfully Booked");
+      Navigator.pop(context);
     }
   }
 
@@ -1781,4 +2065,27 @@ void _listenForChanges() {
             ));
     Navigator.push(context, route);
   }
+
+  Container insidePopubButton(BuildContext context, String name) {
+    return Container(
+      height: 25,
+      padding: EdgeInsets.only(top: 5),
+      child: Row(
+        children: [
+          green10R,
+          SizedBox(width: 10),
+          Text(
+            name,
+            style: TextStyle(fontSize: 12, color: Colors.black87),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Icon green10R = Icon(
+    Icons.circle,
+    color: Colors.green,
+    size: 10,
+  );
 }

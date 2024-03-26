@@ -95,6 +95,17 @@ class _SplashScreenState extends State<SplashScreen> {
               style: TextStyle(color: Colors.black87, fontSize: 20),
             ),
           ),
+          // SizedBox(
+          //   height: 50,
+          // ),
+          //
+          // Center(
+          //   child: Text(
+          //     " Online Car Murket Place",
+          //     style: TextStyle(color: Colors.black87, fontSize: 20),
+          //   ),
+          // ),
+
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [

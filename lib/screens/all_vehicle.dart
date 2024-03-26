@@ -15,7 +15,6 @@ class AllVehicle extends StatefulWidget {
 
 class _AllVehicleState extends State<AllVehicle> {
   @override
-  static String imagePath = "https://pilotbazar.com/storage/vehicles/";
   static late int page;
   static late int i;
 

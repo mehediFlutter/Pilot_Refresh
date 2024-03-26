@@ -1,11 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:http/http.dart' as http;
-import 'package:pilot_refresh/const_color/base_api_url.dart';
 import 'package:pilot_refresh/const_color/border_color_radious.dart';
-import 'package:pilot_refresh/screens/auth/auth_utility.dart';
-import 'package:pilot_refresh/screens/auth/customer_care/customer_care_details.dart';
 import 'package:pilot_refresh/screens/bottom_nav_base-screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -100,6 +96,13 @@ class _CustomerCareRegistrationState extends State<CustomerCareRegistration> {
         print(response.statusCode);
         final decodedResponse = jsonDecode(response.body);
         print(decodedResponse);
+        if(response.statusCode==200){
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Customer Care Registration Success!!!')));
+            Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BottomNavBaseScreen()));
+        }
   }
 
   @override
@@ -198,10 +201,7 @@ class _CustomerCareRegistrationState extends State<CustomerCareRegistration> {
                             const Color.fromARGB(255, 89, 170, 236)),
                     onPressed: () {
                       customerCareRegistration();
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) => CustomerCareDetails()));
+                    
                     },
                     child: Text(
                       "Create",

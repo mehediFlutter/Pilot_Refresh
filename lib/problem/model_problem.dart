@@ -1,10 +1,7 @@
 import 'dart:convert';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pilot_refresh/problem/model_products.dart';
-import 'package:pilot_refresh/product.dart';
-import 'package:pilot_refresh/widget/custom_text_fild.dart';
 
 class ModelProblem extends StatefulWidget {
   const ModelProblem({

@@ -150,7 +150,8 @@ class _StockListItemState extends State<StockListItem> {
             skeleton: e['skeleton']?['translate'][0]?['title'] ?? '--',
             mileage: e['mileage']?['translate'][0]?['title'] ?? '--',
 
-            fixed_price: e['fixed_price'].toString() ?? '',
+            fixed_price: e['fixed_price']?.toString() ??
+                e['price'].toString(),
             model: e['carmodel']?['translate'][0]?['title'] ?? '--',
             manufacture: e['manufacture'] ?? '--',
             registration: e['registration'] ?? '--',
@@ -449,15 +450,15 @@ class _StockListItemState extends State<StockListItem> {
 
               if (askingPriceBool)
                 p.Padding(
-                  padding: p.EdgeInsets.only(right: 15, left: 1),
-                  child: p.Text(products[i].asking_price.toString(),
-                      style: p.TextStyle(fontSize: 7), softWrap: false),
+                  padding: p.EdgeInsets.only(right: 17, left: 1),
+                  child: p.Expanded(child: p.Text(products[i].asking_price.toString(),
+                      style: p.TextStyle(fontSize: 6), softWrap: false),)
                 ),
               if (fixedPriceBool)
                 p.Padding(
-                  padding: p.EdgeInsets.only(right: 15, left: 1),
+                  padding: p.EdgeInsets.only(right: 17, left: 1),
                   child: p.Text(products[i].fixed_price.toString(),
-                      style: p.TextStyle(fontSize: 7), softWrap: false),
+                      style: p.TextStyle(fontSize: 6), softWrap: false),
                 ),
 
               if (addId)

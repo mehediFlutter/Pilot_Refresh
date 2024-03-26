@@ -4,20 +4,19 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'package:pilot_refresh/For_Customer_Care/screens/C_bottom_nav_base_screen.dart';
 import 'package:pilot_refresh/screens/edit_price.dart';
 import 'package:pilot_refresh/screens/advance_edit_screen.dart';
 import 'package:pilot_refresh/advance/text_fild_select_box.dart';
 import 'package:pilot_refresh/screens/vehicle-details.dart';
 import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
-import 'package:pilot_refresh/widget/image_class.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class C_Item extends StatefulWidget {
-  final bool? myAskingPrice;
+  final bool? showAskingPrice;
   final String? toki;
   final int? id;
   final String? code;
@@ -25,6 +24,7 @@ class C_Item extends StatefulWidget {
   final String? price;
   final String? purchase_price;
   final String? fixed_price;
+  final String? new_price;
   final String? available;
   final bool? isLoggedIn;
   final String? vehiclaName;
@@ -51,6 +51,8 @@ class C_Item extends StatefulWidget {
   final String? onlyMileage;
   final String? engines;
   final String? vehiclaNameModel;
+  final String? token;
+  final String? fixedOrAskingPrice;
 
   C_Item({
     this.id,
@@ -60,6 +62,7 @@ class C_Item extends StatefulWidget {
     this.price,
     this.purchase_price,
     this.fixed_price,
+    this.new_price,
     this.available,
     this.vehiclaName,
     this.brandName,
@@ -76,7 +79,6 @@ class C_Item extends StatefulWidget {
     this.skeleton,
     this.termAndCondition,
     this.detailsLink,
-    this.myAskingPrice,
     this.carColor,
     this.edition,
     this.grade,
@@ -87,6 +89,9 @@ class C_Item extends StatefulWidget {
     this.onlyMileage,
     this.engines,
     this.vehiclaNameModel,
+    this.token,
+    this.fixedOrAskingPrice,
+    this.showAskingPrice,
   });
 
   @override
@@ -117,6 +122,8 @@ class _C_ItemState extends State<C_Item> {
 
   @override
   void initState() {
+    print(widget.new_price);
+    print(widget.price);
     super.initState();
     print("get prefs bool is");
     initializePreffsBool();
@@ -212,7 +219,7 @@ class _C_ItemState extends State<C_Item> {
   }
 
   Future newGetDetails(int id) async {
-    imageInProgress =  true;
+    imageInProgress = true;
     if (mounted) {
       setState(() {});
     }
@@ -256,7 +263,7 @@ class _C_ItemState extends State<C_Item> {
       unicTitle.add(pair.featureTitle);
       details.add(pair.detailTitles.join(', '));
     }
-    imageInProgress =  false;
+    imageInProgress = false;
     if (mounted) {
       setState(() {});
     }
@@ -266,107 +273,9 @@ class _C_ItemState extends State<C_Item> {
     print("End get details methode");
   }
 
-  static List showImageList = [];
-   
+  List<XFile> showImageList = [];
 
-   Future<void> shareOnlyDetailsForMedia() async {
-    imageInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
-    prefss = await SharedPreferences.getInstance();
-    if (mounted) {
-      setState(() {});
-    }
-    //setState() {});
-    final uri = Uri.parse(
-        "https://pilotbazar.com/storage/vehicles/${widget.imageName}");
-    final response = await http.get(uri, headers: {
-      'Accept': 'application/vnd.api+json',
-      'Content-Type': 'application/vnd.api+json',
-      'Authorization': 'Bearer ${prefss.getString('token')}'
-    });
-    final imageBytes = response.bodyBytes;
-    final tempDirectory = await getTemporaryDirectory();
-    final tempFile =
-        await File('${tempDirectory.path}/sharedImage.jpg').create();
-    await tempFile.writeAsBytes(imageBytes);
-
-    String message =
-        "${widget.vehiclaName},Manufacture: ${widget.manufacture}, ${widget.condition}, Registration:${widget.registration},Mileage: ${widget.nMillage},} ";
-    print("length of unit title");
-    print(unicTitle.length);
-    String message2 = '';
-    for (int i = 0; i < details.length; i++) {
-      message2 += " ${details[i]}";
-      if (i < details.length - 1) {
-        message2 += ", "; // Add a comma and space if it's not the last index
-      }
-    }
-    print(message2);
-
-    setState(() {});
-    await Share.share(message + message2);
-   
-
-    imageInProgress = false;
-     unicTitle.clear();
-    details.clear();
-    if (mounted) {
-      setState(() {});
-    }
-  }
-  Future<void> shareOnlyDetailsWithLink() async {
-    imageInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
-    prefss = await SharedPreferences.getInstance();
-    if (mounted) {
-      setState(() {});
-    }
-    //setState() {});
-    final uri = Uri.parse(
-        "https://pilotbazar.com/storage/vehicles/${widget.imageName}");
-    final response = await http.get(uri, headers: {
-      'Accept': 'application/vnd.api+json',
-      'Content-Type': 'application/vnd.api+json',
-      'Authorization': 'Bearer ${prefss.getString('token')}'
-    });
-    final imageBytes = response.bodyBytes;
-    final tempDirectory = await getTemporaryDirectory();
-    final tempFile =
-        await File('${tempDirectory.path}/sharedImage.jpg').create();
-    await tempFile.writeAsBytes(imageBytes);
-
-    String message =
-        "${widget.vehiclaName},Manufacture: ${widget.manufacture}, ${widget.condition}, Registration:${widget.registration},Mileage: ${widget.nMillage}, Price: ${widget.price}} ";
-    print("length of unit title");
-    print(unicTitle.length);
-    String message2 = '';
-    for (int i = 0; i < details.length; i++) {
-      message2 += " ${details[i]}";
-      if (i < details.length - 1) {
-        message2 += ", "; // Add a comma and space if it's not the last index
-      }
-    }
-    print(message2);
-    String message3 =
-        "\nShow More\n $detailsLink";
-
-    setState(() {});
-    await Share.share(message + message2 +message3);
-    unicTitle.clear();
-    details.clear();
-
-    imageInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-   
-  Future<void> shareAllImages(int id) async {
+  Future<void> shareAllImages() async {
     imageInProgress = true;
     if (mounted) {
       setState(() {});
@@ -377,12 +286,12 @@ class _C_ItemState extends State<C_Item> {
       if (prefss.getString('token') == null) {
         response1 = await get(
           Uri.parse(
-              "https://pilotbazar.com/api/clients/vehicles/products/$id/detail"),
+              "https://pilotbazar.com/api/clients/vehicles/products/${widget.id}/detail"),
         );
       } else {
         response1 = await get(
             Uri.parse(
-                "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"),
+                "https://pilotbazar.com/api/merchants/vehicles/products/${widget.id}/detail"),
             headers: {
               'Accept': 'application/vnd.api+json',
               'Content-Type': 'application/vnd.api+json',
@@ -419,10 +328,8 @@ class _C_ItemState extends State<C_Item> {
 
       print("Length is Unic title");
       print(unicTitle.length);
-      late String info;
 
       if (showImageList.isNotEmpty) {
-        // Share all images with text
         await Share.shareXFiles(
           showImageList.map((image) => image as XFile).toList(),
         );
@@ -446,137 +353,142 @@ class _C_ItemState extends State<C_Item> {
 
   TextStyle popubItem = TextStyle(color: Colors.black87, fontFamily: 'Roboto');
 
-// Share with Email
   bool emailInProgress = false;
 
-  Future<void> shareViaEmail(String id, {bool isMedia = false}) async {
-    // print("Shared via email methode ${imageInProgress}");
-    prefss = await SharedPreferences.getInstance();
-    showImageList.clear();
-    emailInProgress = true;
-    setState(() {});
-    print('Start of emailInPRogress ${emailInProgress}');
+  Future<void> shareDetailsWithOneImage() async {
+    imageInProgress = true;
 
-    Response? response1;
-
-    try {
-      if (prefss.getString('token') == null) {
-        response1 = await get(
-          Uri.parse(
-              "https://pilotbazar.com/api/clients/vehicles/products/$id/detail"),
-        );
-      } else {
-        response1 = await get(
-            Uri.parse(
-                "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"),
-            headers: {
-              'Accept': 'application/vnd.api+json',
-              'Content-Type': 'application/vnd.api+json',
-              'Authorization': 'Bearer ${prefss.getString('token')}'
-            });
-      }
-      print(response1.statusCode);
-      final Map<String, dynamic> decodedResponse1 = jsonDecode(response1!.body);
-      print("Shared via email methode ${imageInProgress}");
-
-      for (int b = 0; b < decodedResponse1['payload']['gallery'].length; b++) {
-        ImageLink = decodedResponse1['payload']["gallery"][b]?['name'] ?? '';
-        ImageLinkList.add(ImageLink);
-      }
-
-      print("From List Image Links are");
-      for (int c = 0; c < ImageLinkList.length; c++) {
-        print(ImageLinkList[c]);
-      }
-
-      //List<XFile> showImageList = [];
-      for (int y = 0; y < ImageLinkList.length; y++) {
-        print('loop of image in prpgress emailInPRogress ${emailInProgress}');
-        final uri = Uri.parse(
-            "https://pilotbazar.com/storage/galleries/${ImageLinkList[y]}");
-        final response = await http.get(uri);
-        final imageBytes = response.bodyBytes;
-        final tempDirectory = await getTemporaryDirectory();
-        // print("Single Image get");
-        // print(" ${imageInProgress}");
-        final tempFile = await File('${tempDirectory.path}/sharedImage$y.jpg')
-            .writeAsBytes(imageBytes);
-
-        final image = XFile(tempFile.path);
-        showImageList.add(image);
-      }
-
-      print("Length is Unic title");
-      print(unicTitle.length);
-      final Map<String, dynamic> decodedResponseForFeatures =
-          jsonDecode(response1.body);
-      List<dynamic> vehicleFeatures =
-          decodedResponseForFeatures['payload']['vehicle_feature'];
-
-      List<FeatureDetailPair> featureDetailPairs =
-          extractFeatureDetails(vehicleFeatures);
-
-      for (var pair in featureDetailPairs) {
-        unicTitle.add(pair.featureTitle);
-        details.add(pair.detailTitles.join(', '));
-      }
-
-      print("details length is");
-      print(details.length);
-      print("End get details methode");
-      String message =
-          "${widget.vehiclaName},Manufacture: ${widget.manufacture}, ${widget.condition}, Registration:${widget.registration},Mileage: ${widget.nMillage},${isMedia ? '' : 'price:${widget.price}'} ";
-      print("length of unit title");
-      print(unicTitle.length);
-      String message2 = '';
-      for (int i = 0; i < details.length; i++) {
-        message2 += " ${details[i]}";
-        if (i < details.length - 1) {
-          message2 += ", "; // Add a comma and space if it's not the last index
-        }
-      }
-      setState(() {});
-      print(message2);
-      String message3 =
-          "\n\nOur HotLine Number: 0196-99-444-00\n Show More\n $detailsLink";
-      if (isMedia == true) {
-        message3 = '';
-        imageInProgress = false;
-        setState(() {});
-      }
-
-      if (showImageList.isNotEmpty) {
-        // Share all images with text
-        await Share.shareXFiles(
-            showImageList.map((image) => image as XFile).toList(),
-            text: enterDetailsMethodeWithLotsOfDetails
-                ? message + message2 + message3
-                : message + message3);
-
-        // Clear lists and reset state
-        unicTitle.clear();
-        details.clear();
-        ImageLinkList.clear();
-        showImageList.clear();
-        enterDetailsMethodeWithLotsOfDetails = false;
-        if (mounted) {
-          setState(() {});
-        }
-        print("bool Whare via email loop ${imageInProgress}");
-      } else {
-        print("No images to share.");
-      }
-    } catch (error) {
-      print("Error: $error");
-    }
-    emailInProgress = false;
     if (mounted) {
       setState(() {});
     }
-    print('End of emailInPRogress ${emailInProgress}');
+    prefss = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {});
+    }
+    //setState() {});
+    final uri = Uri.parse(
+        "https://pilotbazar.com/storage/vehicles/${widget.imageName}");
+    final response = await http.get(uri, headers: {
+      'Accept': 'application/vnd.api+json',
+      'Content-Type': 'application/vnd.api+json',
+      'Authorization': 'Bearer ${prefss.getString('token')}'
+    });
+    final imageBytes = response.bodyBytes;
+    final tempDirectory = await getTemporaryDirectory();
+    final tempFile =
+        await File('${tempDirectory.path}/sharedImage.jpg').create();
+    await tempFile.writeAsBytes(imageBytes);
+
+    //await getDetails(widget.id);
+    final image = XFile(tempFile.path);
+
+    String message =
+        "${widget.vehiclaName},Manufacture: ${widget.manufacture}, ${widget.condition}, Registration:${widget.registration},Mileage: ${widget.nMillage},price:${getIntPreef > 0 ? widget.showAskingPrice??true ? widget.price : widget.fixed_price : widget.new_price} ";
+    print("length of unit title");
+    print(unicTitle.length);
+    String message2 = '';
+    for (int i = 0; i < details.length; i++) {
+      message2 += " ${details[i]}";
+      if (i < details.length - 1) {
+        message2 += ", "; // Add a comma and space if it's not the last index
+      }
+    }
+
+    print(message2);
+    String message3 =
+        "\nOut HotLine Number ${prefss.getString('mobileNumber')}\nShow More\n $detailsLink";
+
+    setState(() {});
+    await Share.shareXFiles([image], text: message + message2 + message3);
+    unicTitle.clear();
+    details.clear();
+
+    imageInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
-  Future<void> shareDetailsWithOneImage() async {
+  Future<void> shareOnlyDetailsForMedia() async {
+    imageInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    prefss = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {});
+    }
+
+    String message =
+        "${widget.vehiclaName},Manufacture: ${widget.manufacture}, ${widget.condition}, Registration:${widget.registration},Mileage: ${widget.nMillage},} ";
+    print("length of unit title");
+    print(unicTitle.length);
+    String message2 = '';
+    for (int i = 0; i < details.length; i++) {
+      message2 += " ${details[i]}";
+      if (i < details.length - 1) {
+        message2 += ", "; // Add a comma and space if it's not the last index
+      }
+    }
+    print(message2);
+
+    setState(() {});
+    await Share.share(message + message2);
+
+    imageInProgress = false;
+    unicTitle.clear();
+    details.clear();
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> shareOnlyDetailsWithLink() async {
+    imageInProgress = true;
+    if (mounted) {
+      setState(() {});
+    }
+    prefss = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {});
+    }
+    //setState() {});
+    final uri = Uri.parse(
+        "https://pilotbazar.com/storage/vehicles/${widget.imageName}");
+    final response = await http.get(uri, headers: {
+      'Accept': 'application/vnd.api+json',
+      'Content-Type': 'application/vnd.api+json',
+      'Authorization': 'Bearer ${prefss.getString('token')}'
+    });
+    final imageBytes = response.bodyBytes;
+    final tempDirectory = await getTemporaryDirectory();
+    final tempFile =
+        await File('${tempDirectory.path}/sharedImage.jpg').create();
+    await tempFile.writeAsBytes(imageBytes);
+
+    String message =
+        "${widget.vehiclaName},Manufacture: ${widget.manufacture}, ${widget.condition}, Registration:${widget.registration},Mileage: ${widget.nMillage}, Price: ${getIntPreef > 0 ? widget.showAskingPrice??true? widget.price : widget.fixed_price : widget.new_price} ";
+    String message2 = '';
+    for (int i = 0; i < details.length; i++) {
+      message2 += " ${details[i]}";
+      if (i < details.length - 1) {
+        message2 += ", "; // Add a comma and space if it's not the last index
+      }
+    }
+    String message3 = "\nOut HotLine Number ${prefss.getString('mobileNumber')}\nShow More\n $detailsLink";
+
+    setState(() {});
+    await Share.share(message + message2 + message3);
+    unicTitle.clear();
+    details.clear();
+
+    imageInProgress = false;
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> shareMedia() async {
     imageInProgress = true;
     if (mounted) {
       setState(() {});
@@ -604,87 +516,31 @@ class _C_ItemState extends State<C_Item> {
     late String info;
 
     String message =
-        "${widget.vehiclaName},Manufacture: ${widget.manufacture}, ${widget.condition}, Registration:${widget.registration},Mileage: ${widget.nMillage},price:${widget.price} ";
-    print("length of unit title");
-    print(unicTitle.length);
-    String message2 = '';
-    for (int i = 0; i < details.length; i++) {
-      message2 += " ${details[i]}";
-      if (i < details.length - 1) {
-        message2 += ", "; // Add a comma and space if it's not the last index
+        "Vehicle Name: ${widget.vehiclaName} \nManufacture:  ${widget.manufacture} \nConditiion: ${widget.condition} \nRegistration: ${widget.registration} \nMillage: ${widget.nMillage}, \nOur HotLine Number: 0196-99-444-00";
+
+    if (unicTitle.length != 0) {
+      info = "\n${unicTitle[0]} : ${details[0]}";
+
+      setState(() {});
+      for (int b = 1; b < unicTitle.length; b++) {
+        info += "\n${unicTitle[b]} : ${details[b]}";
       }
     }
-    print(message2);
-    String message3 =
-        "\n\nOur HotLine Number: 0196-99-444-00\n Show More\n $detailsLink";
-
-    setState(() {});
-    await Share.shareXFiles([image], text: message + message2 + message3);
+    await Share.shareXFiles([image], text: message);
+    //"Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 017xxxxxxxx\n"
     unicTitle.clear();
     details.clear();
-
     imageInProgress = false;
     if (mounted) {
       setState(() {});
     }
+    setState(() {});
   }
-
-  // Future<void> shareMedia() async {
-  //   imageInProgress = true;
-  //   if (mounted) {
-  //     setState(() {});
-  //   }
-  //   prefss = await SharedPreferences.getInstance();
-  //   if (mounted) {
-  //     setState(() {});
-  //   }
-  //   //setState() {});
-  //   final uri = Uri.parse(
-  //       "https://pilotbazar.com/storage/vehicles/${widget.imageName}");
-  //   final response = await http.get(uri, headers: {
-  //     'Accept': 'application/vnd.api+json',
-  //     'Content-Type': 'application/vnd.api+json',
-  //     'Authorization': 'Bearer ${prefss.getString('token')}'
-  //   });
-  //   final imageBytes = response.bodyBytes;
-  //   final tempDirectory = await getTemporaryDirectory();
-  //   final tempFile =
-  //       await File('${tempDirectory.path}/sharedImage.jpg').create();
-  //   await tempFile.writeAsBytes(imageBytes);
-
-  //   //await getDetails(widget.id);
-  //   final image = XFile(tempFile.path);
-  //   late String info;
-
-  //   String message =
-  //       "Vehicle Name: ${widget.vehiclaName} \nManufacture:  ${widget.manufacture} \nConditiion: ${widget.condition} \nRegistration: ${widget.registration} \nMillage: ${widget.nMillage}, \nOur HotLine Number: 0196-99-444-00";
-
-  //   if (unicTitle.length != 0) {
-  //     info = "\n${unicTitle[0]} : ${details[0]}";
-  //     _detailsInProgress = true;
-  //     setState(() {});
-  //     for (int b = 1; b < unicTitle.length; b++) {
-  //       info += "\n${unicTitle[b]} : ${details[b]}";
-  //     }
-  //   }
-  //   await Share.shareXFiles([image],
-  //       text: _detailsInProgress ? message + info : message);
-  //   //"Vehicle Name: ${products[x].vehicleName} \nManufacture:  ${products[x].manufacture} \nConditiion: ${products[x].condition} \nRegistration: ${products[x].registration} \nMillage: ${products[x].mileage}, \nPrice: ${products[x].price} \nOur HotLine Number: 017xxxxxxxx\n"
-  //   unicTitle.clear();
-  //   details.clear();
-  //   _detailsInProgress = false;
-  //   imageInProgress = false;
-  //   if (mounted) {
-  //     setState(() {});
-  //   }
-  //   setState(() {});
-  // }
 
   late SharedPreferences preffs;
   double? shareSize;
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
 
     return InkWell(
       child: Padding(
@@ -736,319 +592,240 @@ class _C_ItemState extends State<C_Item> {
                                             widget.manufacture,
                                       )));
                         },
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 0),
-                          child: Image.network(
-                            "https://pilotbazar.com/storage/vehicles/${widget.imageName}",
-                            width: 60,
-                            height: 110,
-                            fit: BoxFit.fill,
-                          ),
+                        child: Image.network(
+                          "https://pilotbazar.com/storage/vehicles/${widget.imageName}",
+                          width: 60,
+                          height: 110,
+                          fit: BoxFit.fill,
                         ),
                       ),
                     ),
 
-                    /// when use inkWel then popub a alart dialog and showing details code is 
-                    ///   // Alart Dialog is off now
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => AlartDialogClass(
-                        //       id: widget.id,
-                        //       vehicleName: widget.vehiclaName,
-                        //       brandName: widget.brandName,
-                        //       engine: widget.engine,
-                        //       detailsCondition: widget.condition,
-                        //       detailsMillege: widget.nMillage,
-                        //       detailsTransmission: widget.transmission,
-                        //       detailsFuel: widget.fuel,
-                        //       skeleton: widget.skeleton,
-                        //       registration: widget.registration,
-                        //       detailsVehicleManuConditioin:
-                        //           widget.manufacture.toString(),
-                        //       detailsVehicleManufacture:
-                        //           widget.manufacture.toString(),
-                        //     ),
-                        //   ),
-                        // );
+                
                     subtitle: ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            (getIntPreef != 1)
-                                ? SizedBox(
-                                    height: size.height / 200,
-                                  )
-                                : SizedBox(),
-                            Text(widget.vehiclaName.toString(),
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                      
+                          Text(widget.vehiclaName.toString(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(fontSize: 8)),
+                          Row(
+                            children: [
+                           
+                              Text(
+                                "R : ",
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyLarge!
-                                    .copyWith(fontSize: 8)),
-                            Row(
-                              children: [
-                                // Text(
-                                //   widget.myAskingPrice.toString(),
-                                //   style: TextStyle(color: Colors.white),
-                                // ),
-                                Text(
-                                  "R : ",
+                                    .copyWith(fontSize: 8),
+                              ),
+                              Text(
+                                widget.registration.toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .copyWith(fontSize: 8),
+                              ),
+                              Text(" | ",
+                                  style: Theme.of(context).textTheme.bodyLarge),
+                              Text(
+                                widget.condition.toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .copyWith(fontSize: 8),
+                              ),
+                              Text(
+                                " | ",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .copyWith(fontSize: 8),
+                              ),
+
+                              Text("m: ",
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge!
-                                      .copyWith(fontSize: 8),
-                                ),
-                                Text(
-                                  widget.registration.toString(),
+                                      .copyWith(fontSize: 8)),
+
+                              Text(widget.onlyMileage.toString(),
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge!
-                                      .copyWith(fontSize: 8),
-                                ),
-                                Text(" | ",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge),
-                                Text(
-                                  widget.condition.toString(),
+                                      .copyWith(fontSize: 8)),
+                              Text(' km',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge!
-                                      .copyWith(fontSize: 8),
-                                ),
-                                Text(
-                                  " | ",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(fontSize: 8),
-                                ),
-                    
-                                //Text(products[x].id.toString()),
-                                Text("m: ",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .copyWith(fontSize: 8)),
-                    
-                                Text(widget.onlyMileage.toString(),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .copyWith(fontSize: 8)),
-                                Text(' km',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .copyWith(fontSize: 8)),
-                              ],
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                (getIntPreef != 1)
-                                    ? SizedBox(
-                                        height: size.height / 220,
-                                      )
-                                    : SizedBox(),
-                                Text(
-                                  widget.available.toString(),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(fontSize: 8),
-                                ),
-                                // (getIntPreef != 1)
-                                //     ? SizedBox(
-                                //         height: 1,
-                                //       )
-                                //     : SizedBox(),
-                                Row(
-                                  //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text("Tk: ",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge!
-                                            .copyWith(fontSize: 10)),
-                                    Text(
-                                        widget.myAskingPrice!
-                                            ? widget.price.toString()
-                                            : widget.purchase_price
-                                                .toString(),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge!
-                                            .copyWith(fontSize: 10)),
-                                    Spacer(),
-                                    // Spacer(),
-                                    // (getIntPreef == 1)
-                                    //     ?
-                                    (imageInProgress || emailInProgress)
-                                        ? CircularProgressIndicator()
-                                        : PopupMenuButton(
-                                            child: Icon(
-                                              Icons.share,
-                                              color: Colors.white70,
-                                              size: 19,
-                                            ),
-                                            onSelected: (value) async {
-                                              if (value == 'details') {
-                                                await newGetDetails(
-                                                    widget.id ?? 12);
-                                                await getLink(
-                                                    widget.id.toString());
-                                                shareDetailsWithOneImage();
-                                              } else if (value == 'image') {
-                                                shareAllImages(
-                                                    widget.id ?? 0);
-                                              } else if (value == 'media') {
-                                              await  newGetDetails(
-                                                    widget.id ?? 12);
-                                              await  getLink(
-                                                    widget.id.toString());
-                                              await  shareOnlyDetailsForMedia();
-                                    
-                                            
-                                              } else if (value == 'email') {
-                                              await  newGetDetails(
-                                                    widget.id ?? 12);
-                                               await getLink(
-                                                    widget.id.toString());
-                                              await  shareOnlyDetailsWithLink();
-                                                
-                                              } else if (value ==
-                                                  'Availability') {
-                                                await getAvailability();
-                                                showDialog(
-                                                    context: context,
-                                                    builder: (BuildContext
-                                                        context) {
-                                                      return AlertDialog(
-                                                        backgroundColor:
-                                                            const Color
-                                                                .fromARGB(
-                                                                255,
-                                                                61,
-                                                                59,
-                                                                59),
-                                                        title: Center(
-                                                            child: Text(
-                                                          "Availability",
-                                                          style: Theme.of(
-                                                                  context)
-                                                              .textTheme
-                                                              .titleSmall,
-                                                        )),
-                                                        content: Container(
-                                                          height: double
-                                                              .infinity,
-                                                          width: 350,
-                                                          child: ListView
-                                                              .builder(
-                                                            primary: false,
-                                                            shrinkWrap:
-                                                                true,
-                                                            itemCount:
-                                                                availableResponseList
-                                                                    .length,
-                                                            itemBuilder:
-                                                                (context,
-                                                                    index) {
-                                                              final item =
-                                                                  availableResponseList[
-                                                                          index]
-                                                                      as Map;
-                                                              return Expanded(
-                                                                child:
-                                                                    Expanded(
-                                                                  child: Expanded(
-                                                                      child: ElevatedButton(
-                                                                          onPressed: () async {
-                                                                            print("this is car id");
-                                                                            print(widget.id);
-                                                                            updateAvailable(item['id'], index);
-                                                                            Navigator.pop(context);
-                                                                          },
-                                                                          style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(255, 97, 93, 90)),
-                                                                          child: Text(item['translate'][0]['title'].toString(), style: Theme.of(context).textTheme.bodySmall))),
-                                                                ),
-                                                              );
-                                                            },
-                                                          ),
-                                                        ),
-                                                        actions: <Widget>[
-                                                          IconButton(
-                                                            onPressed: () {
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                            icon: Icon(Icons
-                                                                .close),
-                                                            color: Colors
-                                                                .white, // Set icon color
-                                                          ),
-                                                        ],
-                                                        contentPadding:
-                                                            EdgeInsets.only(
-                                                                top: 8,
-                                                                right: 8,
-                                                                bottom: 0,
-                                                                left: 8),
-                                                      );
-                                                    });
-                                              }
-                                            },
-                                            itemBuilder: (context) {
-                                              return [
-                                                PopupMenuItem(
-                                                  child: Text(
-                                                      "Send One Image"),
-                                                  value: 'details',
-                                                  textStyle: popubItem,
-                                                ),
-                                                PopupMenuItem(
-                                                  child: Text(
-                                                      "Send All Image"),
-                                                  value: 'image',
-                                                  textStyle: popubItem,
-                                                ),
-                                                 PopupMenuItem(
-                                                  child: Text(
-                                                      "Send Details with Link"),
-                                                  value: 'email',
-                                                  textStyle: popubItem,
-                                                ),
-                                                PopupMenuItem(
-                                                  child: Text(
-                                                      "Send Details in Media"),
-                                                  value: 'media',
-                                                  textStyle: popubItem,
-                                                ),
-                                              ];
-                                            },
+                                      .copyWith(fontSize: 8)),
+                            ],
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                           
+                              Text(
+                                widget.available.toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .copyWith(fontSize: 8),
+                              ),
+                            
+                              Row(
+                                //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("Tk: ",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(fontSize: 10)),
+
+                                
+
+                                  getIntPreef > 0
+                                      ? Text(
+                                          widget.price.toString(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .copyWith(fontSize: 10),
+                                        )
+                                      : Text(
+                                          widget.new_price.toString(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .copyWith(fontSize: 10),
+                                        ),
+
+                                  Spacer(),
+                                 
+                                  (imageInProgress || emailInProgress)
+                                      ? SizedBox(
+                                        height: 19,width: 19,
+                                        child: CircularProgressIndicator(strokeWidth: 3,))
+                                      : PopupMenuButton(
+                                          child: Icon(
+                                            Icons.share,
+                                            color: Colors.white,
+                                            size: 19,
                                           ),
-                                    // : SizedBox(),
-                    
-                                    // popup menu
-                    
-                                    (getIntPreef == 1)
-                                        ? Spacer()
-                                        : Container(),
-                                    (getIntPreef == 1)
-                                        ? PopupMenuButton(
+                                          itemBuilder: (context) {
+                                            return [
+                                              PopupMenuItem(
+                                                  child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Align(
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      'Send as Visitor',
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          fontSize: 12),
+                                                    ),
+                                                  ),
+                                                  Divider(
+                                                    color: Colors.black,
+                                                  ),
+                                                  InkWell(
+                                                    onTap: () async {
+                                                      Navigator.pop(context);
+                                                      await newGetDetails(
+                                                          widget.id ?? 12);
+                                                      await getLink(await widget
+                                                          .id
+                                                          .toString());
+                                                      await shareDetailsWithOneImage();
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: insidePopubButton(context,
+                                                        "Taka, Link, Details, Image  "),
+                                                  ),
+                                                  SizedBox(width: 10),
+                                                  SizedBox(height: 10),
+                                                  InkWell(
+                                                    child: insidePopubButton(context,
+                                                        "Taka, Link, Details"),
+                                                    onTap: () async {
+                                                      Navigator.pop(context);
+                                                      await newGetDetails(
+                                                          widget.id ?? 12);
+                                                      await getLink(
+                                                          widget.id.toString());
+                                                      await shareOnlyDetailsWithLink();
+
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                  SizedBox(height: 10),
+                                                  SizedBox(height: 10),
+                                                  Align(
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      'Send as Media (মিডিয়া)',
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          fontSize: 12),
+                                                    ),
+                                                  ),
+                                                  Divider(
+                                                    color: Colors.black,
+                                                  ),
+                                                  InkWell(
+                                                    child: insidePopubButton(context,
+                                                        "All Images (শুধু ছবি)"),
+                                                    onTap: () async {
+                                                      Navigator.pop(context);
+                                                      await shareAllImages();
+                                                     
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                  SizedBox(height: 10),
+                                                  InkWell(
+                                                      onTap: () async {
+                                                      
+                                                        Navigator.pop(context);
+
+                                                        await newGetDetails(
+                                                            widget.id ?? 12);
+                                                        await getLink(widget.id
+                                                            .toString());
+                                                        await shareOnlyDetailsForMedia();
+                                                      },
+                                                      child: insidePopubButton(
+                                                          context,
+                                                          "Details (শুধু তথ্য)")),
+                                                ],
+                                              ))
+                                            ];
+                                          }),
+
+
+                                  (getIntPreef == 1) ? Spacer() : Container(),
+                                  (getIntPreef == 1)
+                                      ? PopupMenuButton(
                                           color: Colors.white,
                                           child: Icon(
                                             Icons.more_vert,
                                             color: Colors.white,
                                           ),
                                           padding: EdgeInsets.zero,
-                                          iconSize: 17,
+                                          iconSize: 15,
                                           onSelected: (value) async {
                                             if (value == 'Edit') {
                                               // Open Edit Popup
@@ -1059,17 +836,13 @@ class _C_ItemState extends State<C_Item> {
                                             // Open Delete Popup
                                             //deleteById(id);
                                             // }
-                                        
-                                        
                                             // if (value == 'Edit price') {
                                             //   navigateToAdvancePage(
                                             //       widget.id ?? 0);
-                                            // }
+                                            // } 
                                             
-                                             else if (value ==
-                                                'Booked') {
-                                              updateBooked(
-                                                  widget.id ?? 0);
+                                            else if (value == 'Booked') {
+                                              updateBooked(widget.id ?? 0);
                                             } else if (value == 'Sold') {
                                               updateSold(widget.id ?? 0);
                                             } else if (value ==
@@ -1077,54 +850,60 @@ class _C_ItemState extends State<C_Item> {
                                               await getAvailability();
                                               showDialog(
                                                   context: context,
-                                                  builder: (BuildContext
-                                                      context) {
+                                                  builder:
+                                                      (BuildContext context) {
                                                     return AlertDialog(
                                                       backgroundColor:
-                                                          const Color
-                                                              .fromARGB(
-                                                              255,
-                                                              61,
-                                                              59,
-                                                              59),
+                                                          const Color.fromARGB(
+                                                              255, 61, 59, 59),
                                                       title: Center(
                                                           child: Text(
                                                         "Availability",
-                                                        style: Theme.of(
-                                                                context)
+                                                        style: Theme.of(context)
                                                             .textTheme
                                                             .titleSmall,
                                                       )),
                                                       content: Container(
-                                                        height: double
-                                                            .infinity,
+                                                        height: double.infinity,
                                                         width: 350,
-                                                        child: ListView
-                                                            .builder(
+                                                        child: ListView.builder(
                                                           primary: false,
-                                                          shrinkWrap:
-                                                              true,
+                                                          shrinkWrap: true,
                                                           itemCount:
                                                               availableResponseList
                                                                   .length,
                                                           itemBuilder:
-                                                              (context,
-                                                                  index) {
+                                                              (context, index) {
                                                             final item =
                                                                 availableResponseList[
                                                                         index]
                                                                     as Map;
                                                             return Expanded(
-                                                                child: ElevatedButton(
-                                                                    onPressed: () async {
-                                                                      print("this is car id");
-                                                                      print(widget.id);
-                                                                      updateAvailable(item['id'],
-                                                                          widget.id ?? 0);
-                                                                      Navigator.pop(context);
-                                                                    },
-                                                                    style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(255, 97, 93, 90)),
-                                                                    child: Text(item['translate'][0]['title'].toString(), style: Theme.of(context).textTheme.bodySmall)));
+                                                                child:
+                                                                    ElevatedButton(
+                                                                        onPressed:
+                                                                            () async {
+                                                                          print(
+                                                                              "this is car id");
+                                                                          print(
+                                                                              widget.id);
+                                                                          updateAvailable(
+                                                                              item['id'],
+                                                                              widget.id ?? 0);
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                        },
+                                                                        style: ElevatedButton.styleFrom(
+                                                                            backgroundColor: Color.fromARGB(
+                                                                                255,
+                                                                                97,
+                                                                                93,
+                                                                                90)),
+                                                                        child: Text(
+                                                                            item['translate'][0]['title']
+                                                                                .toString(),
+                                                                            style:
+                                                                                Theme.of(context).textTheme.bodySmall)));
                                                           },
                                                         ),
                                                       ),
@@ -1134,8 +913,8 @@ class _C_ItemState extends State<C_Item> {
                                                             Navigator.pop(
                                                                 context);
                                                           },
-                                                          icon: Icon(Icons
-                                                              .close),
+                                                          icon:
+                                                              Icon(Icons.close),
                                                           color: Colors
                                                               .white, // Set icon color
                                                         ),
@@ -1148,20 +927,17 @@ class _C_ItemState extends State<C_Item> {
                                                               left: 8),
                                                     );
                                                   });
-                                            } else if (value ==
-                                                'Advance') {
+                                            } else if (value == 'Advance') {
                                               await Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
                                                           TextFildSelectBox(
                                                             id: widget.id,
-                                                            availableDD:
-                                                                widget
-                                                                    .available,
-                                                            vehiclaName:
-                                                                widget
-                                                                    .vehiclaName,
+                                                            availableDD: widget
+                                                                .available,
+                                                            vehiclaName: widget
+                                                                .vehiclaName,
                                                             vehiclaNameBangla:
                                                                 widget
                                                                     .vehiclaName,
@@ -1170,91 +946,68 @@ class _C_ItemState extends State<C_Item> {
                                                                     .condition,
                                                             brandName: widget
                                                                 .brandName,
-                                                            fuel: widget
-                                                                .fuel,
-                                                            skeleton: widget
-                                                                .skeleton,
-                                                            transmission:
-                                                                widget
-                                                                    .transmission,
-                                                            registration:
-                                                                widget
-                                                                    .registration,
-                                                            carColor: widget
-                                                                .carColor,
-                                                            edition: widget
-                                                                .edition,
-                                                            model: widget
-                                                                .model,
-                                                            grade: widget
-                                                                .grade,
+                                                            fuel: widget.fuel,
+                                                            skeleton:
+                                                                widget.skeleton,
+                                                            transmission: widget
+                                                                .transmission,
+                                                            registration: widget
+                                                                .registration,
+                                                            carColor:
+                                                                widget.carColor,
+                                                            edition:
+                                                                widget.edition,
+                                                            model: widget.model,
+                                                            grade: widget.grade,
                                                             mileage: widget
-                                                                .nMillage
+                                                                .registration
                                                                 .toString(),
                                                             engine: widget
                                                                 .engine
                                                                 .toString(),
-                                                            purchase_price:
-                                                                widget
-                                                                    .purchase_price,
-                                                            price: widget
-                                                                .price,
-                                                            fixed_price:
-                                                                widget
-                                                                    .fixed_price,
-                                                            engine_number:
-                                                                widget
-                                                                    .engineNumber,
-                                                            chassis_number:
-                                                                widget
-                                                                    .chassisNumber,
-                                                            code: widget
-                                                                .code,
-                                                            video: widget
-                                                                .video
+                                                            purchase_price: widget
+                                                                .purchase_price,
+                                                            price: widget.price,
+                                                            fixed_price: widget
+                                                                .fixed_price,
+                                                            engine_number: widget
+                                                                .engineNumber,
+                                                            chassis_number: widget
+                                                                .chassisNumber,
+                                                            code: widget.code,
+                                                            video: widget.video
                                                                 .toString(),
-                                                            manufacture:
-                                                                widget
-                                                                    .manufacture,
+                                                            manufacture: widget
+                                                                .manufacture,
                                                             engineId: widget
                                                                 .engine_id,
-                                                            onlyMileage:
-                                                                widget
-                                                                    .onlyMileage,
-                                                            engines: widget
-                                                                .engines,
+                                                            onlyMileage: widget
+                                                                .onlyMileage,
+                                                            engines:
+                                                                widget.engines,
                                                           )));
                                               // navigateToAdvanceEditPage(
                                               //     widget.id ?? 0);
-                                            } else if (value ==
-                                                'Delete') {
+                                            } else if (value == 'Delete') {
                                               print("Id is ${widget.id}");
                                               showDialog(
                                                   context: context,
-                                                  builder: (BuildContext
-                                                      context) {
+                                                  builder:
+                                                      (BuildContext context) {
                                                     return AlertDialog(
                                                       shape:
                                                           RoundedRectangleBorder(
                                                         borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                                    5), // Remove rounded corners
+                                                            BorderRadius.circular(
+                                                                5), // Remove rounded corners
                                                       ),
                                                       backgroundColor:
-                                                          const Color
-                                                              .fromARGB(
-                                                              255,
-                                                              61,
-                                                              59,
-                                                              59),
+                                                          const Color.fromARGB(
+                                                              255, 61, 59, 59),
                                                       contentPadding:
-                                                          EdgeInsets
-                                                              .symmetric(
-                                                                  horizontal:
-                                                                      50,
-                                                                  vertical:
-                                                                      20),
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 50,
+                                                              vertical: 20),
                                                       title: Center(
                                                           child: Text(
                                                         "Do you want to delete?",
@@ -1266,8 +1019,7 @@ class _C_ItemState extends State<C_Item> {
                                                       // titlePadding: EdgeInsets.only(top: 20),
                                                       content: Row(
                                                         children: [
-                                                          SizedBox(
-                                                              height: 10),
+                                                          SizedBox(height: 10),
                                                           Spacer(),
                                                           TextButton(
                                                             onPressed:
@@ -1286,8 +1038,7 @@ class _C_ItemState extends State<C_Item> {
                                                             ),
                                                           ),
                                                           TextButton(
-                                                            onPressed:
-                                                                () {
+                                                            onPressed: () {
                                                               Navigator.pop(
                                                                   context);
                                                             },
@@ -1323,13 +1074,9 @@ class _C_ItemState extends State<C_Item> {
                                                 value: 'Sold',
                                                 textStyle: popubItem,
                                               ),
-                                              // PopupMenuItem(
-                                              //   child: Text("Edit"),
-                                              //   value: 'Edit',
-                                              // ),
+                                              
                                               PopupMenuItem(
-                                                child:
-                                                    Text("Availability"),
+                                                child: Text("Availability"),
                                                 value: 'Availability',
                                                 textStyle: popubItem,
                                               ),
@@ -1346,13 +1093,15 @@ class _C_ItemState extends State<C_Item> {
                                             ];
                                           },
                                         )
-                                        : SizedBox(),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                                      : SizedBox(),
+                                  (getIntPreef != 1 || getIntPreef <= 0)
+                                      ? SizedBox(width: 20)
+                                      : SizedBox()
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -1400,29 +1149,28 @@ class _C_ItemState extends State<C_Item> {
       'Content-Type': 'application/vnd.api+json',
       'Authorization': 'Bearer ${prefss.getString('token')}'
     });
-    print(response.statusCode);
-    print(widget.id);
 
     if (response.statusCode == 200) {
-      print("Succesfully Sold");
     }
   }
 
   deleteMethode(int id) async {
     prefss = await SharedPreferences.getInstance();
-    print(widget.id);
-    final url =
-        "https://pilotbazar.com/api/merchants/vehicles/products/$id/update/sold";
+    //  final body = {
+    //   "delete_id": 1,
+    // };
+    final url = "https://pilotbazar.com/api/merchants/vehicles/products/$id";
     final uri = Uri.parse(url);
-    final response = await http.put(uri, headers: {
+    final response = await http.delete(uri, headers: {
       'Accept': 'application/vnd.api+json',
       'Content-Type': 'application/vnd.api+json',
       'Authorization': 'Bearer ${prefss.getString('token')}'
     });
-    print(response.statusCode);
 
     if (response.statusCode == 200) {
       print("Succesfully Booked");
+      Navigator.pop(context);
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>C_BottomNavBaseScreen()), (route) => false);
     }
   }
 
@@ -1509,4 +1257,30 @@ class _C_ItemState extends State<C_Item> {
       setState(() {});
     }
   }
+
+  Container insidePopubButton(BuildContext context, String name) {
+    return Container(
+      height: 25,
+      padding: EdgeInsets.only(top: 5),
+      child: Row(
+        children: [
+          green10R,
+           SizedBox(width: 10),
+          Text(
+            name,
+            style: TextStyle(fontSize: 12, color: Colors.black87),
+          ),
+         
+          
+        ],
+      ),
+    );
+  }
+
+  Icon green10R = Icon(
+    Icons.circle,
+    color: Colors.green,
+    size: 10,
+  );
 }
+

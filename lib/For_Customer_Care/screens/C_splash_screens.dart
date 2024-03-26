@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:pilot_refresh/For_Customer_Care/screens/C_bottom_nav_base_screen.dart';
-import 'package:pilot_refresh/screens/auth/auth_utility.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 

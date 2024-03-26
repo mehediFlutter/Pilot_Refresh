@@ -431,53 +431,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                                               },
                                             ),
                                           ),
-                                          // Container(
-                                          //   height: 100,
-                                          //   width: double.infinity,
-                                          //   child: ListView.separated(
-                                          //     scrollDirection: Axis.horizontal,
-                                          //     itemCount:
-                                          //         ImageLinkList.length ?? 0,
-                                          //     itemBuilder: (context, index) {
-                                          //       return InkWell(
-                                          //         onTap: () {
-                                          //           final newPageIndex = index;
-                                          //           if (newPageIndex <=
-                                          //               ImageLinkList.length) {
-                                          //             _pageController
-                                          //                 .animateToPage(
-                                          //                     newPageIndex,
-                                          //                     duration: Duration(
-                                          //                         microseconds:
-                                          //                             300),
-                                          //                     curve: Curves
-                                          //                         .easeInOut);
-                                          //           }
-                                          //           setState(() {});
-                                          //           print(index);
-                                          //         },
-                                          //         child: ClipRRect(
-                                          //           borderRadius:
-                                          //               BorderRadius.circular(
-                                          //                   10),
-                                          //           child: Image.network(
-                                          //             'https://pilotbazar.com/storage/galleries/${ImageLinkList[index] ?? 'https://pilotbazar.com/storage/vehicles/${widget.detailsVehicleImageName.toString()}'}',
-                                          //             width: 100,
-                                          //             height: 100,
-                                          //             fit: BoxFit.cover,
-                                          //           ),
-                                          //         ),
-                                          //       );
-                                          //     },
-                                          //     separatorBuilder:
-                                          //         (BuildContext context,
-                                          //             int index) {
-                                          //       return SizedBox(
-                                          //         width: 10,
-                                          //       );
-                                          //     },
-                                          //   ),
-                                          // ),
+                                          
                                         ],
                                       ),
                                     ),
@@ -650,26 +604,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                       ],
                     ),
 
-                    // trailing: Column(
-                    //   mainAxisAlignment: MainAxisAlignment.center,
-                    //   children: [
-                    //     Text(
-                    //       "Code",
-                    //       style: Theme.of(context)
-                    //           .textTheme
-                    //           .bodyMedium!
-                    //           .copyWith(color: Colors.black, fontSize: 15),
-                    //     ),
-                    //     Expanded(
-                    //         child: Text(
-                    //       "PS-99",
-                    //       style: Theme.of(context)
-                    //           .textTheme
-                    //           .bodyMedium!
-                    //           .copyWith(color: Colors.black, fontSize: 10),
-                    //     )),
-                    //   ],
-                    // ),
+                    
                   ),
                 ),
                 SizedBox(
@@ -682,18 +617,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                           decorationColor: Colors.white,
                           decorationStyle: TextDecorationStyle.solid,
                         )),
-                //     RichText(
-                //   text: TextSpan(
-                //     text: 'Features',
-                //     style: TextStyle(
-                //       color: Colors.white,
-                //       fontSize: 20,
-                //       decoration: TextDecoration.underline,
-                //     ),
-                //   ),
-                // ),
-
-                // this is less feature and details
+                
                 Container(
                     width: double.infinity,
                     child: ListView.separated(
@@ -730,91 +654,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                       },
                     )),
 
-                // Container(
-                //   width: double.infinity,
-                //   height: size.height / 2.7,
-                //   child: Expanded(
-                //     child: Row(
-                //       mainAxisAlignment: MainAxisAlignment.start,
-                //       children: [
-                //         Expanded(
-                //           child: Column(
-                //             crossAxisAlignment: CrossAxisAlignment.start,
-                //             children: [
-                //               SizedBox(
-                //                 height: size.height / 40,
-                //               ),
-                //               features_unit_left_side(context, "Brand : ",
-                //                   widget.brandName.toString()),
-                //               features_unit_left_side(
-                //                   context, "Model : ", widget.model.toString()),
-                //               features_unit_left_side(context, "Engine : ",
-                //                   widget.engine.toString()),
-                //               features_unit_left_side(context, "Condition : ",
-                //                   widget.detailsCondition.toString()),
-                //               features_unit_left_side(context, "Mileage : ",
-                //                   widget.detailsMillege.toString()),
-                //               Row(
-                //                 children: [
-                //                   Text("Transmission : ",
-                //                       style: Theme.of(context)
-                //                           .textTheme
-                //                           .bodyMedium!
-                //                           .copyWith(fontSize: 12)),
-                //                   Expanded(
-                //                       child: Text(
-                //                           widget.detailsTransmission.toString(),
-                //                           style: Theme.of(context)
-                //                               .textTheme
-                //                               .bodyMedium!
-                //                               .copyWith(fontSize: 12))),
-                //                   SizedBox(
-                //                     height: 10,
-                //                   ),
-                //                 ],
-                //               ),
-                //               SizedBox(height: 20),
-                //               features_unit_left_side(
-                //                   context, "Color : ", widget.color.toString()),
-                //             ],
-                //           ),
-                //         ),
-                //         Expanded(
-                //           child: Align(
-                //             alignment: Alignment.topRight,
-                //             child: Column(
-                //               mainAxisSize: MainAxisSize.min,
-                //               children: [
-                //                 SizedBox(
-                //                   height: size.height / 50,
-                //                 ),
-                //                 features_unit_right_side(
-                //                     context,
-                //                     "Trim & Edition : ",
-                //                     widget.term_and_edition.toString()),
-                //                 features_unit_right_side(context, "Fuel : ",
-                //                     widget.detailsFuel.toString()),
-                //                 features_unit_right_side(context,
-                //                     "Skeleton  : ", widget.skeleton.toString()),
-                //                 features_unit_right_side(
-                //                     context,
-                //                     "Registration :",
-                //                     widget.registration.toString()),
-                //                 features_unit_right_side(context, "Grade : ",
-                //                     widget.detailsGrade.toString()),
-                //                 features_unit_right_side(
-                //                     context,
-                //                     "Manufacture : ",
-                //                     widget.detailsVehicleManufacture
-                //                         .toString()),
-                //               ],
-                //             ),
-                //           ),
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // ),
+               
                 SizedBox(
                   height: 10,
                 ),

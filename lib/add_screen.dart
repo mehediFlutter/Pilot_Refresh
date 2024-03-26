@@ -1,9 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
-import 'package:pilot_refresh/screens/home_vehicle.dart';
 
 class EditScreen extends StatefulWidget {
   final String? name;
@@ -28,7 +25,6 @@ class _EditScreenState extends State<EditScreen> {
   TextEditingController _priceEditingController = TextEditingController();
   TextEditingController _registrationEditingController =
       TextEditingController();
-  TextEditingController _manufactureEditingController = TextEditingController();
   TextEditingController _conditionEditingController = TextEditingController();
   TextEditingController _millegeEditingController = TextEditingController();
   @override

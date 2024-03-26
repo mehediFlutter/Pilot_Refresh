@@ -25,102 +25,29 @@ class _RegistrationState extends State<Registration> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(height: size.height/8,),
-                  // const Text(
-                  //   "Register",
-                  //   style: TextStyle(
-                  //       color: Colors.white,
-                  //       fontSize: 27,
-                  //       fontFamily: "AbhayaLibre"),
-                  // ),
-
-                  // Padding(
-                  //   padding: EdgeInsets.only(
-                  //       left: 60, right: 60, top: 20, bottom: size.height / 25),
-                  //   child: Row(
-                  //     children: [
-                  //       Text(
-                  //         "Login",
-                  //         style: TextStyle(
-                  //             color: Colors.white,
-                  //             fontSize: 16,
-                  //             fontFamily: 'Axiforma'),
-                  //       ),
-                  //       Spacer(),
-                  //       Text(
-                  //         "Registration",
-                  //         style: TextStyle(
-                  //             color: Colors.white,
-                  //             fontSize: 16,
-                  //             fontFamily: 'Axiforma'),
-                  //       )
-                  //     ],
-                  //   ),
-                  // ),
-
+                 
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       children: [
                         TextField(
-                          // scrollPadding: EdgeInsets.zero,
                           decoration: InputDecoration(
-                            // prefixIcon: Padding(
-                            //   padding: EdgeInsetsDirectional.only(
-                            //       start: 1.0, end: 30),
-                            //   // child: Icon(
-                            //   //   Icons.phone_android_outlined,
-                            //   //   color: Colors.white,
-                            //   //   size: 25,
-                            //   // ),
-                            // ),
-                            // suffixIcon: Icon(
-                            //   Icons.remove_red_eye_outlined,
-                            //   color: Colors.white,
-                            //   size: 30,
-                            // ),
+                           
                             hintText: "Phone Number",
                             hintStyle: Theme.of(context).textTheme.titleMedium,
                           ),
                         ),
                         SizedBox(height: 5),
                         TextField(
-                          // scrollPadding: EdgeInsets.zero,
                           decoration: InputDecoration(
-                            // prefixIcon: Padding(
-                            //   padding: EdgeInsetsDirectional.only(
-                            //       start: 1.0, end: 30),
-                            //   // child: Icon(
-                            //   //   Icons.account_circle_outlined,
-                            //   //   color: Colors.white,
-                            //   //   size: 25,
-                            //   // ),
-                            // ),
-                            // suffixIcon: Icon(
-                            //   Icons.remove_red_eye_outlined,
-                            //   color: Colors.white,
-                            //   size: 30,
-                            // ),
+                          
                             hintText: "Name",
                             hintStyle: Theme.of(context).textTheme.titleMedium,
                           ),
                         ),
                         TextField(
-                          // scrollPadding: EdgeInsets.zero,
                           decoration: InputDecoration(
-                            // prefixIcon: Padding(
-                            //   padding: EdgeInsetsDirectional.only(
-                            //       start: 1.0, end: 30),
-                            //   // child: Icon(
-                            //   //   Icons.account_circle_outlined,
-                            //   //   color: Colors.white,
-                            //   //   size: 25,
-                            //   // ),
-                            // ),
-                            // suffixIcon: Icon(
-                            //   Icons.remove_red_eye_outlined,
-                            //   color: Colors.white,
-                            //   size: 30,
-                            // ),
+                           
                             hintText: "Conpany Name",
                             hintStyle: Theme.of(context).textTheme.titleMedium,
                           ),
@@ -128,47 +55,17 @@ class _RegistrationState extends State<Registration> {
 
                         SizedBox(height: 5),
                         TextField(
-                          // scrollPadding: EdgeInsets.zero,
                           decoration: InputDecoration(
-                            // prefixIcon: Padding(
-                            //   padding: EdgeInsetsDirectional.only(
-                            //       start: 1.0, end: 30),
-                            //   // child: Icon(
-                            //   //   Icons.email_outlined,
-                            //   //   color: Colors.white,
-                            //   //   size: 25,
-                            //   // ),
-                            // ),
-                            // suffixIcon: Icon(
-                            //   Icons.remove_red_eye_outlined,
-                            //   color: Colors.white,
-                            //   size: 30,
-                            // ),
+                           
                             hintText: "Email",
                             hintStyle: Theme.of(context).textTheme.titleMedium,
                           ),
                         ),
-                        // const SizedBox(
-                        //   height: 20,
-                        // ),
+                      
                         SizedBox(height: 5),
                         TextField(
-                          // scrollPadding: EdgeInsets.zero,
                           decoration: InputDecoration(
-                            // prefixIcon: Padding(
-                            //   padding: EdgeInsetsDirectional.only(
-                            //       start: 1.0, end: 30),
-                            //   // child: Icon(
-                            //   //   Icons.lock_outline_sharp,
-                            //   //   color: Colors.white,
-                            //   //   size: 25,
-                            //   // ),
-                            // ),
-                            // suffixIcon: Icon(
-                            //   Icons.remove_red_eye_outlined,
-                            //   color: Colors.white,
-                            //   size: 30,
-                            // ),
+                          
                             hintText: "Password",
                             hintStyle: Theme.of(context).textTheme.titleMedium,
                           ),
@@ -177,27 +74,7 @@ class _RegistrationState extends State<Registration> {
                     ),
                   ),
                   SizedBox(height: 5),
-                  // TextField(
-                  //   // scrollPadding: EdgeInsets.zero,
-                  //   decoration: InputDecoration(
-                  //     prefixIcon: const Padding(
-                  //       padding:
-                  //           EdgeInsetsDirectional.only(start: 1.0, end: 30),
-                  //       // child: Icon(
-                  //       //   Icons.lock_outline_sharp,
-                  //       //   color: Colors.white,
-                  //       //   size: 25,
-                  //       // ),
-                  //     ),
-                  //     // suffixIcon: const Icon(
-                  //     //   Icons.remove_red_eye_outlined,
-                  //     //   color: Colors.white,
-                  //     //   size: 30,
-                  //     // ),
-                  //     hintText: " Confirm Password",
-                  //     hintStyle: Theme.of(context).textTheme.titleMedium,
-                  //   ),
-                  // ),
+              
                   SizedBox(
                     height: size.height / 40,
                   ),

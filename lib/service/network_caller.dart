@@ -45,12 +45,5 @@ class NetworkCaller {
     return NetworkResponse(false, -1, null);
   }
 
-  // Future<void> gotoLogin() async {
-  //   await AuthUtility.clearUserInfo();
-    
-  //   Navigator.pushAndRemoveUntil(
-  //       TaskManagerApp.globalKey.currentContext!,
-  //       MaterialPageRoute(builder: (context) => LoginScreen()),
-  //       (route) => false);
-  // }
+
 }

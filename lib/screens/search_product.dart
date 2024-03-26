@@ -19,12 +19,6 @@ class SearchProduct {
     final String? model;
 
 
-  // productCode,
-  // image,
-  // unitPrice,
-  // totalPrice,
-  // createAt,
-  // quantity;
 
   SearchProduct( 
      {
@@ -46,11 +40,6 @@ class SearchProduct {
     this.registration,
     this.grede,
     this.model,
-    // required this.productCode,
-    // required this.image,
-    // required this.unitPrice,
-    // required this.totalPrice,
-    // required this.createAt,
-    // required this.quantity
+
   });
 }

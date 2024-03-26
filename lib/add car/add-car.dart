@@ -1,7 +1,5 @@
 import 'dart:io';
 import 'dart:convert';
-import 'dart:ui';
-import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -139,11 +137,9 @@ class _AddNewCarState extends State<AddNewCar> {
   @override
   void initState() {
     super.initState();
-    String a = '';
     // setState(() {
     //   getColor();
     // });
-    String b = '';
     setState(() {
       getConditions();
     });
@@ -829,7 +825,6 @@ class _AddNewCarState extends State<AddNewCar> {
       'Content-Type': 'application/vnd.api+json',
       'Authorization': 'Bearer ${prefss.getString('token')}'
     };
-    String targetPath = '/storage/emulated/0/Download/';
 
     String CustomTargetPath = '';
     String directoryName = 'PilotBazar';

@@ -6,9 +6,7 @@ import 'package:http/http.dart';
 import 'package:pilot_refresh/For_Customer_Care/screens/C_bottom_nav_base_screen.dart';
 import 'package:pilot_refresh/const_color/border_color_radious.dart';
 import 'package:pilot_refresh/screens/auth/auth_utility.dart';
-import 'package:pilot_refresh/screens/auth/customer_care/customer_care_registration.dart';
 import 'package:pilot_refresh/screens/auth/login_model.dart';
-import 'package:pilot_refresh/screens/auth/new_registration_screen.dart';
 import 'package:pilot_refresh/screens/bottom_nav_base-screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -97,13 +95,7 @@ class _CustomerCareLoginState extends State<CustomerCareLogin> {
 
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login Success !!!!')));
 
-      // Navigator.push(
-      //     context,
-      //     MaterialPageRoute(
-      //         builder: (context) => C_BottomNavBaseScreen(
-      //             isLogedIn: prefss.getBool('isLogin'),
-      //             token: decodedBody['payload']?['token'].toString())
-      //             ));
+
 
       print("Login Success");
     }
@@ -111,61 +103,13 @@ class _CustomerCareLoginState extends State<CustomerCareLogin> {
        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login Faild Try Again !!!!')));
     }
 
-    // token = decodedBody['payload']['token'];
-    // await Navigator.pushAndRemoveUntil(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (context) => BottomNavBaseScreen(
-    //               token: token,
-    //             )),
-    //     (route) => false);
     myLoginInInProgress = false;
     if (mounted) {
       setState(() {});
     }
   }
 
-  // Future<void> login() async {
-  //   _loginInProgress = true;
-  //   if (mounted) {
-  //     setState(() {});
-  //   }
 
-  //   NetworkResponse response = await NetworkCaller().postRequest(
-  //       'https://pilotbazar.com/api/merchant/auth/login', <String, dynamic>{
-  //     "mobile": _mobileController.text,
-  //     "password": _passwordController.text
-  //   });
-  //   _loginInProgress = false;
-  //   if (mounted) {
-  //     setState(() {});
-  //   }
-  //   print("here 1 ?");
-  //   if (response.statusCode == 200) {
-  //     print("Login Success!!!!");
-  //     Map decodedBody = jsonDecode(response.body.toString());
-  //     // String token = decodedBody['token'];
-  //     // print("Token is");
-  //     // print(token);
-  //     // _mobileController.clear();
-  //     // _passwordController.clear();
-  //     token = decodedBody['payload']?['token'] ?? '';
-  //     // LoginModel model = LoginModel.fromJson(response.body!);
-  //     // await AuthUtility.saveUserInfo(model);
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(context)
-  //           .showSnackBar(SnackBar(content: Text("Login Success")));
-  //     }
-
-  //     Navigator.push(context,
-  //         MaterialPageRoute(builder: (context) => BottomNavBaseScreen()));
-  //   } else {
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(context)
-  //           .showSnackBar(SnackBar(content: Text("Login Faild!!")));
-  //     }
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -266,7 +210,6 @@ class _CustomerCareLoginState extends State<CustomerCareLogin> {
                               return null;
                             }
                             await myLogin();
-                            //  Navigator.push(context, MaterialPageRoute(builder: (context)=>C_BottomNavBaseScreen()));
                           },
                           child: Text(
                             "Login",
@@ -274,21 +217,7 @@ class _CustomerCareLoginState extends State<CustomerCareLogin> {
                           )),
                 ),
                 SizedBox(height: 15),
-                // Align(
-                //   alignment: Alignment.centerRight,
-                //   child: OutlinedButton(
-                //     onPressed: () {
-                //       Navigator.push(
-                //           context,
-                //           MaterialPageRoute(
-                //               builder: (context) => CustomerCareRegistration()));
-                //     },
-                //     child: Text(
-                //       "Customer Care Registration",
-                //       style: TextStyle(color: Colors.black87, fontSize: 13),
-                //     ),
-                //   ),
-                // ),
+               
                 TextButton(
                     onPressed: () async {
                       final bool isLoggedIn =

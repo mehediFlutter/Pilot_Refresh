@@ -9,8 +9,8 @@ List<FeatureDetailPair> extractFeatureDetails(List<dynamic> vehicleFeatures) {
   Map<String, List<String>> featureDetailsMap = {};
 
   for (var feature in vehicleFeatures) {
-    String featureTitle = feature['feature']['title'];
-    String detailTitle = feature['detail']['title'];
+    String featureTitle = feature['feature']['title']??'None';
+    String detailTitle = feature['detail']?['title']??'None';
 
     if (!featureDetailsMap.containsKey(featureTitle)) {
       featureDetailsMap[featureTitle] = [];

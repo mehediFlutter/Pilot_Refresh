@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -10,9 +9,7 @@ import 'package:pilot_refresh/screens/advance_edit_screen.dart';
 import 'package:pilot_refresh/advance/text_fild_select_box.dart';
 import 'package:pilot_refresh/screens/vehicle-details.dart';
 import 'package:pilot_refresh/unic_title_and_details_function_class.dart';
-import 'package:pilot_refresh/widget/image_class.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -355,187 +352,7 @@ class _ItemState extends State<Item> {
 
   TextStyle popubItem = TextStyle(color: Colors.black87, fontFamily: 'Roboto');
 
-// Share with Email
   bool emailInProgress = false;
-// Future<void> shareViaEmail(int id) async {
-//   prefss = await SharedPreferences.getInstance();
-//   try {
-//     Response response1 = await get(
-//       Uri.parse("https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"),
-//       headers: {
-//         'Accept': 'application/vnd.api+json',
-//         'Content-Type': 'application/vnd.api+json',
-//         'Authorization': 'Bearer ${prefss.getString('token')}'
-//       }
-//     );
-//     print(response1.statusCode);
-//     final Map<String, dynamic> decodedResponse1 = jsonDecode(response1.body);
-//     for (int b = 0; b < decodedResponse1['payload']['gallery'].length; b++) {
-//       ImageLink = decodedResponse1['payload']["gallery"][b]?['name'] ?? '';
-//       ImageLinkList.add(ImageLink);
-//     }
-//     List<XFile> showImageList = [];
-//     for (int y = 0; y < ImageLinkList.length; y++) {
-//       final uri = Uri.parse("https://pilotbazar.com/storage/galleries/${ImageLinkList[y]}");
-//       print("Image Taken");
-//       final response = await http.get(uri);
-//       final imageBytes = await response.bodyBytes;
-//       final tempDirectory = await getTemporaryDirectory();
-//       final tempFile = await File('${tempDirectory.path}/sharedImage$y.jpg').writeAsBytes(imageBytes);
-//       final image =await XFile(tempFile.path);
-//       showImageList.add(image);
-//     }
-//     print("Length is Unic title");
-//     print(unicTitle.length);
-//   //  String message ='hello';
-
-//     if (showImageList.isNotEmpty) {
-//       // Share all images with text
-//      await Share.shareXFiles(
-//   showImageList.map((image) => image as XFile).toList(),
-//   text: await 'hello',
-// );
-//       // Clear lists and reset state
-//       unicTitle.clear();
-//       details.clear();
-//       ImageLinkList.clear();
-//       showImageList.clear();
-//       setState(() {});
-//     } else {
-//       print("No images to share.");
-//     }
-//   } catch (error) {
-//     print("Error: $error");
-//   }
-// }
-
-  // Future<void> shareViaEmail(String id, {bool isMedia = false}) async {
-  //   prefss = await SharedPreferences.getInstance();
-  //   showImageList.clear();
-  //   emailInProgress = true;
-  //   setState(() {});
-  //   print('Start of emailInPRogress ${emailInProgress}');
-
-  //   Response? response1;
-
-  //   try {
-  //     if (prefss.getString('token') == null) {
-  //       response1 = await get(
-  //         Uri.parse(
-  //             "https://pilotbazar.com/api/clients/vehicles/products/$id/detail"),
-  //       );
-  //     } else {
-  //       response1 = await get(
-  //           Uri.parse(
-  //               "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"),
-  //           headers: {
-  //             'Accept': 'application/vnd.api+json',
-  //             'Content-Type': 'application/vnd.api+json',
-  //             'Authorization': 'Bearer ${prefss.getString('token')}'
-  //           });
-  //     }
-  //     print(response1.statusCode);
-  //     final Map<String, dynamic> decodedResponse1 = jsonDecode(response1!.body);
-  //     print("Shared via email methode ${imageInProgress}");
-
-  //     for (int b = 0; b < decodedResponse1['payload']['gallery'].length; b++) {
-  //       ImageLink = decodedResponse1['payload']["gallery"][b]?['name'] ?? '';
-  //       ImageLinkList.add(ImageLink);
-  //     }
-
-  //     print("From List Image Links are");
-  //     for (int c = 0; c < ImageLinkList.length; c++) {
-  //       print(ImageLinkList[c]);
-  //     }
-
-  //     //List<XFile> showImageList = [];
-  //     for (int y = 0; y < ImageLinkList.length; y++) {
-  //       print('loop of image in prpgress emailInPRogress ${emailInProgress}');
-  //       final uri = Uri.parse(
-  //           "https://pilotbazar.com/storage/galleries/${ImageLinkList[y]}");
-  //       final response = await http.get(uri);
-  //       final imageBytes = response.bodyBytes;
-  //       final tempDirectory = await getTemporaryDirectory();
-
-  //       final tempFile = await File('${tempDirectory.path}/sharedImage$y.jpg')
-  //           .writeAsBytes(imageBytes);
-
-  //       final image = XFile(tempFile.path);
-  //       showImageList.add(image);
-  //     }
-
-  //     print("Length is Unic title");
-  //     print(unicTitle.length);
-  //     final Map<String, dynamic> decodedResponseForFeatures =
-  //         jsonDecode(response1.body);
-  //     List<dynamic> vehicleFeatures =
-  //         decodedResponseForFeatures['payload']['vehicle_feature'];
-
-  //     List<FeatureDetailPair> featureDetailPairs =
-  //         extractFeatureDetails(vehicleFeatures);
-
-  //     for (var pair in featureDetailPairs) {
-  //       unicTitle.add(pair.featureTitle);
-  //       details.add(pair.detailTitles.join(', '));
-  //     }
-
-  //     print("details length is");
-  //     print(details.length);
-  //     print("End get details methode");
-  //     String message =
-  //         "${widget.vehiclaName},Manufacture: ${widget.manufacture}, ${widget.condition}, Registration:${widget.registration},Mileage: ${widget.nMillage},${isMedia ? '' : 'price:${widget.price}'} ";
-  //     print("length of unit title");
-  //     print(unicTitle.length);
-  //     String message2 = '';
-  //     for (int i = 0; i < details.length; i++) {
-  //       message2 += " ${details[i]}";
-  //       if (i < details.length - 1) {
-  //         message2 += ", "; // Add a comma and space if it's not the last index
-  //       }
-  //     }
-  //     setState(() {});
-  //     print(message2);
-  //     String message3 =
-  //         "\n\nOur HotLine Number: 0196-99-444-00\n Show More\n $detailsLink";
-  //     if (isMedia == true) {
-  //       message3 = '';
-  //       imageInProgress = false;
-  //       setState(() {});
-  //     }
-
-  //     if (showImageList.isNotEmpty) {
-  //       // Share all images with text
-  //       // await Share.shareXFiles(
-  //       //     showImageList.map((image) => image as XFile).toList(),
-  //       //     text: enterDetailsMethodeWithLotsOfDetails
-  //       //         ? message + message2 + message3
-  //       //         : message + message3
-  //       //     );
-  //       await Share.shareXFiles(
-  //         showImageList,
-  //       );
-
-  //       unicTitle.clear();
-  //       details.clear();
-  //       ImageLinkList.clear();
-  //       showImageList.clear();
-  //       enterDetailsMethodeWithLotsOfDetails = false;
-  //       if (mounted) {
-  //         setState(() {});
-  //       }
-  //       print("bool Whare via email loop ${imageInProgress}");
-  //     } else {
-  //       print("No images to share.");
-  //     }
-  //   } catch (error) {
-  //     print("Error: $error");
-  //   }
-  //   emailInProgress = false;
-  //   if (mounted) {
-  //     setState(() {});
-  //   }
-  //   print('End of emailInPRogress ${emailInProgress}');
-  // }
 
   Future<void> shareDetailsWithOneImage() async {
     imageInProgress = true;
@@ -602,7 +419,7 @@ class _ItemState extends State<Item> {
     }
 
     String message =
-        "${widget.vehiclaName},Manufacture: ${widget.manufacture}, ${widget.condition}, Registration:${widget.registration},Mileage: ${widget.nMillage},} ";
+        "${widget.vehiclaName},Manufacture: ${widget.manufacture}, ${widget.condition}, Registration:${widget.registration},Mileage: ${widget.nMillage} ";
     print("length of unit title");
     print(unicTitle.length);
     String message2 = '';
@@ -650,8 +467,6 @@ class _ItemState extends State<Item> {
 
     String message =
         "${widget.vehiclaName},Manufacture: ${widget.manufacture}, ${widget.condition}, Registration:${widget.registration},Mileage: ${widget.nMillage}, Price: ${getIntPreef > 0 ? widget.showAskingPrice! ? widget.price : widget.fixed_price : widget.new_price} ";
-    print("length of unit title");
-    print(unicTitle.length);
     String message2 = '';
     for (int i = 0; i < details.length; i++) {
       message2 += " ${details[i]}";
@@ -659,8 +474,8 @@ class _ItemState extends State<Item> {
         message2 += ", "; // Add a comma and space if it's not the last index
       }
     }
-    print(message2);
-    String message3 = "\nOut HotLine Number ${prefss.getString('mobileNumber')}\nShow More\n $detailsLink";
+    String message3 =
+        "\nOut HotLine Number ${prefss.getString('mobileNumber')}\nShow More\n $detailsLink";
 
     setState(() {});
     await Share.share(message + message2 + message3);
@@ -726,8 +541,6 @@ class _ItemState extends State<Item> {
   double? shareSize;
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-
     return InkWell(
       child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 5),
@@ -758,7 +571,11 @@ class _ItemState extends State<Item> {
                                         vehicleName: widget.vehiclaName,
                                         detailsVehicleImageName:
                                             "https://pilotbazar.com/storage/vehicles/${widget.imageName}",
-                                        price: widget.price,
+                                        price: (widget.showAskingPrice == false)
+                                            ? widget.fixed_price.toString()
+                                            : (getIntPreef > 0
+                                                ? widget.price.toString()
+                                                : widget.new_price.toString()),
                                         brandName: widget.brandName,
                                         engine: widget.engine,
                                         engines: widget.engines,
@@ -786,41 +603,12 @@ class _ItemState extends State<Item> {
                         ),
                       ),
                     ),
-
-                    /// when use inkWel then tap open a alart dialog and showing details code is
-                    /// // Alart Dialog is off now
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => AlartDialogClass(
-                    //       id: widget.id,
-                    //       vehicleName: widget.vehiclaName,
-                    //       brandName: widget.brandName,
-                    //       engine: widget.engine,
-                    //       detailsCondition: widget.condition,
-                    //       detailsMillege: widget.nMillage,
-                    //       detailsTransmission: widget.transmission,
-                    //       detailsFuel: widget.fuel,
-                    //       skeleton: widget.skeleton,
-                    //       registration: widget.registration,
-                    //       detailsVehicleManuConditioin:
-                    //           widget.manufacture.toString(),
-                    //       detailsVehicleManufacture:
-                    //           widget.manufacture.toString(),
-                    //     ),
-                    //   ),
-                    // );
                     subtitle: ListTile(
                       contentPadding: EdgeInsets.zero,
                       title: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          // (getIntPreef != 1)
-                          //     ? SizedBox(
-                          //         height: 0,
-                          //       )
-                          //     : SizedBox(),
                           Text(widget.vehiclaName.toString(),
                               style: Theme.of(context)
                                   .textTheme
@@ -828,10 +616,6 @@ class _ItemState extends State<Item> {
                                   .copyWith(fontSize: 8)),
                           Row(
                             children: [
-                              // Text(
-                              //   widget.myAskingPrice.toString(),
-                              //   style: TextStyle(color: Colors.white),
-                              // ),
                               Text(
                                 "R : ",
                                 style: Theme.of(context)
@@ -862,14 +646,11 @@ class _ItemState extends State<Item> {
                                     .bodyLarge!
                                     .copyWith(fontSize: 8),
                               ),
-
-                              //Text(products[x].id.toString()),
                               Text("m: ",
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge!
                                       .copyWith(fontSize: 8)),
-
                               Text(widget.onlyMileage.toString(),
                                   style: Theme.of(context)
                                       .textTheme
@@ -886,11 +667,6 @@ class _ItemState extends State<Item> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // (getIntPreef != 1)
-                              //     ? SizedBox(
-                              //         height: size.height / 220,
-                              //       )
-                              //     : SizedBox(),
                               Text(
                                 widget.available.toString(),
                                 style: Theme.of(context)
@@ -898,11 +674,6 @@ class _ItemState extends State<Item> {
                                     .bodyLarge!
                                     .copyWith(fontSize: 8),
                               ),
-                              // (getIntPreef != 1)
-                              //     ? SizedBox(
-                              //         height: 1,
-                              //       )
-                              //     : SizedBox(),
                               Row(
                                 //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
@@ -911,47 +682,39 @@ class _ItemState extends State<Item> {
                                           .textTheme
                                           .bodyLarge!
                                           .copyWith(fontSize: 10)),
-
-                                  //  getIntPreef>0? Text(widget.new_price.toString()): Text(
-                                  //        widget.price.toString(),
-
-                                  //       style: Theme.of(context)
-                                  //           .textTheme
-                                  //           .bodyLarge!
-                                  //           .copyWith(fontSize: 10)),
-
-                                  // Text(
-                                  //             widget.fixedOrAskingPrice.toString(),
-                                  //             style: Theme.of(context)
-                                  //                 .textTheme
-                                  //                 .bodyLarge!
-                                  //                 .copyWith(fontSize: 10),
-                                  //           ),
-
-                                  getIntPreef > 0
-                                      ? Text(
-                                          widget.price.toString(),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge!
-                                              .copyWith(fontSize: 10),
-                                        )
-                                      : Text(
-                                          widget.new_price.toString(),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge!
-                                              .copyWith(fontSize: 10),
-                                        ),
-
+                                  if (widget.showAskingPrice == false) ...{
+                                    Text(
+                                      widget.fixed_price.toString(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(fontSize: 10),
+                                    )
+                                  } else ...{
+                                    getIntPreef > 0
+                                        ? Text(
+                                            widget.price.toString(),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge!
+                                                .copyWith(fontSize: 10),
+                                          )
+                                        : Text(
+                                            widget.new_price.toString(),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge!
+                                                .copyWith(fontSize: 10),
+                                          ),
+                                  },
                                   Spacer(),
-                                  // Spacer(),
-                                  // (getIntPreef == 1)
-                                  //     ?
                                   (imageInProgress || emailInProgress)
                                       ? SizedBox(
-                                        height: 19,width: 19,
-                                        child: CircularProgressIndicator(strokeWidth: 3,))
+                                          height: 19,
+                                          width: 19,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 3,
+                                          ))
                                       : PopupMenuButton(
                                           child: Icon(
                                             Icons.share,
@@ -968,7 +731,7 @@ class _ItemState extends State<Item> {
                                                   Align(
                                                     alignment: Alignment.center,
                                                     child: Text(
-                                                      'Send as Visitor',
+                                                      'Send For Direct Buyer',
                                                       style: TextStyle(
                                                           color: Colors.black,
                                                           fontWeight:
@@ -990,13 +753,15 @@ class _ItemState extends State<Item> {
                                                       await shareDetailsWithOneImage();
                                                       Navigator.pop(context);
                                                     },
-                                                    child: insidePopubButton(context,
+                                                    child: insidePopubButton(
+                                                        context,
                                                         "Taka, Link, Details, Image  "),
                                                   ),
                                                   SizedBox(width: 10),
                                                   SizedBox(height: 10),
                                                   InkWell(
-                                                    child: insidePopubButton(context,
+                                                    child: insidePopubButton(
+                                                        context,
                                                         "Taka, Link, Details"),
                                                     onTap: () async {
                                                       Navigator.pop(context);
@@ -1026,20 +791,19 @@ class _ItemState extends State<Item> {
                                                     color: Colors.black,
                                                   ),
                                                   InkWell(
-                                                    child: insidePopubButton(context,
+                                                    child: insidePopubButton(
+                                                        context,
                                                         "All Images (শুধু ছবি)"),
                                                     onTap: () async {
                                                       Navigator.pop(context);
                                                       await shareAllImages();
-                                                      print(
-                                                          "I am  Taka, Link, Details");
+
                                                       Navigator.pop(context);
                                                     },
                                                   ),
                                                   SizedBox(height: 10),
                                                   InkWell(
                                                       onTap: () async {
-                                                        print("Onli image");
                                                         Navigator.pop(context);
 
                                                         await newGetDetails(
@@ -1055,165 +819,6 @@ class _ItemState extends State<Item> {
                                               ))
                                             ];
                                           }),
-
-                                  // : PopupMenuButton(
-
-                                  //   onSelected: (value) async {
-                                  //     if (value == 'details') {
-                                  //       await newGetDetails(
-                                  //           widget.id ?? 12);
-                                  //       await getLink(
-                                  //           widget.id.toString());
-                                  //       shareDetailsWithOneImage();
-                                  //     } else if (value == 'image') {
-                                  //       shareAllImages();
-                                  //     } else if (value == 'media') {
-                                  //       await newGetDetails(
-                                  //           widget.id ?? 12);
-                                  //       await getLink(
-                                  //           widget.id.toString());
-                                  //       await shareOnlyDetailsForMedia();
-                                  //     } else if (value == 'email') {
-                                  //       await newGetDetails(
-                                  //           widget.id ?? 12);
-                                  //       await getLink(
-                                  //           widget.id.toString());
-                                  //       await shareOnlyDetailsWithLink();
-                                  //     } else if (value ==
-                                  //         'Availability') {
-                                  //       await getAvailability();
-                                  //       showDialog(
-                                  //           context: context,
-                                  //           builder:
-                                  //               (BuildContext context) {
-                                  //             return AlertDialog(
-                                  //               backgroundColor:
-                                  //                   const Color
-                                  //                       .fromARGB(255,
-                                  //                       61, 59, 59),
-                                  //               title: Center(
-                                  //                   child: Text(
-                                  //                 "Availability",
-                                  //                 style:
-                                  //                     Theme.of(context)
-                                  //                         .textTheme
-                                  //                         .titleSmall,
-                                  //               )),
-                                  //               content: Container(
-                                  //                 height:
-                                  //                     double.infinity,
-                                  //                 width: 350,
-                                  //                 child:
-                                  //                     ListView.builder(
-                                  //                   primary: false,
-                                  //                   shrinkWrap: true,
-                                  //                   itemCount:
-                                  //                       availableResponseList
-                                  //                           .length,
-                                  //                   itemBuilder:
-                                  //                       (context,
-                                  //                           index) {
-                                  //                     final item =
-                                  //                         availableResponseList[
-                                  //                                 index]
-                                  //                             as Map;
-                                  //                     return Expanded(
-                                  //                       child: Expanded(
-                                  //                         child: Expanded(
-                                  //                             child: ElevatedButton(
-                                  //                                 onPressed: () async {
-                                  //                                   print("this is car id");
-                                  //                                   print(widget.id);
-                                  //                                   updateAvailable(item['id'],
-                                  //                                       index);
-                                  //                                   Navigator.pop(context);
-                                  //                                 },
-                                  //                                 style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(255, 97, 93, 90)),
-                                  //                                 child: Text(item['translate'][0]['title'].toString(), style: Theme.of(context).textTheme.bodySmall))),
-                                  //                       ),
-                                  //                     );
-                                  //                   },
-                                  //                 ),
-                                  //               ),
-                                  //               actions: <Widget>[
-                                  //                 IconButton(
-                                  //                   onPressed: () {
-                                  //                     Navigator.pop(
-                                  //                         context);
-                                  //                   },
-                                  //                   icon: Icon(
-                                  //                       Icons.close),
-                                  //                   color: Colors
-                                  //                       .white, // Set icon color
-                                  //                 ),
-                                  //               ],
-                                  //               contentPadding:
-                                  //                   EdgeInsets.only(
-                                  //                       top: 8,
-                                  //                       right: 8,
-                                  //                       bottom: 0,
-                                  //                       left: 8),
-                                  //             );
-                                  //           });
-                                  //     }
-                                  //   },
-                                  //   itemBuilder: (context) {
-                                  //     return [
-                                  //       //  Text(''),
-                                  //       PopupMenuItem(
-                                  //         // enabled: false,
-                                  //         padding: EdgeInsets.zero,
-                                  //         child: Center(
-                                  //             child: Text(
-                                  //                 "Send as Visitor")),
-                                  //         textStyle: popubItem,
-                                  //       ),
-
-                                  //       PopupMenuItem(
-                                  //         child: Text(
-                                  //             "Taka, Link, Detail, Image"),
-                                  //         value: 'details',
-                                  //         textStyle: popubItem,
-                                  //       ),
-                                  //       PopupMenuItem(
-                                  //         child: Text(
-                                  //             "Taka, Link, Detail"),
-                                  //         value: 'email',
-                                  //         textStyle: popubItem,
-                                  //       ),
-                                  //       PopupMenuItem(
-                                  //         child: Center(
-                                  //             child: Text(
-                                  //                 "Send as Media (মিডিয়া)")),
-                                  //         textStyle: popubItem,
-                                  //       ),
-
-                                  //       PopupMenuItem(
-                                  //         child: Text(
-                                  //             "All Images (শুধু ছবি)"),
-                                  //         value: 'image',
-                                  //         textStyle: popubItem,
-                                  //       ),
-
-                                  //       // PopupMenuItem(
-                                  //       //   child: Text(
-                                  //       //       "Send Details with Link (শুধু তথ্য) "),
-                                  //       //   value: 'email',
-                                  //       //   textStyle: popubItem,
-                                  //       // ),
-                                  //       PopupMenuItem(
-                                  //         child: Text(
-                                  //             "Details (শুধু তথ্য)"),
-                                  //         value: 'media',
-                                  //         textStyle: popubItem,
-                                  //       ),
-                                  //     ];
-                                  //   },
-                                  // ),
-                                  // : SizedBox(),
-
-                                  // popup menu
-
                                   (getIntPreef == 1) ? Spacer() : Container(),
                                   (getIntPreef == 1)
                                       ? PopupMenuButton(
@@ -1470,10 +1075,6 @@ class _ItemState extends State<Item> {
                                                 value: 'Sold',
                                                 textStyle: popubItem,
                                               ),
-                                              // PopupMenuItem(
-                                              //   child: Text("Edit"),
-                                              //   value: 'Edit',
-                                              // ),
                                               PopupMenuItem(
                                                 child: Text("Availability"),
                                                 value: 'Availability',
@@ -1548,12 +1149,8 @@ class _ItemState extends State<Item> {
       'Content-Type': 'application/vnd.api+json',
       'Authorization': 'Bearer ${prefss.getString('token')}'
     });
-    print(response.statusCode);
-    print(widget.id);
 
-    if (response.statusCode == 200) {
-      print("Succesfully Sold");
-    }
+    if (response.statusCode == 200) {}
   }
 
   deleteMethode(int id) async {
@@ -1561,7 +1158,6 @@ class _ItemState extends State<Item> {
     //  final body = {
     //   "delete_id": 1,
     // };
-    print(widget.id);
     final url = "https://pilotbazar.com/api/merchants/vehicles/products/$id";
     final uri = Uri.parse(url);
     final response = await http.delete(uri, headers: {
@@ -1569,7 +1165,6 @@ class _ItemState extends State<Item> {
       'Content-Type': 'application/vnd.api+json',
       'Authorization': 'Bearer ${prefss.getString('token')}'
     });
-    print(response.statusCode);
 
     if (response.statusCode == 200) {
       print("Succesfully Booked");
@@ -1668,13 +1263,11 @@ class _ItemState extends State<Item> {
       child: Row(
         children: [
           green10R,
-           SizedBox(width: 10),
+          SizedBox(width: 10),
           Text(
             name,
             style: TextStyle(fontSize: 12, color: Colors.black87),
           ),
-         
-          
         ],
       ),
     );
@@ -1686,64 +1279,3 @@ class _ItemState extends State<Item> {
     size: 10,
   );
 }
-
-//  Future<void> shareViaEmail(String id, {bool isMedia = false}) async {
-//     prefss = await SharedPreferences.getInstance();
-//     showImageList.clear();
-//     emailInProgress = true;
-//     setState(() {});
-//     print('Start of emailInPRogress ${emailInProgress}');
-//   Response? response1;
-//     try { if (prefss.getString('token') == null) { response1 = await get(
-//           Uri.parse(
-//               "https://pilotbazar.com/api/clients/vehicles/products/$id/detail"),
-//         );
-//       } else {
-//         response1 = await get(
-//             Uri.parse(
-//                 "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"),
-//             headers: {
-//               'Accept': 'application/vnd.api+json',
-//               'Content-Type': 'application/vnd.api+json',
-//               'Authorization': 'Bearer ${prefss.getString('token')}'
-//             });
-//       }
-//       print(response1.statusCode);
-//       final Map<String, dynamic> decodedResponse1 = jsonDecode(response1!.body);
-//       print("Shared via email methode ${imageInProgress}");
-//       for (int b = 0; b < decodedResponse1['payload']['gallery'].length; b++) {
-//         ImageLink = decodedResponse1['payload']["gallery"][b]?['name'] ?? '';
-//         ImageLinkList.add(ImageLink);
-//       }
-//       print("From List Image Links are");
-//     for (int y = 0; y < ImageLinkList.length; y++) {
-//         print('loop of image in prpgress emailInPRogress ${emailInProgress}');
-//         final uri = Uri.parse(
-//             "https://pilotbazar.com/storage/galleries/${ImageLinkList[y]}");
-//         final response = await http.get(uri);
-//         final imageBytes = response.bodyBytes;
-//         final tempDirectory = await getTemporaryDirectory();
-//         final tempFile = await File('${tempDirectory.path}/sharedImage$y.jpg')
-//             .writeAsBytes(imageBytes);final image = XFile(tempFile.path);showImageList.add(image);}
-//       final Map<String, dynamic> decodedResponseForFeatures =
-//           jsonDecode(response1.body);
-//       List<dynamic> vehicleFeatures =
-//           decodedResponseForFeatures['payload']['vehicle_feature'];
-//       List<FeatureDetailPair> featureDetailPairs =
-//           extractFeatureDetails(vehicleFeatures);
-//       for (var pair in featureDetailPairs) {
-//         unicTitle.add(pair.featureTitle);
-//         details.add(pair.detailTitles.join(', '));
-//       }    String message ='Hello'; print(unicTitle.length); String message2 = '';
-//       setState(() {}); print(message2);
-//       String message3 ="\n\nOur HotLine Number: 0196-99-444-00\n Show More\n $detailsLink";
-//       if (isMedia == true) {message3 = '';imageInProgress = false;setState(() {});}if (showImageList.isNotEmpty) {
-//             text: enterDetailsMethodeWithLotsOfDetails
-//                 ? message + message2 + message3: message + message3);        unicTitle.clear();
-//         details.clear();ImageLinkList.clear();
-//         showImageList.clear();enterDetailsMethodeWithLotsOfDetails = false;
-//         if (mounted) {setState(() {});}
-//         print("bool Whare via email loop ${imageInProgress}");} else { print("No images to share."); }} catch (error) {print("Error: $error");}
-//     emailInProgress = false;
-//     if (mounted) {
-//       setState(() {});}

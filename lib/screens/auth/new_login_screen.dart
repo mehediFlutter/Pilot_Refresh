@@ -3,13 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:pilot_refresh/For_Customer_Care/auth/customer_care_login.dart';
 import 'package:pilot_refresh/screens/auth/auth_utility.dart';
-import 'package:pilot_refresh/screens/auth/customer_care/customer_care_registration.dart';
 import 'package:pilot_refresh/screens/auth/login_model.dart';
-import 'package:pilot_refresh/screens/auth/new_registration_screen.dart';
-import 'package:pilot_refresh/service/network_caller.dart';
-import 'package:pilot_refresh/service/network_response.dart';
 import 'package:pilot_refresh/screens/bottom_nav_base-screen.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NewLoginScreen extends StatefulWidget {
@@ -24,7 +19,6 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
   TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> _globalKey = GlobalKey();
   String phone = '01969944400';
-  bool _loginInProgress = false;
   var token;
   var merchantId;
   var merchantName;
@@ -64,8 +58,8 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
           'Content-Type': 'application/vnd.api+json'
         },
         body: jsonEncode(body));
-        print("status code");
-        print(response.statusCode);
+    print("status code");
+    print(response.statusCode);
 
     if (response.statusCode == 200) {
       Map decodedBody = jsonDecode(response.body.toString());
@@ -89,63 +83,22 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
       await prefss.setBool('isLogin', true);
 
       print("Login Success");
-     
-    } 
+    }
     myLoginInInProgress = false;
     if (mounted) {
       setState(() {});
     }
 
-    if(response.statusCode==200){
-      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>BottomNavBaseScreen()), (route) => false);
-    }
-    else {
+    if (response.statusCode == 200) {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => BottomNavBaseScreen()),
+          (route) => false);
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("Error Phone number or Password try again!!!")));
     }
   }
-
-  // Future<void> login() async {
-  //   _loginInProgress = true;
-  //   if (mounted) {
-  //     setState(() {});
-  //   }
-
-  //   NetworkResponse response = await NetworkCaller().postRequest(
-  //       'https://pilotbazar.com/api/merchant/auth/login', <String, dynamic>{
-  //     "mobile": _mobileController.text,
-  //     "password": _passwordController.text
-  //   });
-  //   _loginInProgress = false;
-  //   if (mounted) {
-  //     setState(() {});
-  //   }
-  //   print("here 1 ?");
-  //   if (response.statusCode == 200) {
-  //     print("Login Success!!!!");
-  //     Map decodedBody = jsonDecode(response.body.toString());
-  //     // String token = decodedBody['token'];
-  //     // print("Token is");
-  //     // print(token);
-  //     // _mobileController.clear();
-  //     // _passwordController.clear();
-  //     token = decodedBody['payload']?['token'] ?? '';
-  //     // LoginModel model = LoginModel.fromJson(response.body!);
-  //     // await AuthUtility.saveUserInfo(model);
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(context)
-  //           .showSnackBar(SnackBar(content: Text("Login Success")));
-  //     }
-
-  //     Navigator.push(context,
-  //         MaterialPageRoute(builder: (context) => BottomNavBaseScreen()));
-  //   } else {
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(context)
-  //           .showSnackBar(SnackBar(content: Text("Login Faild!!")));
-  //     }
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -186,11 +139,26 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                     ),
                   ),
                   child: TextFormField(
+                    onChanged: (value) {
+                      // Check if the value entered does not start with "88"
+                      if (!value.startsWith("88")) {
+                        // If it doesn't start with "88", prepend "88" to the entered value
+                        mobileController.value =
+                            mobileController.value.copyWith(
+                          text: "88$value",
+                          selection:
+                              TextSelection.collapsed(offset: "88".length),
+                          // Set cursor position after "88"
+                        );
+                      }
+                    },
                     cursorColor: Colors.black,
-                    controller: mobileController,
-                    style:  Theme.of(context).textTheme.bodyMedium!.copyWith( fontSize: 15,color: Colors.black),
+                  //  controller: mobileController,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(fontSize: 15, color: Colors.black),
                     decoration: InputDecoration(
-                      
                       labelText: "Mobile No",
                       labelStyle: TextStyle(color: Colors.grey, fontSize: 13),
                     ),
@@ -221,7 +189,10 @@ class _NewLoginScreenState extends State<NewLoginScreen> {
                   child: TextFormField(
                     cursorColor: Colors.black,
                     controller: passwordController,
-                    style:  Theme.of(context).textTheme.bodyMedium!.copyWith( fontSize: 15,color: Colors.black),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(fontSize: 15, color: Colors.black),
                     decoration: InputDecoration(
                       labelText: "Password",
                       labelStyle: TextStyle(color: Colors.grey, fontSize: 13),

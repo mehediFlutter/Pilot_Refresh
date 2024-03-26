@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:pilot_refresh/product.dart';
-import 'package:pilot_refresh/service/network_caller.dart';
-import 'package:pilot_refresh/service/network_response.dart';
 
 class SearchByApi extends StatefulWidget {
   const SearchByApi({super.key});

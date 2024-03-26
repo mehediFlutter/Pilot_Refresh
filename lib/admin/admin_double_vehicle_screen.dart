@@ -270,10 +270,8 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
           //  print(newPrice);
         }
         //  List<Product> products = [];
-         newPrice = (e['fixed_price'] != null &&
-                e['fixed_price'].toInt() > 0)
-            ? (e['fixed_price'] +
-                (e['additional_price'] ?? 0))
+        newPrice = (e['fixed_price'] != null && e['fixed_price'].toInt() > 0)
+            ? (e['fixed_price'] + (e['additional_price'] ?? 0))
             : int.parse(e['price'].toString());
         setState(() {});
         products.add(Product(
@@ -287,7 +285,7 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
               e['mileages'].toString(),
           price: e['price'].toString() ?? '',
           purchase_price: e['purchase_price'].toString() ?? '',
-          fixed_price: e['fixed_price'].toString() ?? '',
+          fixed_price: e['fixed_price']?.toString() ?? e['price'].toString(),
           imageName: e['image']?['name'] ?? '',
           registration: e['registration'] ?? 'None',
           engine:
@@ -331,8 +329,7 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
 
   bool isLoading = false;
   int? newPrice;
-    bool showAskingPrice = true;
-
+  bool showAskingPrice = true;
 
   Future getProduct(int page) async {
     prefss = await SharedPreferences.getInstance();
@@ -375,15 +372,14 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
     for (i; i < getproductsList.length; i++) {
       print('length of this products');
       // print(decodedResponse['data'].length);
-      
-        newPrice = (getproductsList[i]['fixed_price'] != null &&
-                getproductsList[i]['fixed_price'].toInt() > 0)
-            ? (getproductsList[i]['fixed_price'] +
-                (getproductsList[i]['additional_price'] ?? 0))
-            : int.parse(getproductsList[i]['price'].toString());
-        setState(() {});
-      
-      
+
+      newPrice = (getproductsList[i]['fixed_price'] != null &&
+              getproductsList[i]['fixed_price'].toInt() > 0)
+          ? (getproductsList[i]['fixed_price'] +
+              (getproductsList[i]['additional_price'] ?? 0))
+          : int.parse(getproductsList[i]['price'].toString());
+      setState(() {});
+
       print(newPrice);
 
       products.add(
@@ -400,7 +396,8 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
           price: getproductsList[i]['price'].toString(),
           purchase_price:
               getproductsList[i]?['purchase_price'].toString() ?? '',
-          fixed_price: getproductsList[i]?['fixed_price'].toString() ?? '',
+          fixed_price: getproductsList[i]?['fixed_price']?.toString() ??
+              getproductsList[i]['price'].toString(),
           //price end
           imageName: getproductsList[i]['image']['name'],
           registration: getproductsList[i]['registration'] ?? 'None',
@@ -429,7 +426,6 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
           onlyMileage: getproductsList[i]['mileages'].toString() ?? '--',
           engines: getproductsList[i]?['engines'].toString() ?? '-',
           newPrice: newPrice.toString(),
-          
         ),
       );
     }
@@ -498,12 +494,12 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
     for (i; i < getproductsList.length; i++) {
       print('length of this products');
       // print(decodedResponse['data'].length);
-       newPrice = (getproductsList[i]['fixed_price'] != null &&
-                getproductsList[i]['fixed_price'].toInt() > 0)
-            ? (getproductsList[i]['fixed_price'] +
-                (getproductsList[i]['additional_price'] ?? 0))
-            : int.parse(getproductsList[i]['price'].toString());
-        setState(() {});
+      newPrice = (getproductsList[i]['fixed_price'] != null &&
+              getproductsList[i]['fixed_price'].toInt() > 0)
+          ? (getproductsList[i]['fixed_price'] +
+              (getproductsList[i]['additional_price'] ?? 0))
+          : int.parse(getproductsList[i]['price'].toString());
+      setState(() {});
       searchProducts.add(
         Product(
           vehicleName: getproductsList[i]['translate'][0]['title'],
@@ -520,8 +516,9 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
           //price here
           price: getproductsList[i]['price'].toString() ?? '',
           purchase_price:
-              getproductsList[i]?['purchase_price'].toString() ?? '',
-          fixed_price: getproductsList[i]?['fixed_price'].toString() ?? '',
+              getproductsList[i]?['purchase_price'].toString() ?? '0',
+          fixed_price: getproductsList[i]?['fixed_price']?.toString() ??
+              getproductsList[i]['price'].toString(),
           //price end
           imageName: getproductsList[i]['image']['name'],
           registration: getproductsList[i]['registration'] ?? 'None',
@@ -549,7 +546,7 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
           engine_id: getproductsList[i]?['engine_id'].toString() ?? '12',
           onlyMileage: getproductsList[i]['mileages'].toString() ?? '--',
           engines: getproductsList[i]?['engines'].toString() ?? '-',
-           newPrice: newPrice.toString(),
+          newPrice: newPrice.toString(),
         ),
       );
     }
@@ -648,15 +645,18 @@ class _DoublVehicleState extends State<AdminDoublVehicle> {
                       )
                     : Column(
                         children: [
-                          (getIntPreef == 1)
+                          (getIntPreef >= 1)
                               ? AskingFixedAndStockList(
-                                  askingPriceFunction: () {                              
+                                  askingPriceFunction: () {
                                     showAskingPrice = true;
+                                    print("Asking Price is pressed");
                                     setState(() {});
                                   },
-                                  fixedPriceFunction: () {                               
+                                  fixedPriceFunction: () {
                                     showAskingPrice = false;
+                                    print("FixedPrice ");
                                     setState(() {});
+                                    if (showAskingPrice == false) {}
                                   },
                                   stockListFunction: () {
                                     print("StockList Price Function is called");

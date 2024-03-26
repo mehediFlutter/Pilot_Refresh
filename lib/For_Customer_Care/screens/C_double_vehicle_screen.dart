@@ -9,8 +9,6 @@ import 'package:pilot_refresh/For_Customer_Care/screens/C_item.dart';
 import 'package:pilot_refresh/admin/asking_fixed_stockList.dart';
 import 'package:pilot_refresh/item_class.dart';
 import 'package:pilot_refresh/product.dart';
-import 'package:pilot_refresh/widget/end_drawer.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -68,7 +66,6 @@ class _DoublVehicleState extends State<C_AdminDoublVehicle> {
     _scrollController.addListener(_listenToScroolMoments);
 
     searchController.addListener(() {
-      // Clear the searchProducts list when the text field is empty
       if (searchController.text.isEmpty) {
         page = 1;
         i = 0;
@@ -77,7 +74,7 @@ class _DoublVehicleState extends State<C_AdminDoublVehicle> {
         getProduct(page);
         setState(() {});
       }
-      _listenToScroolMoments;
+     // _listenToScroolMoments;
     });
 
     setState(() {});
@@ -579,27 +576,27 @@ class _DoublVehicleState extends State<C_AdminDoublVehicle> {
               children: [
                 Column(
                   children: [
-                    (getIntPreef == 1)
-                        ? AskingFixedAndStockList(
-                            askingPriceFunction: () {
-                              print("Asking Price function is called");
-                              updateAskingPriceFunction();
-                              askingPriceInProgress = false;
-                              setState(() {});
-                              print(askingPriceInProgress);
-                            },
-                            fixedPriceFunction: () {
-                              print("Fixed Price Function is called");
-                              askingPriceInProgress = true;
-                              updateFixedPriceFunction();
-                              setState(() {});
-                              print(askingPriceInProgress);
-                            },
-                            stockListFunction: () {
-                              print("StockList Price Function is called");
-                            },
-                          )
-                        : SizedBox(),
+                    // (getIntPreef == 1)
+                    //     ? AskingFixedAndStockList(
+                    //         askingPriceFunction: () {
+                    //           print("Asking Price function is called");
+                    //           updateAskingPriceFunction();
+                    //           askingPriceInProgress = false;
+                    //           setState(() {});
+                    //           print(askingPriceInProgress);
+                    //         },
+                    //         fixedPriceFunction: () {
+                    //           print("Fixed Price Function is called");
+                    //           askingPriceInProgress = true;
+                    //           updateFixedPriceFunction();
+                    //           setState(() {});
+                    //           print(askingPriceInProgress);
+                    //         },
+                    //         stockListFunction: () {
+                    //           print("StockList Price Function is called");
+                    //         },
+                    //       )
+                    //     : SizedBox(),
                     Expanded(
                       child: RefreshIndicator(
                         onRefresh: () async {
@@ -622,7 +619,7 @@ class _DoublVehicleState extends State<C_AdminDoublVehicle> {
                                   const EdgeInsets.symmetric(horizontal: 3),
                               child: C_Item(
                                 isLoggedIn: widget.isLogedIn,
-                                myAskingPrice: myBoolValue,
+                              //  myAskingPrice: myBoolValue,
                                 id: products[index + j].id!,
                                 imageName:
                                     products[index + j].imageName.toString(),

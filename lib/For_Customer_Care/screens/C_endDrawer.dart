@@ -10,8 +10,8 @@ import 'package:pilot_refresh/screens/marcent_dash_board.dart';
 import 'package:pilot_refresh/widget/drawer_item_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class EndDrawer extends StatefulWidget {
-  const EndDrawer({
+class C_EndDrawer extends StatefulWidget {
+  const C_EndDrawer({
     super.key,
     required this.mounted,
   });
@@ -19,10 +19,10 @@ class EndDrawer extends StatefulWidget {
   final bool mounted;
 
   @override
-  State<EndDrawer> createState() => _EndDrawerState();
+  State<C_EndDrawer> createState() => _C_EndDrawerState();
 }
 
-class _EndDrawerState extends State<EndDrawer> {
+class _C_EndDrawerState extends State<C_EndDrawer> {
   int getIntPreef = 0;
 late SharedPreferences pre;
 
@@ -54,7 +54,7 @@ Future<void> getPreffs() async {
     return Align(
       alignment: Alignment.topRight,
       child: SizedBox(
-        height: (getIntPreef==1 || getIntPreef>=0)?280:215,     
+        height: (getIntPreef==1 || getIntPreef>=0)?300:215,     
         width: 200,
         child: Drawer(
           backgroundColor: Color(0xFF333333),
@@ -74,48 +74,30 @@ Future<void> getPreffs() async {
                                 builder: (context) => MarchentDashBoard()));
                       },
                     ),
-                  (getIntPreef==1 || getIntPreef>=0)?  DrawerItemList(
-                      text: 'Add New Car',
-                      icon: Icon(Icons.add_box_sharp),
-                      onTapFunction: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AddNewCar()));
-                      },
-                    ):SizedBox(),
+                  // (getIntPreef==1 || getIntPreef>=0)?  DrawerItemList(
+                  //     text: 'Add New Car',
+                  //     icon: Icon(Icons.add_box_sharp),
+                  //     onTapFunction: () {
+                  //       Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => AddNewCar()));
+                  //     },
+                  //   ):SizedBox(),
                    
-                   (getIntPreef !=1)?  DrawerItemList(
-                      text: 'Merchent Login',
-                      icon: Icon(Icons.login),
-                      onTapFunction: () {
-                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>NewLoginScreen()), (route) => false);
-                      },
-                    ):SizedBox(),
-                   (getIntPreef !=1)?  DrawerItemList(
+             
+                   DrawerItemList(
                       text: 'Customer Care Login',
                       icon: Icon(Icons.login),
                       onTapFunction: () {
                         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>CustomerCareLogin()), (route) => false);
                       },
-                    ):SizedBox(),
-                  (getIntPreef ==1 || getIntPreef>=0)?   DrawerItemList(
-                      text: 'Merchent Logout',
-                      icon: Icon(Icons.logout),
-                      onTapFunction: () {
-                        LogOutAlartDialog().showAlertDialog(context);
-                      },
-                    ):SizedBox(),
+                    ),
+                 
                     
-                     (getIntPreef==1 || getIntPreef>=0)? DrawerItemList(text: 'Create Customar Care',
-                      icon: Icon(Icons.person_add), onTapFunction: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>CustomerCareRegistration()));
-                      }):SizedBox(),
+                    
 
-                    //  (getIntPreef==1 || getIntPreef>=0)? DrawerItemList(text: 'Customar care Details',
-                    //   icon: Icon(Icons.note), onTapFunction: (){
-                    //     Navigator.push(context, MaterialPageRoute(builder: (context)=>CustomerCareDetails()));
-                    //   }):SizedBox(),
+                   
 
                       // DrawerItemList(text: 'Calculate Car Price',
                       // icon: Icon(Icons.calculate), onTapFunction: (){

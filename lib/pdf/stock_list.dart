@@ -802,26 +802,7 @@ class _StockListState extends State<StockList> {
                   'N.B Green Features will be Send with Your Stock List',
                   style: TextStyle(fontSize: 12),
                 ),
-                // Expanded(
-                //   child: Container(
-                //     alignment: Alignment.bottomLeft,
-                //     child: Wrap(
-                //       spacing: 5.0, // Adjust spacing as needed
-                //       runSpacing: 0, // Adjust run spacing as needed
-                //       children: List.generate(
-                //         stockKeyList.length,
-                //         (index) {
-                //           return Padding(
-                //             padding: const EdgeInsets.all(8.0),
-                //             child: Text(
-                //               stockKeyList[index],
-                //             ),
-                //           );
-                //         },
-                //       ),
-                //     ),
-                //   ),
-                // ),
+         
                
               ],
             ),

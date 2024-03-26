@@ -42,6 +42,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
   late String toki;
   bool _isDeviceConnected = false;
   bool _isAlertShown = false;
+  bool showAskingPrice = true;
   late StreamSubscription<ConnectivityResult> _subscription;
 
   int getIntPreef = 0;
@@ -266,9 +267,12 @@ class _HomeVehicleState extends State<HomeVehicle> {
     }
   }
 
-  void getNewProduct(int page) async {
-    prefss = await SharedPreferences.getInstance();
+  getNewProduct(int page) async {
+    print("I am new products methode");
+    print("Page");
+    print(page);
     _getNewProductinProgress = true;
+    // searchProductsIsEmpty = false;
     if (mounted) {
       setState(() {});
     }
@@ -276,22 +280,23 @@ class _HomeVehicleState extends State<HomeVehicle> {
     if (prefss.getString('token') == null) {
       response = await get(
         Uri.parse(
-            "https://pilotbazar.com/api/clients/vehicles/products?page=$page"),
+            'https://pilotbazar.com/api/clients/vehicles/products?page=$page'),
       );
     } else {
       response = await get(
         Uri.parse(
-            "https://pilotbazar.com/api/merchants/vehicles/products?page=$page"),
+            'https://pilotbazar.com/api/merchants/vehicles/products?page=$page'),
         headers: {
           'Accept': 'application/vnd.api+json',
           'Content-Type': 'application/vnd.api+json',
-          'Authorization': 'Bearer ${prefss.getString('token')}',
+          'Authorization': 'Bearer ${prefss.getString('token')}'
         },
       );
     }
+
     //https://pilotbazar.com/api/vehicle?page=0
     //https://crud.teamrabbil.com/api/v1/ReadProduct
-    print(response.statusCode);
+    print(response!.statusCode);
     final Map<String, dynamic> decodedResponse1 = jsonDecode(response.body);
     final Map<String, dynamic> decodedResponse = decodedResponse1['payload'];
     if (decodedResponse['data'].isEmpty) {
@@ -303,6 +308,28 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
     if (response.statusCode == 200) {
       decodedResponse['data'].forEach((e) {
+        if (decodedResponse['data'].isEmpty) {
+          _getNewProductinProgress = false;
+          if (mounted) {
+            setState(() {});
+          }
+        }
+        if (prefss.getString('token') == null) {
+          newPrice = (e['fixed_price'] != null && e['fixed_price'] > 0)
+              ? (e['fixed_price'] + (e['additional_price'] ?? 0))
+              : e['price'];
+          //  print(newPrice);
+          setState(() {});
+        } else {
+          newPrice = e['price'];
+          setState(() {});
+          //  print(newPrice);
+        }
+        //  List<Product> products = [];
+        newPrice = (e['fixed_price'] != null && e['fixed_price'].toInt() > 0)
+            ? (e['fixed_price'] + (e['additional_price'] ?? 0))
+            : int.parse(e['price'].toString());
+        setState(() {});
         products.add(Product(
           vehicleName: e['translate'][0]['title'],
           vehicleNameBangla: e['translate'][1]['title'],
@@ -311,41 +338,47 @@ class _HomeVehicleState extends State<HomeVehicle> {
           manufacture: e['manufacture'] ?? '',
           condition: e['condition']['translate'][0]?['title'] ?? '',
           mileage: e['mileage']?['translate'][0]?['title'].toString() ??
-              e['mileages'].toString() ??
-              '--',
-          price: e['price'].toString(),
+              e['mileages'].toString(),
+          price: e['price'].toString() ?? '',
           purchase_price: e['purchase_price'].toString() ?? '',
-          fixed_price: e['fixed_price'].toString() ?? '',
+          fixed_price: e['fixed_price']?.toString() ?? e['price'].toString(),
           imageName: e['image']?['name'] ?? '',
           registration: e['registration'] ?? 'None',
-          engine: e['engine']?['translate'][0]?['title'].toString() ?? '',
+          engine:
+              e['engine']?['translate'][0]?['title'] ?? e['engines'].toString(),
           brandName: e['brand']?['translate'][0]?['title'] ?? '',
           transmission: e['transmission']?['translate'][0]?['title'] ?? '',
           fuel: e['fuel']?['translate'][0]?['title'] ?? '',
           skeleton: e['skeleton']?['translate'][0]?['title'] ?? '',
           available: e['available']?['translate'][0]?['title'] ?? '',
-          code: e['code'].toString() ?? '',
+          code: e['code'] ?? '',
           carColor: e['color']['translate'][0]['title'] ?? 'None',
           edition: e['edition']['translate'][0]['title'] ?? 'None',
           model: e['carmodel']?['translate'][0]?['title'] ?? '',
           grade: e['grade']?['translate'][0]?['title'] ?? 'none',
-          engineNumber: e['engine_number'].toString() ?? '--',
-          chassisNumber: e['chassis_number'].toString() ?? '--',
+          engineNumber: e['engine_number'] ?? '--',
+          chassisNumber: e['chassis_number'] ?? '--',
           video: e['video'] ?? 'No Video',
           engine_id: e['engine_id'].toString() ?? '--',
           onlyMileage: e['mileages'].toString() ?? '--',
           engines: e['engines'].toString() ?? '-',
+          newPrice: newPrice.toString(),
         ));
       });
 
       x = j + 1;
     }
+    for (var item in products) {
+      print(item.newPrice.toString());
+    }
     _getNewProductinProgress = false;
     if (mounted) {
       setState(() {});
     }
-    print("Page Number is");
-    print(page);
+    if (decodedResponse['data'].isEmpty) {
+      _getNewProductinProgress = false;
+      setState(() {});
+    }
   }
 
   bool isLoading = false;
@@ -467,38 +500,6 @@ class _HomeVehicleState extends State<HomeVehicle> {
   static List unicTitle = [];
   static List details = [];
   static List imageLInk = [];
-
-  // Future getDetails(int id) async {
-  //   _getDataInProgress = true;
-  //   if (mounted) {
-  //     setState(() {});
-  //   }
-  //   Response response = await get(Uri.parse(
-  //       "https://pilotbazar.com/api/merchants/vehicles/products/$id/detail"));
-  //   //https://pilotbazar.com/api/vehicle?page=0
-  //   //https://crud.teamrabbil.com/api/v1/ReadProduct
-  //   print(response.statusCode);
-  //   final Map<String, dynamic> decodedResponse = jsonDecode(response.body);
-  //   List<dynamic> vehicleFeatures =
-  //       decodedResponse['payload']['vehicle_feature'];
-
-  //   List<FeatureDetailPair> featureDetailPairs =
-  //       extractFeatureDetails(vehicleFeatures);
-
-  //   for (var pair in featureDetailPairs) {
-  //     unicTitle.add(pair.featureTitle);
-  //     details.add(pair.detailTitles.join(', '));
-  //   }
-
-  //   // get image link in list
-
-  //   _getDataInProgress = false;
-  //   if (mounted) {
-  //     setState(() {});
-  //   }
-
-  //   //return unicTitle+details;
-  // }
 
   Future getDetails(int id) async {
     prefss = await SharedPreferences.getInstance();
@@ -684,6 +685,8 @@ class _HomeVehicleState extends State<HomeVehicle> {
             "https://pilotbazar.com/storage/galleries/${ImageLinkList[y]}");
         final response = await http.get(uri);
         final imageBytes = response.bodyBytes;
+        //  print("Body bite");
+        print(response);
         final tempDirectory = await getTemporaryDirectory();
         print("hello");
         final tempFile = await File('${tempDirectory.path}/sharedImage$y.jpg')
@@ -730,6 +733,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
       mileage,
       price,
       newPrice,
+      fixed_price,
       detailsLink) async {
     imageInProgress = true;
     if (mounted) {
@@ -756,7 +760,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
     final image = XFile(tempFile.path);
 
     String message =
-        "$vehicleName,Manufacture: $manufacture, $condition, Registration:$registration,Mileage: $mileage,price:${getIntPreef >= 0 ? price : newPrice} ";
+        "$vehicleName,Manufacture: $manufacture, $condition, Registration:$registration,Mileage: $mileage,price:${getIntPreef > 0 ? showAskingPrice ?price : fixed_price : newPrice} ";
     print("length of unit title");
     print(unicTitle.length);
     String message2 = '';
@@ -797,6 +801,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
       mileage,
       price,
       newPrice,
+      fixed_price,
       detailsLink) async {
     imageInProgress = true;
     if (mounted) {
@@ -816,8 +821,8 @@ class _HomeVehicleState extends State<HomeVehicle> {
 
     //await getDetails(widget.id);
 
-    String message =
-        "$vehicleName,Manufacture: $manufacture, $condition, Registration:$registration,Mileage: $mileage,price:${getIntPreef >= 0 ? price : newPrice} ";
+    String message =                                                                                    // price:${getIntPreef > 0 ? showAskingPrice ?price : fixed_price : newPrice}
+        "$vehicleName,Manufacture: $manufacture, $condition, Registration:$registration,Mileage: $mileage,price:${getIntPreef >= 0 ? showAskingPrice? price:fixed_price: newPrice} ";
     print("length of unit title");
     print(unicTitle.length);
     String message2 = '';
@@ -1152,6 +1157,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
   TextEditingController searchController = TextEditingController();
   // Search
   Future<void> search(String value) async {
+    print("I am search Products methodes");
     searchProducts.clear();
     products.clear();
     if (searchController.text.isEmpty) {
@@ -1190,60 +1196,47 @@ class _HomeVehicleState extends State<HomeVehicle> {
               (getproductsList[i]['additional_price'] ?? 0))
           : int.parse(getproductsList[i]['price'].toString());
       products.add(Product(
-        vehicleName: decodedResponse['data'][i]['translate'][0]['title'],
-        vehicleNameBangla: decodedResponse['data'][i]['translate'][1]['title'],
-        manufacture: decodedResponse['data'][i]['manufacture'],
-        slug: decodedResponse['data'][i]['slug'],
-        id: decodedResponse['data'][i]['id'],
-        condition: decodedResponse['data'][i]['condition']['translate'][0]
-            ['title'],
-        mileage: decodedResponse['data'][i]['mileage']?['translate'][0]
-                ?['title'] ??
-            '--',
-        //price here
-        price: decodedResponse['data'][i]['price'].toString() ?? '',
-        purchase_price:
-            decodedResponse['data'][i]?['purchase_price'].toString() ?? '',
-        fixed_price:
-            decodedResponse['data'][i]?['fixed_price'].toString() ?? '',
-        //price end
-        imageName: decodedResponse['data'][i]['image']['name'],
-        registration: decodedResponse['data'][i]['registration'] ?? 'None',
-        engine: decodedResponse['data'][i]['engine']?['translate'][0]['title']
+        vehicleName: getproductsList[i]['translate'][0]['title'],
+        vehicleNameBangla: getproductsList[i]['translate'][1]['title'],
+        manufacture: getproductsList[i]['manufacture'],
+        slug: getproductsList[i]['slug'],
+        id: getproductsList[i]['id'],
+        condition: getproductsList[i]['condition']?['translate'][0]?['title'] ??
+            "Condition None",
+        mileage: getproductsList[i]['mileage']?['translate'][0]?['title']
                 .toString() ??
-            decodedResponse['data'][i]['engines'],
-        brandName: decodedResponse['data'][i]['brand']['translate'][0]['title'],
-        transmission: decodedResponse['data'][i]['transmission']['translate'][0]
+            getproductsList[i]['mileages'].toString(),
+        //price here
+        price: getproductsList[i]['price'].toString() ?? '',
+        purchase_price: getproductsList[i]?['purchase_price'].toString() ?? '',
+        fixed_price: getproductsList[i]?['fixed_price'].toString() ?? '',
+        //price end
+        imageName: getproductsList[i]['image']['name'],
+        registration: getproductsList[i]['registration'] ?? 'None',
+        engine: getproductsList[i]?['engines'].toString() ?? '--',
+        brandName: getproductsList[i]['brand']['translate'][0]['title'],
+        transmission: getproductsList[i]['transmission']['translate'][0]
             ['title'],
-        fuel: decodedResponse['data'][i]['fuel']['translate'][0]['title'],
-        skeleton: decodedResponse['data'][i]['skeleton']['translate'][0]
-            ['title'],
-        available: decodedResponse['data'][i]?['available']?['translate'][0]
-                ?['title'] ??
-            '',
-        code: decodedResponse['data'][i]?['code'].toString() ?? '',
-        //model: decodedResponse['data'],
-        carColor: decodedResponse['data'][i]['color']?['translate'][0]
-                ['title'] ??
-            'None',
-        edition: decodedResponse['data'][i]['edition']['translate'][0]
-                ['title'] ??
-            'None',
-        model: decodedResponse['data'][i]?['carmodel']?['translate'][0]
-                ?['title'] ??
-            '',
-
-        grade: decodedResponse['data'][i]?['grade']?['translate'][0]
-                ?['title'] ??
-            '',
-        engineNumber:
-            decodedResponse['data'][i]['engine_number'].toString() ?? '--',
-        chassisNumber:
-            decodedResponse['data'][i]['chassis_number'].toString() ?? '--',
-        video: decodedResponse['data'][i]?['video'] ?? 'No Video',
-        engine_id: decodedResponse['data'][i]?['engine_id'].toString() ?? '12',
-        onlyMileage: decodedResponse['data'][i]['mileages'].toString() ?? '--',
-        engines: decodedResponse['data'][i]?['engines'].toString() ?? '-',
+        fuel: getproductsList[i]['fuel']['translate'][0]['title'],
+        skeleton: getproductsList[i]['skeleton']['translate'][0]['title'],
+        available:
+            getproductsList[i]?['available']?['translate'][0]?['title'] ?? '',
+        code: getproductsList[i]?['code'].toString() ?? '',
+        //model: getproductsList,
+        carColor:
+            getproductsList[i]['color']?['translate'][0]['title'] ?? 'None',
+        edition:
+            getproductsList[i]['edition']['translate'][0]['title'] ?? 'None',
+        model: getproductsList[i]?['carmodel']?['translate'][0]?['title'] ?? '',
+        grade:
+            getproductsList[i]?['grade']?['translate'][0]?['title'] ?? 'none',
+        engineNumber: getproductsList[i]['engine_number'] ?? 'none',
+        chassisNumber: getproductsList[i]['chassis_number'] ?? 'none',
+        video: getproductsList[i]?['video'] ?? 'No Video',
+        engine_id: getproductsList[i]?['engine_id'].toString() ?? '12',
+        onlyMileage: getproductsList[i]['mileages'].toString() ?? '--',
+        engines: getproductsList[i]?['engines'].toString() ?? '-',
+        newPrice: newPrice.toString(),
       ));
     }
     products.addAll(searchProducts);
@@ -1368,21 +1361,18 @@ class _HomeVehicleState extends State<HomeVehicle> {
               children: [
                 Column(
                   children: [
-                    (getIntPreef == 1)
+                    (getIntPreef >= 1)
                         ? AskingFixedAndStockList(
                             askingPriceFunction: () {
-                              print("Asking Price function is called");
-                              updateAskingPriceFunction();
-                              askingPriceInProgress = false;
+                              print("Asking Price Function is called");
+
+                              showAskingPrice = true;
                               setState(() {});
-                              print(askingPriceInProgress);
                             },
                             fixedPriceFunction: () {
                               print("Fixed Price Function is called");
-                              askingPriceInProgress = true;
-                              updateFixedPriceFunction();
+                              showAskingPrice = false;
                               setState(() {});
-                              print(askingPriceInProgress);
                             },
                             stockListFunction: () {
                               print("StockList Price Function is called");
@@ -1459,7 +1449,11 @@ class _HomeVehicleState extends State<HomeVehicle> {
                           id: products[x].id,
                           detailsVehicleImageName:
                               "https://pilotbazar.com/storage/vehicles/${products[x].imageName}",
-                          price: products[x].price,
+                          price: (showAskingPrice == false)
+                              ? products[x].fixed_price.toString()
+                              : (getIntPreef > 0
+                                  ? products[x].price.toString()
+                                  : products[x].newPrice.toString()),
                           brandName: products[x].brandName,
                           vehicleName: products[x].vehicleName,
                           engine: products[x].engine,
@@ -1610,7 +1604,10 @@ class _HomeVehicleState extends State<HomeVehicle> {
                                             products[x + j].mileage,
                                             products[x + j].price,
                                             products[x + j].newPrice,
-                                            detailsLink);
+                                            products[x + j].fixed_price,
+                                            detailsLink,
+
+                                            );
                                       },
                                       child: insidePopubButton(context,
                                           "Taka, Link, Details, Image  "),
@@ -1634,6 +1631,7 @@ class _HomeVehicleState extends State<HomeVehicle> {
                                             products[x + j].mileage,
                                             products[x + j].price,
                                             products[x + j].newPrice,
+                                            products[x + j].fixed_price,
                                             detailsLink);
                                       },
                                     ),
@@ -1784,15 +1782,22 @@ class _HomeVehicleState extends State<HomeVehicle> {
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
                               SizedBox(width: 5),
-                              getIntPreef >= 0
-                                  ? Text(
-                                      products[x].price.toString(),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleLarge,
-                                    )
+                              showAskingPrice
+                                  ? (getIntPreef >= 0
+                                      ? Text(
+                                          products[x].price.toString(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleLarge,
+                                        )
+                                      : Text(
+                                          products[x].newPrice.toString(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleLarge,
+                                        ))
                                   : Text(
-                                      products[x].newPrice.toString(),
+                                      products[x].fixed_price.toString(),
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleLarge,

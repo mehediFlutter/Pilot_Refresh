@@ -79,18 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         TextField(
                           style: Theme.of(context).textTheme.bodySmall,
                           decoration: InputDecoration(
-                            // contentPadding: EdgeInsets.only(top: 10),
-                            // enabledBorder: UnderlineInputBorder(
-                            //     borderSide: BorderSide(color: Colors.white)),
-                            // prefixIcon: Padding(
-                            //   padding: EdgeInsetsDirectional.only(
-                            //       start: 0, end: 30),
-                            //   // child: Icon(
-                            //   //   Icons.email_outlined,
-                            //   //   color: Colors.grey,
-                            //   //   size: 30,
-                            //   // ),
-                            // ),
+                     
                             hintText: "Mobile Number/Email Address",
                             hintStyle: Theme.of(context).textTheme.titleMedium,
                             // hintStyle: TextStyle(color: Colors.white, fontSize: 15),
@@ -102,21 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         TextField(
                           // scrollPadding: EdgeInsets.zero,
                           decoration: InputDecoration(
-                            // contentPadding: EdgeInsets.only(left: 20,top: 15),
-                            // prefixIcon: Padding(
-                            //   padding: EdgeInsetsDirectional.only(
-                            //       start: 1.0, end: 0),
-                            //   // child: Icon(
-                            //   //   Icons.lock_outline_sharp,
-                            //   //   color: Colors.grey,
-                            //   //   size: 30,
-                            //   // ),
-                            // ),
-                            // suffixIcon: Icon(
-                            //   Icons.remove_red_eye_outlined,
-                            //   color: Colors.grey,
-                            //   size: 30,
-                            // ),
+                           
                             hintText: "Password",
                             hintStyle: Theme.of(context).textTheme.titleMedium,
                           ),
@@ -128,26 +103,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 20,
                   ),
                   Row(
-                    //mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      // Checkbox(
-                      //   //fillColor: Colors.white,
-                      //   checkColor: Colors.white,
-                      //   activeColor: Colors.white,
-                      //   value: isChecked,
-                      //   onChanged: (value) {
-                      //     setState(() {
-                      //       isChecked = value!;
-                      //     });
-                      //   },
-                      // ),
-                      // const Expanded(
-                      //   child: Text(
-                      //     "Remember password",
-                      //     style:
-                      //         TextStyle(color: Colors.grey, fontSize: 14,fontFamily: "AbhayaLibre"),
-                      //   ),
-                      // ),
+               
                       Spacer(),
                       SizedBox(
                         width: size.width / 10,
